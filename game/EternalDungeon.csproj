@@ -1,0 +1,13 @@
+<Project Sdk="Godot.NET.Sdk/4.7.2">
+  <!-- Presentation and input only. All rules live in Core. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <RootNamespace>EternalDungeon.Game</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\src\Core\EternalDungeon.Core.csproj" />
+    <!-- Data ships inside the game assembly, so exports carry it. Read with DataSource.FromAssembly. -->
+    <EmbeddedResource Include="..\data\*.json" LogicalName="data/%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>

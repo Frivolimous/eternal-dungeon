@@ -1,0 +1,21 @@
+[
+  { "id": "health", "name": "Health", "group": "character", "combine": "add" },
+  { "id": "h_regen", "name": "H.Regen", "group": "character", "combine": "add" },
+  { "id": "mana", "name": "Mana", "group": "character", "combine": "add" },
+  { "id": "m_regen", "name": "M.Regen", "group": "character", "combine": "add" },
+  { "id": "speed", "name": "Speed", "group": "character", "combine": "add", "integer": true },
+  { "id": "initiative", "name": "Initiative", "group": "character", "combine": "add", "integer": true },
+  { "id": "threat", "name": "Threat", "group": "character", "combine": "add", "hidden": true },
+  { "id": "vulnerability", "name": "Vulnerability", "group": "character", "combine": "add", "hidden": true },
+
+  { "id": "base_dmg", "name": "Base Dmg", "group": "attack", "combine": "add" },
+  { "id": "power", "name": "Power", "group": "attack", "combine": "add" },
+  { "id": "multiplier", "name": "Multiplier", "group": "attack", "combine": "add" },
+  { "id": "penetrate", "name": "Penetrate", "group": "attack", "combine": "dim" },
+  { "id": "hit", "name": "Hit", "group": "attack", "combine": "dim" },
+  { "id": "rate", "name": "Rate", "group": "attack", "combine": "dim" },
+
+  { "id": "resist", "name": "Resist", "group": "defense", "combine": "dim" },
+  { "id": "avoid", "name": "Avoid", "group": "defense", "combine": "dim" },
+  { "id": "deval", "name": "Deval", "group": "defense", "combine": "dim" }
+]

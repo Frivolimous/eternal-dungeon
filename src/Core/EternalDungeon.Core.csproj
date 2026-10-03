@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The rules library. Plain C#: it must never reference Godot (a test checks this). -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>EternalDungeon.Core</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="EternalDungeon.Core.Tests" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,12 @@
+{
+  "assets": [
+    {
+      "id": "app_icon",
+      "path": "icon.svg",
+      "width": 128,
+      "height": 128,
+      "aiPlaceholder": true,
+      "note": "Dungeon door drawn by Claude for M0."
+    }
+  ]
+}

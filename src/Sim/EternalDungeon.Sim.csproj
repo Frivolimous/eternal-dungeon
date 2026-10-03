@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Command-line tool: battle simulator (M1) and data/asset checks. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>EternalDungeon.Sim</RootNamespace>
+    <AssemblyName>sim</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\EternalDungeon.Core.csproj" />
+  </ItemGroup>
+</Project>

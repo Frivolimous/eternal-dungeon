@@ -1,0 +1,9 @@
+<Project>
+  <!-- Shared by every project in the repo, including the Godot project in game/. -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+</Project>
