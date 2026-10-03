@@ -19,11 +19,16 @@ if (-not (Test-Path $templates)) {
 $mode = if ($Debug) { '--export-debug' } else { '--export-release' }
 $builds = Join-Path $root 'builds'
 $targets = @(
-    @{ Preset = 'Windows Desktop'; Out = 'windows\EternalDungeon.exe' },
-    @{ Preset = 'Linux'; Out = 'linux\EternalDungeon.x86_64' }
+    @{ Preset = 'Windows Desktop'; Out = 'windows\EternalDungeon.exe'; Template = 'windows_release_x86_64.exe' },
+    @{ Preset = 'Linux'; Out = 'linux\EternalDungeon.x86_64'; Template = 'linux_release.x86_64' }
 )
 
+$built = 0
 foreach ($t in $targets) {
+    if (-not (Test-Path (Join-Path $templates $t.Template))) {
+        Write-Warning "Skipping $($t.Preset): its export template isn't installed (Editor > Manage Export Templates)."
+        continue
+    }
     $out = Join-Path $builds $t.Out
     $dir = Split-Path $out -Parent
     if (Test-Path $dir) { Remove-Item $dir -Recurse -Force }
@@ -32,5 +37,7 @@ foreach ($t in $targets) {
     Write-Host "== $($t.Preset) -> $out"
     & $godot --headless --path (Join-Path $root 'game') $mode $t.Preset $out
     if ($LASTEXITCODE -ne 0 -or -not (Test-Path $out)) { throw "$($t.Preset) export failed." }
+    $built++
 }
+if ($built -eq 0) { throw "Nothing was built: no export templates are installed for these presets." }
 Write-Host "Builds are in $builds"
