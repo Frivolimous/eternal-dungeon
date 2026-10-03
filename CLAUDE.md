@@ -23,7 +23,7 @@ build depth → M5 Content & endgame → M6 Steam.
 
 | Tool | Version | Where |
 |---|---|---|
-| Godot (.NET edition) | 4.7.2 stable mono | `C:\Program Files (x86)\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64\` (use the `_console.exe` from scripts) |
+| Godot (.NET edition) | 4.7.2 stable mono | `C:\Tools\Godot_v4.7.2-stable_mono_win64\` (use the `_console.exe` from scripts) |
 | .NET SDK | 10.0.401 (pinned in `global.json`, rolls forward to later 10.0.x) | |
 | Target framework | net8.0 for every project (Godot 4.7's default) | |
 | Tests | xUnit v3 on Microsoft.Testing.Platform | |

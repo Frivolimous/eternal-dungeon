@@ -7,7 +7,7 @@ $ErrorActionPreference = 'Stop'
 
 $root = Split-Path $PSScriptRoot -Parent
 $godot = if ($env:GODOT) { $env:GODOT } else {
-    'C:\Program Files (x86)\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64_console.exe'
+    'C:\Tools\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64_console.exe'
 }
 if (-not (Test-Path $godot)) { throw "Godot not found at $godot. Set `$env:GODOT to the console exe." }
 
