@@ -1,0 +1,48 @@
+﻿Systems Showcase · 1000 battles · seeds 1–1000
+Win rate         48.4%  (484 won, 516 lost, 0 stalemates)
+Battle length    19.0 turns on average
+Party HP left    16.6% on average, 0.0% at worst
+Hit rate         84.1% of 45989 attacks
+
+Damage dealt per battle
+  Elementalist              153.7
+  Rogue                     152.5
+  Goblin Brute              121.1
+  Goblin Hexer               97.0
+  Warrior                    72.2
+  Goblin Grunt               62.4
+
+Hero deaths per battle
+  Warrior                     0.8
+  Elementalist                0.7
+  Rogue                       0.6
+
+Actions used per battle
+  Elementalist: Defend                  0.6
+  Elementalist: Fire Bolt               3.9
+  Elementalist: Frost Shard             4.7
+  Elementalist: Move                    1.3
+  Goblin Brute: Smash                   7.9
+  Goblin Grunt: Slash                   5.2
+  Goblin Hexer: Hex Bolt                9.8
+  Rogue: Dagger Attack                 12.8
+  Rogue: Defend                         2.6
+  Rogue: Move                           0.2
+  Rogue: Sneak                          1.0
+  Warrior: Attack                       0.5
+  Warrior: Defend                       0.9
+  Warrior: Move                         1.7
+  Warrior: Power Attack                 1.8
+  Warrior: Shield Bash                  1.2
+
+Effects and CC applied per battle
+  Chill                                 4.0
+  Cloak                                 1.0
+  Dazed (Stun)                          1.1
+  Dread (Fear)                          5.6
+  Guard                                 4.2
+  Stagger breaks                        1.3
+  Casts interrupted                     1.1
+
+Procs fired per battle
+  Goblin Hexer: Flaming                 5.9

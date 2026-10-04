@@ -1,35 +1,41 @@
 ﻿Goblin Patrol · 1000 battles · seeds 1–1000
-Win rate         85.5%  (855 won, 145 lost, 0 stalemates)
-Battle length    9.0 turns on average
-Party HP left    26.1% on average, 0.0% at worst
-Hit rate         85.5% of 36376 attacks
+Win rate         74.3%  (743 won, 257 lost, 0 stalemates)
+Battle length    12.0 turns on average
+Party HP left    24.6% on average, 0.0% at worst
+Hit rate         83.1% of 45929 attacks
 
 Damage dealt per battle
-  Elementalist              176.1
-  Rogue                     112.7
-  Goblin Grunt              100.9
-  Goblin Archer              97.4
-  Warrior                    71.0
-  Goblin Shaman              38.4
+  Elementalist              143.9
+  Rogue                     138.8
+  Goblin Archer             119.8
+  Goblin Grunt               93.2
+  Warrior                    83.1
+  Goblin Shaman              41.5
 
 Hero deaths per battle
-  Warrior                     0.9
-  Rogue                       0.3
+  Warrior                     1.0
+  Rogue                       0.4
   Elementalist                0.3
 
 Actions used per battle
-  Elementalist: Defend                  0.0
-  Elementalist: Fire Bolt               8.0
-  Goblin Archer: Shot                   6.8
-  Goblin Grunt: Slash                   6.9
-  Goblin Shaman: Mend                   3.6
+  Elementalist: Fire Bolt               4.5
+  Elementalist: Frost Shard             4.7
+  Goblin Archer: Shot                  11.4
+  Goblin Grunt: Slash                   7.8
+  Goblin Shaman: Defend                 0.9
+  Goblin Shaman: Mend                   4.3
+  Goblin Shaman: Move                   0.1
   Goblin Shaman: Rotting Hex            3.2
-  Rogue: Dagger Attack                  9.4
-  Warrior: Power Attack                 2.4
+  Rogue: Dagger Attack                 11.3
+  Rogue: Defend                         0.7
+  Warrior: Attack                       1.1
+  Warrior: Defend                       0.9
+  Warrior: Power Attack                 2.3
 
 Effects and CC applied per battle
-  Guard                                 0.0
-  Rot                                   2.5
+  Chill                                 3.7
+  Guard                                 2.4
+  Rot                                   2.4
   Stagger breaks                        0.0
   Casts interrupted                     0.0
 
