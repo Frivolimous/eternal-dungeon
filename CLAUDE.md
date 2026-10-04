@@ -105,6 +105,17 @@ check. AI-generated art is for placeholders only and must be flagged; nothing fl
 - Heavy and Light are melee-only tags: only melee actions carry them.
 - `all_damage` (Add, factor 1 + value) and `all_resist` (Dim) are untagged stats for the damage formula.
 
+- Damage = Base × (1 + Power/100) × (1 + Multiplier) × (1 − Resist × (1 − Penetrate)) × (1 + All Damage) ×
+  (1 − All Resist). Base = the action's base damage + the attacker's Base Dmg stat for its tags. An action's
+  `allDamage` (Power Attack: 1.0 = ×2) adds to the attacker's All Damage. Damage rounds to the nearest whole
+  number, minimum 1 on a successful damaging hit.
+
+## To do at the end of M1 (Jeremy asked)
+
+- **Procs, crit included.** Crit is not a separate roll: it will be one of several procs (damage, buffs,
+  special effects) that can apply to any attack. Design them with Jeremy after the other M1 systems. Until
+  then there is no crit; the proc-chance formula exists on its own.
+
 ## Open (don't build without Jeremy)
 
 Economy; crafted items' minimum dungeon; weight-penalty and room-count placeholders; Hard Mode, global skill

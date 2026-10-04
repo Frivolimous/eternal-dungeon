@@ -1,0 +1,49 @@
+// Starter actions for M1. Numbers are placeholders. Effects (Defend's shield, Slow, Rot, heals, buffs,
+// Sneak's cloak, stagger) arrive with the effects system.
+// castTime is on the 100 scale: 50 = half a base-speed turn.
+[
+  { "id": "attack", "name": "Attack", "tags": ["physical", "melee"],
+    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 15 },
+
+  { "id": "power_attack", "name": "Power Attack", "tags": ["physical", "melee", "heavy"],
+    "target": "enemy", "range": "melee", "apCost": 200, "baseDamage": 15, "allDamage": 1.0 },
+
+  { "id": "defend", "name": "Defend", "tags": ["buff"],
+    "target": "self", "apCost": 100 },
+
+  { "id": "move", "name": "Move", "tags": [],
+    "target": "tile", "apCost": 50 },
+
+  { "id": "dagger_attack", "name": "Dagger Attack", "tags": ["physical", "melee", "light", "finesse"],
+    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 12 },
+
+  { "id": "sneak", "name": "Sneak", "tags": ["buff"],
+    "target": "tile", "apCost": 100 },
+
+  { "id": "fire_bolt", "name": "Fire Bolt", "tags": ["arcane", "spell", "ranged", "fire"],
+    "target": "enemy", "range": "any", "apCost": 100, "manaCost": 10, "baseDamage": 22, "castTime": 50 },
+
+  { "id": "frost_shard", "name": "Frost Shard", "tags": ["arcane", "spell", "ranged", "ice", "control"],
+    "target": "enemy", "range": "any", "apCost": 100, "manaCost": 8, "baseDamage": 12 },
+
+  { "id": "goblin_slash", "name": "Slash", "tags": ["physical", "melee"],
+    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 10 },
+
+  { "id": "goblin_shot", "name": "Shot", "tags": ["physical", "ranged", "projectile"],
+    "target": "enemy", "range": "any", "apCost": 100, "baseDamage": 9 },
+
+  { "id": "rotting_hex", "name": "Rotting Hex", "tags": ["spirit", "spell", "ranged", "toxic", "curse"],
+    "target": "enemy", "range": "any", "apCost": 100, "manaCost": 8, "baseDamage": 4 },
+
+  { "id": "mend", "name": "Mend", "tags": ["spirit", "spell", "buff"],
+    "target": "ally", "range": "any", "apCost": 100, "manaCost": 10 },
+
+  { "id": "brute_smash", "name": "Smash", "tags": ["physical", "melee", "heavy", "force"],
+    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 16 },
+
+  { "id": "chief_cleave", "name": "Cleave", "tags": ["physical", "melee", "heavy"],
+    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 18 },
+
+  { "id": "war_cry", "name": "War Cry", "tags": ["buff"],
+    "target": "self", "apCost": 100 }
+]

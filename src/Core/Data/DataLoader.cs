@@ -11,7 +11,11 @@ public static class DataLoader
     public const string TagsFile = "tags.json";
     public const string StatsFile = "stats.json";
     public const string CompoundStatsFile = "compound_stats.json";
+    public const string ActionsFile = "actions.json";
     public const string UnitsFile = "units.json";
+
+    /// <summary>AP costs an action may have (Anchor: Combat › Turn order). 200 works like a cooldown.</summary>
+    public static readonly int[] ApCosts = [50, 100, 200];
 
     public static GameData LoadDirectory(string directory) => Load(DataSource.FromDirectory(directory));
 
@@ -23,13 +27,63 @@ public static class DataLoader
         if (compounds.FirstOrDefault(c => stats.ContainsKey(c.Id)) is { } clash)
             throw new DataException(CompoundStatsFile, "", $"\"{clash.Id}\" is both a stat and a compound stat");
         var compoundIds = compounds.Select(c => c.Id).ToHashSet();
-        var units = ReadList(source, UnitsFile, f => ReadUnit(f, tags, stats, compoundIds));
-        return new GameData([.. tags.Values], [.. stats.Values], compounds, units);
+        var actions = ReadList(source, ActionsFile, f => ReadAction(f, tags));
+        var actionIds = actions.Select(a => a.Id).ToHashSet();
+        var units = ReadList(source, UnitsFile, f => ReadUnit(f, tags, stats, compoundIds, actionIds));
+        return new GameData([.. tags.Values], [.. stats.Values], compounds, units, actions);
     }
 
-    static UnitDef ReadUnit(JsonField f, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats, HashSet<string> compounds)
+    static ActionDef ReadAction(JsonField f, Dictionary<string, TagDef> tags)
     {
-        f.OnlyFields("id", "name", "size", "stats", "tagStats", "compounds");
+        f.OnlyFields("id", "name", "tags", "target", "range", "apCost", "manaCost", "baseDamage", "allDamage", "castTime");
+
+        var actionTags = new List<string>();
+        foreach (var t in f["tags"].Items())
+        {
+            var tag = t.Id();
+            if (!tags.ContainsKey(tag))
+                throw t.Error($"unknown tag \"{tag}\" (not in {TagsFile})");
+            if (actionTags.Contains(tag))
+                throw t.Error($"tag \"{tag}\" is listed twice");
+            actionTags.Add(tag);
+        }
+
+        // Heavy and Light are weapon weights, found only on melee actions (Jeremy, 2026-10-04).
+        if (actionTags.FirstOrDefault(t => t is "heavy" or "light") is { } weight && !actionTags.Contains("melee"))
+            throw f["tags"].Error($"\"{weight}\" is a melee-only tag, so the action must also be tagged melee");
+
+        var target = f["target"].Enum<ActionTarget>();
+        var range = f.Optional("range")?.Enum<ActionRange>();
+        if (target is ActionTarget.Enemy or ActionTarget.Ally && range is null)
+            throw new DataException(f.File, $"{f.Path}.range", $"is required for a {JsonField.SnakeCase(target.ToString())} action");
+
+        var ap = f["apCost"].Int();
+        if (Array.IndexOf(ApCosts, ap) < 0)
+            throw f["apCost"].Error($"expected one of {string.Join(", ", ApCosts)}, got {ap}");
+
+        var action = new ActionDef(
+            f["id"].Id(),
+            f["name"].String(),
+            actionTags,
+            target,
+            range,
+            ap,
+            f.Optional("manaCost")?.Int() ?? 0,
+            f.Optional("baseDamage")?.Number() ?? 0,
+            f.Optional("allDamage")?.Number() ?? 0,
+            f.Optional("castTime")?.Int() ?? 0);
+        if (action.ManaCost < 0) throw f["manaCost"].Error("can't be negative");
+        if (action.BaseDamage < 0) throw f["baseDamage"].Error("can't be negative");
+        if (action.CastTime < 0) throw f["castTime"].Error("can't be negative");
+        if (action.DealsDamage && target != ActionTarget.Enemy)
+            throw f["baseDamage"].Error("only enemy-targeted actions deal damage");
+        return action;
+    }
+
+    static UnitDef ReadUnit(JsonField f, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats,
+        HashSet<string> compounds, HashSet<string> actions)
+    {
+        f.OnlyFields("id", "name", "size", "stats", "tagStats", "compounds", "actions");
 
         var size = f["size"];
         var unitSize = size.Number() switch
@@ -69,7 +123,18 @@ public static class DataLoader
             compoundValues[prop.Name] = prop.Value.Number();
         }
 
-        var unit = new UnitDef(f["id"].Id(), f["name"].String(), unitSize, values, compoundValues);
+        var actionList = new List<string>();
+        foreach (var a in f["actions"].Items())
+        {
+            var id = a.Id();
+            if (!actions.Contains(id))
+                throw a.Error($"unknown action \"{id}\" (not in {ActionsFile})");
+            actionList.Add(id);
+        }
+        if (actionList.Count == 0)
+            throw f["actions"].Error("a unit needs at least one action");
+
+        var unit = new UnitDef(f["id"].Id(), f["name"].String(), unitSize, values, compoundValues, actionList);
         if (!values.Any(v => v.Stat == "health" && v.Value > 0))
             throw f["stats"].Error("a unit needs health above 0");
         return unit;

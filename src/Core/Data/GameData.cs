@@ -5,8 +5,12 @@ public sealed class GameData(
     IReadOnlyList<TagDef> tagList,
     IReadOnlyList<StatDef> statList,
     IReadOnlyList<CompoundStatDef>? compoundList = null,
-    IReadOnlyList<UnitDef>? unitList = null)
+    IReadOnlyList<UnitDef>? unitList = null,
+    IReadOnlyList<ActionDef>? actionList = null)
 {
+    public IReadOnlyList<ActionDef> ActionList { get; } = actionList ?? [];
+    public IReadOnlyDictionary<string, ActionDef> Actions { get; } = (actionList ?? []).ToDictionary(a => a.Id);
+
     public IReadOnlyList<TagDef> TagList { get; } = tagList;
     public IReadOnlyList<StatDef> StatList { get; } = statList;
     public IReadOnlyList<CompoundStatDef> CompoundList { get; } = compoundList ?? [];

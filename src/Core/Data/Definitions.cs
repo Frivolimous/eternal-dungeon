@@ -56,10 +56,36 @@ public enum UnitSize
 /// <summary>A base stat value on a unit definition: untagged when <see cref="Tag"/> is null.</summary>
 public sealed record StatValue(string Stat, string? Tag, double Value);
 
-/// <summary>A hero or enemy as content: base stats, tag stats and compound stats.</summary>
+/// <summary>A hero or enemy as content: base stats, tag stats, compound stats and its actions.</summary>
 public sealed record UnitDef(
     string Id,
     string Name,
     UnitSize Size,
     IReadOnlyList<StatValue> Stats,
-    IReadOnlyDictionary<string, double> Compounds);
+    IReadOnlyDictionary<string, double> Compounds,
+    IReadOnlyList<string> Actions);
+
+/// <summary>Who an action is aimed at.</summary>
+public enum ActionTarget { Enemy, Ally, Self, Tile }
+
+/// <summary>
+/// Which tiles an action can reach (placeholders from the brief): Melee from the front row to the enemy front
+/// row, Reach (spear) also the second row, Any is any enemy tile (ranged and spells).
+/// </summary>
+public enum ActionRange { Melee, Reach, Any }
+
+/// <summary>Something a unit can do on its turn (Anchor: Combat).</summary>
+public sealed record ActionDef(
+    string Id,
+    string Name,
+    IReadOnlyList<string> Tags,
+    ActionTarget Target,
+    ActionRange? Range,
+    int ApCost,
+    int ManaCost,
+    double BaseDamage,
+    double AllDamage,
+    int CastTime)
+{
+    public bool DealsDamage => BaseDamage > 0;
+}

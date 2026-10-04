@@ -14,18 +14,20 @@ public class DataLoaderTests
          { "id": "power", "name": "Power", "group": "attack", "combine": "add" }]
         """;
     const string ValidUnits = "[]";
+    const string ValidActions = """[{ "id": "poke", "name": "Poke", "tags": ["fire"], "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 5 }]""";
 
-    static GameData Load(string tags = ValidTags, string stats = ValidStats, string compounds = ValidCompounds, string units = ValidUnits) =>
+    static GameData Load(string tags = ValidTags, string stats = ValidStats, string compounds = ValidCompounds, string units = ValidUnits, string actions = ValidActions) =>
         DataLoader.Load(DataSource.FromFiles(new Dictionary<string, string>
         {
             [DataLoader.TagsFile] = tags,
             [DataLoader.StatsFile] = stats,
             [DataLoader.CompoundStatsFile] = compounds,
             [DataLoader.UnitsFile] = units,
+            [DataLoader.ActionsFile] = actions,
         }));
 
-    static DataException LoadFails(string tags = ValidTags, string stats = ValidStats, string compounds = ValidCompounds, string units = ValidUnits) =>
-        Assert.Throws<DataException>(() => Load(tags, stats, compounds, units));
+    static DataException LoadFails(string tags = ValidTags, string stats = ValidStats, string compounds = ValidCompounds, string units = ValidUnits, string actions = ValidActions) =>
+        Assert.Throws<DataException>(() => Load(tags, stats, compounds, units, actions));
 
     static DataException UnitFails(string unitJson) =>
         LoadFails(stats: HealthAndPower, units: $"[{unitJson}]");
@@ -37,7 +39,7 @@ public class DataLoaderTests
             [{ "id": "troll", "name": "Troll", "size": 1.5,
                "stats": { "health": 200 },
                "tagStats": [{ "tag": "fire", "stat": "power", "value": 10 }],
-               "compounds": { "magic": 5 } }]
+               "compounds": { "magic": 5 }, "actions": ["poke"] }]
             """);
         var troll = data.Units["troll"];
         Assert.Equal(UnitSize.Tall, troll.Size);
@@ -53,7 +55,7 @@ public class DataLoaderTests
         Assert.Equal("[0].stats.luck", UnitFails("""{ "id": "u", "name": "U", "size": 1, "stats": { "health": 1, "luck": 7 } }""").Field);
         Assert.Equal("[0].compounds.charm", UnitFails("""{ "id": "u", "name": "U", "size": 1, "stats": { "health": 1 }, "compounds": { "charm": 3 } }""").Field);
         Assert.Equal("[0].tagStats[0].stat", UnitFails("""{ "id": "u", "name": "U", "size": 1, "stats": { "health": 1 }, "tagStats": [{ "tag": "fire", "stat": "health", "value": 5 }] }""").Field);
-        Assert.Equal("[0].stats", UnitFails("""{ "id": "u", "name": "U", "size": 1, "stats": { "power": 1 } }""").Field);
+        Assert.Equal("[0].stats", UnitFails("""{ "id": "u", "name": "U", "size": 1, "stats": { "power": 1 }, "actions": ["poke"] }""").Field);
     }
 
     [Fact]
@@ -91,10 +93,35 @@ public class DataLoaderTests
         Assert.Contains("mult", mult.Message);
     }
 
+    static DataException ActionFails(string actionJson) =>
+        LoadFails(tags: """
+            [{ "id": "fire", "name": "Fire", "group": "element" },
+             { "id": "melee", "name": "Melee", "group": "delivery" },
+             { "id": "heavy", "name": "Heavy", "group": "style" }]
+            """, compounds: "[]", actions: $"[{actionJson}]");
+
+    [Fact]
+    public void Action_errors_name_the_field()
+    {
+        Assert.Equal("[0].apCost", ActionFails("""{ "id": "a", "name": "A", "tags": [], "target": "self", "apCost": 75 }""").Field);
+        Assert.Equal("[0].tags", ActionFails("""{ "id": "a", "name": "A", "tags": ["heavy"], "target": "enemy", "range": "any", "apCost": 100 }""").Field);
+        Assert.Equal("[0].range", ActionFails("""{ "id": "a", "name": "A", "tags": ["fire"], "target": "enemy", "apCost": 100 }""").Field);
+        Assert.Equal("[0].tags[1]", ActionFails("""{ "id": "a", "name": "A", "tags": ["fire", "lava"], "target": "self", "apCost": 100 }""").Field);
+        Assert.Equal("[0].baseDamage", ActionFails("""{ "id": "a", "name": "A", "tags": [], "target": "self", "apCost": 100, "baseDamage": 5 }""").Field);
+    }
+
+    [Fact]
+    public void Units_must_reference_real_actions()
+    {
+        var e = UnitFails("""{ "id": "u", "name": "U", "size": 1, "stats": { "health": 1 }, "actions": ["poke", "fly"] }""");
+        Assert.Equal("[0].actions[1]", e.Field);
+        Assert.Contains("actions.json", e.Message);
+    }
+
     [Fact]
     public void Reads_snake_case_enums()
     {
-        var data = Load(tags: """[{ "id": "arcane", "name": "Arcane", "group": "damage_type" }]""", compounds: "[]");
+        var data = Load(tags: """[{ "id": "arcane", "name": "Arcane", "group": "damage_type" }]""", compounds: "[]", actions: "[]");
         Assert.Equal(TagGroup.DamageType, data.Tags["arcane"].Group);
     }
 
