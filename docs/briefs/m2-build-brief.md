@@ -1,8 +1,8 @@
 # M2 Build Brief: Playable battle
 
-Written 2026-10-04 from a design session with Jeremy. The Design Anchor (`docs/design/`) wins wherever this
-brief disagrees. Prerequisite: `placeholder-review-2026-10-04.md` is done (default actions, cast and DoT
-changes, showcase encounter).
+Written 2026-10-04 from a design session with Jeremy, revised the same day after Claude's review. The Design
+Anchor (`docs/design/`) wins wherever this brief disagrees. Prerequisites (the placeholder review and the M1 log
+review) are done.
 
 ## Goal
 
@@ -12,12 +12,12 @@ styles. The checkpoint is about **feel**: is a battle readable and satisfying, a
 
 ## In scope
 
-- A flexible board model in Core (section 1).
+- A front-based board model in Core (section 1).
 - The data reorganized into flat tables, ready for the Google Sheets sync (section 2).
 - The battle screen: board, cards, timeline, details panel, log and action bar (sections 3–5).
 - The hero turn flow, previews and feedback (sections 6–7).
 - Input, resolution, UI text and accessibility basics (section 8).
-- Tools: debug menu, auto-battle, screenshot mode and art request list (section 9).
+- Tools: debug menu, replays, auto-battle, screenshot mode and art request list (section 9).
 
 ## Out of scope
 
@@ -26,54 +26,68 @@ styles. The checkpoint is about **feel**: is a battle readable and satisfying, a
 - Dungeons, floors, XP, loot and saving: M3.
 - Audio: a separate pass once the art style is chosen.
 - Full controller polish: M6. M2 must not rule it out (section 8).
+- Damage variance: damage stays static (no damage roll). Only hit, crit and Brutal are random.
 
 ## Anchor updates
 
 Write the presentation decisions below into the Anchor, in a new `docs/design/presentation.md` linked from the
-README, and update `combat.md` › Battlefield for the flexible board. Anything Claude chooses beyond this brief
+README, and update `combat.md` › Battlefield for areas and fronts. Anything Claude chooses beyond this brief
 goes into `placeholders.md`.
 
-## 1. Flexible board (Core)
+## 1. Areas and fronts (Core), layout (presentation)
 
-The battlefield is a set of **areas placed on a shared table**, not two fixed 3×2 grids.
+The battlefield is a set of **areas** connected by **fronts**, not two fixed 3×2 grids.
 
-- Each area has a side (party or enemy), a size (columns × rows), a position on the table and an orientation.
-  Its **front edge** is the edge that faces the opposing area.
-- "Front row", melee reach, Push/Pull and the forward collapse are all defined relative to the front edge, so
-  they work in any orientation.
-- Unit footprints (1, 2 or 4 tiles) keep working in any orientation.
-- Encounters specify their layout in data. Default: **vertical**, with the party area at the bottom and the
-  enemy area at the top, front edges facing each other.
-- M2 supports **one front per area**. Multiple fronts (enemies on two sides) are M3, but the model must not
-  assume a single front in a way that blocks them.
-- Tests: the same fight gives identical results in the vertical layout and in a rotated side-on layout
-  (party left, enemies right). Range, Push/Pull and collapse tests run in both orientations.
+- **Core** knows only logic: each area has a side (party or enemy) and a size (columns × rows), and tiles are in
+  front-relative coordinates (row 0 is the front). A **front** links an edge of one area to an edge of an opposing
+  area. "Front row", melee reach, Push/Pull and the forward collapse are all defined relative to a front.
+- **Presentation** decides where each area sits on the table and which way it faces. Encounters give their layout
+  in data (Godot reads it; Core ignores it). Default: **vertical**, party at the bottom, enemies at the top, front
+  edges facing each other. Side-on: party left, enemies right.
+- Unit footprints (1, 2 or 4 tiles) are front-relative, so they work in any layout.
+- M2 supports **one front per area**. Multiple fronts (enemies on two sides) are M3, but the model must not assume
+  a single front in a way that blocks them: with several fronts, a tile's row becomes its depth from a given front.
+- Tests: Core's existing range, Push/Pull and collapse tests run on the front model. On the Godot side, the
+  tile ↔ screen mapping round-trips in both layouts, and the same replay (section 9) gives the same log in the
+  vertical and side-on layouts.
 
 ## 2. Data as flat tables
 
-Every data table must be exportable to a spreadsheet tab and importable back exactly. Reorganize the JSON now
-so each file maps cleanly to flat tables:
+Every data table must be exportable to a spreadsheet tab and importable back exactly. **JSON stays the source of
+truth** (it diffs well in git); TSV is the exchange format.
 
 - Each file is a list of flat records (one row each). Nested lists become **child tables** keyed by the parent
   id and an order column, for example `actions` + `action_effects`, `units` + `unit_actions`,
   `encounters` + `encounter_units` (with position), and `effects` / `procs` with their own child tables for
   stat changes and results.
-- Units keep one column per stat.
+- Units keep one column per untagged stat and one per compound stat. **Tag-keyed stats** (Fire Power 50) go in a
+  child table `unit_tag_stats`: unit, stat, tag, value, one row each. The same pattern applies anywhere else a
+  record carries tagged stats.
+- `defaults.json` is a single record, so it becomes a key/value table.
+- **No comments in JSON.** The `//` comments move out: design notes go to the Anchor, and per-row notes go in a
+  `note` column where a table needs one.
+- Data files are always written by **one canonical writer** (fixed key order, number format and indentation),
+  so files round-trip byte for byte.
 - Field names are stable and spreadsheet-friendly (they become column headers).
+- TSV conventions: numbers with a `.` decimal point regardless of locale, booleans as `TRUE` / `FALSE` (as Sheets
+  writes them), enums as their names, an empty cell means the field's default.
 - Add the **TSV export and import** now: `sim export-tsv <dir>` and `sim import-tsv <dir>`, one TSV per table.
   Import runs the full strict validation, prints a change summary ("Goblin Grunt: health 85 → 95"), and writes
   nothing if anything is invalid. Columns starting with `_` and unknown files are ignored, so Jeremy can keep
   calculations alongside the data.
-- Test: exporting then importing reproduces the data files exactly.
+- Test: exporting then importing reproduces the data files byte for byte.
 
 ## 3. The table and cards
 
-- The battlefield is a **3D scene seen from above** (slight perspective is fine): a table with each unit as a
-  flat 2D card. All "3D" is card transforms: lift, tilt, flip, shake, shadow.
+- The battlefield is a **3D scene seen from above**: a table with each unit as a flat 2D card. All "3D" is card
+  transforms: lift, tilt, flip, shake, shadow. The camera is orthographic or nearly so, so card text stays sharp.
+- **Images are portraits only.** No text is ever baked into art: names, numbers, bars and icons are drawn by the
+  game from engine data.
 - **Card face:** portrait, name, HP bar with numbers, Shield, the Act meter along one edge, the stagger bar
   (white while breaking) and status icons.
-- Card size follows footprint: a single card for size 1, a double-height card covering 2 tiles for size 1.5, and
-  a large card covering a 2×2 block for size 2.
+- Card size follows footprint, and the portrait follows its shape: **square** for size 1 (one tile) and size 2
+  (a 2×2 block), **1:2** for size 1.5 (two tiles, front and back). In a layout where a Tall unit's two tiles run
+  across the screen, only the **portrait image is rotated** 90° to fit; the card frame and its text stay upright.
 - **Portrait states:** each unit can have optional portraits for states such as low HP, hurt, attacking,
   casting and knocked out. Only `default` is required, and a missing state falls back to it. States may later be
   animations instead of stills, with no code changes. Add this to the asset manifest format.
@@ -90,25 +104,41 @@ Designed at **1280×800** (Steam Deck's native 16:10) and scaled up for larger s
   scrolling combat log.
 - **Bottom:** the action bar for the active hero.
 - The camera frames whatever layout the encounter uses.
+- Cards are small on a 7" screen (about 110 px wide for a size-1 card). Check readability with screenshot mode
+  early, before polishing.
 
 ## 5. Action bar
 
 - Actions are **buttons styled as small card frames**: icon, name, AP cost, Mana cost and cast time. They're
-  not a hand of cards.
-- Unusable actions (no Mana, Silenced, no valid target) are shown disabled with the reason on hover.
+  not a hand of cards. The default actions (Attack, Defend, Move) are included.
+- Unusable actions (no Mana, Silenced, Rooted, Feared, no valid target) are shown disabled with the reason on
+  hover.
 
 ## 6. A hero's turn
 
 1. The active hero's card lifts and glows, and the action bar shows its actions.
 2. Hovering an action shows a **ghost marker on the timeline** where the hero's next turn would land, given that
-   action's AP cost and any cast time.
-3. Picking an action highlights valid targets (or empty tiles for Move). Hovering a target shows the hit chance,
-   the damage range, the crit and Brutal chances, and any effects it would apply.
+   action's AP cost and the hero's current Speed. For a cast it shows two points: when the cast completes and when
+   the next turn lands. It's an estimate: a buff expiring can move it.
+3. Picking an action highlights valid targets (or empty tiles for Move). Hovering a target shows the **preview**:
+   the hit chance as a percentage, the damage on a normal hit, a crit and a Brutal crit, each with its chance, and
+   any effects it would apply. Procs aren't included in the numbers; procs that could trigger are listed with their
+   chance.
 4. Click to confirm. Right-click or Escape steps back.
 5. Enemy turns play automatically.
 
+**Heroes the player can't fully control:**
+
+- Stunned or Sleeping: the turn is skipped, with a short visible beat so the player sees why.
+- Feared: the action bar allows only Defend and Move away from the front; everything else is disabled with the
+  reason.
+- Confused: the player picks the action; the target is chosen at random after confirming, and the preview says so.
+
 The combat log uses the same text as the simulator's brief log, and shows every damage tag (for example
 "Arcane, Fire").
+
+**The UI never uses the battle's random generator.** Previews and the ghost marker call pure functions only, and
+a test checks that previewing changes nothing (the battle plays identically with and without previews).
 
 ## 7. Feedback (placeholder quality)
 
@@ -127,38 +157,49 @@ The combat log uses the same text as the simulator's brief log, and shows every 
 - **Built on focus navigation**, so a controller can drive everything later by mapping buttons (D-pad moves
   focus, A confirms, B cancels, bumpers switch actions). Nothing may depend on mouse hover alone: every hover
   preview must also show when the element has focus.
-- **UI text** lives in string tables (Godot's translation system) from day one, never typed directly in scenes
-  or code.
+- **UI text** lives in string tables from day one, never typed directly in scenes or code. One `strings.csv` in
+  Godot's CSV translation format: Godot imports it, and Core reads the same file to format the combat log, so the
+  simulator and the game print identical lines. Content names (units, actions, effects) stay in the data tables
+  and are translated there later.
 - **Accessibility:** statuses use shape plus color, never color alone. Add a text-size setting.
 
 ## 9. Tools
 
 - **Debug menu:** the start screen lists encounters, a seed field, and Start. After a battle: Restart (same
-  seed), Next seed, and Back to menu.
+  seed), Next seed, Save replay, and Back to menu.
+- **Replays:** a battle is fully determined by its seed and the choices made, so a replay is a small file: the
+  encounter, the seed and the list of choices. The game can save one after a battle and load one from the debug
+  menu, and `sim replay <file>` plays it in the simulator. Uses: proving the UI matches the simulator, attaching
+  to bug reports, and driving screenshot mode.
 - **Auto-battle toggle:** heroes act on the simulator's scripted AI, so whole fights can be watched.
-- **Screenshot mode:** a command-line option that loads an encounter and seed, plays a given number of actions
-  at instant speed, saves a PNG of the screen and quits. Use it to check UI work visually, and keep a few
-  reference screenshots in `docs/screenshots/`.
-- **Art request list:** generate `docs/art-requests.md` listing every image M2 needs, with its manifest id, exact
-  pixel size and a one-line description: portraits for each unit and card size, portrait states (optional), the
-  card frame, action icons and status icons. Art is drawn at **2× display size** so it stays sharp on larger
-  screens. Jeremy makes the images (AI placeholders, flagged in the manifest) in 2–3 candidate styles.
-- **Style switch:** the debug menu can switch between the candidate art styles, so they can be compared in the
-  same fight. Each style is a folder of images with the same ids and sizes.
+- **Screenshot mode:** a command-line option that loads an encounter and seed (or a replay), plays a given number
+  of actions at instant speed (heroes on auto-battle unless a replay drives them), saves a PNG of the screen and
+  quits. It needs a real window (Godot's headless mode doesn't render), so a window flashes open briefly. Use it
+  to check UI work visually, and keep a few reference screenshots in `docs/screenshots/`.
+- **Art request list:** `sim art-requests` generates `docs/art-requests.md` from the data and the manifest, so it
+  never goes stale. It lists every image M2 needs, with its manifest id, exact pixel size and a one-line
+  description: portraits for each unit (square, or 1:2 for Tall), portrait states (optional), the card frame,
+  action icons and status icons. Card pixel sizes are fixed at the 1280×800 reference layout, and art is drawn at
+  **2× display size** so it stays sharp on larger screens. Jeremy makes the images (AI placeholders, flagged in
+  the manifest) in 2–3 candidate styles.
+- **Style switch:** the manifest lists images by id, and each style is a folder holding the same ids at the same
+  sizes. The debug menu switches styles, so they can be compared in the same fight. `sim assets` checks every
+  style folder.
 
 ## Acceptance criteria
 
-- [ ] `dotnet test` passes, including board tests in both orientations and the export-then-import round trip.
+- [ ] `dotnet test` passes, including the front-model board tests, the export-then-import byte-for-byte round
+      trip, and the previews-change-nothing test.
 - [ ] `sim export-tsv` / `sim import-tsv` work, with a change summary and nothing written on invalid data.
 - [ ] The game launches to the debug menu. Every encounter, including the showcase encounter, can be played to
       victory or defeat with the mouse alone, and with the keyboard alone.
-- [ ] The timeline, ghost marker, target previews, details panel and log all show correct values (the same as
-      the simulator for the same seed and choices).
+- [ ] The timeline, ghost marker, target previews, details panel and log all show correct values: a replay saved
+      from the game gives the same log in `sim replay`.
 - [ ] Hero deaths flip face down. Speed settings and skip work. Auto-battle completes fights.
-- [ ] One encounter also runs in a side-on layout and plays correctly.
+- [ ] One encounter also runs in a side-on layout and plays correctly (same replay, same log).
 - [ ] Screenshot mode produces PNGs, and reference screenshots are in `docs/screenshots/`.
-- [ ] `docs/art-requests.md` exists, and the game runs with whatever art is present (missing art falls back to a
-      generated placeholder card, never a crash).
-- [ ] No UI text is hard-coded. Statuses are readable without color.
+- [ ] `sim art-requests` writes `docs/art-requests.md`, and the game runs with whatever art is present (missing
+      art falls back to a generated placeholder card, never a crash).
+- [ ] No UI text is hard-coded, and no text is baked into images. Statuses are readable without color.
 - [ ] The Anchor has `presentation.md` and an updated Battlefield section, and `CLAUDE.md` lists any new commands.
 - [ ] **Checkpoint:** Jeremy plays several fights, judges the feel, and picks an art style.
