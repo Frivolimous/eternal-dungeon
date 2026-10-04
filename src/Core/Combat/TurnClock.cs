@@ -24,8 +24,8 @@ public sealed record BuffTick(long Tick, int Turn) : ClockEvent(Tick);
 /// AP cost is subtracted, so Act can stay above 100 (extra turns) or drop below 0 (delays). Nothing happens
 /// in real time: <see cref="Next"/> jumps straight to the next event.
 /// <para>Events at the same sub-tick come in this order: buff tick, cast completions, then turns. Turn ties go
-/// to the higher Act, then the higher Speed, then the unit listed first. A unit that is casting gains Act but
-/// takes no turn until its cast completes or is interrupted.</para>
+/// to the higher Act, then the higher Speed, then the unit listed first. A casting unit's meter stops filling
+/// while it casts and resumes when the cast completes, fizzles or is interrupted.</para>
 /// </summary>
 public sealed class TurnClock(IReadOnlyList<Unit> units)
 {
@@ -108,7 +108,7 @@ public sealed class TurnClock(IReadOnlyList<Unit> units)
     {
         Tick += dt;
         foreach (var u in units)
-            if (u.Alive)
+            if (u.Alive && u.Casting is null)
                 u.ActTicks += u.Speed * dt;
     }
 

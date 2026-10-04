@@ -114,21 +114,28 @@ public class TurnClockTests
         Assert.Equal("fire_bolt", done.Cast.ActionId);
         Assert.Null(mage.Casting);
         Assert.IsType<BuffTick>(clock.Next());                           // T 1.00
-        Assert.Equal(1.0, Assert.IsType<TurnReady>(clock.Next()).Time);
+        Assert.Equal(1.5, Assert.IsType<TurnReady>(clock.Next()).Time);  // the meter was frozen during the cast
     }
 
     [Fact]
-    public void A_slow_cast_holds_the_turn_until_it_completes()
+    public void The_meter_stops_filling_while_casting()
     {
         var mage = U("mage", 100, act: 100);
-        var clock = new TurnClock([mage]);
+        var other = U("other", 100);
+        var clock = new TurnClock([mage, other]);
         clock.Next();
-        TurnClock.Spend(mage, 100);
+        TurnClock.Spend(mage, 100);                                       // Act 0
         clock.BeginCast(mage, "big_spell", null, 150);
 
-        Assert.IsType<BuffTick>(clock.Next());                           // T 1: Act is 100 but the cast holds it
+        Assert.IsType<BuffTick>(clock.Next());                           // T 1
+        Assert.Equal("other", Assert.IsType<TurnReady>(clock.Next()).Unit.Id);
+        TurnClock.Spend(other, 100);
+        Assert.Equal(0, mage.ActTicks);                                  // frozen while casting
         Assert.Equal(1.5, Assert.IsType<CastComplete>(clock.Next()).Time);
-        Assert.Equal(1.5, Assert.IsType<TurnReady>(clock.Next()).Time);  // the held turn comes right after
+        Assert.IsType<BuffTick>(clock.Next());                           // T 2
+        Assert.Equal("other", ((TurnReady)clock.Next()).Unit.Id);
+        TurnClock.Spend(other, 100);
+        Assert.Equal(2.5, Assert.IsType<TurnReady>(clock.Next()).Time);  // the meter restarted at T 1.5
     }
 
     [Fact]

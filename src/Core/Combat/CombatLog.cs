@@ -129,7 +129,7 @@ public static class CombatLog
         DelayedDamaged p => $"{p.Buff.Def.Name} bursts for {p.Taken.Absorbed + p.Taken.ToHealth} on {p.Target.Name} (HP {p.HealthBefore} → {p.HealthBefore - p.Taken.ToHealth})",
         Staggered s => $"staggers {s.Target.Name} +{s.Amount} (bar {s.Bar}{(s.Broke ? ", broken: stunned" : "")})",
         Interrupted i => $"{i.Unit.Name}'s cast is interrupted",
-        Fizzled f => $"fizzles: {f.Reason}",
+        Fizzled f => f.Reason.Contains(" fizzles") ? f.Reason : $"fizzles: {f.Reason}",
         Died d => $"{d.Unit.Name} falls",
         Moved m when m.Why == "collapse" => $"{m.Unit.Name} steps forward ({Pos(m.Unit, m.From)} → {Pos(m.Unit, m.To)})",
         Moved m => $"{m.Unit.Name} moves {Pos(m.Unit, m.From)} → {Pos(m.Unit, m.To)}{(m.Why is "Move" ? "" : $" ({m.Why})")}",

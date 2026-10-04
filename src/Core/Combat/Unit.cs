@@ -36,6 +36,9 @@ public sealed class Unit
 
     public List<Buff> Buffs { get; } = [];
 
+    /// <summary>The cast this unit was in the middle of when it died (it fizzles); cleared once reported.</summary>
+    public Cast? CastLostOnDeath { get; set; }
+
     /// <summary>The name in combat logs, numbered when a battle has several of the same unit ("Goblin Grunt #2").</summary>
     public string Name { get; set; }
 
@@ -138,6 +141,11 @@ public sealed class Unit
         Shield -= absorbed;
         var toHealth = Math.Min(Health, amount - absorbed);
         Health -= toHealth;
+        if (!Alive && Casting is not null)
+        {
+            CastLostOnDeath = Casting;
+            Casting = null;
+        }
         return new DamageTaken(absorbed, toHealth, !Alive);
     }
 

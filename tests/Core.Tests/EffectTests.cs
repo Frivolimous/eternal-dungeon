@@ -223,6 +223,26 @@ public class EffectTests
         Assert.Single(fizzle.Of<Fizzled>());
     }
 
+    [Fact]
+    public void A_cast_fizzles_when_its_caster_dies()
+    {
+        var data = Repo;
+        var mage = Ready(U(data, "elementalist", "mage", Side.Party));
+        var g = U(data, "goblin_grunt", "g", Side.Enemy);
+        var battle = new Battle(data, [mage, g], seed: 1);
+        battle.Clock.Next();
+        battle.Act(mage, data.Actions["fire_bolt"], g);
+        Assert.NotNull(mage.Casting);
+
+        mage.Stats.Add("test", "avoid", -0.9);
+        mage.TakeDamage(mage.Health - 1);
+        g.ActTicks = TurnClock.TurnThreshold;
+        var r = battle.Act(g, data.Actions["goblin_slash"], mage);
+        Assert.Contains(r.Of<Fizzled>(), f => f.Reason.Contains("Fire Bolt fizzles"));
+        Assert.Null(mage.Casting);
+        Assert.DoesNotContain(Enumerable.Range(0, 5).Select(_ => battle.Clock.Next()), e => e is CastComplete);
+    }
+
     static ClockEvent NextNonTurn(Battle b)
     {
         while (true)

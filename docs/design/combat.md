@@ -34,6 +34,8 @@ Every character starts with Weapon Crit Rating 5% and untagged Crit Mult 0.5, so
 - At 100 Act, it's that unit's turn. Act can go above 100, giving extra turns, or below 0, delaying the turn.
 - Actions cost AP out of the 100-point meter: 50 is half a turn, 100 a full turn, and 200 works like a cooldown.
 - Spells have a casting timer. The Arcanist's Meddle staggers an enemy while it's casting.
+- A unit's Act meter stops filling while it casts, and resumes when the cast completes, fizzles or is interrupted.
+- A cast fizzles if its target dies, the caster dies, or it's interrupted. There is no retargeting.
 - Buffs and Regen run on their own clock at base Speed 100, so a 3-turn buff lasts 3 base-speed turns whatever the buffed hero's own Speed. Speed, Act and AP are integers on the 100 scale, while chance-type stats (Avoid, Resist, Rate, Deval) are 0–1 internally and shown as percentages.
 - Events at the same moment resolve in a fixed order: the buff clock first, then completed casts, then turns.
 - If both sides fall at the same moment, it counts as a party wipe.

@@ -8,8 +8,6 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 
 | Rule | Placeholder |
 | --- | --- |
-| Casting and turns | A casting unit keeps filling its Act meter but takes no turn until its cast completes or is interrupted |
-| Cast target gone | A cast whose target fell before it completes fizzles |
 | Battle time limit | 300 base-speed turns, then a stalemate (no winner). If this ever happens in practice, the encounter is badly designed: investigate rather than tune the limit |
 | Damage over time | A flat amount per buff-clock turn (× stacks); Shield absorbs it; no damage formula |
 | Fear | Skips the unit's turns (later: flee or only defend) |

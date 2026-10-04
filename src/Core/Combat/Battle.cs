@@ -100,7 +100,7 @@ public sealed partial class Battle
                     var taken = unit.TakeDamage(buff.Def.PeriodicDamage * buff.Stacks);
                     AddThreat(buff.CasterId, taken.Absorbed + taken.ToHealth);
                     r.Add(new PeriodicDamaged(unit, buff, taken, before));
-                    if (taken.Killed) r.Add(new Died(unit));
+                    if (taken.Killed) AddDeath(unit, r);
                 }
                 if (buff.Def.PeriodicHeal > 0 && unit.Alive)
                 {
@@ -223,7 +223,7 @@ public sealed partial class Battle
                     dealt = taken.Absorbed + taken.ToHealth;
                     actor.ThreatEarned += dealt;
                     r.Add(new Damaged(target, breakdown, taken, before));
-                    if (taken.Killed) r.Add(new Died(target));
+                    if (taken.Killed) AddDeath(target, r);
                 }
                 actor.Stats.RemoveSource(ThisHitSource);
 
@@ -382,7 +382,7 @@ public sealed partial class Battle
     }
 
     /// <summary>Ends a buff. When it runs its course (<paramref name="natural"/>), its delayed damage lands.</summary>
-    static void Expire(Unit unit, Buff buff, ActionResult r, bool natural = true)
+    void Expire(Unit unit, Buff buff, ActionResult r, bool natural = true)
     {
         unit.Stats.RemoveSource(buff.SourceKey);
         unit.RemoveShield(buff.ShieldGranted);
@@ -393,12 +393,23 @@ public sealed partial class Battle
             var before = unit.Health;
             var taken = unit.TakeDamage(buff.Def.DelayedDamage * buff.Stacks);
             r.Add(new DelayedDamaged(unit, buff, taken, before));
-            if (taken.Killed) r.Add(new Died(unit));
+            if (taken.Killed) AddDeath(unit, r);
         }
     }
 
     static int ShieldAmount(EffectDef def, Unit unit) =>
         (int)Math.Round(def.ShieldMaxHealth * unit.MaxHealth, MidpointRounding.AwayFromZero);
+
+    /// <summary>Reports a death; a cast the unit was in the middle of fizzles (Anchor: Combat › Turn order).</summary>
+    void AddDeath(Unit unit, ActionResult r)
+    {
+        r.Add(new Died(unit));
+        if (unit.CastLostOnDeath is { } cast)
+        {
+            r.Add(new Fizzled($"{unit.Name}'s {Data.Actions[cast.ActionId].Name} fizzles: the caster fell"));
+            unit.CastLostOnDeath = null;
+        }
+    }
 
     ActionResult Record(ActionResult r)
     {

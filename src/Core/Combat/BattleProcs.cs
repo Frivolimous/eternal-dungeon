@@ -118,7 +118,7 @@ public sealed partial class Battle
             var taken = target.TakeDamage(breakdown.Final);
             owner.ThreatEarned += taken.Absorbed + taken.ToHealth;
             r.Add(new ProcDamaged(owner, target, def, breakdown, taken, before));
-            if (taken.Killed) r.Add(new Died(target));
+            if (taken.Killed) AddDeath(target, r);
         }
         if (def.Heal > 0)
             HealFromProc(def, owner, target, def.Heal * scale * (1 + owner.Stats.Get("power", def.Tags) / 100), r);
