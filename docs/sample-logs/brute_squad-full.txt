@@ -1,0 +1,144 @@
+Brute Squad · seed 42
+Party: Rogue 100 HP, Warrior 140 HP, Elementalist 80 HP
+Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Archer 60 HP
+
+[T 0.42] Rogue → Dagger Attack → Goblin Brute
+         hit (93%) · 13 dmg (Physical) · Goblin Brute HP 200 → 187
+         roll 0.084 vs 0.931 → hit
+         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
+[T 0.70] Warrior → Power Attack → Goblin Brute
+         hit (93%) · 33 dmg (Physical) · Goblin Brute HP 187 → 154
+         roll 0.379 vs 0.931 → hit
+         dmg = base 15 × power 1.225 (22.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 2 (1) × all res 1 (0) = 33.075 → 33
+[T 0.70] Goblin Archer → Shot → Warrior
+         hit (86%) · 18 dmg (Physical) · Warrior HP 140 → 122
+         roll 0.68 vs 0.855 → hit
+         dmg = base 16 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 17.6 → 18
+[T 0.80] Elementalist begins casting Fire Bolt at Goblin Archer (ready at T 1.30)
+[T 0.89] Goblin Grunt → Slash → Warrior
+         miss (77%)
+         roll 0.925 vs 0.77 → miss
+[T 1.25] Rogue → Dagger Attack → Goblin Brute
+         miss (93%)
+         roll 0.992 vs 0.931 → miss
+[T 1.29] Goblin Brute → Smash → Warrior
+         miss (73%)
+         roll 0.77 vs 0.727 → miss
+[T 1.30] Elementalist → Fire Bolt → Goblin Archer
+         hit (90%) · 28 dmg (Arcane) · Goblin Archer HP 60 → 32
+         roll 0.719 vs 0.903 → hit
+         dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
+[T 1.70] Goblin Archer → Shot → Warrior
+         hit (86%) · 18 dmg (Physical) · Warrior HP 122 → 104
+         roll 0.85 vs 0.855 → hit
+         dmg = base 16 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 17.6 → 18
+[T 1.80] Elementalist begins casting Fire Bolt at Goblin Archer (ready at T 2.30)
+[T 2.00] Goblin Grunt → Slash → Warrior
+         hit (77%) · 19 dmg (Physical) · Warrior HP 104 → 85
+         roll 0.761 vs 0.77 → hit
+         dmg = base 18 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 18.9 → 19
+[T 2.09] Rogue → Dagger Attack → Goblin Grunt
+         hit (90%) · 14 dmg (Physical) · Goblin Grunt HP 85 → 71
+         roll 0.583 vs 0.903 → hit
+         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
+[T 2.30] Elementalist → Fire Bolt → Goblin Archer
+         hit (90%) · 28 dmg (Arcane) · Goblin Archer HP 32 → 4
+         roll 0.682 vs 0.903 → hit
+         dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
+[T 2.70] Warrior → Power Attack → Goblin Grunt
+         hit (90%) · 37 dmg (Physical) · Goblin Grunt HP 71 → 34
+         roll 0.291 vs 0.903 → hit
+         dmg = base 15 × power 1.225 (22.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 2 (1) × all res 1 (0) = 36.75 → 37
+[T 2.70] Goblin Archer → Shot → Warrior
+         hit (86%) · 18 dmg (Physical) · Warrior HP 85 → 67
+         roll 0.801 vs 0.855 → hit
+         dmg = base 16 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 17.6 → 18
+[T 2.72] Goblin Brute → Smash → Warrior
+         hit (73%) · 26 dmg (Physical) · Warrior HP 67 → 41
+         roll 0.321 vs 0.727 → hit
+         dmg = base 20 × power 1.3 (30) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 26 → 26
+         staggers Warrior +35 (bar 35)
+[T 2.80] Elementalist begins casting Fire Bolt at Goblin Archer (ready at T 3.30)
+[T 2.92] Rogue → Dagger Attack → Goblin Grunt
+         hit (90%) · 14 dmg (Physical) · Goblin Grunt HP 34 → 20
+         roll 0.711 vs 0.903 → hit
+         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
+[T 3.12] Goblin Grunt → Slash → Warrior
+         miss (77%)
+         roll 0.878 vs 0.77 → miss
+[T 3.30] Elementalist → Fire Bolt → Goblin Archer
+         hit (90%) · 28 dmg (Arcane) · Goblin Archer HP 4 → 0
+         roll 0.617 vs 0.903 → hit
+         dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
+         Goblin Archer falls
+[T 3.75] Rogue → Dagger Attack → Goblin Grunt
+         hit (90%) · 14 dmg (Physical) · Goblin Grunt HP 20 → 6
+         roll 0.851 vs 0.903 → hit
+         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
+[T 3.80] Elementalist begins casting Fire Bolt at Goblin Grunt (ready at T 4.30)
+[T 4.15] Goblin Brute → Smash → Warrior
+         hit (73%) · 26 dmg (Physical) · Warrior HP 41 → 15
+         roll 0.708 vs 0.727 → hit
+         dmg = base 20 × power 1.3 (30) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 26 → 26
+         staggers Warrior +35 (bar 50)
+[T 4.23] Goblin Grunt → Slash → Warrior
+         hit (77%) · 19 dmg (Physical) · Warrior HP 15 → 0
+         roll 0.708 vs 0.77 → hit
+         dmg = base 18 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 18.9 → 19
+         Warrior falls
+[T 4.30] Elementalist → Fire Bolt → Goblin Grunt
+         hit (90%) · 28 dmg (Arcane) · Goblin Grunt HP 6 → 0
+         roll 0.093 vs 0.903 → hit
+         dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
+         Goblin Grunt falls
+[T 4.59] Rogue → Dagger Attack → Goblin Brute
+         hit (93%) · 13 dmg (Physical) · Goblin Brute HP 154 → 141
+         roll 0.179 vs 0.931 → hit
+         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
+[T 4.80] Elementalist begins casting Fire Bolt at Goblin Brute (ready at T 5.30)
+[T 5.30] Elementalist → Fire Bolt → Goblin Brute
+         hit (93%) · 28 dmg (Arcane) · Goblin Brute HP 141 → 113
+         roll 0.436 vs 0.931 → hit
+         dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
+[T 5.42] Rogue → Dagger Attack → Goblin Brute
+         hit (93%) · 13 dmg (Physical) · Goblin Brute HP 113 → 100
+         roll 0.602 vs 0.931 → hit
+         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
+[T 5.58] Goblin Brute → Smash → Rogue
+         hit (75%) · 26 dmg (Physical) · Rogue HP 100 → 74
+         roll 0.314 vs 0.747 → hit
+         dmg = base 20 × power 1.3 (30) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 26 → 26
+         staggers Rogue +35 (bar 35)
+[T 5.80] Elementalist begins casting Fire Bolt at Goblin Brute (ready at T 6.30)
+[T 6.30] Elementalist → Fire Bolt → Goblin Brute
+         hit (93%) · 28 dmg (Arcane) · Goblin Brute HP 100 → 72
+         roll 0.489 vs 0.931 → hit
+         dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
+[T 6.80] Elementalist begins casting Fire Bolt at Goblin Brute (ready at T 7.30)
+[T 6.92] Rogue → Dagger Attack → Goblin Brute
+         hit (93%) · 13 dmg (Physical) · Goblin Brute HP 72 → 59
+         roll 0.399 vs 0.931 → hit
+         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
+[T 7.00] Goblin Brute → Smash → Rogue
+         miss (75%)
+         roll 0.789 vs 0.747 → miss
+[T 7.30] Elementalist → Fire Bolt → Goblin Brute
+         hit (93%) · 28 dmg (Arcane) · Goblin Brute HP 59 → 31
+         roll 0.635 vs 0.931 → hit
+         dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
+[T 7.80] Elementalist begins casting Fire Bolt at Goblin Brute (ready at T 8.30)
+[T 8.30] Elementalist → Fire Bolt → Goblin Brute
+         hit (93%) · 28 dmg (Arcane) · Goblin Brute HP 31 → 3
+         roll 0.231 vs 0.931 → hit
+         dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
+[T 8.43] Goblin Brute → Smash → Rogue
+         hit (75%) · 26 dmg (Physical) · Rogue HP 74 → 48
+         roll 0.414 vs 0.747 → hit
+         dmg = base 20 × power 1.3 (30) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 26 → 26
+         staggers Rogue +35 (bar 40)
+[T 8.59] Rogue → Dagger Attack → Goblin Brute
+         hit (93%) · 13 dmg (Physical) · Goblin Brute HP 3 → 0
+         roll 0.623 vs 0.931 → hit
+         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
+         Goblin Brute falls
+[T 8.59] Victory: the party wins.
