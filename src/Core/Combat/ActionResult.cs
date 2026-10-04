@@ -16,7 +16,8 @@ public sealed record Healed(Unit Target, string Source, int Amount, int HealthBe
 
 public sealed record Shielded(Unit Target, string Source, int Amount) : Outcome;
 
-public sealed record BuffApplied(Unit Target, Buff Buff, bool Refreshed) : Outcome;
+/// <summary>A buff landed. Stacks, turns left and Shield are as they were at that moment.</summary>
+public sealed record BuffApplied(Unit Target, Buff Buff, bool Refreshed, int Stacks, int Remaining, int Shield) : Outcome;
 
 public sealed record BuffExpired(Unit Target, Buff Buff) : Outcome;
 

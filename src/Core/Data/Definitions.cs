@@ -83,6 +83,13 @@ public sealed record AiRule(
 /// </summary>
 public sealed record AiProfileDef(string Id, string Name, double ThreatWeight, IReadOnlyList<AiRule> Rules);
 
+/// <summary>A unit and where it starts: <see cref="Row"/> 0 is the front; Tall and Large units anchor at their
+/// front-left tile.</summary>
+public sealed record Placement(string Unit, int Row, int Col);
+
+/// <summary>A fixed battle: the party's formation and the enemies' layout.</summary>
+public sealed record EncounterDef(string Id, string Name, IReadOnlyList<Placement> Party, IReadOnlyList<Placement> Enemies);
+
 /// <summary>Who an action is aimed at.</summary>
 public enum ActionTarget { Enemy, Ally, Self, Tile }
 

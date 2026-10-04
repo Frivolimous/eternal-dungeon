@@ -138,7 +138,7 @@ public class GridTests
         grid.Place(shaman, E(1, 2));
         var b = new Battle(Repo, [warrior, g1, archer, shaman], seed: 1, grid);
 
-        g1.TakeDamage(59);
+        g1.TakeDamage(g1.MaxHealth - 1);
         g1.Stats.Add("test", "avoid", -0.9);
         warrior.ActTicks = TurnClock.TurnThreshold;
         var r = b.Act(warrior, Repo.Actions["attack"], g1);

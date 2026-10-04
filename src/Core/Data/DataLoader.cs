@@ -15,6 +15,10 @@ public static class DataLoader
     public const string ActionsFile = "actions.json";
     public const string AiProfilesFile = "ai_profiles.json";
     public const string UnitsFile = "units.json";
+    public const string EncountersFile = "encounters.json";
+
+    /// <summary>Each side's area on the battle grid (Anchor: 3×2 by default).</summary>
+    public const int AreaCols = 3, AreaRows = 2;
 
     /// <summary>AP costs an action may have (Anchor: Combat › Turn order). 200 works like a cooldown.</summary>
     public static readonly int[] ApCosts = [50, 100, 200];
@@ -47,7 +51,9 @@ public static class DataLoader
         foreach (var unit in units)
             if (ais.First(a => a.Id == unit.Ai).Rules.FirstOrDefault(r => !unit.Actions.Contains(r.Action)) is { } missing)
                 throw new DataException(UnitsFile, unit.Id, $"its AI \"{unit.Ai}\" uses \"{missing.Action}\", which isn't in its actions");
-        return new GameData([.. tags.Values], [.. stats.Values], compounds, units, actions, effects, ais);
+        var unitsById = units.ToDictionary(u => u.Id);
+        var encounters = ReadList(source, EncountersFile, f => ReadEncounter(f, unitsById));
+        return new GameData([.. tags.Values], [.. stats.Values], compounds, units, actions, effects, ais, encounters);
     }
 
     static EffectDef ReadEffect(JsonField f, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats,
@@ -207,6 +213,41 @@ public static class DataLoader
         if (action.DealsDamage && target != ActionTarget.Enemy)
             throw f["baseDamage"].Error("only enemy-targeted actions deal damage");
         return action;
+    }
+
+    static EncounterDef ReadEncounter(JsonField f, Dictionary<string, UnitDef> units)
+    {
+        f.OnlyFields("id", "name", "party", "enemies");
+        return new EncounterDef(f["id"].Id(), f["name"].String(), ReadSide(f["party"], units), ReadSide(f["enemies"], units));
+    }
+
+    /// <summary>A side's placements: known units, 1–6 of them, each footprint inside the area and not overlapping.</summary>
+    static List<Placement> ReadSide(JsonField list, Dictionary<string, UnitDef> units)
+    {
+        var placements = new List<Placement>();
+        var taken = new HashSet<(int, int)>();
+        foreach (var p in list.Items())
+        {
+            p.OnlyFields("unit", "row", "col");
+            var id = p["unit"].Id();
+            if (!units.TryGetValue(id, out var unit))
+                throw p["unit"].Error($"unknown unit \"{id}\" (not in {UnitsFile})");
+            var row = p["row"].Int();
+            var col = p["col"].Int();
+            var (rows, cols) = unit.Size switch { UnitSize.Tall => (2, 1), UnitSize.Large => (2, 2), _ => (1, 1) };
+            for (var r = row; r < row + rows; r++)
+                for (var c = col; c < col + cols; c++)
+                {
+                    if (r < 0 || r >= AreaRows || c < 0 || c >= AreaCols)
+                        throw p.Error($"{unit.Name} doesn't fit at row {row}, col {col} (the area is {AreaCols} wide, {AreaRows} deep)");
+                    if (!taken.Add((r, c)))
+                        throw p.Error($"{unit.Name} overlaps another unit at row {r}, col {c}");
+                }
+            placements.Add(new Placement(id, row, col));
+        }
+        if (placements.Count is 0 or > 6)
+            throw list.Error($"needs 1 to 6 units, got {placements.Count}");
+        return placements;
     }
 
     /// <summary>The most an AI may lean toward Threat or Vulnerability (Anchor: at most 75% toward one).</summary>

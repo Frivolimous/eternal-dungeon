@@ -1,0 +1,34 @@
+// Fixed encounters for M1 (Goblin Woods). row 0 is the front; Tall and Large units anchor at their
+// front-left tile. Each area is 3 columns wide and 2 rows deep.
+[
+  { "id": "goblin_patrol", "name": "Goblin Patrol",
+    "party": [
+      { "unit": "rogue", "row": 0, "col": 0 },
+      { "unit": "warrior", "row": 0, "col": 1 },
+      { "unit": "elementalist", "row": 1, "col": 1 } ],
+    "enemies": [
+      { "unit": "goblin_grunt", "row": 0, "col": 0 },
+      { "unit": "goblin_grunt", "row": 0, "col": 2 },
+      { "unit": "goblin_archer", "row": 1, "col": 0 },
+      { "unit": "goblin_shaman", "row": 1, "col": 2 } ] },
+
+  { "id": "brute_squad", "name": "Brute Squad",
+    "party": [
+      { "unit": "rogue", "row": 0, "col": 0 },
+      { "unit": "warrior", "row": 0, "col": 1 },
+      { "unit": "elementalist", "row": 1, "col": 1 } ],
+    "enemies": [
+      { "unit": "goblin_brute", "row": 0, "col": 1 },
+      { "unit": "goblin_grunt", "row": 0, "col": 0 },
+      { "unit": "goblin_archer", "row": 1, "col": 2 } ] },
+
+  { "id": "chief_hall", "name": "The Goblin Chief",
+    "party": [
+      { "unit": "rogue", "row": 0, "col": 0 },
+      { "unit": "warrior", "row": 0, "col": 1 },
+      { "unit": "elementalist", "row": 1, "col": 1 } ],
+    "enemies": [
+      { "unit": "goblin_chief", "row": 0, "col": 0 },
+      { "unit": "goblin_grunt", "row": 0, "col": 2 },
+      { "unit": "goblin_grunt", "row": 1, "col": 2 } ] }
+]

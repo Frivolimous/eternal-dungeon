@@ -338,7 +338,7 @@ public sealed class Battle
             buff.ShieldGranted = ShieldAmount(p.Def, unit);
             unit.AddShield(buff.ShieldGranted);
         }
-        r.Add(new BuffApplied(unit, buff, refreshed));
+        r.Add(new BuffApplied(unit, buff, refreshed, buff.Stacks, buff.Remaining, buff.ShieldGranted));
         if (p.Def.Cc == CcKind.Stun) Interrupt(unit, r);
     }
 

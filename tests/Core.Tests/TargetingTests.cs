@@ -90,7 +90,7 @@ public class TargetingTests
         var b = new Battle(Repo, [warrior, grunt, shaman], seed: 1);
 
         Assert.Equal("rotting_hex", UnitAi.Decide(b, shaman)!.Action.Id);
-        grunt.TakeDamage(35);                                             // 25/60, below half
+        grunt.TakeDamage(grunt.MaxHealth / 2 + 5);                        // below half
         var d = UnitAi.Decide(b, shaman)!;
         Assert.Equal(("mend", grunt), (d.Action.Id, d.Target));
     }
@@ -137,6 +137,7 @@ public class TargetingTests
                 [DataLoader.ActionsFile] = """[{ "id": "wait", "name": "Wait", "tags": [], "target": "self", "apCost": 100 }]""",
                 [DataLoader.AiProfilesFile] = """[{ "id": "zealot", "name": "Zealot", "threatWeight": 0.9, "rules": [{ "action": "wait" }] }]""",
                 [DataLoader.UnitsFile] = "[]",
+                [DataLoader.EncountersFile] = "[]",
             })));
         Assert.Equal("ai_profiles.json", e.File);
         Assert.Equal("[0].threatWeight", e.Field);

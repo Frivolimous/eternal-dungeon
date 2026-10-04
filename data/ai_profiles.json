@@ -18,10 +18,7 @@
     "rules": [ { "action": "war_cry", "missingBuff": "war_cry" }, { "action": "chief_cleave" } ] },
 
   { "id": "hero_warrior", "name": "Warrior (scripted)", "threatWeight": 0.25,
-    "rules": [
-      { "action": "defend", "selfHealthBelow": 0.25, "missingBuff": "guard" },
-      { "action": "power_attack" },
-      { "action": "attack" } ] },
+    "rules": [ { "action": "power_attack" }, { "action": "attack" } ] },
 
   { "id": "hero_rogue", "name": "Rogue (scripted)", "threatWeight": 0.25,
     "rules": [ { "action": "dagger_attack" }, { "action": "sneak", "notIntruding": true } ] },

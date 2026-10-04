@@ -35,6 +35,9 @@ Set `$env:GODOT` to override the Godot path in scripts.
 ```bash
 dotnet test                                          # all tests, from the repo root
 dotnet build                                         # everything, including the Godot project
+dotnet run --project src/Sim -- run --encounter goblin_patrol --seed 42 [--log-level full]   # one battle + log
+dotnet run --project src/Sim -- batch --encounter goblin_patrol --runs 1000                  # win rate etc.
+dotnet run --project src/Sim -- encounters           # list encounter ids
 dotnet run --project src/Sim -- data                 # load and validate data/*.json
 dotnet run --project src/Sim -- assets               # check the asset manifest, list AI placeholders
 dotnet test --filter-method "*Bad_enum*"             # one test by name (wildcards allowed)
@@ -51,7 +54,9 @@ run the main scene and see its prints. Exports need the 4.7.2 .NET export templa
 ## Layout
 
 ```
-data/              JSON content (tags, stats; more in M1). Embedded into the game assembly at build.
+data/              JSON content: tags, stats, compound_stats, effects, actions, ai_profiles, units,
+                   encounters (loaded in that order; later files reference earlier ones). Embedded into the
+                   game assembly at build.
 src/Core/          rules library, plain C#, no Godot
 src/Sim/           command-line tool (assembly name `sim`): data/asset checks now, battle simulator in M1
 tests/Core.Tests/  xUnit tests for Core
@@ -129,6 +134,12 @@ check. AI-generated art is for placeholders only and must be flagged; nothing fl
   to an empty neighbouring tile. Sneak (placeholder until Jeremy decides): to any empty tile in the enemy area;
   a unit standing in the other side's area can melee anyone there and be meleed by anyone there. Push/Pull:
   one row back/forward if the tiles are free (placeholder).
+- Targeting (UnitAi): w × Threat + (1 − w) × Vulnerability; Threat = damage dealt + healing done (+ the
+  Threat stat), scaled against the highest among the candidates (placeholder); Vulnerability = share of
+  Health missing (+ Vulnerability stat / 100). AI profiles (ai_profiles.json) hold w and ordered action rules;
+  the heroes' profiles are the simulator's scripted AI. A unit with no valid rule steps forward or waits.
+- Balance target for the starter encounters: 70–90% party wins in `sim batch` (currently ~86/81/77%). Tests
+  read Health and damage from the data, not hard-coded numbers, wherever tuning could change them.
 - `Core.Combat` is the battle namespace (a `Battle` namespace would clash with the `Battle` class).
 
 ## To do at the end of M1 (Jeremy asked)

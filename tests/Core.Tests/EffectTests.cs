@@ -210,11 +210,11 @@ public class EffectTests
         Assert.IsType<TurnReady>(battle.Clock.Next());
         var start = battle.Act(mage, data.Actions["fire_bolt"], g1);
         Assert.Equal(50, start.Of<CastStarted>().Single().ReadyAt);
-        Assert.Equal(60, g1.Health);
+        Assert.Equal(g1.MaxHealth, g1.Health);
 
         var done = battle.CompleteCast((CastComplete)NextNonTurn(battle));
         Assert.Single(done.Of<Damaged>());
-        Assert.True(g1.Health < 60);
+        Assert.True(g1.Health < g1.MaxHealth);
 
         mage.ActTicks = TurnClock.TurnThreshold;
         battle.Act(mage, data.Actions["fire_bolt"], g2);

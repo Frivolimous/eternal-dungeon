@@ -20,32 +20,32 @@
     "ai": "hero_elementalist" },
 
   { "id": "goblin_grunt", "name": "Goblin Grunt", "size": 1,
-    "stats": { "health": 60, "speed": 90, "initiative": 20, "hit": 0.9, "avoid": 0.05 },
+    "stats": { "health": 85, "speed": 90, "initiative": 20, "hit": 0.9, "avoid": 0.05 },
     "compounds": { "strength": 5 },
     "actions": ["goblin_slash"],
     "ai": "goblin_grunt" },
 
   { "id": "goblin_archer", "name": "Goblin Archer", "size": 1,
-    "stats": { "health": 45, "speed": 100, "initiative": 30, "hit": 0.9, "avoid": 0.05 },
+    "stats": { "health": 60, "speed": 100, "initiative": 30, "hit": 0.9, "avoid": 0.05 },
     "compounds": { "dexterity": 10 },
     "actions": ["goblin_shot"],
     "ai": "goblin_archer" },
 
   { "id": "goblin_shaman", "name": "Goblin Shaman", "size": 1,
-    "stats": { "health": 50, "mana": 40, "m_regen": 4, "speed": 95, "initiative": 25, "hit": 0.9, "avoid": 0.05 },
+    "stats": { "health": 60, "mana": 40, "m_regen": 4, "speed": 95, "initiative": 25, "hit": 0.9, "avoid": 0.05 },
     "compounds": { "magic": 10 },
     "actions": ["rotting_hex", "mend"],
     "ai": "goblin_shaman" },
 
   { "id": "goblin_brute", "name": "Goblin Brute", "size": 1.5,
-    "stats": { "health": 150, "speed": 70, "initiative": 10, "hit": 0.85, "avoid": 0.02 },
+    "stats": { "health": 200, "speed": 70, "initiative": 10, "hit": 0.85, "avoid": 0.02 },
     "tagStats": [ { "tag": "physical", "stat": "resist", "value": 0.1 } ],
     "compounds": { "strength": 20 },
     "actions": ["brute_smash"],
     "ai": "goblin_brute" },
 
   { "id": "goblin_chief", "name": "Goblin Chief", "size": 2,
-    "stats": { "health": 300, "speed": 85, "initiative": 15, "hit": 0.9, "avoid": 0.05 },
+    "stats": { "health": 420, "speed": 85, "initiative": 15, "hit": 0.9, "avoid": 0.05 },
     "compounds": { "strength": 20, "fortification": 10 },
     "actions": ["chief_cleave", "war_cry"],
     "ai": "goblin_chief" }

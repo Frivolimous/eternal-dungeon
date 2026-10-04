@@ -8,8 +8,12 @@ public sealed class GameData(
     IReadOnlyList<UnitDef>? unitList = null,
     IReadOnlyList<ActionDef>? actionList = null,
     IReadOnlyList<EffectDef>? effectList = null,
-    IReadOnlyList<AiProfileDef>? aiProfileList = null)
+    IReadOnlyList<AiProfileDef>? aiProfileList = null,
+    IReadOnlyList<EncounterDef>? encounterList = null)
 {
+    public IReadOnlyList<EncounterDef> EncounterList { get; } = encounterList ?? [];
+    public IReadOnlyDictionary<string, EncounterDef> Encounters { get; } = (encounterList ?? []).ToDictionary(e => e.Id);
+
     public IReadOnlyList<AiProfileDef> AiProfileList { get; } = aiProfileList ?? [];
     public IReadOnlyDictionary<string, AiProfileDef> AiProfiles { get; } = (aiProfileList ?? []).ToDictionary(a => a.Id);
 

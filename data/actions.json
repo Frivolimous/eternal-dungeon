@@ -29,13 +29,13 @@
     "effects": [{ "effect": "chill" }] },
 
   { "id": "goblin_slash", "name": "Slash", "tags": ["physical", "melee"],
-    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 10 },
+    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 18 },
 
   { "id": "goblin_shot", "name": "Shot", "tags": ["physical", "ranged", "projectile"],
-    "target": "enemy", "range": "any", "apCost": 100, "baseDamage": 9 },
+    "target": "enemy", "range": "any", "apCost": 100, "baseDamage": 16 },
 
   { "id": "rotting_hex", "name": "Rotting Hex", "tags": ["spirit", "spell", "ranged", "toxic", "curse"],
-    "target": "enemy", "range": "any", "apCost": 100, "manaCost": 8, "baseDamage": 4,
+    "target": "enemy", "range": "any", "apCost": 100, "manaCost": 8, "baseDamage": 8,
     "effects": [{ "effect": "rot" }] },
 
   { "id": "mend", "name": "Mend", "tags": ["spirit", "spell", "buff"],
@@ -43,11 +43,11 @@
     "effects": [{ "effect": "mend" }] },
 
   { "id": "brute_smash", "name": "Smash", "tags": ["physical", "melee", "heavy", "force"],
-    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 16,
+    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 20,
     "effects": [{ "effect": "smash_stagger" }] },
 
   { "id": "chief_cleave", "name": "Cleave", "tags": ["physical", "melee", "heavy"],
-    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 18 },
+    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 26 },
 
   { "id": "war_cry", "name": "War Cry", "tags": ["buff"],
     "target": "self", "apCost": 100,

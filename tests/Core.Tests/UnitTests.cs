@@ -38,7 +38,7 @@ public class UnitTests
     public void Health_stops_at_zero_and_the_unit_dies()
     {
         var g = Make("goblin_grunt", Side.Enemy);
-        Assert.Equal(new DamageTaken(0, 60, true), g.TakeDamage(500));
+        Assert.Equal(new DamageTaken(0, g.MaxHealth, true), g.TakeDamage(500));
         Assert.Equal(0, g.Health);
         Assert.False(g.Alive);
         Assert.Equal(new DamageTaken(0, 0, false), g.TakeDamage(5));    // no second kill

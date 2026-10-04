@@ -27,6 +27,7 @@ public class DataLoaderTests
             [DataLoader.ActionsFile] = actions,
             [DataLoader.EffectsFile] = effects,
             [DataLoader.AiProfilesFile] = ais,
+            [DataLoader.EncountersFile] = "[]",
         }));
 
     static DataException LoadFails(string tags = ValidTags, string stats = ValidStats, string compounds = ValidCompounds, string units = ValidUnits, string actions = ValidActions, string effects = "[]", string ais = ValidAis) =>
