@@ -74,6 +74,12 @@ public enum ActionTarget { Enemy, Ally, Self, Tile }
 /// </summary>
 public enum ActionRange { Melee, Reach, Any }
 
+/// <summary>Who an action's effect lands on: the action's target or the unit acting.</summary>
+public enum EffectAim { Target, Self }
+
+/// <summary>An effect an action applies. On an enemy-targeted action it applies only when the action succeeds.</summary>
+public sealed record EffectRef(string Effect, EffectAim On);
+
 /// <summary>Something a unit can do on its turn (Anchor: Combat).</summary>
 public sealed record ActionDef(
     string Id,
@@ -85,7 +91,47 @@ public sealed record ActionDef(
     int ManaCost,
     double BaseDamage,
     double AllDamage,
-    int CastTime)
+    int CastTime,
+    IReadOnlyList<EffectRef> Effects)
 {
     public bool DealsDamage => BaseDamage > 0;
+}
+
+/// <summary>How long an effect lasts: no time at all (instant), a number of buff-clock turns, or until the
+/// affected unit's next turn starts.</summary>
+public enum DurationKind { Instant, Turns, UntilNextTurn }
+
+/// <summary>When a buff's trigger fires (Anchor: Combat › Buffs and effects). Periodic effects are
+/// <see cref="EffectDef.PeriodicDamage"/> and <see cref="EffectDef.PeriodicHeal"/>.</summary>
+public enum TriggerOn { HitTaken, TurnStart, ActionComplete }
+
+/// <summary>Who a triggered effect lands on: the buffed unit, or the other unit in the event (the attacker
+/// for <see cref="TriggerOn.HitTaken"/>, the action's target for <see cref="TriggerOn.ActionComplete"/>).</summary>
+public enum TriggerTarget { Self, Other }
+
+/// <summary>A buff's trigger: when <see cref="On"/> happens and the state check passes, apply <see cref="Effect"/>.
+/// The only state check so far: the buffed unit's Health is below a share of its maximum.</summary>
+public sealed record TriggerDef(TriggerOn On, string Effect, TriggerTarget Target, double? HealthBelow);
+
+/// <summary>
+/// An effect or buff (Anchor: Combat › Buffs and effects). An instant effect heals or shields once. A buff
+/// (any other duration) adds stat modifiers while it lasts, can carry a Shield that goes when it ends, can
+/// deal damage or heal on every buff-clock turn, and can have triggers. A buff is unique per source (action +
+/// caster) unless <see cref="Stacking"/>.
+/// </summary>
+public sealed record EffectDef(
+    string Id,
+    string Name,
+    DurationKind Duration,
+    int Turns,
+    bool Stacking,
+    int MaxStacks,
+    IReadOnlyList<StatValue> Stats,
+    double Heal,
+    double ShieldMaxHealth,
+    int PeriodicDamage,
+    int PeriodicHeal,
+    IReadOnlyList<TriggerDef> Triggers)
+{
+    public bool IsBuff => Duration != DurationKind.Instant;
 }

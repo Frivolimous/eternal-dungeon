@@ -16,7 +16,7 @@ public class DataLoaderTests
     const string ValidUnits = "[]";
     const string ValidActions = """[{ "id": "poke", "name": "Poke", "tags": ["fire"], "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 5 }]""";
 
-    static GameData Load(string tags = ValidTags, string stats = ValidStats, string compounds = ValidCompounds, string units = ValidUnits, string actions = ValidActions) =>
+    static GameData Load(string tags = ValidTags, string stats = ValidStats, string compounds = ValidCompounds, string units = ValidUnits, string actions = ValidActions, string effects = "[]") =>
         DataLoader.Load(DataSource.FromFiles(new Dictionary<string, string>
         {
             [DataLoader.TagsFile] = tags,
@@ -24,10 +24,11 @@ public class DataLoaderTests
             [DataLoader.CompoundStatsFile] = compounds,
             [DataLoader.UnitsFile] = units,
             [DataLoader.ActionsFile] = actions,
+            [DataLoader.EffectsFile] = effects,
         }));
 
-    static DataException LoadFails(string tags = ValidTags, string stats = ValidStats, string compounds = ValidCompounds, string units = ValidUnits, string actions = ValidActions) =>
-        Assert.Throws<DataException>(() => Load(tags, stats, compounds, units, actions));
+    static DataException LoadFails(string tags = ValidTags, string stats = ValidStats, string compounds = ValidCompounds, string units = ValidUnits, string actions = ValidActions, string effects = "[]") =>
+        Assert.Throws<DataException>(() => Load(tags, stats, compounds, units, actions, effects));
 
     static DataException UnitFails(string unitJson) =>
         LoadFails(stats: HealthAndPower, units: $"[{unitJson}]");

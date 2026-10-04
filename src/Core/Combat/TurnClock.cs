@@ -1,4 +1,4 @@
-namespace EternalDungeon.Core.Battle;
+namespace EternalDungeon.Core.Combat;
 
 /// <summary>A spell in progress: it takes effect at <see cref="CompletesAt"/> unless interrupted.</summary>
 public sealed record Cast(string ActionId, string? TargetId, long StartedAt, long CompletesAt);

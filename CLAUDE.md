@@ -114,6 +114,13 @@ check. AI-generated art is for placeholders only and must be flagged; nothing fl
   Same-tick events: buff tick, then cast completions, then turns. A casting unit keeps gaining Act but takes no
   turn until its cast completes or is interrupted (choices of Claude's, not in the Anchor).
 
+- Effects (Battle.cs): the action's hit and damage come first, then queued effects in order (triggers join
+  the same queue), then every buff created, so a buff never boosts the action that made it. Buff source =
+  effect + action + caster. Placeholders: periodic damage/heal is a flat amount per buff-clock turn (×
+  stacks, Shield absorbs, no formula); an instant heal scales with the caster's Power for the action's tags;
+  a cast whose target fell before it completes fizzles.
+- `Core.Combat` is the battle namespace (a `Battle` namespace would clash with the `Battle` class).
+
 ## To do at the end of M1 (Jeremy asked)
 
 - **Procs, crit included.** Crit is not a separate roll: it will be one of several procs (damage, buffs,

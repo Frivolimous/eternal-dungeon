@@ -6,8 +6,12 @@ public sealed class GameData(
     IReadOnlyList<StatDef> statList,
     IReadOnlyList<CompoundStatDef>? compoundList = null,
     IReadOnlyList<UnitDef>? unitList = null,
-    IReadOnlyList<ActionDef>? actionList = null)
+    IReadOnlyList<ActionDef>? actionList = null,
+    IReadOnlyList<EffectDef>? effectList = null)
 {
+    public IReadOnlyList<EffectDef> EffectList { get; } = effectList ?? [];
+    public IReadOnlyDictionary<string, EffectDef> Effects { get; } = (effectList ?? []).ToDictionary(e => e.Id);
+
     public IReadOnlyList<ActionDef> ActionList { get; } = actionList ?? [];
     public IReadOnlyDictionary<string, ActionDef> Actions { get; } = (actionList ?? []).ToDictionary(a => a.Id);
 

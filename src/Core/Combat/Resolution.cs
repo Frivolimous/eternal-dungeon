@@ -1,6 +1,6 @@
 using EternalDungeon.Core.Data;
 
-namespace EternalDungeon.Core.Battle;
+namespace EternalDungeon.Core.Combat;
 
 /// <summary>Every term of one damage calculation, so a full combat log can show how a number was reached.</summary>
 public sealed record DamageBreakdown(

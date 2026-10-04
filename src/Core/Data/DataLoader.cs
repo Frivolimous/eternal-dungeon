@@ -11,6 +11,7 @@ public static class DataLoader
     public const string TagsFile = "tags.json";
     public const string StatsFile = "stats.json";
     public const string CompoundStatsFile = "compound_stats.json";
+    public const string EffectsFile = "effects.json";
     public const string ActionsFile = "actions.json";
     public const string UnitsFile = "units.json";
 
@@ -27,15 +28,111 @@ public static class DataLoader
         if (compounds.FirstOrDefault(c => stats.ContainsKey(c.Id)) is { } clash)
             throw new DataException(CompoundStatsFile, "", $"\"{clash.Id}\" is both a stat and a compound stat");
         var compoundIds = compounds.Select(c => c.Id).ToHashSet();
-        var actions = ReadList(source, ActionsFile, f => ReadAction(f, tags));
+
+        // Triggers point at effects in the same file, so their ids are checked once the whole file is read.
+        var triggerRefs = new List<(JsonField Field, string Effect)>();
+        var effects = ReadList(source, EffectsFile, f => ReadEffect(f, tags, stats, triggerRefs));
+        var effectIds = effects.Select(e => e.Id).ToHashSet();
+        foreach (var (field, effect) in triggerRefs)
+            if (!effectIds.Contains(effect))
+                throw field.Error($"unknown effect \"{effect}\"");
+
+        var actions = ReadList(source, ActionsFile, f => ReadAction(f, tags, effectIds));
         var actionIds = actions.Select(a => a.Id).ToHashSet();
         var units = ReadList(source, UnitsFile, f => ReadUnit(f, tags, stats, compoundIds, actionIds));
-        return new GameData([.. tags.Values], [.. stats.Values], compounds, units, actions);
+        return new GameData([.. tags.Values], [.. stats.Values], compounds, units, actions, effects);
     }
 
-    static ActionDef ReadAction(JsonField f, Dictionary<string, TagDef> tags)
+    static EffectDef ReadEffect(JsonField f, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats,
+        List<(JsonField, string)> triggerRefs)
     {
-        f.OnlyFields("id", "name", "tags", "target", "range", "apCost", "manaCost", "baseDamage", "allDamage", "castTime");
+        f.OnlyFields("id", "name", "duration", "stacking", "maxStacks", "stats", "heal", "shieldMaxHealth",
+            "periodicDamage", "periodicHeal", "triggers");
+
+        var duration = DurationKind.Instant;
+        var turns = 0;
+        if (f.Optional("duration") is { } d)
+        {
+            if (d.Element.ValueKind == System.Text.Json.JsonValueKind.String)
+            {
+                if (d.String() != "until_next_turn")
+                    throw d.Error($"expected a number of turns or \"until_next_turn\", got \"{d.String()}\"");
+                duration = DurationKind.UntilNextTurn;
+            }
+            else
+            {
+                duration = DurationKind.Turns;
+                turns = d.Int();
+                if (turns < 1) throw d.Error("must be at least 1 turn");
+            }
+        }
+
+        var statValues = new List<StatValue>();
+        foreach (var s in f.Optional("stats")?.Items() ?? [])
+            statValues.Add(ReadStatEntry(s, tags, stats, tagRequired: false));
+
+        var triggers = new List<TriggerDef>();
+        foreach (var t in f.Optional("triggers")?.Items() ?? [])
+        {
+            t.OnlyFields("on", "effect", "target", "healthBelow");
+            var effect = t["effect"].Id();
+            triggerRefs.Add((t["effect"], effect));
+            triggers.Add(new TriggerDef(
+                t["on"].Enum<TriggerOn>(),
+                effect,
+                t.Optional("target")?.Enum<TriggerTarget>() ?? TriggerTarget.Self,
+                t.Optional("healthBelow")?.Number()));
+        }
+
+        var def = new EffectDef(
+            f["id"].Id(),
+            f["name"].String(),
+            duration,
+            turns,
+            f.Optional("stacking")?.Bool() ?? false,
+            f.Optional("maxStacks")?.Int() ?? int.MaxValue,
+            statValues,
+            f.Optional("heal")?.Number() ?? 0,
+            f.Optional("shieldMaxHealth")?.Number() ?? 0,
+            f.Optional("periodicDamage")?.Int() ?? 0,
+            f.Optional("periodicHeal")?.Int() ?? 0,
+            triggers);
+
+        if (!def.IsBuff)
+        {
+            foreach (var buffOnly in new[] { "stacking", "maxStacks", "stats", "periodicDamage", "periodicHeal", "triggers" })
+                if (f.Optional(buffOnly) is { } field)
+                    throw field.Error("only buffs (effects with a duration) can have this");
+        }
+        if (def.MaxStacks < 1) throw f["maxStacks"].Error("must be at least 1");
+        if (f.Optional("maxStacks") is { } ms && !def.Stacking) throw ms.Error("only stacking buffs have a stack limit");
+        if (def.Heal < 0 || def.ShieldMaxHealth < 0 || def.PeriodicDamage < 0 || def.PeriodicHeal < 0)
+            throw f.Error("heal, shield and periodic amounts can't be negative");
+        return def;
+    }
+
+    /// <summary>One <c>{ "stat", "tag"?, "value" }</c> entry, checked against the stat's rules.</summary>
+    static StatValue ReadStatEntry(JsonField f, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats, bool tagRequired)
+    {
+        f.OnlyFields("tag", "stat", "value");
+        var stat = f["stat"].Id();
+        if (!stats.TryGetValue(stat, out var def))
+            throw f["stat"].Error($"unknown stat \"{stat}\" (not in {StatsFile})");
+        string? tag = null;
+        if (tagRequired || f.Optional("tag") is not null)
+        {
+            tag = f["tag"].Id();
+            if (!tags.ContainsKey(tag))
+                throw f["tag"].Error($"unknown tag \"{tag}\" (not in {TagsFile})");
+            if (!def.TagKeyed)
+                throw f["stat"].Error($"{def.Name} is a character stat and can't be keyed to a tag");
+        }
+        return new StatValue(stat, tag, ReadStatValue(f["value"], def));
+    }
+
+    static ActionDef ReadAction(JsonField f, Dictionary<string, TagDef> tags, HashSet<string> effects)
+    {
+        f.OnlyFields("id", "name", "tags", "target", "range", "apCost", "manaCost", "baseDamage", "allDamage", "castTime", "effects");
 
         var actionTags = new List<string>();
         foreach (var t in f["tags"].Items())
@@ -61,6 +158,16 @@ public static class DataLoader
         if (Array.IndexOf(ApCosts, ap) < 0)
             throw f["apCost"].Error($"expected one of {string.Join(", ", ApCosts)}, got {ap}");
 
+        var effectRefs = new List<EffectRef>();
+        foreach (var e in f.Optional("effects")?.Items() ?? [])
+        {
+            e.OnlyFields("effect", "on");
+            var id = e["effect"].Id();
+            if (!effects.Contains(id))
+                throw e["effect"].Error($"unknown effect \"{id}\" (not in {EffectsFile})");
+            effectRefs.Add(new EffectRef(id, e.Optional("on")?.Enum<EffectAim>() ?? EffectAim.Target));
+        }
+
         var action = new ActionDef(
             f["id"].Id(),
             f["name"].String(),
@@ -71,7 +178,8 @@ public static class DataLoader
             f.Optional("manaCost")?.Int() ?? 0,
             f.Optional("baseDamage")?.Number() ?? 0,
             f.Optional("allDamage")?.Number() ?? 0,
-            f.Optional("castTime")?.Int() ?? 0);
+            f.Optional("castTime")?.Int() ?? 0,
+            effectRefs);
         if (action.ManaCost < 0) throw f["manaCost"].Error("can't be negative");
         if (action.BaseDamage < 0) throw f["baseDamage"].Error("can't be negative");
         if (action.CastTime < 0) throw f["castTime"].Error("can't be negative");
@@ -102,18 +210,7 @@ public static class DataLoader
             values.Add(new StatValue(def.Id, null, ReadStatValue(prop.Value, def)));
         }
         foreach (var t in f.Optional("tagStats")?.Items() ?? [])
-        {
-            t.OnlyFields("tag", "stat", "value");
-            var tag = t["tag"].Id();
-            if (!tags.ContainsKey(tag))
-                throw t["tag"].Error($"unknown tag \"{tag}\" (not in {TagsFile})");
-            var stat = t["stat"].Id();
-            if (!stats.TryGetValue(stat, out var def))
-                throw t["stat"].Error($"unknown stat \"{stat}\" (not in {StatsFile})");
-            if (!def.TagKeyed)
-                throw t["stat"].Error($"{def.Name} is a character stat and can't be keyed to a tag");
-            values.Add(new StatValue(stat, tag, ReadStatValue(t["value"], def)));
-        }
+            values.Add(ReadStatEntry(t, tags, stats, tagRequired: true));
 
         var compoundValues = new Dictionary<string, double>();
         foreach (var prop in f.Optional("compounds")?.Properties() ?? [])

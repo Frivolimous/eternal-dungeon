@@ -1,4 +1,4 @@
-using EternalDungeon.Core.Battle;
+using EternalDungeon.Core.Combat;
 
 namespace EternalDungeon.Core.Tests;
 

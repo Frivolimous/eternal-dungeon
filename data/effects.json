@@ -1,0 +1,17 @@
+// Effects and buffs for M1. Numbers are placeholders.
+// duration: a number of buff-clock turns, "until_next_turn", or absent for an instant effect.
+// shieldMaxHealth: a Shield worth that share of the unit's max Health; a buff's Shield goes when the buff ends.
+[
+  { "id": "guard", "name": "Guard", "duration": "until_next_turn",
+    "stats": [ { "stat": "avoid", "value": 0.3 } ], "shieldMaxHealth": 0.1 },
+
+  { "id": "cloak", "name": "Cloak", "duration": "until_next_turn",
+    "stats": [ { "stat": "avoid", "value": 0.5 }, { "stat": "threat", "value": -50 } ] },
+
+  { "id": "rot", "name": "Rot", "duration": 3, "periodicDamage": 4 },
+
+  { "id": "mend", "name": "Mend", "heal": 20 },
+
+  { "id": "war_cry", "name": "War Cry", "duration": 3, "stacking": true, "maxStacks": 3,
+    "stats": [ { "stat": "power", "value": 10 } ] }
+]

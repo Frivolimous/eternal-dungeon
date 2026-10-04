@@ -1,7 +1,7 @@
 using EternalDungeon.Core.Data;
 using EternalDungeon.Core.Stats;
 
-namespace EternalDungeon.Core.Battle;
+namespace EternalDungeon.Core.Combat;
 
 public enum Side { Party, Enemy }
 
@@ -33,7 +33,10 @@ public sealed class Unit
     /// <summary>The spell being cast, if any (Anchor: Combat › Turn order).</summary>
     public Cast? Casting { get; set; }
 
-    public string Name => Def.Name;
+    public List<Buff> Buffs { get; } = [];
+
+    /// <summary>The name in combat logs, numbered when a battle has several of the same unit ("Goblin Grunt #2").</summary>
+    public string Name { get; set; }
     public bool Alive => Health > 0;
     public double Act => ActTicks / 100.0;
     public int MaxHealth => (int)Math.Round(Stats.Get("health"));
@@ -47,6 +50,7 @@ public sealed class Unit
     {
         Id = id;
         Def = def;
+        Name = def.Name;
         Side = side;
         Stats = new StatBlock(data);
         foreach (var v in def.Stats)
