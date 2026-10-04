@@ -28,7 +28,7 @@ int Data()
 {
     var data = DataLoader.LoadDirectory(Path.Combine(root, "data"));
     Console.WriteLine($"{GameInfo.Title} {GameInfo.Version}: data OK");
-    Console.WriteLine($"  {data.TagList.Count} tags, {data.StatList.Count} stats");
+    Console.WriteLine($"  {data.TagList.Count} tags, {data.StatList.Count} stats, {data.CompoundList.Count} compound stats");
     return 0;
 }
 

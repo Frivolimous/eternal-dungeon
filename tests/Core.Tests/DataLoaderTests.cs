@@ -7,15 +7,18 @@ public class DataLoaderTests
     const string ValidTags = """[{ "id": "fire", "name": "Fire", "group": "element" }]""";
     const string ValidStats = """[{ "id": "power", "name": "Power", "group": "attack", "combine": "add" }]""";
 
-    static GameData Load(string tags = ValidTags, string stats = ValidStats) =>
+    const string ValidCompounds = """[{ "id": "magic", "name": "Magic", "rows": [{ "tag": "fire", "stat": "power", "coef": 1 }] }]""";
+
+    static GameData Load(string tags = ValidTags, string stats = ValidStats, string compounds = ValidCompounds) =>
         DataLoader.Load(DataSource.FromFiles(new Dictionary<string, string>
         {
             [DataLoader.TagsFile] = tags,
             [DataLoader.StatsFile] = stats,
+            [DataLoader.CompoundStatsFile] = compounds,
         }));
 
-    static DataException LoadFails(string tags = ValidTags, string stats = ValidStats) =>
-        Assert.Throws<DataException>(() => Load(tags, stats));
+    static DataException LoadFails(string tags = ValidTags, string stats = ValidStats, string compounds = ValidCompounds) =>
+        Assert.Throws<DataException>(() => Load(tags, stats, compounds));
 
     [Fact]
     public void Repo_data_loads()
@@ -30,12 +33,32 @@ public class DataLoaderTests
         Assert.True(data.Stats["vulnerability"].Hidden);
         Assert.False(data.Stats["health"].TagKeyed);
         Assert.True(data.Stats["avoid"].TagKeyed);
+        Assert.Equal(12, data.CompoundList.Count);
+        Assert.Contains(new CompoundRow("heavy", "power", 0.5), data.Compounds["strength"].Rows);
+    }
+
+    [Fact]
+    public void Compound_rows_must_reference_real_tag_keyed_stats()
+    {
+        var tag = LoadFails(compounds: """[{ "id": "magic", "name": "Magic", "rows": [{ "tag": "lava", "stat": "power", "coef": 1 }] }]""");
+        Assert.Equal("compound_stats.json", tag.File);
+        Assert.Equal("[0].rows[0].tag", tag.Field);
+
+        var stat = LoadFails(
+            stats: """[{ "id": "power", "name": "Power", "group": "attack", "combine": "add" }, { "id": "health", "name": "Health", "group": "character", "combine": "add" }]""",
+            compounds: """[{ "id": "vigor", "name": "Vigor", "rows": [{ "tag": "fire", "stat": "health", "coef": 1 }] }]""");
+        Assert.Equal("[0].rows[0].stat", stat.Field);
+
+        var mult = LoadFails(
+            stats: """[{ "id": "echo", "name": "Echo", "group": "attack", "combine": "mult" }]""",
+            compounds: """[{ "id": "magic", "name": "Magic", "rows": [{ "tag": "fire", "stat": "echo", "coef": 1 }] }]""");
+        Assert.Contains("mult", mult.Message);
     }
 
     [Fact]
     public void Reads_snake_case_enums()
     {
-        var data = Load(tags: """[{ "id": "arcane", "name": "Arcane", "group": "damage_type" }]""");
+        var data = Load(tags: """[{ "id": "arcane", "name": "Arcane", "group": "damage_type" }]""", compounds: "[]");
         Assert.Equal(TagGroup.DamageType, data.Tags["arcane"].Group);
     }
 

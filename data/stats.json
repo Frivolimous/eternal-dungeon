@@ -7,6 +7,8 @@
   { "id": "initiative", "name": "Initiative", "group": "character", "combine": "add", "integer": true },
   { "id": "threat", "name": "Threat", "group": "character", "combine": "add", "hidden": true },
   { "id": "vulnerability", "name": "Vulnerability", "group": "character", "combine": "add", "hidden": true },
+  { "id": "all_damage", "name": "All Damage", "group": "character", "combine": "add" },
+  { "id": "all_resist", "name": "All Resist", "group": "character", "combine": "dim" },
 
   { "id": "base_dmg", "name": "Base Dmg", "group": "attack", "combine": "add" },
   { "id": "power", "name": "Power", "group": "attack", "combine": "add" },

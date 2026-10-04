@@ -8,14 +8,18 @@ public static class DataLoader
 {
     public const string TagsFile = "tags.json";
     public const string StatsFile = "stats.json";
+    public const string CompoundStatsFile = "compound_stats.json";
 
     public static GameData LoadDirectory(string directory) => Load(DataSource.FromDirectory(directory));
 
     public static GameData Load(DataSource source)
     {
-        var tags = ReadList(source, TagsFile, ReadTag);
-        var stats = ReadList(source, StatsFile, ReadStat);
-        return new GameData(tags, stats);
+        var tags = ReadList(source, TagsFile, ReadTag).ToDictionary(t => t.Id);
+        var stats = ReadList(source, StatsFile, ReadStat).ToDictionary(s => s.Id);
+        var compounds = ReadList(source, CompoundStatsFile, f => ReadCompound(f, tags, stats));
+        if (compounds.FirstOrDefault(c => stats.ContainsKey(c.Id)) is { } clash)
+            throw new DataException(CompoundStatsFile, "", $"\"{clash.Id}\" is both a stat and a compound stat");
+        return new GameData([.. tags.Values], [.. stats.Values], compounds);
     }
 
     /// <summary>Reads a file whose root is an array of entries with unique <c>id</c>s.</summary>
@@ -53,5 +57,29 @@ public static class DataLoader
         if (stat.Integer && stat.Combine != CombineMode.Add)
             throw f["integer"].Error("only stats that combine by add can be integers");
         return stat;
+    }
+
+    static CompoundStatDef ReadCompound(JsonField f, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats)
+    {
+        f.OnlyFields("id", "name", "rows");
+        var rows = new List<CompoundRow>();
+        foreach (var r in f["rows"].Items())
+        {
+            r.OnlyFields("tag", "stat", "coef");
+            var tag = r["tag"].Id();
+            if (!tags.ContainsKey(tag))
+                throw r["tag"].Error($"unknown tag \"{tag}\" (not in {TagsFile})");
+            var stat = r["stat"].Id();
+            if (!stats.TryGetValue(stat, out var def))
+                throw r["stat"].Error($"unknown stat \"{stat}\" (not in {StatsFile})");
+            if (!def.TagKeyed)
+                throw r["stat"].Error($"{def.Name} is a character stat and can't be keyed to a tag");
+            if (def.Combine == CombineMode.Mult)
+                throw r["stat"].Error($"{def.Name} combines by mult; compound stats can only feed add and dim stats");
+            rows.Add(new CompoundRow(tag, stat, r["coef"].Number()));
+        }
+        if (rows.Count == 0)
+            throw f["rows"].Error("needs at least one row");
+        return new CompoundStatDef(f["id"].Id(), f["name"].String(), rows);
     }
 }

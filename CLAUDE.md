@@ -97,6 +97,13 @@ check. AI-generated art is for placeholders only and must be flagged; nothing fl
 - Power factor = 1 + Power / 100; Multiplier factor = 1 + Multiplier.
 - Speed, Act and AP are integers on a 100 scale; chance stats are 0–1 doubles and Dim values stay below 1.
 - Tenacity's "Control Duration −1" is parked: implement only its Control Deval part.
+- Dim: positive and negative modifiers stack separately (each by the Dim formula) and the negative total is
+  subtracted; the result can go below 0. Modifiers must be strictly between −1 and 1.
+- Compound stats: every recipe row whose tag the action carries counts, adjusters included (Strength gives a
+  Heavy action +0.5× even without Melee). Points are percentages: on a chance stat, 1 point = 0.01.
+  Placeholder: one compound adds at most ±0.95 to a chance stat per action.
+- Heavy and Light are melee-only tags: only melee actions carry them.
+- `all_damage` (Add, factor 1 + value) and `all_resist` (Dim) are untagged stats for the damage formula.
 
 ## Open (don't build without Jeremy)
 

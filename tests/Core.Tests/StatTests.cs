@@ -136,4 +136,96 @@ public class StatTests
         Assert.Equal(0.75, s.Get("hit", ["physical", "ranged"]), Precision);
         Assert.Equal(0.5, s.Get("hit", ["physical", "melee"]), Precision);
     }
+
+    // ---- Negative chance modifiers ----
+
+    [Fact]
+    public void Negative_dim_modifiers_stack_separately_and_are_subtracted()
+    {
+        var s = NewBlock();
+        s.Add("a", "avoid", 0.5);
+        s.Add("b", "avoid", 0.2);      // P = 1 − 0.5 × 0.8 = 0.6
+        s.Add("curse1", "avoid", -0.2);
+        s.Add("curse2", "avoid", -0.2); // N = 1 − 0.8 × 0.8 = 0.36
+        Assert.Equal(0.24, s.Get("avoid"), Precision);
+
+        s.RemoveSource("a");
+        s.RemoveSource("b");
+        Assert.Equal(-0.36, s.Get("avoid"), Precision);  // can go below 0
+        Assert.Throws<ArgumentException>(() => s.Add("x", "avoid", -1));
+    }
+
+    // ---- Compound stats ----
+
+    [Fact]
+    public void Strength_scales_with_the_heavy_and_light_adjusters()
+    {
+        var s = NewBlock();
+        s.Add("base", "strength", 10);
+
+        Assert.Equal(15, s.Get("power", ["physical", "melee", "heavy"]));   // 10 × (1 + 0.5)
+        Assert.Equal(5, s.Get("power", ["physical", "melee", "light"]));    // 10 × (1 − 0.5)
+        Assert.Equal(10, s.Get("power", ["physical", "melee"]));
+        Assert.Equal(5, s.Get("power", ["physical", "ranged", "heavy"]));   // adjusters apply on their own
+        Assert.Equal(0, s.Get("power", ["spell", "fire"]));
+        Assert.Equal(0, s.Get("power"));                                    // compounds only feed tag stats
+    }
+
+    [Fact]
+    public void Light_weapons_split_between_strength_and_dexterity()
+    {
+        var s = NewBlock();
+        s.Add("base", "strength", 10);
+        s.Add("base", "dexterity", 10);
+        s.Add("base", "power", 4);
+        // Dagger Attack (Melee Light Finesse): Str 10 × 0.5 + Dex 10 × (0.5 + 0.5) + 4 untagged.
+        Assert.Equal(19, s.Get("power", ["physical", "melee", "light", "finesse"]));
+    }
+
+    [Fact]
+    public void Every_matching_row_counts()
+    {
+        var s = NewBlock();
+        s.Add("base", "elemental", 10);
+        Assert.Equal(20, s.Get("power", ["spell", "fire", "ice"]));         // 10 × (1 + 1)
+    }
+
+    [Fact]
+    public void Compound_points_are_percent_on_chance_stats()
+    {
+        var s = NewBlock();
+        s.Add("base", "hit", 0.95);
+        s.Add("base", "accuracy", 10);
+        Assert.Equal(1 - 0.05 * 0.9, s.Get("hit", ["physical", "melee"]), Precision);  // 0.95 dim 0.10 = 0.955
+
+        s.Add("base", "dodge", 20);
+        Assert.Equal(0.3, s.Get("avoid", ["physical", "projectile", "grenade"]), Precision);  // 0.20 × 1.5
+
+        s.Add("base", "intellect", 10);
+        Assert.Equal(10, s.Get("power", ["gadget"]));
+        Assert.Equal(0.1, s.Get("rate", ["gadget"]), Precision);
+        Assert.Equal(0.15, s.Get("rate", ["gadget", "cryptic"]), Precision);
+    }
+
+    [Fact]
+    public void A_compound_alone_cannot_reach_full_chance()
+    {
+        var s = NewBlock();
+        s.Add("base", "dodge", 100);
+        Assert.Equal(StatBlock.MaxCompoundChance, s.Get("avoid", ["projectile", "grenade"]), Precision);  // 1.5 capped
+    }
+
+    [Fact]
+    public void Compound_modifiers_add_and_leave_with_their_source()
+    {
+        var s = NewBlock();
+        s.Add("base", "strength", 10);
+        s.Add("enrage", "strength", 5);
+        Assert.Equal(15, s.GetCompound("strength"));
+        Assert.Equal(15, s.Get("power", ["melee"]));
+
+        s.RemoveSource("enrage");
+        Assert.Equal(10, s.Get("power", ["melee"]));
+        Assert.Throws<ArgumentException>(() => s.Add("x", "strength", 5, "melee"));
+    }
 }
