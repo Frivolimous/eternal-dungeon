@@ -1,3 +1,5 @@
+using EternalDungeon.Core.Stats;
+
 namespace EternalDungeon.Core.Data;
 
 /// <summary>
@@ -9,6 +11,7 @@ public static class DataLoader
     public const string TagsFile = "tags.json";
     public const string StatsFile = "stats.json";
     public const string CompoundStatsFile = "compound_stats.json";
+    public const string UnitsFile = "units.json";
 
     public static GameData LoadDirectory(string directory) => Load(DataSource.FromDirectory(directory));
 
@@ -19,7 +22,65 @@ public static class DataLoader
         var compounds = ReadList(source, CompoundStatsFile, f => ReadCompound(f, tags, stats));
         if (compounds.FirstOrDefault(c => stats.ContainsKey(c.Id)) is { } clash)
             throw new DataException(CompoundStatsFile, "", $"\"{clash.Id}\" is both a stat and a compound stat");
-        return new GameData([.. tags.Values], [.. stats.Values], compounds);
+        var compoundIds = compounds.Select(c => c.Id).ToHashSet();
+        var units = ReadList(source, UnitsFile, f => ReadUnit(f, tags, stats, compoundIds));
+        return new GameData([.. tags.Values], [.. stats.Values], compounds, units);
+    }
+
+    static UnitDef ReadUnit(JsonField f, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats, HashSet<string> compounds)
+    {
+        f.OnlyFields("id", "name", "size", "stats", "tagStats", "compounds");
+
+        var size = f["size"];
+        var unitSize = size.Number() switch
+        {
+            1 => UnitSize.Small,
+            1.5 => UnitSize.Tall,
+            2 => UnitSize.Large,
+            var n => throw size.Error($"expected 1, 1.5 or 2, got {n}"),
+        };
+
+        var values = new List<StatValue>();
+        foreach (var prop in f["stats"].Properties())
+        {
+            if (!stats.TryGetValue(prop.Name, out var def))
+                throw prop.Value.Error($"unknown stat \"{prop.Name}\" (not in {StatsFile})");
+            values.Add(new StatValue(def.Id, null, ReadStatValue(prop.Value, def)));
+        }
+        foreach (var t in f.Optional("tagStats")?.Items() ?? [])
+        {
+            t.OnlyFields("tag", "stat", "value");
+            var tag = t["tag"].Id();
+            if (!tags.ContainsKey(tag))
+                throw t["tag"].Error($"unknown tag \"{tag}\" (not in {TagsFile})");
+            var stat = t["stat"].Id();
+            if (!stats.TryGetValue(stat, out var def))
+                throw t["stat"].Error($"unknown stat \"{stat}\" (not in {StatsFile})");
+            if (!def.TagKeyed)
+                throw t["stat"].Error($"{def.Name} is a character stat and can't be keyed to a tag");
+            values.Add(new StatValue(stat, tag, ReadStatValue(t["value"], def)));
+        }
+
+        var compoundValues = new Dictionary<string, double>();
+        foreach (var prop in f.Optional("compounds")?.Properties() ?? [])
+        {
+            if (!compounds.Contains(prop.Name))
+                throw prop.Value.Error($"unknown compound stat \"{prop.Name}\" (not in {CompoundStatsFile})");
+            compoundValues[prop.Name] = prop.Value.Number();
+        }
+
+        var unit = new UnitDef(f["id"].Id(), f["name"].String(), unitSize, values, compoundValues);
+        if (!values.Any(v => v.Stat == "health" && v.Value > 0))
+            throw f["stats"].Error("a unit needs health above 0");
+        return unit;
+    }
+
+    static double ReadStatValue(JsonField f, StatDef def)
+    {
+        var value = f.Number();
+        try { Combine.Validate(def, value); }
+        catch (ArgumentException e) { throw f.Error(e.Message); }
+        return value;
     }
 
     /// <summary>Reads a file whose root is an array of entries with unique <c>id</c>s.</summary>

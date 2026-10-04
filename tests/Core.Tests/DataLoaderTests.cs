@@ -9,16 +9,52 @@ public class DataLoaderTests
 
     const string ValidCompounds = """[{ "id": "magic", "name": "Magic", "rows": [{ "tag": "fire", "stat": "power", "coef": 1 }] }]""";
 
-    static GameData Load(string tags = ValidTags, string stats = ValidStats, string compounds = ValidCompounds) =>
+    const string HealthAndPower = """
+        [{ "id": "health", "name": "Health", "group": "character", "combine": "add" },
+         { "id": "power", "name": "Power", "group": "attack", "combine": "add" }]
+        """;
+    const string ValidUnits = "[]";
+
+    static GameData Load(string tags = ValidTags, string stats = ValidStats, string compounds = ValidCompounds, string units = ValidUnits) =>
         DataLoader.Load(DataSource.FromFiles(new Dictionary<string, string>
         {
             [DataLoader.TagsFile] = tags,
             [DataLoader.StatsFile] = stats,
             [DataLoader.CompoundStatsFile] = compounds,
+            [DataLoader.UnitsFile] = units,
         }));
 
-    static DataException LoadFails(string tags = ValidTags, string stats = ValidStats, string compounds = ValidCompounds) =>
-        Assert.Throws<DataException>(() => Load(tags, stats, compounds));
+    static DataException LoadFails(string tags = ValidTags, string stats = ValidStats, string compounds = ValidCompounds, string units = ValidUnits) =>
+        Assert.Throws<DataException>(() => Load(tags, stats, compounds, units));
+
+    static DataException UnitFails(string unitJson) =>
+        LoadFails(stats: HealthAndPower, units: $"[{unitJson}]");
+
+    [Fact]
+    public void Units_load_with_stats_tag_stats_and_compounds()
+    {
+        var data = Load(stats: HealthAndPower, units: """
+            [{ "id": "troll", "name": "Troll", "size": 1.5,
+               "stats": { "health": 200 },
+               "tagStats": [{ "tag": "fire", "stat": "power", "value": 10 }],
+               "compounds": { "magic": 5 } }]
+            """);
+        var troll = data.Units["troll"];
+        Assert.Equal(UnitSize.Tall, troll.Size);
+        Assert.Contains(new StatValue("health", null, 200), troll.Stats);
+        Assert.Contains(new StatValue("power", "fire", 10), troll.Stats);
+        Assert.Equal(5, troll.Compounds["magic"]);
+    }
+
+    [Fact]
+    public void Unit_errors_name_the_field()
+    {
+        Assert.Equal("[0].size", UnitFails("""{ "id": "u", "name": "U", "size": 3, "stats": { "health": 1 } }""").Field);
+        Assert.Equal("[0].stats.luck", UnitFails("""{ "id": "u", "name": "U", "size": 1, "stats": { "health": 1, "luck": 7 } }""").Field);
+        Assert.Equal("[0].compounds.charm", UnitFails("""{ "id": "u", "name": "U", "size": 1, "stats": { "health": 1 }, "compounds": { "charm": 3 } }""").Field);
+        Assert.Equal("[0].tagStats[0].stat", UnitFails("""{ "id": "u", "name": "U", "size": 1, "stats": { "health": 1 }, "tagStats": [{ "tag": "fire", "stat": "health", "value": 5 }] }""").Field);
+        Assert.Equal("[0].stats", UnitFails("""{ "id": "u", "name": "U", "size": 1, "stats": { "power": 1 } }""").Field);
+    }
 
     [Fact]
     public void Repo_data_loads()

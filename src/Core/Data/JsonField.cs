@@ -82,6 +82,14 @@ public readonly partial struct JsonField
                     $"unknown field (allowed: {string.Join(", ", allowed)})");
     }
 
+    /// <summary>Every property of this object, for maps such as <c>"stats": { "health": 100 }</c>.</summary>
+    public IEnumerable<(string Name, JsonField Value)> Properties()
+    {
+        ExpectKind(JsonValueKind.Object, "an object");
+        foreach (var prop in Element.EnumerateObject())
+            yield return (prop.Name, new JsonField(prop.Value, File, Child(prop.Name)));
+    }
+
     // ---- Arrays ----
 
     public IEnumerable<JsonField> Items()

@@ -41,3 +41,25 @@ public sealed record CompoundRow(string Tag, string Stat, double Coef);
 /// Points are percentages: 10 Strength is 10 Power on a melee action, 10 Accuracy is +0.10 Hit.
 /// </summary>
 public sealed record CompoundStatDef(string Id, string Name, IReadOnlyList<CompoundRow> Rows);
+
+/// <summary>An enemy's footprint (Anchor: Combat › Battlefield). Heroes are always Small.</summary>
+public enum UnitSize
+{
+    /// <summary>Size 1: one tile (a person).</summary>
+    Small,
+    /// <summary>Size 1.5: two tiles in a column, front and back (a troll).</summary>
+    Tall,
+    /// <summary>Size 2: a 2×2 block (a Balrog).</summary>
+    Large,
+}
+
+/// <summary>A base stat value on a unit definition: untagged when <see cref="Tag"/> is null.</summary>
+public sealed record StatValue(string Stat, string? Tag, double Value);
+
+/// <summary>A hero or enemy as content: base stats, tag stats and compound stats.</summary>
+public sealed record UnitDef(
+    string Id,
+    string Name,
+    UnitSize Size,
+    IReadOnlyList<StatValue> Stats,
+    IReadOnlyDictionary<string, double> Compounds);
