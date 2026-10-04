@@ -29,7 +29,7 @@ public static class CombatLog
     {
         var sb = new StringBuilder();
         foreach (var r in battle.Results)
-            foreach (var line in Lines(battle.Data, r, level))
+            foreach (var line in Lines(battle, r, level))
                 sb.AppendLine(line);
         sb.AppendLine(Ending(battle));
         return sb.ToString();
@@ -42,8 +42,9 @@ public static class CombatLog
         _ => $"[T {T(battle.Clock.Tick)}] Stalemate: no winner by the time limit.",
     };
 
-    public static IEnumerable<string> Lines(GameData data, ActionResult r, LogLevel level)
+    public static IEnumerable<string> Lines(Battle battle, ActionResult r, LogLevel level)
     {
+        var data = battle.Data;
         var head = $"[T {T(r.Tick)}] ";
         if (r.Action is { } action)
         {
@@ -59,18 +60,19 @@ public static class CombatLog
                 _ => r.Target is null ? "" : $" → {r.Target.Name}",
             };
             yield return $"{head}{r.Actor.Name} → {action.Name}{aim}";
-            foreach (var line in Details(data, action, r.Outcomes, level))
+            foreach (var line in Details(battle, action, r.Outcomes, level))
                 yield return Indent + line;
             yield break;
         }
 
         // Clock results (turn start, buff ticks, skips): one line per thing that happened.
-        foreach (var line in Details(data, null, r.Outcomes, level))
+        foreach (var line in Details(battle, null, r.Outcomes, level))
             yield return head + line;
     }
 
-    static IEnumerable<string> Details(GameData data, ActionDef? action, List<Outcome> outcomes, LogLevel level)
+    static IEnumerable<string> Details(Battle battle, ActionDef? action, List<Outcome> outcomes, LogLevel level)
     {
+        var data = battle.Data;
         // The action's own hit and damage share a line, as in the brief.
         var parts = new List<string>();
         var full = new List<string>();
@@ -109,7 +111,7 @@ public static class CombatLog
                     if (level == LogLevel.Full) rest.Add(Breakdown(pd.Breakdown));
                     break;
                 default:
-                    if (Describe(o) is string text) rest.Add(text);
+                    if (Describe(battle.Grid, o) is string text) rest.Add(text);
                     break;
             }
         }
@@ -118,7 +120,7 @@ public static class CombatLog
         foreach (var x in rest) yield return x;
     }
 
-    static string? Describe(Outcome o) => o switch
+    static string? Describe(BattleGrid grid, Outcome o) => o switch
     {
         Healed h when h.Amount > 0 => $"{h.Source} heals {h.Target.Name} for {h.Amount} (HP {h.HealthBefore} → {h.HealthBefore + h.Amount})",
         Healed => null,
@@ -132,8 +134,8 @@ public static class CombatLog
         Interrupted i => $"{i.Unit.Name}'s cast is interrupted",
         Fizzled f => f.Reason.Contains(" fizzles") ? f.Reason : $"fizzles: {f.Reason}",
         Died d => $"{d.Unit.Name} falls",
-        Moved m when m.Why == "collapse" => $"{m.Unit.Name} steps forward ({Pos(m.Unit, m.From)} → {Pos(m.Unit, m.To)})",
-        Moved m => $"{m.Unit.Name} moves {Pos(m.Unit, m.From)} → {Pos(m.Unit, m.To)}{(m.Why is "Move" ? "" : $" ({m.Why})")}",
+        Moved m when m.Why == "collapse" => $"{m.Unit.Name} steps forward ({Pos(grid, m.Unit, m.From)} → {Pos(grid, m.Unit, m.To)})",
+        Moved m => $"{m.Unit.Name} moves {Pos(grid, m.Unit, m.From)} → {Pos(grid, m.Unit, m.To)}{(m.Why is "Move" ? "" : $" ({m.Why})")}",
         Waited w => $"{w.Unit.Name} waits",
         TurnLost l => $"{l.Unit.Name} loses the turn ({l.Reason})",
         _ => null,
@@ -176,8 +178,13 @@ public static class CombatLog
     static string DamageTags(GameData data, IEnumerable<string> tags) =>
         string.Join(", ", tags.Select(t => data.Tags[t]).Where(t => t.Group is TagGroup.DamageType or TagGroup.Element).Select(t => t.Name));
 
-    /// <summary>Row and column; marked when the unit stands in the other side's area.</summary>
-    static string Pos(Unit u, Tile t) => $"r{t.Row}c{t.Col}{(t.Area != u.Side ? " (opposing area)" : "")}";
+    /// <summary>Front-relative row (depth) and column (lane), so the log reads the same in any layout; marked when
+    /// the unit stands in the other side's area.</summary>
+    static string Pos(BattleGrid grid, Unit u, Tile t)
+    {
+        var (depth, lane) = grid.Relative(t);
+        return $"r{depth}c{lane}{(grid.SideOf(t) != u.Side ? " (opposing area)" : "")}";
+    }
 
     public static string T(long tick) => (tick / (double)TurnClock.TicksPerTurn).ToString("0.00", Inv);
     static string Pct(double p) => (p * 100).ToString("0", Inv) + "%";

@@ -9,9 +9,11 @@ public static class EncounterSetup
     /// unit's id plus a number (<c>goblin_grunt#2</c>); names get the number only when a unit appears more than
     /// once on its side ("Goblin Grunt #2").
     /// </summary>
-    public static Battle Build(GameData data, EncounterDef encounter, ulong seed)
+    /// <param name="grid">An empty board to use instead of the default one (placements are front-relative, so they
+    /// work on any board).</param>
+    public static Battle Build(GameData data, EncounterDef encounter, ulong seed, BattleGrid? grid = null)
     {
-        var grid = new BattleGrid(DataLoader.AreaCols, DataLoader.AreaRows);
+        grid ??= new BattleGrid(DataLoader.AreaCols, DataLoader.AreaRows);
         var units = new List<Unit>();
         foreach (var (side, placements) in new[] { (Side.Party, encounter.Party), (Side.Enemy, encounter.Enemies) })
         {
@@ -23,7 +25,7 @@ public static class EncounterSetup
                 var def = data.Units[p.Unit];
                 var unit = new Unit($"{p.Unit}#{n}", def, side, data);
                 if (counts[p.Unit] > 1) unit.Name = $"{def.Name} #{n}";
-                grid.Place(unit, new Tile(side, p.Row, p.Col));
+                grid.Place(unit, grid.TileAt(grid.HomeOf(side).Id, p.Row, p.Col));
                 units.Add(unit);
             }
         }

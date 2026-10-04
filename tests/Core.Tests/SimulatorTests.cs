@@ -25,6 +25,34 @@ public class SimulatorTests
         Assert.NotEqual(CombatLog.Write(Play("goblin_patrol", 1)), CombatLog.Write(Play("goblin_patrol", 2)));
     }
 
+    /// <summary>
+    /// Core is front-relative: the same fight on a board whose areas face each other along other edges (the party's
+    /// area turned on its side and facing with its last column, the enemy's facing with its last row) plays out
+    /// exactly the same. Range, Move, Sneak, Push/Pull and collapse all run in these fights.
+    /// </summary>
+    [Fact]
+    public void The_same_fight_plays_identically_on_a_rotated_board()
+    {
+        static BattleGrid Rotated() => new(
+            [new BattleArea(BattleGrid.PartyArea, Side.Party, Cols: 2, Rows: 3), new BattleArea(BattleGrid.EnemyArea, Side.Enemy, 3, 2)],
+            [new Front(BattleGrid.PartyArea, Edge.ColEnd, BattleGrid.EnemyArea, Edge.RowEnd)]);
+
+        var seen = new HashSet<string>();
+        foreach (var encounter in TestData.Repo.EncounterList)
+            for (ulong seed = 1; seed <= 20; seed++)
+            {
+                var normal = EncounterSetup.Build(TestData.Repo, encounter, seed);
+                var rotated = EncounterSetup.Build(TestData.Repo, encounter, seed, Rotated());
+                BattleRunner.Run(normal);
+                BattleRunner.Run(rotated);
+                Assert.Equal(CombatLog.Write(normal, LogLevel.Full), CombatLog.Write(rotated, LogLevel.Full));
+                Assert.NotEqual(normal.Grid.AnchorOf(normal.Units[0]), rotated.Grid.AnchorOf(rotated.Units[0]));
+                foreach (var m in rotated.Results.SelectMany(r => r.Of<Moved>()))
+                    seen.Add(m.Why is "Move" or "collapse" or "Sneak" ? m.Why : "shove");
+            }
+        Assert.True(seen.SetEquals(["Move", "Sneak", "collapse", "shove"]), string.Join(", ", seen));
+    }
+
     [Fact]
     public void Every_encounter_runs_to_a_finish()
     {
@@ -69,7 +97,7 @@ public class SimulatorTests
         var battle = EncounterSetup.Build(TestData.Repo, TestData.Repo.Encounters["goblin_patrol"], 1);
         Assert.Equal(["Rogue", "Warrior", "Elementalist", "Goblin Grunt #1", "Goblin Grunt #2", "Goblin Archer", "Goblin Shaman"],
             battle.Units.Select(u => u.Name));
-        Assert.Equal(new Tile(Side.Enemy, 1, 2), battle.Grid.AnchorOf(battle.Unit("goblin_shaman#1")));
+        Assert.Equal(new Tile(BattleGrid.EnemyArea, 1, 2), battle.Grid.AnchorOf(battle.Unit("goblin_shaman#1")));
     }
 
     [Fact]

@@ -44,6 +44,8 @@ Every character starts with Weapon Crit Rating 5% and untagged Crit Mult 0.5, so
 
 ## Battlefield
 
+- The battlefield is a set of **areas** joined by **fronts**. A front is where an edge of one side's area faces an edge of the other side's. Every rule is relative to a front: a tile's row is its depth from the front edge (row 0 is the front row), and its column runs along that edge. Where areas sit on the table and which way they face is presentation only (see presentation.md), so the same fight plays identically in any layout.
+- M2 has one front per area. Ambushed and Surrounding battles (M3) add more fronts; range already counts every front between two areas, while Push/Pull, footprints and collapse for multi-front areas are decided in M3.
 - Each side has its own area, 3×2 or 2×3 by default. Abilities can grow it to 4×2 or 3×3.
 - At most 6 units are on the map: the 4 party heroes plus overflow from mercenaries and pets.
 - Heroes move freely within their area, and enemies generally stay put. Every action has a Range.

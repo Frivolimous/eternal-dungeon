@@ -334,7 +334,7 @@ public sealed partial class Battle
     /// <summary>Collapses any area whose front row emptied (deaths, moves, pushes).</summary>
     void CollapseAreas(ActionResult r)
     {
-        foreach (var area in new[] { Side.Party, Side.Enemy })
+        foreach (var area in Grid.Areas.Select(a => a.Id))
         {
             var before = Units.Where(u => u.Alive).ToDictionary(u => u, u => Grid.AnchorOf(u));
             foreach (var u in Grid.Collapse(area))

@@ -10,8 +10,8 @@ public class GridTests
     static Unit U(string def, string id, Side side, GameData? data = null) =>
         new(id, (data ?? Repo).Units[def], side, data ?? Repo);
 
-    static Tile P(int row, int col) => new(Side.Party, row, col);
-    static Tile E(int row, int col) => new(Side.Enemy, row, col);
+    static Tile P(int row, int col) => new(BattleGrid.PartyArea, row, col);
+    static Tile E(int row, int col) => new(BattleGrid.EnemyArea, row, col);
 
     [Fact]
     public void Footprints_cover_one_two_and_four_tiles()

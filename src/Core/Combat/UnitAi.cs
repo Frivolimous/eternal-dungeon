@@ -32,7 +32,7 @@ public static class UnitAi
             if (Choose(battle, unit, action, rule, profile.ThreatWeight) is { } decision)
                 return decision;
         }
-        var forward = battle.Grid.AnchorOf(unit) is { } at ? battle.Grid.MoveOptions(unit).Where(t => t.Row < at.Row) : [];
+        var forward = battle.Grid.ForwardOptions(unit);
         return Default(battle, unit, d => d.Move, forward) ?? Default(battle, unit, d => d.Defend);
     }
 

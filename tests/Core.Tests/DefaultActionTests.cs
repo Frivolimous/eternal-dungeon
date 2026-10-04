@@ -8,8 +8,8 @@ namespace EternalDungeon.Core.Tests;
 public class DefaultActionTests
 {
     static Unit U(GameData data, string def, string id, Side side) => new(id, data.Units[def], side, data);
-    static Tile P(int row, int col) => new(Side.Party, row, col);
-    static Tile E(int row, int col) => new(Side.Enemy, row, col);
+    static Tile P(int row, int col) => new(BattleGrid.PartyArea, row, col);
+    static Tile E(int row, int col) => new(BattleGrid.EnemyArea, row, col);
 
     [Fact]
     public void Every_unit_has_the_default_actions_on_top_of_its_own()

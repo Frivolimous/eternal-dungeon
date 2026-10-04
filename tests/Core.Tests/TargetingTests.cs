@@ -8,8 +8,8 @@ namespace EternalDungeon.Core.Tests;
 public class TargetingTests
 {
     static Unit U(string def, string id, Side side) => new(id, Repo.Units[def], side, Repo);
-    static Tile P(int row, int col) => new(Side.Party, row, col);
-    static Tile E(int row, int col) => new(Side.Enemy, row, col);
+    static Tile P(int row, int col) => new(BattleGrid.PartyArea, row, col);
+    static Tile E(int row, int col) => new(BattleGrid.EnemyArea, row, col);
 
     [Fact]
     public void The_score_weighs_threat_against_vulnerability()
