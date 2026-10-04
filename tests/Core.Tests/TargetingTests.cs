@@ -19,18 +19,26 @@ public class TargetingTests
         loud.ThreatEarned = 100;                                          // threat 1.0 (the most), vulnerability 0
         hurt.TakeDamage(50);                                              // threat 0, vulnerability 0.5
 
-        Assert.Equal(loud, UnitAi.PickTarget([loud, hurt], 0.75));        // 0.75 vs 0.125
-        Assert.Equal(hurt, UnitAi.PickTarget([loud, hurt], 0.25));        // 0.25 vs 0.375
-        Assert.Equal(loud, UnitAi.PickTarget([loud, hurt], 0.5));         // 0.5 vs 0.25
+        Assert.Equal(loud, UnitAi.PickTarget([loud, hurt], 0.75, new Rng(1)));        // 0.75 vs 0.125
+        Assert.Equal(hurt, UnitAi.PickTarget([loud, hurt], 0.25, new Rng(1)));        // 0.25 vs 0.375
+        Assert.Equal(loud, UnitAi.PickTarget([loud, hurt], 0.5, new Rng(1)));         // 0.5 vs 0.25
     }
 
     [Fact]
-    public void Ties_go_to_the_first_listed()
+    public void Ties_are_broken_by_the_seeded_rng()
     {
         var a = U("warrior", "a", Side.Party);
         var b = U("warrior", "b", Side.Party);
-        Assert.Equal(a, UnitAi.PickTarget([a, b], 0.5));
-        Assert.Equal(b, UnitAi.PickTarget([b, a], 0.5));
+        var picks = Enumerable.Range(1, 40).Select(seed => UnitAi.PickTarget([a, b], 0.5, new Rng((ulong)seed))).ToList();
+        Assert.Contains(a, picks);
+        Assert.Contains(b, picks);                                                     // not always the first listed
+        Assert.Equal(picks, Enumerable.Range(1, 40).Select(seed => UnitAi.PickTarget([a, b], 0.5, new Rng((ulong)seed))));
+
+        var rng = new Rng(9);
+        var probe = new Rng(9);
+        b.TakeDamage(10);                                                              // no tie: no roll
+        Assert.Equal(b, UnitAi.PickTarget([a, b], 0.5, rng));
+        Assert.Equal(probe.NextULong(), rng.NextULong());
     }
 
     [Fact]

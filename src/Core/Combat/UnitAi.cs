@@ -54,7 +54,7 @@ public static class UnitAi
                 // Confusion (placeholder): any valid target, at random.
                 var pick = unit.Has(CcKind.Confusion)
                     ? enemies[battle.Rng.NextInt(enemies.Count)]
-                    : PickTarget(enemies, w);
+                    : PickTarget(enemies, w, battle.Rng);
                 return new Decision(action, pick, null);
         }
     }
@@ -63,26 +63,21 @@ public static class UnitAi
         battle.Units.Where(u => battle.Grid.CantTarget(unit, action, u) is null).ToList();
 
     /// <summary>
-    /// The highest score w × Threat + (1 − w) × Vulnerability; ties go to the first listed. Threat is earned in
-    /// damage and healing, so it's scaled against the highest Threat among the candidates to put it on the same
-    /// 0–1 footing as Vulnerability (placeholder).
+    /// The highest score w × Threat + (1 − w) × Vulnerability. Ties are broken by a pick from the battle's seeded
+    /// RNG (never a global one); it's only rolled when there is a tie. Threat is earned in damage and healing, so it's
+    /// scaled against the highest Threat among the candidates to put it on the same 0–1 footing as
+    /// Vulnerability (placeholder).
     /// </summary>
-    public static Unit PickTarget(IReadOnlyList<Unit> candidates, double w)
+    public static Unit PickTarget(IReadOnlyList<Unit> candidates, double w, Rng rng)
     {
+        const double tolerance = 1e-12;
         var maxThreat = candidates.Max(c => Math.Max(0, c.Threat));
-        Unit best = candidates[0];
-        var bestScore = double.MinValue;
-        foreach (var c in candidates)
-        {
-            var threat = maxThreat > 0 ? Math.Max(0, c.Threat) / maxThreat : 0;
-            var score = w * threat + (1 - w) * c.Vulnerability;
-            if (score > bestScore)
-            {
-                best = c;
-                bestScore = score;
-            }
-        }
-        return best;
+        var scored = candidates
+            .Select(c => (Unit: c, Score: w * (maxThreat > 0 ? Math.Max(0, c.Threat) / maxThreat : 0) + (1 - w) * c.Vulnerability))
+            .ToList();
+        var best = scored.Max(s => s.Score);
+        var tied = scored.Where(s => s.Score >= best - tolerance).Select(s => s.Unit).ToList();
+        return tied.Count == 1 ? tied[0] : tied[rng.NextInt(tied.Count)];
     }
 
     /// <summary>Nothing to do from here: a unit that can Move steps toward the front row.</summary>

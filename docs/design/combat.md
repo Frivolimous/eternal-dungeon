@@ -69,6 +69,8 @@ Damage over time scales with the caster: when it's applied, the caster's Power a
 
 Enemies pick targets by weighing Threat against Vulnerability, and each AI type weights them differently (up to 75% toward one). Threat rises when a hero deals damage or heals. Vulnerability is hidden and rises as Health drops.
 
+Ties between equally scored targets are broken by a pick from the battle's seeded random generator, never a global one.
+
 ## Buffs and effects
 
 - Each source can apply a buff only once, unless the buff is explicitly stacking. Source = action plus caster, so 3 different poison spells give 3 poisons, and the same buff from 3 casters stacks 3 times.

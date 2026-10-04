@@ -29,4 +29,3 @@ Threat, its scale and Vulnerability: review after M2 playtests.
 | Threat | Damage dealt + healing done in this battle, plus the Threat stat (Cloak −50) |
 | Threat vs. Vulnerability scale | Threat is divided by the highest Threat among the possible targets, so both are 0–1 |
 | Vulnerability | The share of Health missing, plus the Vulnerability stat ÷ 100 |
-| Ties | The first listed target |
