@@ -8,13 +8,17 @@ Eternal Dungeon: a roguelike party dungeon crawler with speed-driven turn-based 
 (one-time purchase) on Steam, Windows + Steam Deck, no monetization. Claude is the main developer; Jeremy owns
 design, playtesting, review and art.
 
-- **Design Anchor** (the spec, single source of truth):
-  https://claude.ai/code/artifact/9de2c81d-a4b9-4fff-94fb-f0dff1a53720
-- **M0 + M1 Build Brief** (what to build first, acceptance criteria):
-  https://claude.ai/code/artifact/dabc031f-ab84-4bec-9180-d79209a06613
+- **Design Anchor** (the spec, single source of truth): [docs/design/](docs/design/README.md), one file per
+  area (stats, combat, classes, equipment, dungeons, meta, production), plus
+  [placeholders.md](docs/design/placeholders.md) (rules Claude chose, for Jeremy to review),
+  [open-questions.md](docs/design/open-questions.md) and [superseded.md](docs/design/superseded.md).
+- **Build briefs** (what to build, acceptance criteria): [docs/briefs/](docs/briefs/). M0 + M1 is done; the
+  Anchor wins wherever a brief disagrees.
 
-Both are Claude Docs: read them with the Claude Docs connector, not a web fetch. The Anchor wins over the
-brief if they disagree. Earlier spreadsheets and the ChatGPT chat are retired; never reference them.
+**Keep the Anchor current in the same commit as the code.** When Jeremy settles a design point, write it into
+its section; when a decision changes, move the old version to superseded.md with the reason; when Claude picks
+a placeholder, add it to placeholders.md. The old claude.ai copies of the Anchor and the brief are retired, as
+are the earlier spreadsheets and the ChatGPT chat: never reference them.
 
 Milestones: M0 Foundations → M1 Rules core → M2 Playable battle → M3 Dungeon 0 slice (go/no-go) → M4 Town &
 build depth → M5 Content & endgame → M6 Steam.
@@ -58,7 +62,8 @@ data/              JSON content: tags, stats, compound_stats, effects, procs, ac
                    encounters, defaults (loaded in that order; later files reference earlier ones). Embedded into the
                    game assembly at build.
 src/Core/          rules library, plain C#, no Godot
-src/Sim/           command-line tool (assembly name `sim`): data/asset checks now, battle simulator in M1
+src/Sim/           command-line tool (assembly name `sim`): battle simulator, data and asset checks
+docs/design/       the Design Anchor;  docs/briefs/  build briefs;  docs/sample-logs/  simulator output
 tests/Core.Tests/  xUnit tests for Core
 game/              Godot .NET project: presentation and input only
   assets/manifest.json   every image, its size and its AI-placeholder flag
@@ -97,65 +102,27 @@ check. AI-generated art is for placeholders only and must be flagged; nothing fl
   a simulator battle.
 - Keep this file current: versions, commands, rules.
 
-## Decided rules worth remembering
+## Where the rules live in code
 
-- Power factor = 1 + Power / 100; Multiplier factor = 1 + Multiplier.
-- Speed, Act and AP are integers on a 100 scale; chance stats are 0–1 doubles and Dim values stay below 1.
-- Tenacity's "Control Duration −1" is parked: implement only its Control Deval part.
-- Dim: positive and negative modifiers stack separately (each by the Dim formula) and the negative total is
-  subtracted; the result can go below 0. Modifiers must be strictly between −1 and 1.
-- Compound stats: every recipe row whose tag the action carries counts, adjusters included (Strength gives a
-  Heavy action +0.5× even without Melee). Points are percentages: on a chance stat, 1 point = 0.01.
-  Placeholder: one compound adds at most ±0.95 to a chance stat per action.
-- Heavy and Light are melee-only tags: only melee actions carry them.
-- `all_damage` (Add, factor 1 + value) and `all_resist` (Dim) are untagged stats for the damage formula.
+The rules themselves are in the Anchor; this is the map from rule to code.
 
-- Damage = Base × (1 + Power/100) × (1 + Multiplier) × (1 − Resist × (1 − Penetrate)) × (1 + All Damage) ×
-  (1 − All Resist). Base = the action's base damage + the attacker's Base Dmg stat for its tags. An action's
-  `allDamage` (Power Attack: 1.0 = ×2) adds to the attacker's All Damage. Damage rounds to the nearest whole
-  number, minimum 1 on a successful damaging hit.
-
-- Turn order (TurnClock): sub-ticks of 1/100 turn; Act is kept in hundredths (`ActTicks`, 10 000 = Act 100).
-  Same-tick events: buff tick, then cast completions, then turns. A casting unit keeps gaining Act but takes no
-  turn until its cast completes or is interrupted (choices of Claude's, not in the Anchor).
-
-- Effects (Battle.cs): the action's hit and damage come first, then queued effects in order (proc effects
-  join the same queue), then every buff created, so a buff never boosts the action that made it. Buff source =
-  effect + action + caster. Placeholders: periodic damage/heal is a flat amount per buff-clock turn (×
-  stacks, Shield absorbs, no formula); an instant heal scales with the caster's Power for the action's tags;
-  a cast whose target fell before it completes fizzles.
-- CC (CcKind on a buff): Stun = Speed 0 and interrupts a cast; Root blocks tile-targeted actions; Silence
-  blocks Spell actions; Sleep skips turns until any hit; Fear skips turns (placeholder); Confusion picks a
-  random living target. Slow and stat reduction are negative stats; delayed damage lands when a buff runs
-  out. Stagger bar: Speed halved above 0, stunned at 100 (interrupts a cast, ignores stagger) until it drains
-  to 0; drains 10 per buff-clock turn (placeholder).
-- Grid (BattleGrid): each side's area is 3 cols × 2 rows, row 0 the front; Tall units take a column, Large a
-  2×2 block; dead units leave their tiles; an area collapses forward when its front row empties. Move: 50 AP
-  to an empty neighbouring tile. Sneak (placeholder until Jeremy decides): to any empty tile in the enemy area;
-  a unit standing in the other side's area can melee anyone there and be meleed by anyone there. Push/Pull:
-  one row back/forward if the tiles are free (placeholder).
-- Targeting (UnitAi): w × Threat + (1 − w) × Vulnerability; Threat = damage dealt + healing done (+ the
-  Threat stat), scaled against the highest among the candidates (placeholder); Vulnerability = share of
-  Health missing (+ Vulnerability stat / 100). AI profiles (ai_profiles.json) hold w and ordered action rules;
-  the heroes' profiles are the simulator's scripted AI. A unit with no valid rule steps forward or waits.
-- Crit (Resolution.CritChance/CritRating, Battle.RollCrit): a core stat, not a proc. Crit Rating (Add,
-  tag-keyed, cap 2.0) → per-hit chance c = (√(1 + 4·Rating) − 1)/2; a crit re-rolls at c for Brutal. Each
-  tier adds Crit Mult × (1 − Critical Resist × (1 − Critical Penetrate)), Critical-keyed parts only. The
-  target's Critical Deval lowers the Rating first. Only an action's direct damage crits. defaults.json gives
-  every unit Weapon Crit Rating 0.05 and untagged Crit Mult 0.5.
-- Procs (procs.json, BattleProcs.cs; Anchor › Procs): units own procs; buffs grant them while active. Trigger
-  (+ optional triggerTags filter and ownerHealthBelow); chance = Base × (1 + Rate) × (1 − Deval) over the
-  proc's tags (Deval only when it lands on someone else), capped at 1 with the excess scaling amounts.
-  Building blocks: damage (full formula, proc tags, no crit), heal, shield, lifesteal, hitStats
-  (before_damage phase, this hit only), effect (any buff/CC, through the queue). Duplicates: merge (one roll
-  at 1 − Π(1 − p), amounts Σp·a ÷ merged chance; states from the strongest copy), separate, unique. Proc
-  damage is not an action, and nothing a proc causes fires procs (FireProcs is called only from action and
-  clock events). Resolve order: hit roll → miss/avoided or before-damage procs → crit → damage →
-  hit/crit/brutal procs → struck/damaged procs → action effects → action-complete procs → buffs. The example
-  procs (ported from EternalQuestMobile) aren't on any starter unit yet.
-- Balance target for the starter encounters: 70–90% party wins in `sim batch` (currently ~86/78/76%). Tests
-  read Health and damage from the data, not hard-coded numbers, wherever tuning could change them.
+- **Stats** (`Core/Stats`): `StatBlock` keeps modifiers per source and recomputes totals (`Combine.Total`);
+  `Get(stat, tags)` = untagged + matching tag modifiers + compound contributions; `GetKeyed` leaves out the
+  untagged part (Critical Resist etc.). Act is kept in hundredths (`Unit.ActTicks`, 10 000 = Act 100).
+- **Formulas** (`Combat/Resolution.cs`): success, damage (`DamageBreakdown`, every factor kept for full
+  logs), proc damage, crit chance and rating.
+- **Turn order** (`Combat/TurnClock.cs`): jumps straight to the next event (turn, cast completion, buff tick).
+- **Battle** (`Combat/Battle.cs` + `BattleProcs.cs`): applies decisions and returns `ActionResult`s. Resolve
+  order: hit roll → miss/avoided or before-damage procs → crit → damage → hit/crit/brutal procs →
+  struck/damaged procs → action effects → action-complete procs → buffs. Effects queue in order and buffs
+  apply last. `FireProcs` is called only from action and clock events, so nothing a proc causes fires procs.
+- **Grid** (`BattleGrid.cs`), **AI** (`UnitAi.cs`, profiles in ai_profiles.json; the heroes' profiles are the
+  simulator's scripted AI), **runner** (`BattleRunner.cs`), **logs** (`CombatLog.cs`), **batch**
+  (`BatchSummary.cs`), **encounters** (`EncounterSetup.cs`).
 - `Core.Combat` is the battle namespace (a `Battle` namespace would clash with the `Battle` class).
+- **Balance:** the starter encounters target 70–90% party wins in `sim batch` (currently ~86/78/76%). Tests
+  read Health and damage from the data, not hard-coded numbers, wherever tuning could change them. The example
+  procs (ported from EternalQuestMobile) aren't on any starter unit yet.
 
 ## To monitor
 
@@ -167,5 +134,5 @@ check. AI-generated art is for placeholders only and must be flagged; nothing fl
 
 ## Open (don't build without Jeremy)
 
-Economy; crafted items' minimum dungeon; weight-penalty and room-count placeholders; Hard Mode, global skill
-tree, class leveling, one town per dungeon, cosmetic DLC.
+See [open-questions.md](docs/design/open-questions.md) and the Ideas still open in
+[meta.md](docs/design/meta.md).
