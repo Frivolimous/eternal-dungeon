@@ -25,12 +25,22 @@ public sealed class Unit
     public int Health { get; private set; }
     public int Mana { get; private set; }
     public int Shield { get; private set; }
-    public int Act { get; set; }
+
+    /// <summary>The action meter in hundredths: 10 000 = Act 100, a turn. Kept in hundredths so units of any
+    /// Speed interleave exactly (each sub-tick, 1/100 of a turn, adds Speed).</summary>
+    public long ActTicks { get; set; }
+
+    /// <summary>The spell being cast, if any (Anchor: Combat › Turn order).</summary>
+    public Cast? Casting { get; set; }
 
     public string Name => Def.Name;
     public bool Alive => Health > 0;
+    public double Act => ActTicks / 100.0;
     public int MaxHealth => (int)Math.Round(Stats.Get("health"));
     public int MaxMana => (int)Math.Round(Stats.Get("mana"));
+
+    /// <summary>Speed as the turn clock uses it: whole, never below 0.</summary>
+    public int Speed => Math.Max(0, (int)Stats.Get("speed"));
 
     /// <param name="id">Unique in the battle, such as <c>goblin_grunt#2</c>.</param>
     public Unit(string id, UnitDef def, Side side, GameData data)
@@ -46,7 +56,7 @@ public sealed class Unit
 
         Health = MaxHealth;
         Mana = MaxMana;
-        Act = (int)Stats.Get("initiative");
+        ActTicks = (long)Stats.Get("initiative") * TurnClock.TicksPerTurn;
     }
 
     /// <summary>Applies damage: Shield first, then Health, which stops at 0.</summary>

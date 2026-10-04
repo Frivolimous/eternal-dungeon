@@ -110,6 +110,10 @@ check. AI-generated art is for placeholders only and must be flagged; nothing fl
   `allDamage` (Power Attack: 1.0 = ×2) adds to the attacker's All Damage. Damage rounds to the nearest whole
   number, minimum 1 on a successful damaging hit.
 
+- Turn order (TurnClock): sub-ticks of 1/100 turn; Act is kept in hundredths (`ActTicks`, 10 000 = Act 100).
+  Same-tick events: buff tick, then cast completions, then turns. A casting unit keeps gaining Act but takes no
+  turn until its cast completes or is interrupted (choices of Claude's, not in the Anchor).
+
 ## To do at the end of M1 (Jeremy asked)
 
 - **Procs, crit included.** Crit is not a separate roll: it will be one of several procs (damage, buffs,
