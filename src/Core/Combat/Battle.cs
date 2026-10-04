@@ -64,7 +64,7 @@ public sealed partial class Battle
     {
         var r = new ActionResult(Clock.Tick, unit, null, null);
         TurnClock.Spend(unit, 100);
-        r.Add(new TurnLost(unit, unit.Has(CcKind.Sleep) ? "asleep" : "afraid"));
+        r.Add(new TurnLost(unit, "asleep"));
         return Record(r);
     }
 
@@ -135,6 +135,7 @@ public sealed partial class Battle
         target = aimed;
         actor.SpendMana(action.ManaCost);
         TurnClock.Spend(actor, action.ApCost);
+        actor.LastActionId = action.Id;
 
         if (action.CastTime > 0)
         {
@@ -156,11 +157,14 @@ public sealed partial class Battle
         if (actor.CantUse(action) is string why)
             throw new InvalidOperationException($"{actor.Name} can't use {action.Name}: {why}");
         var options = action.MoveTo == MoveTo.Enemy ? Grid.SneakOptions(actor) : Grid.MoveOptions(actor);
+        if (actor.Afraid)
+            options = Grid.RetreatOptions(actor);
         if (!options.Contains(tile))
             throw new InvalidOperationException($"{actor.Name} can't {action.Name} to {tile}");
 
         actor.SpendMana(action.ManaCost);
         TurnClock.Spend(actor, action.ApCost);
+        actor.LastActionId = action.Id;
         var r = new ActionResult(Clock.Tick, actor, action, null);
         var from = Grid.AnchorOf(actor)!.Value;
         Grid.MoveTo(actor, tile);

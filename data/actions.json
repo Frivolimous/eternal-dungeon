@@ -28,11 +28,19 @@
     "target": "enemy", "range": "any", "apCost": 100, "manaCost": 8, "baseDamage": 12,
     "effects": [{ "effect": "chill" }] },
 
+  { "id": "shield_bash", "name": "Shield Bash", "tags": ["weapon", "physical", "melee", "force", "control"],
+    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 6,
+    "effects": [{ "effect": "daze" }, { "effect": "push" }] },
+
+  { "id": "hex_bolt", "name": "Hex Bolt", "tags": ["spirit", "spell", "ranged", "dark", "curse"],
+    "target": "enemy", "range": "any", "apCost": 100, "baseDamage": 10, "castTime": 60,
+    "effects": [{ "effect": "dread" }] },
+
   { "id": "goblin_slash", "name": "Slash", "tags": ["weapon", "physical", "melee"],
-    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 18 },
+    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 15 },
 
   { "id": "goblin_shot", "name": "Shot", "tags": ["weapon", "physical", "ranged", "projectile"],
-    "target": "enemy", "range": "any", "apCost": 100, "baseDamage": 16 },
+    "target": "enemy", "range": "any", "apCost": 100, "baseDamage": 13 },
 
   { "id": "rotting_hex", "name": "Rotting Hex", "tags": ["spirit", "spell", "ranged", "toxic", "curse"],
     "target": "enemy", "range": "any", "apCost": 100, "manaCost": 8, "baseDamage": 8,
@@ -43,11 +51,11 @@
     "effects": [{ "effect": "mend" }] },
 
   { "id": "brute_smash", "name": "Smash", "tags": ["weapon", "physical", "melee", "heavy", "force"],
-    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 20,
+    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 17,
     "effects": [{ "effect": "smash_stagger" }] },
 
   { "id": "chief_cleave", "name": "Cleave", "tags": ["weapon", "physical", "melee", "heavy"],
-    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 26 },
+    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 20 },
 
   { "id": "war_cry", "name": "War Cry", "tags": ["buff"],
     "target": "self", "apCost": 100,

@@ -17,12 +17,24 @@
   { "id": "goblin_chief", "name": "Chief", "threatWeight": 0.6,
     "rules": [ { "action": "war_cry", "missingBuff": "war_cry" }, { "action": "chief_cleave" } ] },
 
+  { "id": "goblin_hexer", "name": "Hexer", "threatWeight": 0.5,
+    "rules": [ { "action": "hex_bolt" } ] },
+
   { "id": "hero_warrior", "name": "Warrior (scripted)", "threatWeight": 0.25,
-    "rules": [ { "action": "power_attack" }, { "action": "attack" } ] },
+    "rules": [
+      { "action": "shield_bash", "targetCasting": true },
+      { "action": "defend", "selfHealthBelow": 0.3, "notTwiceInARow": true },
+      { "action": "power_attack", "notTwiceInARow": true },
+      { "action": "attack" } ] },
 
   { "id": "hero_rogue", "name": "Rogue (scripted)", "threatWeight": 0.25,
-    "rules": [ { "action": "dagger_attack" }, { "action": "sneak", "notIntruding": true } ] },
+    "rules": [
+      { "action": "defend", "selfHealthBelow": 0.25, "notTwiceInARow": true },
+      { "action": "dagger_attack" },
+      { "action": "sneak", "notIntruding": true } ] },
 
   { "id": "hero_elementalist", "name": "Elementalist (scripted)", "threatWeight": 0.25,
-    "rules": [ { "action": "fire_bolt" }, { "action": "frost_shard" }, { "action": "defend" } ] }
+    "rules": [
+      { "action": "frost_shard", "targetMissingBuff": "chill", "notTwiceInARow": true },
+      { "action": "fire_bolt" } ] }
 ]

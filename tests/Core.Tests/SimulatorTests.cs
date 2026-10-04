@@ -26,12 +26,41 @@ public class SimulatorTests
     }
 
     [Fact]
-    public void Every_starter_encounter_runs_to_a_finish()
+    public void Every_encounter_runs_to_a_finish()
     {
-        Assert.Equal(["goblin_patrol", "brute_squad", "chief_hall"], TestData.Repo.EncounterList.Select(e => e.Id));
+        Assert.Equal(["goblin_patrol", "brute_squad", "chief_hall", "systems_showcase"], TestData.Repo.EncounterList.Select(e => e.Id));
         foreach (var encounter in TestData.Repo.Encounters.Keys)
             for (ulong seed = 1; seed <= 25; seed++)
                 Assert.NotNull(Play(encounter, seed).Winner);
+    }
+
+    /// <summary>
+    /// The Systems Showcase exists so every M1 system shows up in a typical seed. Each must fire in at least half
+    /// of 20 seeds (they currently fire in 15–20).
+    /// </summary>
+    [Fact]
+    public void The_showcase_exercises_every_system()
+    {
+        var checks = new Dictionary<string, Func<Outcome, bool>>
+        {
+            ["Slow"] = o => o is BuffApplied { Buff.Def.Id: "chill" },
+            ["Sneak"] = o => o is Moved { Why: "Sneak" },
+            ["Move"] = o => o is Moved { Why: "Move" },
+            ["Defend"] = o => o is BuffApplied { Buff.Def.Id: "guard" },
+            ["Stagger break"] = o => o is Staggered { Broke: true },
+            ["Cast interrupt"] = o => o is Interrupted,
+            ["Proc"] = o => o is ProcRolled { Roll.Success: true },
+            ["Fear"] = o => o is BuffApplied { Buff.Def.Cc: CcKind.Fear },
+            ["Push"] = o => o is Moved { Why: "Push" },
+        };
+        var seen = checks.Keys.ToDictionary(k => k, _ => 0);
+        for (ulong seed = 1; seed <= 20; seed++)
+        {
+            var outcomes = Play("systems_showcase", seed).Results.SelectMany(r => r.Outcomes).ToList();
+            foreach (var (name, check) in checks)
+                if (outcomes.Any(check)) seen[name]++;
+        }
+        Assert.All(seen, kv => Assert.True(kv.Value >= 10, $"{kv.Key} fired in only {kv.Value} of 20 seeds"));
     }
 
     [Fact]

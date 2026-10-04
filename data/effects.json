@@ -18,9 +18,13 @@
   { "id": "chill", "name": "Chill", "duration": 2,
     "stats": [ { "stat": "speed", "value": -30 } ] },
 
-  { "id": "smash_stagger", "name": "Stagger", "stagger": 35 },
+  { "id": "smash_stagger", "name": "Stagger", "stagger": 60 },
 
   { "id": "daze", "name": "Dazed", "duration": 1, "cc": "stun" },
+
+  { "id": "dread", "name": "Dread", "duration": 2, "cc": "fear" },
+
+  { "id": "push", "name": "Push", "displace": "push" },
 
   { "id": "berserk", "name": "Berserk", "duration": 3,
     "stats": [ { "stat": "power", "value": 25 } ] }

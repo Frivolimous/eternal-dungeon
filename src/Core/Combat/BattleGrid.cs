@@ -124,6 +124,10 @@ public sealed class BattleGrid(int cols = 3, int rows = 2)
         return next.Where(t => Inside(t) && At(t) is null);
     }
 
+    /// <summary>Where a feared unit may Move: an empty neighbouring tile one row further from the front.</summary>
+    public IEnumerable<Tile> RetreatOptions(Unit unit) =>
+        AnchorOf(unit) is { } at ? MoveOptions(unit).Where(t => t.Row > at.Row) : [];
+
     /// <summary>Where <paramref name="unit"/> could Sneak to: any empty tile in the other side's area.</summary>
     public IEnumerable<Tile> SneakOptions(Unit unit)
     {

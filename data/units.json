@@ -4,19 +4,19 @@
   { "id": "warrior", "name": "Warrior", "size": 1,
     "stats": { "health": 140, "speed": 100, "initiative": 30, "hit": 0.95, "avoid": 0.05 },
     "compounds": { "strength": 15, "parry": 10 },
-    "actions": ["attack", "power_attack", "defend", "move"],
+    "actions": ["power_attack", "shield_bash"],
     "ai": "hero_warrior" },
 
   { "id": "rogue", "name": "Rogue", "size": 1,
     "stats": { "health": 100, "speed": 120, "initiative": 50, "hit": 0.95, "avoid": 0.05 },
     "compounds": { "strength": 5, "dexterity": 15, "dodge": 15 },
-    "actions": ["dagger_attack", "sneak", "defend", "move"],
+    "actions": ["dagger_attack", "sneak"],
     "ai": "hero_rogue" },
 
   { "id": "elementalist", "name": "Elementalist", "size": 1,
     "stats": { "health": 80, "mana": 60, "m_regen": 5, "speed": 100, "initiative": 20, "hit": 0.95, "avoid": 0.05 },
     "compounds": { "magic": 15, "elemental": 10, "turn": 10 },
-    "actions": ["fire_bolt", "frost_shard", "defend", "move"],
+    "actions": ["fire_bolt", "frost_shard"],
     "ai": "hero_elementalist" },
 
   { "id": "goblin_grunt", "name": "Goblin Grunt", "size": 1,
@@ -44,8 +44,15 @@
     "actions": ["brute_smash"],
     "ai": "goblin_brute" },
 
+  { "id": "goblin_hexer", "name": "Goblin Hexer", "size": 1,
+    "stats": { "health": 160, "speed": 90, "initiative": 60, "hit": 0.9, "avoid": 0.05 },
+    "compounds": { "magic": 10 },
+    "actions": ["hex_bolt"],
+    "ai": "goblin_hexer",
+    "procs": ["flaming"] },
+
   { "id": "goblin_chief", "name": "Goblin Chief", "size": 2,
-    "stats": { "health": 420, "speed": 85, "initiative": 15, "hit": 0.9, "avoid": 0.05 },
+    "stats": { "health": 370, "speed": 85, "initiative": 15, "hit": 0.9, "avoid": 0.05 },
     "compounds": { "strength": 20, "fortification": 10 },
     "actions": ["chief_cleave", "war_cry"],
     "ai": "goblin_chief" }

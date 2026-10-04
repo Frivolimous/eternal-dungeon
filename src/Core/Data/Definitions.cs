@@ -77,7 +77,19 @@ public sealed record AiRule(
     double? AllyHealthBelow = null,
     double? SelfHealthBelow = null,
     string? MissingBuff = null,
-    bool NotIntruding = false);
+    bool NotIntruding = false,
+    bool NotTwiceInARow = false,
+    string? TargetMissingBuff = null,
+    bool TargetCasting = false);
+
+/// <summary>
+/// The actions every unit has on top of its own (defaults.json): a basic weapon Attack, Defend and Move. Fear
+/// allows only Defend and Move (away from the front).
+/// </summary>
+public sealed record DefaultActions(string Attack, string Defend, string Move)
+{
+    public IEnumerable<string> All => [Attack, Defend, Move];
+}
 
 /// <summary>
 /// How a unit picks actions and targets (Anchor: Combat › Enemy targeting). Targets score

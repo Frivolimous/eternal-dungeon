@@ -11,8 +11,16 @@ public sealed class GameData(
     IReadOnlyList<AiProfileDef>? aiProfileList = null,
     IReadOnlyList<EncounterDef>? encounterList = null,
     IReadOnlyList<StatValue>? unitDefaults = null,
-    IReadOnlyList<ProcDef>? procList = null)
+    IReadOnlyList<ProcDef>? procList = null,
+    DefaultActions? defaultActions = null)
 {
+    /// <summary>The actions every unit has on top of its own, or null when the data defines none.</summary>
+    public DefaultActions? DefaultActions { get; } = defaultActions;
+
+    /// <summary>Everything <paramref name="unit"/> can do: its own actions, then the default ones it doesn't already list.</summary>
+    public IEnumerable<string> ActionsOf(UnitDef unit) =>
+        unit.Actions.Concat(DefaultActions?.All ?? []).Distinct();
+
     public IReadOnlyList<ProcDef> ProcList { get; } = procList ?? [];
     public IReadOnlyDictionary<string, ProcDef> Procs { get; } = (procList ?? []).ToDictionary(p => p.Id);
 

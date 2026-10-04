@@ -52,9 +52,23 @@ Every character starts with Weapon Crit Rating 5% and untagged Crit Mult 0.5, so
 - Push and Pull move a unit one row back or forward within its area, only if the tiles are free.
 - Enemy size is its footprint: size 1 takes 1 tile (a person), size 1.5 takes 2 tiles in a column, front and back (a troll), and size 2 takes a 2×2 block of 4 tiles (a Balrog).
 
+## Default actions
+
+Every unit, heroes and enemies, has three default actions on top of its own skills (defaults.json, so they can be tuned without code changes). AP costs are placeholders for tuning.
+
+| Action | AP | Effect |
+| --- | --- | --- |
+| Attack | 100 | Basic weapon attack |
+| Defend | 100 | +0.3 Avoid and a Shield of 10% max Health until the unit's next turn |
+| Move | 50 | One tile within the unit's own area |
+
+A unit with no valid target for its skills uses these: it Moves to step into an empty front tile if it can, otherwise it Defends. This keeps "enemies generally stay put" true while stopping melee enemies from waiting behind their own front line.
+
 ## Crowd control
 
 CC can target a character or a tile: Slow, Stun, Stagger, Pull/Push/Move, Root, damage over time, delayed damage, stat reduction, action override (Confusion, Fear, Sleep), action restriction (Root, Silence) and conditional effects.
+
+Fear: a feared unit can only Defend, or Move one tile away from the front. It can't attack or use skills. Unlike Stun (and Sleep), Fear doesn't skip the turn.
 
 Damage over time scales with the caster: when it's applied, the caster's Power and Multiplier factors for the tags of the action (or proc) that applied it are locked in, and every tick uses them. Shield still absorbs ticks.
 

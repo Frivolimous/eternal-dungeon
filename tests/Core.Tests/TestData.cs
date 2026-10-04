@@ -16,7 +16,8 @@ static class TestData
             Repo.AiProfileList,
             Repo.EncounterList,
             Repo.UnitDefaults,
-            [.. Repo.ProcList, .. procs ?? []]);
+            [.. Repo.ProcList, .. procs ?? []],
+            Repo.DefaultActions);
 
     public static EffectDef Buff(string id, int turns = 3, bool stacking = false, int maxStacks = int.MaxValue,
         StatValue[]? stats = null, int periodicDamage = 0, string[]? procs = null) =>

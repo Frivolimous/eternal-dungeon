@@ -1,5 +1,7 @@
-// Stats every unit starts with, before its own (source "default").
+// What every unit starts with. unitStats: stats before its own (source "default"). defaultActions: the actions
+// every unit has on top of its own (AP costs are placeholders for tuning; Fear allows only Defend and Move).
 {
+  "defaultActions": { "attack": "attack", "defend": "defend", "move": "move" },
   "unitStats": [
     { "stat": "crit_rating", "tag": "weapon", "value": 0.05 },
     { "stat": "crit_mult", "value": 0.5 }

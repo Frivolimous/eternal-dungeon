@@ -120,7 +120,9 @@ The rules themselves are in the Anchor; this is the map from rule to code.
   simulator's scripted AI), **runner** (`BattleRunner.cs`), **logs** (`CombatLog.cs`), **batch**
   (`BatchSummary.cs`), **encounters** (`EncounterSetup.cs`).
 - `Core.Combat` is the battle namespace (a `Battle` namespace would clash with the `Battle` class).
-- **Balance:** the starter encounters target 70–90% party wins in `sim batch` (currently ~86/78/76%). Tests
+- **Balance:** the starter encounters target 70–90% party wins in `sim batch` (currently ~74/74/81%). The fourth
+  encounter, `systems_showcase`, has no win target: it exists so every M1 system fires in a typical seed (a test
+  checks it). Tests
   read Health and damage from the data, not hard-coded numbers, wherever tuning could change them. The example
   procs (ported from EternalQuestMobile) aren't on any starter unit yet.
 

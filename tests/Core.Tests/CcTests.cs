@@ -121,18 +121,20 @@ public class CcTests
     public void Stagger_halves_speed_while_the_bar_is_above_zero()
     {
         var data = Repo;
+        var smash = data.Effects["smash_stagger"].Stagger;                // read from data: tuning changes it
+        Assert.InRange(smash, 11, 99);
         var brute = U(data, "goblin_brute", "brute", Side.Enemy);
         var w = Exposed(U(data, "warrior", "w", Side.Party));
         var b = new Battle(data, [w, brute], seed: 1);
 
         var r = Apply(b, brute, w, "brute_smash");
-        Assert.Equal(new Staggered(w, 35, 35, false), r.Of<Staggered>().Single());
+        Assert.Equal(new Staggered(w, smash, smash, false), r.Of<Staggered>().Single());
         Assert.Equal(50, w.Speed);
 
-        for (var i = 0; i < 3; i++) b.BuffTick();                        // 35 → 25 → 15 → 5
-        Assert.Equal(5, w.Stagger);
-        Assert.Equal(50, w.Speed);
         b.BuffTick();
+        Assert.Equal(smash - Battle.StaggerDrain, w.Stagger);             // drains each buff-clock turn
+        Assert.Equal(50, w.Speed);
+        for (var i = 0; i < 10; i++) b.BuffTick();
         Assert.Equal(0, w.Stagger);
         Assert.Equal(100, w.Speed);
     }
@@ -142,26 +144,26 @@ public class CcTests
     {
         var data = Repo;
         var brute = U(data, "goblin_brute", "brute", Side.Enemy);
-        var mage = Exposed(U(data, "warrior", "tank", Side.Party));   // any unit can cast; 140 Health survives four Smashes
-        var b = new Battle(data, [mage, brute], seed: 1);
-        b.Clock.BeginCast(mage, "fire_bolt", null, 50);
+        var tank = Exposed(U(data, "warrior", "tank", Side.Party));      // any unit can cast; 140 Health survives the Smashes
+        var b = new Battle(data, [tank, brute], seed: 1);
+        b.Clock.BeginCast(tank, "fire_bolt", null, 50);
 
-        Apply(b, brute, mage, "brute_smash");
-        Apply(b, brute, mage, "brute_smash");
-        var third = Apply(b, brute, mage, "brute_smash");                // 35 + 35 + 35 fills it
-        Assert.True(third.Of<Staggered>().Single().Broke);
-        Assert.Single(third.Of<Interrupted>());
-        Assert.True(mage.StaggerBroken);
-        Assert.Equal(0, mage.Speed);
+        ActionResult last;
+        do last = Apply(b, brute, tank, "brute_smash");                  // Smash until the bar fills
+        while (!last.Of<Staggered>().Single().Broke);
+        Assert.Single(last.Of<Interrupted>());
+        Assert.True(tank.StaggerBroken);
+        Assert.Equal(Unit.StaggerMax, tank.Stagger);
+        Assert.Equal(0, tank.Speed);
 
-        Apply(b, brute, mage, "brute_smash");                            // white bar: no more stagger
-        Assert.Equal(100, mage.Stagger);
+        Apply(b, brute, tank, "brute_smash");                             // white bar: no more stagger
+        Assert.Equal(Unit.StaggerMax, tank.Stagger);
 
         for (var i = 0; i < 9; i++) b.BuffTick();
-        Assert.Equal(10, mage.Stagger);
-        Assert.Equal(0, mage.Speed);                                     // still stunned until empty
+        Assert.Equal(10, tank.Stagger);
+        Assert.Equal(0, tank.Speed);                                      // still stunned until empty
         b.BuffTick();
-        Assert.False(mage.StaggerBroken);
-        Assert.Equal(100, mage.Speed);
+        Assert.False(tank.StaggerBroken);
+        Assert.Equal(100, tank.Speed);
     }
 }

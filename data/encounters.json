@@ -30,5 +30,15 @@
     "enemies": [
       { "unit": "goblin_chief", "row": 0, "col": 0 },
       { "unit": "goblin_grunt", "row": 0, "col": 2 },
-      { "unit": "goblin_grunt", "row": 1, "col": 2 } ] }
+      { "unit": "goblin_grunt", "row": 1, "col": 2 } ] },
+
+  { "id": "systems_showcase", "name": "Systems Showcase",
+    "party": [
+      { "unit": "rogue", "row": 1, "col": 0 },
+      { "unit": "warrior", "row": 0, "col": 1 },
+      { "unit": "elementalist", "row": 1, "col": 2 } ],
+    "enemies": [
+      { "unit": "goblin_brute", "row": 0, "col": 0 },
+      { "unit": "goblin_grunt", "row": 0, "col": 1 },
+      { "unit": "goblin_hexer", "row": 0, "col": 2 } ] }
 ]

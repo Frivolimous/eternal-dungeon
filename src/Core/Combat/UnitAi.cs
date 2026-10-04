@@ -9,12 +9,16 @@ public sealed record Decision(ActionDef Action, Unit? Target, Tile? Tile);
 /// Picks actions and targets from a unit's AI profile (Anchor: Combat › Enemy targeting). Rules are tried in
 /// order; the first whose action is usable, whose conditions hold and that has a valid target wins. Enemy
 /// targets score w × Threat + (1 − w) × Vulnerability. Heroes use the same rules in the simulator, since there
-/// is no player input yet.
+/// is no player input yet. With no rule usable, a unit uses its default actions: it Moves toward the front if it
+/// can, otherwise it Defends. A feared unit only Moves away from the front, or Defends.
 /// </summary>
 public static class UnitAi
 {
     public static Decision? Decide(Battle battle, Unit unit)
     {
+        if (unit.Afraid)
+            return Default(battle, unit, d => d.Move, battle.Grid.RetreatOptions(unit)) ?? Default(battle, unit, d => d.Defend);
+
         var profile = battle.Data.AiProfiles[unit.Def.Ai];
         foreach (var rule in profile.Rules)
         {
@@ -23,11 +27,13 @@ public static class UnitAi
             if (rule.SelfHealthBelow is double self && unit.Health >= self * unit.MaxHealth) continue;
             if (rule.MissingBuff is string buff && unit.Buffs.Any(b => b.Def.Id == buff)) continue;
             if (rule.NotIntruding && battle.Grid.Intruding(unit)) continue;
+            if (rule.NotTwiceInARow && unit.LastActionId == rule.Action) continue;
 
             if (Choose(battle, unit, action, rule, profile.ThreatWeight) is { } decision)
                 return decision;
         }
-        return StepForward(battle, unit);
+        var forward = battle.Grid.AnchorOf(unit) is { } at ? battle.Grid.MoveOptions(unit).Where(t => t.Row < at.Row) : [];
+        return Default(battle, unit, d => d.Move, forward) ?? Default(battle, unit, d => d.Defend);
     }
 
     static Decision? Choose(Battle battle, Unit unit, ActionDef action, AiRule rule, double w)
@@ -49,7 +55,10 @@ public static class UnitAi
                 return allies.Count > 0 ? new Decision(action, allies[0], null) : null;
 
             default:
-                var enemies = ValidTargets(battle, unit, action);
+                var enemies = ValidTargets(battle, unit, action)
+                    .Where(e => rule.TargetMissingBuff is not string missing || e.Buffs.All(b => b.Def.Id != missing))
+                    .Where(e => !rule.TargetCasting || e.Casting is not null)
+                    .ToList();
                 if (enemies.Count == 0) return null;
                 // Confusion (placeholder): any valid target, at random.
                 var pick = unit.Has(CcKind.Confusion)
@@ -80,13 +89,15 @@ public static class UnitAi
         return tied.Count == 1 ? tied[0] : tied[rng.NextInt(tied.Count)];
     }
 
-    /// <summary>Nothing to do from here: a unit that can Move steps toward the front row.</summary>
-    static Decision? StepForward(Battle battle, Unit unit)
+    /// <summary>One of the default actions (defaults.json), if the unit can use it: a Move to the first of
+    /// <paramref name="tiles"/>, or Defend.</summary>
+    static Decision? Default(Battle battle, Unit unit, Func<DefaultActions, string> role, IEnumerable<Tile>? tiles = null)
     {
-        var move = unit.Def.Actions.Select(id => battle.Data.Actions[id])
-            .FirstOrDefault(a => a.MoveTo == MoveTo.Own && unit.CantUse(a) is null);
-        if (move is null || battle.Grid.AnchorOf(unit) is not { } at) return null;
-        var forward = battle.Grid.MoveOptions(unit).Where(t => t.Row < at.Row).ToList();
-        return forward.Count > 0 ? new Decision(move, null, forward[0]) : null;
+        if (battle.Data.DefaultActions is not { } defaults) return null;
+        var action = battle.Data.Actions[role(defaults)];
+        if (unit.CantUse(action) is not null) return null;
+        if (action.Target != ActionTarget.Tile) return new Decision(action, unit, null);
+        var tile = (tiles ?? []).Cast<Tile?>().FirstOrDefault();
+        return tile is { } to ? new Decision(action, null, to) : null;
     }
 }

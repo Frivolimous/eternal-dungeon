@@ -51,17 +51,41 @@ public static class DataLoader
         var actionsById = actions.ToDictionary(a => a.Id);
         var ais = ReadList(source, AiProfilesFile, f => ReadAiProfile(f, actionsById, effectIds));
         var aiIds = ais.Select(a => a.Id).ToHashSet();
-        var units = ReadList(source, UnitsFile, f => ReadUnit(f, tags, stats, compoundIds, actionIds, aiIds, procIds));
-        foreach (var unit in units)
-            if (ais.First(a => a.Id == unit.Ai).Rules.FirstOrDefault(r => !unit.Actions.Contains(r.Action)) is { } missing)
-                throw new DataException(UnitsFile, unit.Id, $"its AI \"{unit.Ai}\" uses \"{missing.Action}\", which isn't in its actions");
-        var unitsById = units.ToDictionary(u => u.Id);
-        var encounters = ReadList(source, EncountersFile, f => ReadEncounter(f, unitsById));
         var defaultsText = source.Read(DefaultsFile) ?? throw new DataException(DefaultsFile, "", "file is missing");
         var defaults = JsonField.Parse(DefaultsFile, defaultsText);
-        defaults.OnlyFields("unitStats");
+        defaults.OnlyFields("unitStats", "defaultActions");
         var unitDefaults = defaults["unitStats"].Items().Select(s => ReadStatEntry(s, tags, stats, tagRequired: false)).ToList();
-        return new GameData([.. tags.Values], [.. stats.Values], compounds, units, actions, effects, ais, encounters, unitDefaults, procs);
+        var defaultActions = defaults.Optional("defaultActions") is { } da ? ReadDefaultActions(da, actionsById) : null;
+
+        var units = ReadList(source, UnitsFile, f => ReadUnit(f, tags, stats, compoundIds, actionIds, aiIds, procIds));
+        foreach (var unit in units)
+        {
+            var has = unit.Actions.Concat(defaultActions?.All ?? []).ToHashSet();
+            if (ais.First(a => a.Id == unit.Ai).Rules.FirstOrDefault(r => !has.Contains(r.Action)) is { } missing)
+                throw new DataException(UnitsFile, unit.Id, $"its AI \"{unit.Ai}\" uses \"{missing.Action}\", which isn't in its actions or the default actions");
+        }
+        var unitsById = units.ToDictionary(u => u.Id);
+        var encounters = ReadList(source, EncountersFile, f => ReadEncounter(f, unitsById));
+        return new GameData([.. tags.Values], [.. stats.Values], compounds, units, actions, effects, ais, encounters, unitDefaults, procs,
+            defaultActions);
+    }
+
+    /// <summary>defaults.json's <c>defaultActions</c>: which actions are the basic Attack, Defend and Move.</summary>
+    static DefaultActions ReadDefaultActions(JsonField f, Dictionary<string, ActionDef> actions)
+    {
+        f.OnlyFields("attack", "defend", "move");
+        ActionDef Get(string role, Func<ActionDef, bool> fits, string what)
+        {
+            var id = f[role].Id();
+            if (!actions.TryGetValue(id, out var def))
+                throw f[role].Error($"unknown action \"{id}\" (not in {ActionsFile})");
+            if (!fits(def)) throw f[role].Error($"the {role} action must be {what}");
+            return def;
+        }
+        return new DefaultActions(
+            Get("attack", a => a.Target == ActionTarget.Enemy && a.DealsDamage, "an enemy-targeted action that deals damage").Id,
+            Get("defend", a => a.Target == ActionTarget.Self, "self-targeted").Id,
+            Get("move", a => a.MoveTo == MoveTo.Own, "a move within the unit's own area").Id);
     }
 
     static EffectDef ReadEffect(JsonField f, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats,
@@ -327,7 +351,8 @@ public static class DataLoader
         var rules = new List<AiRule>();
         foreach (var r in f["rules"].Items())
         {
-            r.OnlyFields("action", "allyHealthBelow", "selfHealthBelow", "missingBuff", "notIntruding");
+            r.OnlyFields("action", "allyHealthBelow", "selfHealthBelow", "missingBuff", "notIntruding", "notTwiceInARow",
+                "targetMissingBuff", "targetCasting");
             var action = r["action"].Id();
             if (!actions.TryGetValue(action, out var def))
                 throw r["action"].Error($"unknown action \"{action}\" (not in {ActionsFile})");
@@ -336,8 +361,15 @@ public static class DataLoader
                 throw r["missingBuff"].Error($"unknown effect \"{buff}\" (not in {EffectsFile})");
             if (r.Optional("allyHealthBelow") is { } ally && def.Target != ActionTarget.Ally)
                 throw ally.Error("only ally-targeted actions can pick an ally by Health");
+            var targetBuff = r.Optional("targetMissingBuff")?.Id();
+            if (targetBuff is not null && !effects.Contains(targetBuff))
+                throw r["targetMissingBuff"].Error($"unknown effect \"{targetBuff}\" (not in {EffectsFile})");
+            var casting = r.Optional("targetCasting")?.Bool() ?? false;
+            if ((targetBuff is not null || casting) && def.Target != ActionTarget.Enemy)
+                throw r.Error("target conditions need an enemy-targeted action");
             rules.Add(new AiRule(action, r.Optional("allyHealthBelow")?.Number(), r.Optional("selfHealthBelow")?.Number(),
-                buff, r.Optional("notIntruding")?.Bool() ?? false));
+                buff, r.Optional("notIntruding")?.Bool() ?? false, r.Optional("notTwiceInARow")?.Bool() ?? false,
+                targetBuff, casting));
         }
         if (rules.Count == 0) throw f["rules"].Error("needs at least one rule");
         return new AiProfileDef(f["id"].Id(), f["name"].String(), w, rules);
@@ -383,8 +415,6 @@ public static class DataLoader
                 throw a.Error($"unknown action \"{id}\" (not in {ActionsFile})");
             actionList.Add(id);
         }
-        if (actionList.Count == 0)
-            throw f["actions"].Error("a unit needs at least one action");
 
         var ai = f["ai"].Id();
         if (!ais.Contains(ai))

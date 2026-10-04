@@ -101,7 +101,13 @@ public sealed class Unit
     public bool Stunned => StaggerBroken || Has(CcKind.Stun);
 
     /// <summary>Sleep and Fear take the whole turn away.</summary>
-    public bool LosesTurn => Has(CcKind.Sleep) || Has(CcKind.Fear);
+    /// <summary>Sleep takes the whole turn away. (Fear doesn't: it only limits the unit to Defend or Move back.)</summary>
+    public bool LosesTurn => Has(CcKind.Sleep);
+
+    public bool Afraid => Has(CcKind.Fear);
+
+    /// <summary>The last action this unit used, for "not twice in a row" AI rules.</summary>
+    public string? LastActionId { get; set; }
 
     /// <summary>Why the unit can't use <paramref name="action"/> right now, or null if it can.</summary>
     public string? CantUse(ActionDef action)
@@ -109,12 +115,17 @@ public sealed class Unit
         if (action.ManaCost > Mana) return "not enough Mana";
         if (action.Target == ActionTarget.Tile && Has(CcKind.Root)) return "rooted";
         if (action.Tags.Contains("spell") && Has(CcKind.Silence)) return "silenced";
+        if (Afraid && action.Id != data.DefaultActions?.Defend && action.Id != data.DefaultActions?.Move)
+            return "afraid: can only Defend or Move away from the front";
         return null;
     }
 
     /// <param name="id">Unique in the battle, such as <c>goblin_grunt#2</c>.</param>
+    readonly GameData data;
+
     public Unit(string id, UnitDef def, Side side, GameData data)
     {
+        this.data = data;
         Id = id;
         Def = def;
         Name = def.Name;
