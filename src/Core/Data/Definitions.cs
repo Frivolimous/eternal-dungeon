@@ -172,9 +172,8 @@ public enum Duplicates
 
 /// <summary>
 /// A proc: when <see cref="Trigger"/> happens (and the event's action carries one of <see cref="TriggerTags"/>, if
-/// any), roll <see cref="Chance"/> × (1 + Rate) × (1 − Deval) over <see cref="Tags"/>, then apply its building
-/// blocks. Amounts (damage, heal, Shield, lifesteal share, this-hit stats) scale with the chance overflow and
-/// add across merged copies; <see cref="Effect"/> (any instant effect or buff, CC included) is a state that
+/// any), roll <see cref="Chance"/> × (1 + Rate) ÷ (1 + Deval) over <see cref="Tags"/> (at most 100%), then apply its
+/// building blocks. Amounts (damage, heal, Shield, lifesteal share, this-hit stats) add only across merged copies; <see cref="Effect"/> (any instant effect or buff, CC included) is a state that
 /// never adds up. Proc damage goes through the damage formula with the proc's tags, and is not an action.
 /// </summary>
 public sealed record ProcDef(
