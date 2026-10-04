@@ -21,3 +21,7 @@
 | Crit | A proc effect that stacks from many sources ("Critical from many sources"), resisted through Fortification | A core stat: Crit Rating converts to a crit chance, a crit can roll again for a Brutal tier, and each tier adds Crit Mult. Procs are a separate system that can trigger on crit and on Brutal. |
 | Production plan | Solo-developer roadmap: 8 phases, about 744 estimated hours, systems spread across phases | Claude as main developer: milestones M0–M6 defined by playable outcomes and checkpoints, plus parallel tracks for art, audio, economy and the store page. |
 | Effect triggers | Buffs had their own triggers: on being hit, on turn start, on action complete (with a state check) | Replaced by procs, which buffs grant while they last (2026-10-04). |
+| Rate and Deval | Dim stats: Proc = Base × (1 + Rate) × (1 − Deval); Rate could never double a proc, Deval approached immunity | Both Add, written as fractions: Proc = Base × (1 + ΣRate) ÷ (1 + ΣDeval); Crit uses Rating ÷ (1 + Critical Deval) (2026-10-04) |
+| Compound cap | Compounds capped at 100 points with a warning above 95; one compound's contribution to a chance stat clamped at ±0.95 | No compound cap; each compound source feeds the target stat as its own source; any single source of a Dim stat counts for at most ±0.95 (2026-10-04) |
+| Fortification | Physical Resist 1 · Critical Resist 1 · Critical Deval 1 | Critical Deval removed (2026-10-04) |
+| Intellect Rate | Gadget Rate 1 · Cryptic Rate +0.5 | Gadget Rate 0.1 · Cryptic Rate +0.05 (2026-10-04) |

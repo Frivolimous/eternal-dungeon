@@ -41,9 +41,12 @@ public class CritTests
     public void Critical_deval_lowers_the_rating_before_the_curve()
     {
         var w = U("warrior", "w", Side.Party);
-        var chief = U("goblin_chief", "chief", Side.Enemy);                            // Fortification 10: Critical Deval 0.10
-        w.Stats.Add("test", "crit_rating", 0.95);
-        Assert.Equal(1.0 * 0.9, Resolution.CritRating(w, TestData.Repo.Actions["attack"], chief), Precision);
+        var g = U("goblin_grunt", "g", Side.Enemy);
+        w.Stats.Add("test", "crit_rating", 0.95);                                      // Rating 1.0 with the default 0.05
+        g.Stats.Add("test", "deval", 0.25, "critical");
+        Assert.Equal(0.8, Resolution.CritRating(w, TestData.Repo.Actions["attack"], g), Precision);   // 1.0 ÷ 1.25
+        g.Stats.Add("curse", "deval", 0.5);                                            // untagged Deval isn't Critical Deval
+        Assert.Equal(0.8, Resolution.CritRating(w, TestData.Repo.Actions["attack"], g), Precision);
     }
 
     [Fact]

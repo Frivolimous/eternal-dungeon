@@ -11,9 +11,9 @@
 
   { "id": "intellect", "name": "Intellect", "rows": [
     { "tag": "gadget", "stat": "power", "coef": 1 },
-    { "tag": "gadget", "stat": "rate", "coef": 1 },
+    { "tag": "gadget", "stat": "rate", "coef": 0.1 },
     { "tag": "cryptic", "stat": "power", "coef": 0.5 },
-    { "tag": "cryptic", "stat": "rate", "coef": 0.5 } ] },
+    { "tag": "cryptic", "stat": "rate", "coef": 0.05 } ] },
 
   { "id": "magic", "name": "Magic", "rows": [
     { "tag": "spell", "stat": "power", "coef": 1 },
@@ -49,6 +49,5 @@
 
   { "id": "fortification", "name": "Fortification", "rows": [
     { "tag": "physical", "stat": "resist", "coef": 1 },
-    { "tag": "critical", "stat": "resist", "coef": 1 },
-    { "tag": "critical", "stat": "deval", "coef": 1 } ] }
+    { "tag": "critical", "stat": "resist", "coef": 1 } ] }
 ]

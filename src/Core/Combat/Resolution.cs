@@ -38,9 +38,16 @@ public static class Resolution
     /// <summary>Success = Hit × (1 − Avoid), kept within 0–1 (negative Avoid can push it past Hit).</summary>
     public static double SuccessChance(double hit, double avoid) => Math.Clamp(hit * (1 - avoid), 0, 1);
 
-    /// <summary>Proc = Base × (1 + Rate) × (1 − Deval), kept within 0–1.</summary>
+    /// <summary>Placeholder: the smallest 1 + Deval can be, so negative Deval (a curse) can't divide by zero.</summary>
+    public const double MinDevalDivisor = 0.1;
+
+    /// <summary>
+    /// Proc = Base × (1 + Rate) ÷ (1 + Deval), Rate and Deval both summed (Anchor: Combat › Procs). Rate 0.5 means
+    /// "50% more often"; equal Rate and Deval cancel; Deval never makes a unit immune. Not capped at 1: the
+    /// caller turns any excess into amount.
+    /// </summary>
     public static double ProcChance(double baseChance, double rate, double deval) =>
-        Math.Clamp(baseChance * (1 + rate) * (1 - deval), 0, 1);
+        Math.Max(0, baseChance * (1 + rate) / Math.Max(MinDevalDivisor, 1 + deval));
 
     /// <summary>Crit Rating's hard cap (Anchor: 200%).</summary>
     public const double MaxCritRating = 2;
@@ -56,9 +63,10 @@ public static class Resolution
         return (Math.Sqrt(1 + 4 * r) - 1) / 2;
     }
 
-    /// <summary>The attacker's Crit Rating for the action's tags, lowered by the target's Critical Deval, capped.</summary>
+    /// <summary>The attacker's Crit Rating for the action's tags ÷ (1 + the target's Critical Deval), capped.</summary>
     public static double CritRating(Unit attacker, ActionDef action, Unit target) =>
-        Math.Clamp(attacker.Stats.Get("crit_rating", action.Tags) * (1 - target.Stats.GetKeyed("deval", Critical)), 0, MaxCritRating);
+        Math.Clamp(attacker.Stats.Get("crit_rating", action.Tags) / Math.Max(MinDevalDivisor, 1 + target.Stats.GetKeyed("deval", Critical)),
+            0, MaxCritRating);
 
     static readonly string[] Critical = ["critical"];
 

@@ -101,9 +101,6 @@ int Data()
     Console.WriteLine($"  {data.TagList.Count} tags, {data.StatList.Count} stats, {data.CompoundList.Count} compound stats, " +
         $"{data.EffectList.Count} effects, {data.ProcList.Count} procs, {data.ActionList.Count} actions, {data.AiProfileList.Count} AI profiles, " +
         $"{data.UnitList.Count} units, {data.EncounterList.Count} encounters");
-    var warnings = DataWarnings.Check(data);
-    foreach (var w in warnings)
-        Console.WriteLine($"  warning: {w}");
     return 0;
 }
 

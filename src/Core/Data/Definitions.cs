@@ -28,8 +28,12 @@ public sealed record StatDef(
     StatGroup Group,
     CombineMode Combine,
     bool Integer,
-    bool Hidden)
+    bool Hidden,
+    double PointValue = 0.01)
 {
+    // PointValue: what one compound-stat point adds to this stat. Compound points are percentages, so a stat
+    // written as a fraction (Hit 0.10, Rate 0.5) gets 0.01 a point; Power, written in points, gets 1.
+
     /// <summary>Whether the stat can be written as a tag stat, such as "Fire Power 50".</summary>
     public bool TagKeyed => Group != StatGroup.Character;
 }

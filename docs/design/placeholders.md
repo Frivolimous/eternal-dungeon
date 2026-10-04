@@ -4,6 +4,13 @@ Rules Claude chose where the Anchor was silent and Jeremy said a placeholder was
 today and can be overruled at any time; once Jeremy decides one, it moves into its proper section and out of
 this page. Numbers that live in data (unit stats, action damage) are tuned by the simulator and aren't listed.
 
+## Stats
+
+| Rule | Placeholder |
+| --- | --- |
+| Single-source cap on Dim stats | One source counts for at most ±0.95 |
+| Negative Deval | 1 + Deval is floored at 0.1, so a curse can at most multiply a proc's chance by 10 |
+
 ## Combat
 
 | Rule | Placeholder |

@@ -467,14 +467,15 @@ public static class DataLoader
 
     static StatDef ReadStat(JsonField f)
     {
-        f.OnlyFields("id", "name", "group", "combine", "integer", "hidden");
+        f.OnlyFields("id", "name", "group", "combine", "integer", "hidden", "pointValue");
         var stat = new StatDef(
             f["id"].Id(),
             f["name"].String(),
             f["group"].Enum<StatGroup>(),
             f["combine"].Enum<CombineMode>(),
             f.Optional("integer")?.Bool() ?? false,
-            f.Optional("hidden")?.Bool() ?? false);
+            f.Optional("hidden")?.Bool() ?? false,
+            f.Optional("pointValue")?.Number() ?? 0.01);
         if (stat.Integer && stat.Combine != CombineMode.Add)
             throw f["integer"].Error("only stats that combine by add can be integers");
         return stat;

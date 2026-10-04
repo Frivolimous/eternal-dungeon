@@ -202,37 +202,52 @@ public class StatTests
         Assert.Equal(0.3, s.Get("avoid", ["physical", "projectile", "grenade"]), Precision);  // 0.20 × 1.5
 
         s.Add("base", "intellect", 10);
-        Assert.Equal(10, s.Get("power", ["gadget"]));
-        Assert.Equal(0.1, s.Get("rate", ["gadget"]), Precision);
-        Assert.Equal(0.15, s.Get("rate", ["gadget", "cryptic"]), Precision);
+        Assert.Equal(10, s.Get("power", ["gadget"]));                                  // Power: 1 a point
+        Assert.Equal(0.01, s.Get("rate", ["gadget"]), Precision);                      // Rate: 10 × 0.1 × 0.01
+        Assert.Equal(0.015, s.Get("rate", ["gadget", "cryptic"]), Precision);          // + 10 × 0.05 × 0.01 (Add)
     }
 
     [Fact]
-    public void Compound_stats_are_capped_at_100_points()
+    public void Add_compounds_have_no_cap()
     {
         var s = NewBlock();
         s.Add("base", "strength", 80);
-        s.Add("rage", "strength", 50);
-        Assert.Equal(100, s.GetCompound("strength"));
-        Assert.Equal(100, s.Get("power", ["melee"]));
-        Assert.Equal(150, s.Get("power", ["melee", "heavy"]));                // the cap is on points, not contributions
+        s.Add("rage", "strength", 150);
+        Assert.Equal(230, s.GetCompound("strength"));
+        Assert.Equal(345, s.Get("power", ["melee", "heavy"]));                         // 230 × 1.5
     }
 
     [Fact]
-    public void Compounds_above_95_are_flagged_and_the_repo_has_none()
+    public void Compound_sources_on_a_dim_stat_diminish_against_each_other()
     {
-        Assert.Empty(Data.DataWarnings.Check(TestData.Repo));
-        var data = new Data.GameData(TestData.Repo.TagList, TestData.Repo.StatList, TestData.Repo.CompoundList,
-            [TestData.Repo.Units["warrior"] with { Compounds = new Dictionary<string, double> { ["strength"] = 96 } }]);
-        Assert.Contains("Strength 96", Assert.Single(Data.DataWarnings.Check(data)));
+        var s = NewBlock();
+        s.Add("boots", "dodge", 30);
+        s.Add("skill", "dodge", 30);
+        Assert.Equal(60, s.GetCompound("dodge"));                                      // the compound itself adds
+        Assert.Equal(1 - 0.7 * 0.7, s.Get("avoid", ["projectile"]), Precision);        // two sources: 0.51, not 0.60
     }
 
     [Fact]
-    public void A_compound_alone_cannot_reach_full_chance()
+    public void A_single_source_of_a_dim_stat_is_capped()
     {
         var s = NewBlock();
         s.Add("base", "dodge", 100);
-        Assert.Equal(StatBlock.MaxCompoundChance, s.Get("avoid", ["projectile", "grenade"]), Precision);  // 1.5 capped
+        Assert.Equal(Combine.MaxDimSource, s.Get("avoid", ["projectile", "grenade"]), Precision);  // 1.5 → 0.95
+
+        s.Add("ward", "avoid", 0.5);
+        Assert.Equal(1 - 0.05 * 0.5, s.Get("avoid", ["projectile", "grenade"]), Precision);       // more sources still stack
+    }
+
+    [Fact]
+    public void Rate_and_deval_add()
+    {
+        var s = NewBlock();
+        s.Add("a", "rate", 0.5);
+        s.Add("b", "rate", 0.5);
+        Assert.Equal(1.0, s.Get("rate"));                                               // "+50% more often" twice = +100%
+        s.Add("c", "deval", 0.5);
+        s.Add("d", "deval", 0.5, "control");
+        Assert.Equal(1.0, s.Get("deval", ["control"]));
     }
 
     [Fact]

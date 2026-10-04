@@ -1,4 +1,4 @@
-﻿Systems Showcase · 1000 battles · seeds 1–1000
+Systems Showcase · 1000 battles · seeds 1–1000
 Win rate         48.4%  (484 won, 516 lost, 0 stalemates)
 Battle length    19.0 turns on average
 Party HP left    16.6% on average, 0.0% at worst

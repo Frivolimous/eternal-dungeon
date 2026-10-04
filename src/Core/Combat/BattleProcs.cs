@@ -41,7 +41,7 @@ public sealed partial class Battle
     }
 
     /// <summary>
-    /// One copy's chance: Base × (1 + owner's Rate) × (1 − target's Deval), all over the proc's tags; Deval only
+    /// One copy's chance: Base × (1 + owner's Rate) ÷ (1 + target's Deval), all over the proc's tags; Deval only
     /// when the proc lands on someone else. Above 100% the chance stops at 1 and the excess becomes a scale on
     /// the proc's amounts (lost if it has none).
     /// </summary>
@@ -49,7 +49,7 @@ public sealed partial class Battle
     {
         var rate = owner.Stats.Get("rate", def.Tags);
         var deval = target == owner ? 0 : target.Stats.Get("deval", def.Tags);
-        var chance = Math.Max(0, def.Chance * (1 + rate) * (1 - deval));
+        var chance = Resolution.ProcChance(def.Chance, rate, deval);
         return chance > 1 ? (1, def.HasAmounts ? chance : 1) : (chance, 1);
     }
 

@@ -10,6 +10,12 @@ namespace EternalDungeon.Core.Stats;
 /// </summary>
 public static class Combine
 {
+    /// <summary>
+    /// The most a single source can add to (or take from) a Dim stat (placeholder value). Many sources still
+    /// stack toward 1, and the Dim formula stops them reaching it; this stops one source getting there alone.
+    /// </summary>
+    public const double MaxDimSource = 0.95;
+
     /// <summary>The value of a stat with no modifiers.</summary>
     public static double Identity(CombineMode mode) => mode == CombineMode.Mult ? 1 : 0;
 
@@ -38,8 +44,9 @@ public static class Combine
     {
         if (mode != CombineMode.Dim)
             return Fold(mode, values) ?? Identity(mode);
-        var positive = Fold(mode, values.Where(v => v > 0)) ?? 0;
-        var negative = Fold(mode, values.Where(v => v < 0).Select(v => -v)) ?? 0;
+        var capped = values.Select(v => Math.Clamp(v, -MaxDimSource, MaxDimSource)).ToList();
+        var positive = Fold(mode, capped.Where(v => v > 0)) ?? 0;
+        var negative = Fold(mode, capped.Where(v => v < 0).Select(v => -v)) ?? 0;
         return positive - negative;
     }
 

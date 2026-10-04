@@ -18,9 +18,15 @@ public class ResolutionTests
     }
 
     [Fact]
-    public void Proc_chance_is_base_times_rate_times_deval()
+    public void Proc_chance_is_base_times_one_plus_rate_over_one_plus_deval()
     {
-        Assert.Equal(0.054, Resolution.ProcChance(0.05, 0.2, 0.1), Precision);  // 0.05 × 1.2 × 0.9
+        Assert.Equal(0.15, Resolution.ProcChance(0.1, 0.5, 0), Precision);       // "50% more often": 10% → 15%
+        Assert.Equal(0.2, Resolution.ProcChance(0.1, 1.0, 0), Precision);        // twice: +100% (Rate adds) → 20%
+        Assert.Equal(0.1, Resolution.ProcChance(0.1, 0.5, 0.5), Precision);      // equal Rate and Deval cancel
+        Assert.Equal(0.05, Resolution.ProcChance(0.1, 0, 1.0), Precision);       // Deval 1 halves it, never immune
+        Assert.Equal(1.5, Resolution.ProcChance(1, 0.5, 0), Precision);          // not capped: the excess becomes amount
+        Assert.Equal(1, Resolution.ProcChance(0.1, 0, -5), Precision);           // negative Deval: divisor floored at 0.1
+        Assert.Equal(0, Resolution.ProcChance(0.1, -2, 0));                      // never below 0
     }
 
     [Fact]

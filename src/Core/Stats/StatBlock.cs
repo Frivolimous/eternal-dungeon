@@ -18,19 +18,6 @@ public sealed record Modifier(string Source, StatKey Key, double Value);
 /// </summary>
 public sealed class StatBlock(GameData data)
 {
-    /// <summary>Compound points are percentages, so a chance (Dim) stat gets points ÷ 100.</summary>
-    public const double ChancePerPoint = 0.01;
-
-    /// <summary>Compound stats are hard-capped at 100 points (Anchor: Stat system › Compound stats).</summary>
-    public const double MaxCompoundPoints = 100;
-
-    /// <summary>Above this a compound stat is almost certainly a design error: <c>sim data</c> warns.</summary>
-    public const double CompoundWarning = 95;
-
-    /// <summary>Safety clamp: the most one compound stat can add to (or take from) a chance stat on one action,
-    /// so a Dim modifier never reaches ±1 (the cap alone allows 100 × 1.5 coefficient = 1.5).</summary>
-    public const double MaxCompoundChance = 0.95;
-
     readonly List<Modifier> modifiers = [];
     readonly List<Modifier> compoundModifiers = [];
 
@@ -94,19 +81,18 @@ public sealed class StatBlock(GameData data)
     /// <summary>The total of exactly one key, e.g. just "Fire Power", for display.</summary>
     public double Get(StatKey key) => Total(Def(key.Stat), m => m.Key.Tag == key.Tag);
 
-    /// <summary>A compound stat's own total (compound stats add), capped at <see cref="MaxCompoundPoints"/>.</summary>
+    /// <summary>A compound stat's own total: its points from every source, added, with no cap.</summary>
     public double GetCompound(string compound) =>
         data.Compounds.ContainsKey(compound)
-            ? CompoundPoints(compound)
+            ? compoundModifiers.Where(m => m.Key.Stat == compound).Sum(m => m.Value)
             : throw new ArgumentException($"Unknown compound stat \"{compound}\"");
 
-    double CompoundPoints(string compound) =>
-        Math.Min(MaxCompoundPoints, compoundModifiers.Where(m => m.Key.Stat == compound).Sum(m => m.Value));
-
     /// <summary>
-    /// Each compound stat adds one value to <paramref name="def"/> for an action: its total × the sum of the
-    /// coefficients of every recipe row for that stat whose tag the action carries. Strength 10 on a
-    /// Melee + Heavy action: 10 × (1 + 0.5) = 15 Power.
+    /// Each source of a compound stat adds one value to <paramref name="def"/> for an action: its points × the
+    /// sum of the coefficients of every recipe row for that stat whose tag the action carries × the stat's point
+    /// value. Strength 10 on a Melee + Heavy action: 10 × (1 + 0.5) × 1 = 15 Power. Sources stay separate, so on
+    /// a Dim stat they diminish against each other (two Dodge 30 sources give Avoid 0.51, not 0.60); on an Add
+    /// stat they simply sum.
     /// </summary>
     IEnumerable<double> CompoundContributions(StatDef def, IReadOnlyCollection<string> actionTags)
     {
@@ -114,12 +100,12 @@ public sealed class StatBlock(GameData data)
         {
             var coef = compound.Rows.Where(r => r.Stat == def.Id && actionTags.Contains(r.Tag)).Sum(r => r.Coef);
             if (coef == 0) continue;
-            var points = CompoundPoints(compound.Id);
-            if (points == 0) continue;
-            var value = points * coef;
-            if (def.Combine == CombineMode.Dim)
-                value = Math.Clamp(value * ChancePerPoint, -MaxCompoundChance, MaxCompoundChance);
-            yield return value;
+            foreach (var source in compoundModifiers.Where(m => m.Key.Stat == compound.Id).GroupBy(m => m.Source))
+            {
+                var points = source.Sum(m => m.Value);
+                if (points != 0)
+                    yield return points * coef * def.PointValue;
+            }
         }
     }
 

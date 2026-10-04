@@ -100,7 +100,7 @@ public class ProcTests
         w.Stats.Add("test", "rate", 0.5, "control");
         Assert.Equal(0.075, Battle.CopyChance(dazzle, w, g).Chance, Precision);
         g.Stats.Add("test", "deval", 0.2, "control");                         // Tenacity-style resistance
-        Assert.Equal(0.06, Battle.CopyChance(dazzle, w, g).Chance, Precision);
+        Assert.Equal(0.0625, Battle.CopyChance(dazzle, w, g).Chance, Precision);   // 0.075 ÷ 1.2
         Assert.Equal(0.075, Battle.CopyChance(dazzle, w, w).Chance, Precision);   // own Deval doesn't count on self
     }
 

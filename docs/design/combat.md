@@ -17,10 +17,10 @@ Combat is purely turn-based and speed-driven, fought on small grids. Each hero i
 ```
 
 ```latex
-\text{Proc} = \text{Base} \times (1 + \text{Rate}_{dim}) \times (1 - \text{Deval}_{dim})
+\text{Proc} = \text{Base} \times (1 + \sum\text{Rate}) \div (1 + \sum\text{Deval})
 ```
 
-Crit is a core stat, not a proc. Crit Rating (Add, tag-keyed, hard cap 200%) converts into a per-hit crit chance c = (√(1 + 4 × Rating) − 1) / 2. A crit rolls again at the same chance for a Brutal crit, so expected damage rises in a straight line with Rating. Each tier adds Crit Mult (Add, tag-keyed): Damage × (1 + tiers × Crit Mult × (1 − Critical Resist × (1 − Critical Penetrate))). The target's Critical Deval lowers the Rating before the conversion: Rating × (1 − Critical Deval), then the 200% cap. Critical Resist and Critical Penetrate count only their Critical-keyed parts, since the untagged parts already applied to the hit. Crit rolls only on a successful hit. The character sheet shows the Rating with both chances as shares of all hits: Rating 100% gives a 62% crit chance, and 38% of hits are Brutal (62% of crits).
+Crit is a core stat, not a proc. Crit Rating (Add, tag-keyed, hard cap 200%) converts into a per-hit crit chance c = (√(1 + 4 × Rating) − 1) / 2. A crit rolls again at the same chance for a Brutal crit, so expected damage rises in a straight line with Rating. Each tier adds Crit Mult (Add, tag-keyed): Damage × (1 + tiers × Crit Mult × (1 − Critical Resist × (1 − Critical Penetrate))). The target's Critical Deval lowers the Rating before the conversion: Rating ÷ (1 + Critical Deval), then the 200% cap. Critical Resist and Critical Penetrate count only their Critical-keyed parts, since the untagged parts already applied to the hit. Crit rolls only on a successful hit. The character sheet shows the Rating with both chances as shares of all hits: Rating 100% gives a 62% crit chance, and 38% of hits are Brutal (62% of crits).
 
 Power and Multiplier scale damage as percentages. Power factor = 1 + total Power / 100, so Fire Power 50 means +50% damage on Fire actions. Multiplier factor = 1 + total Multiplier, so 0.2 means +20%.
 
@@ -103,7 +103,7 @@ A proc is an effect that fires on an event, with a chance. Units have procs of t
 | Trigger | hit, miss, crit, Brutal, action complete (the owner's actions); struck, avoided, damaged (actions against the owner; damaged counts only damage from actions, to be checked in playtests); turn start, fight start |
 | Trigger tags | Optional filter: the event's action must carry at least one of them (Spikey: struck by Melee) |
 | Phase | After the hit by default. A hit proc can be marked before damage, to change that hit (e.g. extra Penetrate for this hit only) |
-| Chance | Base × (1 + Rate) × (1 − Deval), using every tag on the proc; the target's Deval applies only when the proc lands on someone else. No base chance means 100% |
+| Chance | Base × (1 + Rate) ÷ (1 + Deval), Rate and Deval both summed (Add), using every tag on the proc; the target's Deval applies only when the proc lands on someone else. No base chance means 100% |
 | Above 100% | The chance stops at 100%; the excess scales the proc's amounts (150% for 20 damage fires at 100% for 30). Procs with no amounts lose the excess |
 | Target | The owner, or the other unit in the event (the target of the owner's action, or the attacker) |
 | Results | Building blocks in data: damage, heal, Shield, heal a share of the hit's damage (lifesteal), stat changes for this hit (before damage), and applying any effect or buff (CC, push, buffs) |

@@ -1,4 +1,4 @@
-﻿Goblin Patrol · 1000 battles · seeds 1–1000
+Goblin Patrol · 1000 battles · seeds 1–1000
 Win rate         74.3%  (743 won, 257 lost, 0 stalemates)
 Battle length    12.0 turns on average
 Party HP left    24.6% on average, 0.0% at worst

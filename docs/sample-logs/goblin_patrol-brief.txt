@@ -1,4 +1,4 @@
-﻿Goblin Patrol · seed 42
+Goblin Patrol · seed 42
 Party: Rogue 100 HP, Warrior 140 HP, Elementalist 80 HP
 Enemies: Goblin Grunt #1 85 HP, Goblin Grunt #2 85 HP, Goblin Archer 60 HP, Goblin Shaman 60 HP
 

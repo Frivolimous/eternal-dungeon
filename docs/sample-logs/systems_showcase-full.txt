@@ -1,4 +1,4 @@
-﻿Systems Showcase · seed 42
+Systems Showcase · seed 42
 Party: Rogue 100 HP, Warrior 140 HP, Elementalist 80 HP
 Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Hexer 160 HP
 
