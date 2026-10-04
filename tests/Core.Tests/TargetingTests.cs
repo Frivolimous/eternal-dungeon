@@ -135,21 +135,11 @@ public class TargetingTests
     [Fact]
     public void Ai_weights_must_stay_within_75_percent()
     {
-        var e = Assert.Throws<DataException>(() => DataLoader.Load(DataSource.FromFiles(
-            new Dictionary<string, string>
-            {
-                [DataLoader.TagsFile] = "[]",
-                [DataLoader.StatsFile] = """[{ "id": "health", "name": "Health", "group": "character", "combine": "add" }]""",
-                [DataLoader.CompoundStatsFile] = "[]",
-                [DataLoader.EffectsFile] = "[]",
-                [DataLoader.ProcsFile] = "[]",
-                [DataLoader.ActionsFile] = """[{ "id": "wait", "name": "Wait", "tags": [], "target": "self", "apCost": 100 }]""",
-                [DataLoader.AiProfilesFile] = """[{ "id": "zealot", "name": "Zealot", "threatWeight": 0.9, "rules": [{ "action": "wait" }] }]""",
-                [DataLoader.UnitsFile] = "[]",
-                [DataLoader.EncountersFile] = "[]",
-                [DataLoader.DefaultsFile] = """{ "unitStats": [] }""",
-            })));
+        var e = TestData.TablesFail(
+            ("actions", """[{ "id": "wait", "name": "Wait", "target": "self", "ap_cost": 100 }]"""),
+            ("ai_profiles", """[{ "id": "zealot", "name": "Zealot", "threat_weight": 0.9 }]"""),
+            ("ai_rules", """[{ "profile": "zealot", "order": 1, "action": "wait" }]"""));
         Assert.Equal("ai_profiles.json", e.File);
-        Assert.Equal("[0].threatWeight", e.Field);
+        Assert.Equal("[0].threat_weight", e.Field);
     }
 }

@@ -11,7 +11,9 @@ CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
 var command = args.Length > 0 ? args[0] : "help";
-var options = Options.Parse(args.Skip(1).ToArray());
+// One optional positional argument after the command (a folder or file), then --options.
+var positional = args.Length > 1 && !args[1].StartsWith("--") ? args[1] : null;
+var options = Options.Parse(args.Skip(positional is null ? 1 : 2).ToArray());
 var root = RepoRoot.Find();
 
 try
@@ -23,6 +25,9 @@ try
         "encounters" => Encounters(),
         "data" => Data(),
         "assets" => Assets(),
+        "export-tsv" => ExportTsv(),
+        "import-tsv" => ImportTsv(),
+        "format-data" => FormatData(),
         _ => Help(),
     };
 }
@@ -37,7 +42,58 @@ catch (OptionException e)
     return 2;
 }
 
-GameData LoadData() => DataLoader.LoadDirectory(Path.Combine(root, "data"));
+string DataDir() => Path.Combine(root, "data");
+
+GameData LoadData() => DataLoader.LoadDirectory(DataDir());
+
+string Folder(string what) =>
+    Path.GetFullPath(positional ?? throw new OptionException($"Give the folder {what}, for example: sim {command} sheets"));
+
+int ExportTsv()
+{
+    var dir = Folder("to export into");
+    var tables = DataTables.FromJson(DataSource.FromDirectory(DataDir()));
+    DataLoader.Build(tables);
+    Directory.CreateDirectory(dir);
+    var files = DataExchange.ExportTsv(tables);
+    foreach (var (name, text) in files)
+        File.WriteAllText(Path.Combine(dir, name), text);
+    Console.WriteLine($"Exported {files.Count} tables to {dir}");
+    return 0;
+}
+
+int ImportTsv()
+{
+    var dir = Folder("to import from");
+    if (!Directory.Exists(dir)) throw new OptionException($"No folder {dir}");
+    var current = DataTables.FromJson(DataSource.FromDirectory(DataDir()));
+    var update = DataExchange.ImportTsv(DataSource.FromDirectory(dir), current);   // throws before writing anything
+    return Write(update, "Imported");
+}
+
+int FormatData()
+{
+    var tables = DataTables.FromJson(DataSource.FromDirectory(DataDir()));
+    DataLoader.Build(tables);
+    return Write(new DataUpdate(DataExchange.JsonFiles(tables), []), "Formatted");
+}
+
+/// <summary>Writes the JSON files that differ from what's on disk and prints the change summary.</summary>
+int Write(DataUpdate update, string verb)
+{
+    foreach (var line in update.Changes)
+        Console.WriteLine("  " + line);
+    var written = 0;
+    foreach (var (name, text) in update.JsonFiles)
+    {
+        var path = Path.Combine(DataDir(), name);
+        if (File.Exists(path) && File.ReadAllText(path) == text) continue;
+        File.WriteAllText(path, text);
+        written++;
+    }
+    Console.WriteLine(written == 0 ? "No changes." : $"{verb}: {written} data file(s) written.");
+    return 0;
+}
 
 EncounterDef EncounterFrom(GameData data)
 {
@@ -129,6 +185,9 @@ int Help()
           batch --encounter <id> [--runs N] [--seed first]           many seeded battles, then a summary
           encounters                                                 list the encounters
           data                                                       load and validate data/*.json
+          export-tsv <folder>                                        write every data table as a TSV (for spreadsheets)
+          import-tsv <folder>                                        validate TSVs, print the changes, write data/*.json
+          format-data                                                rewrite data/*.json in canonical form
           assets                                                     check the asset manifest, list AI placeholders
         """);
     return command == "help" ? 0 : 1;

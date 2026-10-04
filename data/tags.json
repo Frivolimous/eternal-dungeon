@@ -3,7 +3,6 @@
   { "id": "chemical", "name": "Chemical", "group": "damage_type" },
   { "id": "physical", "name": "Physical", "group": "damage_type" },
   { "id": "spirit", "name": "Spirit", "group": "damage_type" },
-
   { "id": "melee", "name": "Melee", "group": "delivery" },
   { "id": "ranged", "name": "Ranged", "group": "delivery" },
   { "id": "projectile", "name": "Projectile", "group": "delivery" },
@@ -11,26 +10,22 @@
   { "id": "spell", "name": "Spell", "group": "delivery" },
   { "id": "aoe", "name": "AoE", "group": "delivery" },
   { "id": "gadget", "name": "Gadget", "group": "delivery" },
-
   { "id": "light", "name": "Light", "group": "style" },
   { "id": "heavy", "name": "Heavy", "group": "style" },
   { "id": "finesse", "name": "Finesse", "group": "style" },
   { "id": "cryptic", "name": "Cryptic", "group": "style" },
   { "id": "mystic", "name": "Mystic", "group": "style" },
-
   { "id": "force", "name": "Force", "group": "function" },
   { "id": "meta", "name": "Meta", "group": "function" },
   { "id": "buff", "name": "Buff", "group": "function" },
   { "id": "curse", "name": "Curse", "group": "function" },
   { "id": "control", "name": "Control", "group": "function" },
   { "id": "critical", "name": "Critical", "group": "function" },
-
   { "id": "fire", "name": "Fire", "group": "element" },
   { "id": "electric", "name": "Electric", "group": "element" },
   { "id": "ice", "name": "Ice", "group": "element" },
   { "id": "holy", "name": "Holy", "group": "element" },
   { "id": "dark", "name": "Dark", "group": "element" },
   { "id": "toxic", "name": "Toxic", "group": "element" },
-
   { "id": "weapon", "name": "Weapon", "group": "source" }
 ]

@@ -1,0 +1,4 @@
+[
+  { "stat": "crit_rating", "tag": "weapon", "value": 0.05 },
+  { "stat": "crit_mult", "value": 0.5 }
+]

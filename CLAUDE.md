@@ -43,6 +43,9 @@ dotnet run --project src/Sim -- run --encounter goblin_patrol --seed 42 [--log-l
 dotnet run --project src/Sim -- batch --encounter goblin_patrol --runs 1000                  # win rate etc.
 dotnet run --project src/Sim -- encounters           # list encounter ids
 dotnet run --project src/Sim -- data                 # load and validate data/*.json
+dotnet run --project src/Sim -- export-tsv sheets    # every data table as a TSV in sheets/ (for spreadsheets)
+dotnet run --project src/Sim -- import-tsv sheets    # validate the TSVs, print changes, write data/*.json
+dotnet run --project src/Sim -- format-data          # rewrite data/*.json in canonical form (after hand edits)
 dotnet run --project src/Sim -- assets               # check the asset manifest, list AI placeholders
 dotnet test --filter-method "*Bad_enum*"             # one test by name (wildcards allowed)
 powershell -ExecutionPolicy Bypass -File tools/build.ps1   # export Windows + Linux builds into builds/
@@ -58,9 +61,8 @@ run the main scene and see its prints. Exports need the 4.7.2 .NET export templa
 ## Layout
 
 ```
-data/              JSON content: tags, stats, compound_stats, effects, procs, actions, ai_profiles, units,
-                   encounters, defaults (loaded in that order; later files reference earlier ones). Embedded into the
-                   game assembly at build.
+data/              JSON content, one flat table per file (data/README.md lists them). Embedded into the game
+                   assembly at build.
 src/Core/          rules library, plain C#, no Godot
 src/Sim/           command-line tool (assembly name `sim`): battle simulator, data and asset checks
 docs/design/       the Design Anchor;  docs/briefs/  build briefs;  docs/sample-logs/  simulator output
@@ -76,13 +78,17 @@ builds/            export output (not committed)
 **Core is pure.** No Godot, no I/O beyond reading data files. A test fails if Core references Godot. Godot code
 only displays state and sends input.
 
-**Data over code.** Content lives in `data/*.json`, read by `DataLoader` through a `DataSource` (a folder for
-Sim and tests, embedded resources for the game, an in-memory set for tests). Reading goes through `JsonField`,
-which is strict (wrong types, missing fields and unknown fields all fail) and throws `DataException` naming
-the file and field path, e.g. `stats.json [4].combine: expected one of add, dim, mult, got "sum"`. Ids are
-lowercase snake_case and unique per file; enums are written in snake_case. Every reference between files is
-checked on load. When you add a file: a `Read…` function in DataLoader, a definition record, and tests for its
-errors.
+**Data over code, as flat tables.** Content lives in `data/*.json`: each file is one table, a list of flat rows,
+so it maps to a spreadsheet tab. Lists of records are child tables (first column = the parent's id, an `order`
+column where order matters); plain id lists sit in one cell. `Schemas.cs` defines every table's columns (the
+units table gets one column per stat and compound stat); `TableFormat` reads JSON and TSV strictly and writes the
+one canonical JSON form (rows one per line, defaults left out), so export then import is byte-exact (a test checks
+it, and another that the files are canonical: run `sim format-data` after hand edits). No comments in JSON:
+notes go in a `note` column or data/README.md. `DataLoader.Build` validates the tables and builds the
+definitions; errors name file, row and column (`stats.json [4].combine: …`, or `units.tsv row 6, health: …`).
+`DataExchange` does TSV export/import (validates everything first, prints a change summary, writes nothing on
+invalid data). When you add a table or column: its schema in `Schemas.cs` (a new table also goes in
+`Schemas.BeforeUnits` or `AfterUnits`), the reading in `DataLoader`, data/README.md, and tests for its errors.
 
 **Asset pipeline.** Every image loads through `game/assets/manifest.json` (id, path relative to
 `game/assets`, width, height, `aiPlaceholder`, optional note), so final art drops in without code changes.

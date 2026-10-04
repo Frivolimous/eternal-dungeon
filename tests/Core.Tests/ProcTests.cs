@@ -241,26 +241,18 @@ public class ProcTests
 
     // ---- Data ----
 
-    static DataException ProcFails(string proc) => Assert.Throws<DataException>(() => DataLoader.Load(DataSource.FromFiles(
-        new Dictionary<string, string>
-        {
-            [DataLoader.TagsFile] = """[{ "id": "fire", "name": "Fire", "group": "element" }]""",
-            [DataLoader.StatsFile] = """[{ "id": "health", "name": "Health", "group": "character", "combine": "add" }, { "id": "penetrate", "name": "Penetrate", "group": "attack", "combine": "dim" }]""",
-            [DataLoader.CompoundStatsFile] = "[]",
-            [DataLoader.EffectsFile] = """[{ "id": "burn", "name": "Burn", "duration": 2, "periodicDamage": 3 }]""",
-            [DataLoader.ProcsFile] = $"[{proc}]",
-            [DataLoader.ActionsFile] = "[]",
-            [DataLoader.AiProfilesFile] = "[]",
-            [DataLoader.UnitsFile] = "[]",
-            [DataLoader.EncountersFile] = "[]",
-            [DataLoader.DefaultsFile] = """{ "unitStats": [] }""",
-        })));
+    static DataException ProcFails(string proc, string hitStats = "[]") => TestData.TablesFail(
+        ("tags", """[{ "id": "fire", "name": "Fire", "group": "element" }]"""),
+        ("stats", """[{ "id": "health", "name": "Health", "group": "character", "combine": "add" }, { "id": "penetrate", "name": "Penetrate", "group": "attack", "combine": "dim" }]"""),
+        ("effects", """[{ "id": "burn", "name": "Burn", "duration": "turns", "turns": 2, "periodic_damage": 3 }]"""),
+        ("procs", $"[{proc}]"),
+        ("proc_hit_stats", hitStats));
 
     [Fact]
     public void Proc_data_is_checked()
     {
         Assert.Contains("only hit procs", ProcFails("""{ "id": "p", "name": "P", "trigger": "struck", "target": "other", "phase": "before_damage", "damage": 1 }""").Message);
-        Assert.Contains("phase before_damage", ProcFails("""{ "id": "p", "name": "P", "trigger": "hit", "target": "other", "hitStats": [{ "stat": "penetrate", "value": 0.1 }] }""").Message);
+        Assert.Contains("phase before_damage", ProcFails("""{ "id": "p", "name": "P", "trigger": "hit", "target": "other" }""", """[{ "proc": "p", "stat": "penetrate", "value": 0.1 }]""").Message);
         Assert.Contains("lifesteal needs", ProcFails("""{ "id": "p", "name": "P", "trigger": "miss", "target": "self", "lifesteal": 0.1 }""").Message);
         Assert.Contains("use self", ProcFails("""{ "id": "p", "name": "P", "trigger": "fight_start", "target": "other", "effect": "burn" }""").Message);
         Assert.Contains("its own owner", ProcFails("""{ "id": "p", "name": "P", "trigger": "hit", "target": "self", "damage": 3 }""").Message);

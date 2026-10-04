@@ -1,30 +1,10 @@
-// Procs (Anchor: Combat › Procs). Ported from EternalQuestMobile's Effects.json as examples; not given to any
-// starter unit yet, so they don't touch balance. Items, skills and buffs will grant them (M3–M4).
-// chance: the base chance (absent = 100%). Amounts (damage, heal, shield, lifesteal, hitStats) scale with
-// merged copies and with chance above 100%; an effect (buff, CC) never adds up.
 [
-  { "id": "flaming", "name": "Flaming", "trigger": "hit", "target": "other",
-    "tags": ["arcane", "fire"], "damage": 5 },
-
-  { "id": "venomous", "name": "Venomous", "trigger": "hit", "target": "other",
-    "tags": ["chemical", "toxic"], "damage": 5 },
-
-  { "id": "vampiric", "name": "Vampiric", "trigger": "hit", "target": "self",
-    "tags": ["dark"], "lifesteal": 0.05 },
-
-  { "id": "dazzling", "name": "Dazzling", "trigger": "hit", "target": "other", "chance": 0.05,
-    "tags": ["holy", "control"], "effect": "daze" },
-
-  { "id": "explosive", "name": "Explosive", "trigger": "crit", "target": "other",
-    "tags": ["arcane", "force", "critical"], "damage": 15 },
-
-  { "id": "spikey", "name": "Spikey", "trigger": "struck", "triggerTags": ["melee"], "target": "other",
-    "tags": ["physical"], "damage": 10 },
-
-  { "id": "berserk", "name": "Berserk", "trigger": "struck", "target": "self", "chance": 0.15,
-    "effect": "berserk" },
-
-  { "id": "armor_break", "name": "Armor Break", "trigger": "hit", "phase": "before_damage",
-    "triggerTags": ["heavy"], "target": "other", "chance": 0.2,
-    "hitStats": [ { "stat": "penetrate", "value": 0.5 } ] }
+  { "id": "flaming", "name": "Flaming", "trigger": "hit", "tags": ["arcane", "fire"], "target": "other", "damage": 5 },
+  { "id": "venomous", "name": "Venomous", "trigger": "hit", "tags": ["chemical", "toxic"], "target": "other", "damage": 5 },
+  { "id": "vampiric", "name": "Vampiric", "trigger": "hit", "tags": ["dark"], "target": "self", "lifesteal": 0.05 },
+  { "id": "dazzling", "name": "Dazzling", "trigger": "hit", "tags": ["holy", "control"], "chance": 0.05, "target": "other", "effect": "daze" },
+  { "id": "explosive", "name": "Explosive", "trigger": "crit", "tags": ["arcane", "force", "critical"], "target": "other", "damage": 15 },
+  { "id": "spikey", "name": "Spikey", "trigger": "struck", "trigger_tags": ["melee"], "tags": ["physical"], "target": "other", "damage": 10 },
+  { "id": "berserk", "name": "Berserk", "trigger": "struck", "chance": 0.15, "target": "self", "effect": "berserk" },
+  { "id": "armor_break", "name": "Armor Break", "trigger": "hit", "trigger_tags": ["heavy"], "chance": 0.2, "target": "other", "phase": "before_damage" }
 ]

@@ -1,31 +1,13 @@
-// Effects and buffs for M1. Numbers are placeholders.
-// duration: a number of buff-clock turns, "until_next_turn", or absent for an instant effect.
-// shieldMaxHealth: a Shield worth that share of the unit's max Health; a buff's Shield goes when the buff ends.
 [
-  { "id": "guard", "name": "Guard", "duration": "until_next_turn",
-    "stats": [ { "stat": "avoid", "value": 0.3 } ], "shieldMaxHealth": 0.1 },
-
-  { "id": "cloak", "name": "Cloak", "duration": "until_next_turn",
-    "stats": [ { "stat": "avoid", "value": 0.5 }, { "stat": "threat", "value": -50 } ] },
-
-  { "id": "rot", "name": "Rot", "duration": 3, "periodicDamage": 4 },
-
+  { "id": "guard", "name": "Guard", "duration": "until_next_turn", "shield_max_health": 0.1 },
+  { "id": "cloak", "name": "Cloak", "duration": "until_next_turn" },
+  { "id": "rot", "name": "Rot", "duration": "turns", "turns": 3, "periodic_damage": 4 },
   { "id": "mend", "name": "Mend", "heal": 20 },
-
-  { "id": "war_cry", "name": "War Cry", "duration": 3, "stacking": true, "maxStacks": 3,
-    "stats": [ { "stat": "power", "value": 10 } ] },
-
-  { "id": "chill", "name": "Chill", "duration": 2,
-    "stats": [ { "stat": "speed", "value": -30 } ] },
-
+  { "id": "war_cry", "name": "War Cry", "duration": "turns", "turns": 3, "stacking": true, "max_stacks": 3 },
+  { "id": "chill", "name": "Chill", "duration": "turns", "turns": 2 },
   { "id": "smash_stagger", "name": "Stagger", "stagger": 60 },
-
-  { "id": "daze", "name": "Dazed", "duration": 1, "cc": "stun" },
-
-  { "id": "dread", "name": "Dread", "duration": 2, "cc": "fear" },
-
+  { "id": "daze", "name": "Dazed", "duration": "turns", "turns": 1, "cc": "stun" },
+  { "id": "dread", "name": "Dread", "duration": "turns", "turns": 2, "cc": "fear" },
   { "id": "push", "name": "Push", "displace": "push" },
-
-  { "id": "berserk", "name": "Berserk", "duration": 3,
-    "stats": [ { "stat": "power", "value": 25 } ] }
+  { "id": "berserk", "name": "Berserk", "duration": "turns", "turns": 3 }
 ]

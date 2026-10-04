@@ -7,6 +7,17 @@ static class TestData
     /// <summary>The repo's data/ folder, loaded once.</summary>
     public static GameData Repo { get; } = DataLoader.LoadDirectory(TestPaths.DataDir);
 
+    /// <summary>Loads in-memory tables: (table name, JSON rows). Every table not given is empty.</summary>
+    public static GameData LoadTables(params (string Table, string Json)[] tables)
+    {
+        var files = Schemas.Names.ToDictionary(n => n + ".json", _ => "[]");
+        foreach (var (table, json) in tables) files[table + ".json"] = json;
+        return DataLoader.Load(DataSource.FromFiles(files));
+    }
+
+    public static DataException TablesFail(params (string Table, string Json)[] tables) =>
+        Assert.Throws<DataException>(() => LoadTables(tables));
+
     /// <summary>The repo data plus extra actions and effects (test-only content).</summary>
     public static GameData With(IEnumerable<ActionDef>? actions = null, IEnumerable<EffectDef>? effects = null,
         IEnumerable<ProcDef>? procs = null) =>

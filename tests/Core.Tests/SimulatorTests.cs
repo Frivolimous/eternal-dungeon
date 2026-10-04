@@ -126,27 +126,23 @@ public class SimulatorTests
     [Fact]
     public void Encounter_placements_are_checked()
     {
-        static DataException Fails(string enemies) => Assert.Throws<DataException>(() => DataLoader.Load(DataSource.FromFiles(
-            new Dictionary<string, string>
-            {
-                [DataLoader.TagsFile] = "[]",
-                [DataLoader.StatsFile] = """[{ "id": "health", "name": "Health", "group": "character", "combine": "add" }]""",
-                [DataLoader.CompoundStatsFile] = "[]",
-                [DataLoader.EffectsFile] = "[]",
-                [DataLoader.ProcsFile] = "[]",
-                [DataLoader.ActionsFile] = """[{ "id": "wait", "name": "Wait", "tags": [], "target": "self", "apCost": 100 }]""",
-                [DataLoader.AiProfilesFile] = """[{ "id": "idle", "name": "Idle", "threatWeight": 0.5, "rules": [{ "action": "wait" }] }]""",
-                [DataLoader.UnitsFile] = """
-                    [{ "id": "imp", "name": "Imp", "size": 1, "stats": { "health": 5 }, "actions": ["wait"], "ai": "idle" },
-                     { "id": "ogre", "name": "Ogre", "size": 2, "stats": { "health": 50 }, "actions": ["wait"], "ai": "idle" }]
-                    """,
-                [DataLoader.EncountersFile] = $$"""[{ "id": "e", "name": "E", "party": [{ "unit": "imp", "row": 0, "col": 0 }], "enemies": {{enemies}} }]""",
-                [DataLoader.DefaultsFile] = """{ "unitStats": [] }""",
-            })));
+        static DataException Fails(params string[] enemies) => TestData.TablesFail(
+            ("stats", """[{ "id": "health", "name": "Health", "group": "character", "combine": "add" }]"""),
+            ("actions", """[{ "id": "wait", "name": "Wait", "target": "self", "ap_cost": 100 }]"""),
+            ("ai_profiles", """[{ "id": "idle", "name": "Idle", "threat_weight": 0.5 }]"""),
+            ("ai_rules", """[{ "profile": "idle", "order": 1, "action": "wait" }]"""),
+            ("units", """
+                [{ "id": "imp", "name": "Imp", "size": 1, "health": 5, "actions": ["wait"], "ai": "idle" },
+                 { "id": "ogre", "name": "Ogre", "size": 2, "health": 50, "actions": ["wait"], "ai": "idle" }]
+                """),
+            ("encounters", """[{ "id": "e", "name": "E" }]"""),
+            ("encounter_units", "[" + string.Join(", ", ["""{ "encounter": "e", "side": "party", "order": 1, "unit": "imp", "row": 0, "col": 0 }""",
+                .. enemies.Select((x, i) => $$"""{ "encounter": "e", "side": "enemy", "order": {{i + 1}}, {{x}} }""")]) + "]"));
 
-        Assert.Contains("doesn't fit", Fails("""[{ "unit": "ogre", "row": 0, "col": 2 }]""").Message);
-        Assert.Contains("overlaps", Fails("""[{ "unit": "ogre", "row": 0, "col": 0 }, { "unit": "imp", "row": 1, "col": 1 }]""").Message);
-        Assert.Equal("[0].enemies[0].unit", Fails("""[{ "unit": "dragon", "row": 0, "col": 0 }]""").Field);
-        Assert.Contains("1 to 6", Fails("[]").Message);
+        Assert.Contains("doesn't fit", Fails("""  "unit": "ogre", "row": 0, "col": 2""").Message);
+        Assert.Contains("overlaps", Fails("""  "unit": "ogre", "row": 0, "col": 0""", """ "unit": "imp", "row": 1, "col": 1""").Message);
+        var unknown = Fails("""  "unit": "dragon", "row": 0, "col": 0""");
+        Assert.Equal(("encounter_units.json", "[1].unit"), (unknown.File, unknown.Field));
+        Assert.Contains("1 to 6", Fails().Message);
     }
 }

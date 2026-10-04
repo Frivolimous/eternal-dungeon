@@ -1,53 +1,14 @@
 [
-  { "id": "strength", "name": "Strength", "rows": [
-    { "tag": "melee", "stat": "power", "coef": 1 },
-    { "tag": "light", "stat": "power", "coef": -0.5 },
-    { "tag": "heavy", "stat": "power", "coef": 0.5 } ] },
-
-  { "id": "dexterity", "name": "Dexterity", "rows": [
-    { "tag": "ranged", "stat": "power", "coef": 1 },
-    { "tag": "light", "stat": "power", "coef": 0.5 },
-    { "tag": "finesse", "stat": "power", "coef": 0.5 } ] },
-
-  { "id": "intellect", "name": "Intellect", "rows": [
-    { "tag": "gadget", "stat": "power", "coef": 1 },
-    { "tag": "gadget", "stat": "rate", "coef": 0.1 },
-    { "tag": "cryptic", "stat": "power", "coef": 0.5 },
-    { "tag": "cryptic", "stat": "rate", "coef": 0.05 } ] },
-
-  { "id": "magic", "name": "Magic", "rows": [
-    { "tag": "spell", "stat": "power", "coef": 1 },
-    { "tag": "mystic", "stat": "power", "coef": 0.5 } ] },
-
-  { "id": "elemental", "name": "Elemental", "rows": [
-    { "tag": "fire", "stat": "power", "coef": 1 },
-    { "tag": "electric", "stat": "power", "coef": 1 },
-    { "tag": "ice", "stat": "power", "coef": 1 } ] },
-
-  { "id": "accuracy", "name": "Accuracy", "rows": [
-    { "tag": "melee", "stat": "hit", "coef": 1 },
-    { "tag": "projectile", "stat": "hit", "coef": 1 },
-    { "tag": "grenade", "stat": "hit", "coef": 0.5 } ] },
-
-  { "id": "parry", "name": "Parry", "rows": [
-    { "tag": "melee", "stat": "avoid", "coef": 1 } ] },
-
-  { "id": "block", "name": "Block", "rows": [
-    { "tag": "melee", "stat": "avoid", "coef": 1 },
-    { "tag": "projectile", "stat": "avoid", "coef": 0.5 } ] },
-
-  { "id": "dodge", "name": "Dodge", "rows": [
-    { "tag": "projectile", "stat": "avoid", "coef": 1 },
-    { "tag": "grenade", "stat": "avoid", "coef": 0.5 },
-    { "tag": "melee", "stat": "avoid", "coef": 0.5 } ] },
-
-  { "id": "turn", "name": "Turn", "rows": [
-    { "tag": "spell", "stat": "avoid", "coef": 1 } ] },
-
-  { "id": "tenacity", "name": "Tenacity", "rows": [
-    { "tag": "control", "stat": "deval", "coef": 1 } ] },
-
-  { "id": "fortification", "name": "Fortification", "rows": [
-    { "tag": "physical", "stat": "resist", "coef": 1 },
-    { "tag": "critical", "stat": "resist", "coef": 1 } ] }
+  { "id": "strength", "name": "Strength" },
+  { "id": "dexterity", "name": "Dexterity" },
+  { "id": "intellect", "name": "Intellect" },
+  { "id": "magic", "name": "Magic" },
+  { "id": "elemental", "name": "Elemental" },
+  { "id": "accuracy", "name": "Accuracy" },
+  { "id": "parry", "name": "Parry" },
+  { "id": "block", "name": "Block" },
+  { "id": "dodge", "name": "Dodge" },
+  { "id": "turn", "name": "Turn" },
+  { "id": "tenacity", "name": "Tenacity" },
+  { "id": "fortification", "name": "Fortification" }
 ]

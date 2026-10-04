@@ -105,8 +105,14 @@ public sealed record AiProfileDef(string Id, string Name, double ThreatWeight, I
 /// front-left tile.</summary>
 public sealed record Placement(string Unit, int Row, int Col);
 
-/// <summary>A fixed battle: the party's formation and the enemies' layout.</summary>
-public sealed record EncounterDef(string Id, string Name, IReadOnlyList<Placement> Party, IReadOnlyList<Placement> Enemies);
+/// <summary>How the board is shown: party at the bottom and enemies at the top, or party left and enemies right.
+/// Presentation only: Core's rules are front-relative and ignore it.</summary>
+public enum BoardLayout { Vertical, SideOn }
+
+/// <summary>A fixed battle: the party's formation, the enemies' layout (front-relative rows and columns), and how
+/// the board is shown.</summary>
+public sealed record EncounterDef(string Id, string Name, IReadOnlyList<Placement> Party, IReadOnlyList<Placement> Enemies,
+    BoardLayout Layout = BoardLayout.Vertical);
 
 /// <summary>Who an action is aimed at.</summary>
 public enum ActionTarget { Enemy, Ally, Self, Tile }

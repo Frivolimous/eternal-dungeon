@@ -9,16 +9,14 @@
   { "id": "vulnerability", "name": "Vulnerability", "group": "character", "combine": "add", "hidden": true },
   { "id": "all_damage", "name": "All Damage", "group": "character", "combine": "add" },
   { "id": "all_resist", "name": "All Resist", "group": "character", "combine": "dim" },
-
   { "id": "base_dmg", "name": "Base Dmg", "group": "attack", "combine": "add" },
-  { "id": "power", "name": "Power", "group": "attack", "combine": "add", "pointValue": 1 },
+  { "id": "power", "name": "Power", "group": "attack", "combine": "add", "point_value": 1 },
   { "id": "multiplier", "name": "Multiplier", "group": "attack", "combine": "add" },
   { "id": "penetrate", "name": "Penetrate", "group": "attack", "combine": "dim" },
   { "id": "hit", "name": "Hit", "group": "attack", "combine": "dim" },
   { "id": "rate", "name": "Rate", "group": "attack", "combine": "add" },
   { "id": "crit_rating", "name": "Crit Rating", "group": "attack", "combine": "add" },
   { "id": "crit_mult", "name": "Crit Mult", "group": "attack", "combine": "add" },
-
   { "id": "resist", "name": "Resist", "group": "defense", "combine": "dim" },
   { "id": "avoid", "name": "Avoid", "group": "defense", "combine": "dim" },
   { "id": "deval", "name": "Deval", "group": "defense", "combine": "add" }

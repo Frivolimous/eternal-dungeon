@@ -22,20 +22,12 @@ public class DefaultActionTests
     [Fact]
     public void Default_actions_must_fit_their_role()
     {
-        var e = Assert.Throws<DataException>(() => DataLoader.Load(DataSource.FromFiles(new Dictionary<string, string>
-        {
-            [DataLoader.TagsFile] = "[]",
-            [DataLoader.StatsFile] = """[{ "id": "health", "name": "Health", "group": "character", "combine": "add" }]""",
-            [DataLoader.CompoundStatsFile] = "[]",
-            [DataLoader.EffectsFile] = "[]",
-            [DataLoader.ProcsFile] = "[]",
-            [DataLoader.ActionsFile] = """[{ "id": "wait", "name": "Wait", "tags": [], "target": "self", "apCost": 100 }]""",
-            [DataLoader.AiProfilesFile] = "[]",
-            [DataLoader.UnitsFile] = "[]",
-            [DataLoader.EncountersFile] = "[]",
-            [DataLoader.DefaultsFile] = """{ "unitStats": [], "defaultActions": { "attack": "wait", "defend": "wait", "move": "wait" } }""",
-        })));
-        Assert.Equal("defaultActions.attack", e.Field);
+        var e = TestData.TablesFail(
+            ("actions", """[{ "id": "wait", "name": "Wait", "target": "self", "ap_cost": 100 }]"""),
+            ("defaults", """[{ "key": "attack_action", "value": "wait" }, { "key": "defend_action", "value": "wait" }, { "key": "move_action", "value": "wait" }]"""));
+        Assert.Equal("defaults.json", e.File);
+        Assert.Equal("[0].value", e.Field);
+        Assert.Contains("attack action must be", e.Message);
     }
 
     [Fact]

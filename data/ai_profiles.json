@@ -1,40 +1,11 @@
-// How units choose actions and targets. threatWeight w: targets score w × Threat + (1 − w) × Vulnerability,
-// w between 0.25 and 0.75. Rules are tried in order; the first usable one with a valid target wins.
-// Enemy weights are the brief's placeholders; hero profiles are the simulator's simple scripted AI.
 [
-  { "id": "goblin_grunt", "name": "Grunt", "threatWeight": 0.5,
-    "rules": [ { "action": "goblin_slash" } ] },
-
-  { "id": "goblin_archer", "name": "Archer", "threatWeight": 0.25,
-    "rules": [ { "action": "goblin_shot" } ] },
-
-  { "id": "goblin_shaman", "name": "Shaman", "threatWeight": 0.75,
-    "rules": [ { "action": "mend", "allyHealthBelow": 0.5 }, { "action": "rotting_hex" } ] },
-
-  { "id": "goblin_brute", "name": "Brute", "threatWeight": 0.5,
-    "rules": [ { "action": "brute_smash" } ] },
-
-  { "id": "goblin_chief", "name": "Chief", "threatWeight": 0.6,
-    "rules": [ { "action": "war_cry", "missingBuff": "war_cry" }, { "action": "chief_cleave" } ] },
-
-  { "id": "goblin_hexer", "name": "Hexer", "threatWeight": 0.5,
-    "rules": [ { "action": "hex_bolt" } ] },
-
-  { "id": "hero_warrior", "name": "Warrior (scripted)", "threatWeight": 0.25,
-    "rules": [
-      { "action": "shield_bash", "targetCasting": true },
-      { "action": "defend", "selfHealthBelow": 0.3, "notTwiceInARow": true },
-      { "action": "power_attack", "notTwiceInARow": true },
-      { "action": "attack" } ] },
-
-  { "id": "hero_rogue", "name": "Rogue (scripted)", "threatWeight": 0.25,
-    "rules": [
-      { "action": "defend", "selfHealthBelow": 0.25, "notTwiceInARow": true },
-      { "action": "dagger_attack" },
-      { "action": "sneak", "notIntruding": true } ] },
-
-  { "id": "hero_elementalist", "name": "Elementalist (scripted)", "threatWeight": 0.25,
-    "rules": [
-      { "action": "frost_shard", "targetMissingBuff": "chill", "notTwiceInARow": true },
-      { "action": "fire_bolt" } ] }
+  { "id": "goblin_grunt", "name": "Grunt", "threat_weight": 0.5 },
+  { "id": "goblin_archer", "name": "Archer", "threat_weight": 0.25 },
+  { "id": "goblin_shaman", "name": "Shaman", "threat_weight": 0.75 },
+  { "id": "goblin_brute", "name": "Brute", "threat_weight": 0.5 },
+  { "id": "goblin_chief", "name": "Chief", "threat_weight": 0.6 },
+  { "id": "goblin_hexer", "name": "Hexer", "threat_weight": 0.5 },
+  { "id": "hero_warrior", "name": "Warrior (scripted)", "threat_weight": 0.25 },
+  { "id": "hero_rogue", "name": "Rogue (scripted)", "threat_weight": 0.25 },
+  { "id": "hero_elementalist", "name": "Elementalist (scripted)", "threat_weight": 0.25 }
 ]

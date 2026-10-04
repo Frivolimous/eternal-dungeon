@@ -57,7 +57,7 @@ Every character starts with Weapon Crit Rating 5% and untagged Crit Mult 0.5, so
 
 ## Default actions
 
-Every unit, heroes and enemies, has three default actions on top of its own skills (defaults.json, so they can be tuned without code changes). AP costs are placeholders for tuning.
+Every unit, heroes and enemies, has three default actions on top of its own skills (the defaults data table, so they can be tuned without code changes). AP costs are placeholders for tuning.
 
 | Action | AP | Effect |
 | --- | --- | --- |

@@ -21,15 +21,13 @@ public readonly partial struct JsonField
         Path = path;
     }
 
+    /// <summary>Parses strict JSON: no comments and no trailing commas (data files are written by one canonical
+    /// writer, which would drop them).</summary>
     public static JsonField Parse(string file, string text)
     {
         try
         {
-            using var doc = JsonDocument.Parse(text, new JsonDocumentOptions
-            {
-                CommentHandling = JsonCommentHandling.Skip,
-                AllowTrailingCommas = true,
-            });
+            using var doc = JsonDocument.Parse(text);
             return new JsonField(doc.RootElement.Clone(), file, "");
         }
         catch (JsonException e)
@@ -132,12 +130,17 @@ public readonly partial struct JsonField
     [GeneratedRegex("^[a-z][a-z0-9_]*$")]
     private static partial Regex IdPattern();
 
+    /// <summary>Whether <paramref name="text"/> is a valid id: lowercase snake_case, starting with a letter.</summary>
+    public static bool IsId(string text) => IdPattern().IsMatch(text);
+
+    public const string IdRule = "lowercase letters, digits and underscores, starting with a letter";
+
     /// <summary>A lowercase snake_case id, such as <c>power_attack</c>.</summary>
     public string Id()
     {
         var id = String();
         if (!IdPattern().IsMatch(id))
-            throw Error($"\"{id}\" is not a valid id (lowercase letters, digits and underscores, starting with a letter)");
+            throw Error($"\"{id}\" is not a valid id ({IdRule})");
         return id;
     }
 

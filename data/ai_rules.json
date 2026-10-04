@@ -1,0 +1,19 @@
+[
+  { "profile": "goblin_grunt", "order": 1, "action": "goblin_slash" },
+  { "profile": "goblin_archer", "order": 1, "action": "goblin_shot" },
+  { "profile": "goblin_shaman", "order": 1, "action": "mend", "ally_health_below": 0.5 },
+  { "profile": "goblin_shaman", "order": 2, "action": "rotting_hex" },
+  { "profile": "goblin_brute", "order": 1, "action": "brute_smash" },
+  { "profile": "goblin_chief", "order": 1, "action": "war_cry", "missing_buff": "war_cry" },
+  { "profile": "goblin_chief", "order": 2, "action": "chief_cleave" },
+  { "profile": "goblin_hexer", "order": 1, "action": "hex_bolt" },
+  { "profile": "hero_warrior", "order": 1, "action": "shield_bash", "target_casting": true },
+  { "profile": "hero_warrior", "order": 2, "action": "defend", "self_health_below": 0.3, "not_twice_in_a_row": true },
+  { "profile": "hero_warrior", "order": 3, "action": "power_attack", "not_twice_in_a_row": true },
+  { "profile": "hero_warrior", "order": 4, "action": "attack" },
+  { "profile": "hero_rogue", "order": 1, "action": "defend", "self_health_below": 0.25, "not_twice_in_a_row": true },
+  { "profile": "hero_rogue", "order": 2, "action": "dagger_attack" },
+  { "profile": "hero_rogue", "order": 3, "action": "sneak", "not_intruding": true },
+  { "profile": "hero_elementalist", "order": 1, "action": "frost_shard", "not_twice_in_a_row": true, "target_missing_buff": "chill" },
+  { "profile": "hero_elementalist", "order": 2, "action": "fire_bolt" }
+]
