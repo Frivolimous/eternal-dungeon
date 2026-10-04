@@ -143,7 +143,7 @@ public static class DataLoader
 
     static ActionDef ReadAction(JsonField f, Dictionary<string, TagDef> tags, HashSet<string> effects)
     {
-        f.OnlyFields("id", "name", "tags", "target", "range", "apCost", "manaCost", "baseDamage", "allDamage", "castTime", "effects");
+        f.OnlyFields("id", "name", "tags", "target", "range", "apCost", "manaCost", "baseDamage", "allDamage", "castTime", "effects", "moveTo");
 
         var actionTags = new List<string>();
         foreach (var t in f["tags"].Items())
@@ -190,7 +190,10 @@ public static class DataLoader
             f.Optional("baseDamage")?.Number() ?? 0,
             f.Optional("allDamage")?.Number() ?? 0,
             f.Optional("castTime")?.Int() ?? 0,
-            effectRefs);
+            effectRefs,
+            f.Optional("moveTo")?.Enum<MoveTo>() ?? MoveTo.None);
+        if ((action.Target == ActionTarget.Tile) != (action.MoveTo != MoveTo.None))
+            throw new DataException(f.File, $"{f.Path}.moveTo", "tile actions need moveTo (own or enemy), and only they can have it");
         if (action.ManaCost < 0) throw f["manaCost"].Error("can't be negative");
         if (action.BaseDamage < 0) throw f["baseDamage"].Error("can't be negative");
         if (action.CastTime < 0) throw f["castTime"].Error("can't be negative");

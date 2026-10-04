@@ -124,6 +124,11 @@ check. AI-generated art is for placeholders only and must be flagged; nothing fl
   random living target. Slow and stat reduction are negative stats; delayed damage lands when a buff runs
   out. Stagger bar: Speed halved above 0, stunned at 100 (interrupts a cast, ignores stagger) until it drains
   to 0; drains 10 per buff-clock turn (placeholder).
+- Grid (BattleGrid): each side's area is 3 cols × 2 rows, row 0 the front; Tall units take a column, Large a
+  2×2 block; dead units leave their tiles; an area collapses forward when its front row empties. Move: 50 AP
+  to an empty neighbouring tile. Sneak (placeholder until Jeremy decides): to any empty tile in the enemy area;
+  a unit standing in the other side's area can melee anyone there and be meleed by anyone there. Push/Pull:
+  one row back/forward if the tiles are free (placeholder).
 - `Core.Combat` is the battle namespace (a `Battle` namespace would clash with the `Battle` class).
 
 ## To do at the end of M1 (Jeremy asked)

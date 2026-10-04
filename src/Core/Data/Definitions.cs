@@ -74,6 +74,9 @@ public enum ActionTarget { Enemy, Ally, Self, Tile }
 /// </summary>
 public enum ActionRange { Melee, Reach, Any }
 
+/// <summary>Where a tile-targeted action moves its user: within its own area (Move) or into the other side's (Sneak).</summary>
+public enum MoveTo { None, Own, Enemy }
+
 /// <summary>Who an action's effect lands on: the action's target or the unit acting.</summary>
 public enum EffectAim { Target, Self }
 
@@ -92,7 +95,8 @@ public sealed record ActionDef(
     double BaseDamage,
     double AllDamage,
     int CastTime,
-    IReadOnlyList<EffectRef> Effects)
+    IReadOnlyList<EffectRef> Effects,
+    MoveTo MoveTo = MoveTo.None)
 {
     public bool DealsDamage => BaseDamage > 0;
 }

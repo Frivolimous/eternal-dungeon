@@ -87,9 +87,10 @@ public class CcTests
         var data = WithCc(Cc("doze", CcKind.Sleep, turns: 5));
         var mage = U(data, "elementalist", "mage", Side.Party);
         var grunt = Exposed(U(data, "goblin_grunt", "grunt", Side.Enemy));
-        var b = new Battle(data, [mage, grunt], seed: 1);
+        var shaman = U(data, "goblin_shaman", "shaman", Side.Enemy);
+        var b = new Battle(data, [mage, grunt, shaman], seed: 1);
 
-        Apply(b, mage, grunt, "apply_doze");
+        Apply(b, shaman, grunt, "apply_doze");                         // the test action targets an ally
         Assert.True(grunt.LosesTurn);
         grunt.ActTicks = TurnClock.TurnThreshold;
         Assert.Single(b.SkipTurn(grunt).Of<TurnLost>());

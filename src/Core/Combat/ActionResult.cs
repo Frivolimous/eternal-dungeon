@@ -29,6 +29,9 @@ public sealed record Fizzled(string Reason) : Outcome;
 
 public sealed record Died(Unit Unit) : Outcome;
 
+/// <summary>A unit changed tiles: by Move or Sneak, pushed or pulled, or the area collapsing forward.</summary>
+public sealed record Moved(Unit Unit, Tile From, Tile To, string Why) : Outcome;
+
 /// <summary>Stagger damage. <see cref="Broke"/>: the bar filled and the unit is stunned until it drains.</summary>
 public sealed record Staggered(Unit Target, int Amount, int Bar, bool Broke) : Outcome;
 

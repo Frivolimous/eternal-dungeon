@@ -15,16 +15,21 @@ public sealed class Battle
     public GameData Data { get; }
     public IReadOnlyList<Unit> Units { get; }
     public TurnClock Clock { get; }
+    public BattleGrid Grid { get; }
     public Rng Rng { get; }
     public List<ActionResult> Results { get; } = [];
 
-    public Battle(GameData data, IReadOnlyList<Unit> units, ulong seed)
+    /// <param name="grid">Where everyone stands; by default each side fills its own area front row first.</param>
+    public Battle(GameData data, IReadOnlyList<Unit> units, ulong seed, BattleGrid? grid = null)
     {
         if (units.Select(u => u.Id).Distinct().Count() != units.Count)
             throw new ArgumentException("Unit ids must be unique in a battle");
         Data = data;
         Units = units;
         Clock = new TurnClock(units);
+        Grid = grid ?? BattleGrid.AutoPlace(units);
+        if (units.Any(u => Grid.AnchorOf(u) is null))
+            throw new ArgumentException("Every unit needs a place on the grid");
         Rng = new Rng(seed);
     }
 
@@ -89,6 +94,7 @@ public sealed class Battle
                     Expire(unit, buff, r);
             }
         }
+        CollapseAreas(r);
         return Record(r);
     }
 
@@ -103,6 +109,13 @@ public sealed class Battle
         if (!actor.Alive) throw new InvalidOperationException($"{actor.Name} is dead");
         if (actor.CantUse(action) is string why)
             throw new InvalidOperationException($"{actor.Name} can't use {action.Name}: {why}");
+        if (action.Target == ActionTarget.Tile)
+            throw new InvalidOperationException($"{action.Name} targets a tile: use ActAt");
+        var aimed = action.Target == ActionTarget.Self ? actor : target
+            ?? throw new InvalidOperationException($"{action.Name} needs a target");
+        if (Grid.CantTarget(actor, action, aimed) is string bad)
+            throw new InvalidOperationException($"{actor.Name} can't aim {action.Name} at {aimed.Name}: {bad}");
+        target = aimed;
         actor.SpendMana(action.ManaCost);
         TurnClock.Spend(actor, action.ApCost);
 
@@ -114,6 +127,34 @@ public sealed class Battle
             return Record(r);
         }
         return Record(Resolve(actor, action, target));
+    }
+
+    /// <summary>A tile-targeted action: Move steps to an empty tile next to the unit in the area it stands in;
+    /// Sneak goes to any empty tile in the other side's area. Then the action's effects apply.</summary>
+    public ActionResult ActAt(Unit actor, ActionDef action, Tile tile)
+    {
+        if (!actor.Alive) throw new InvalidOperationException($"{actor.Name} is dead");
+        if (action.Target != ActionTarget.Tile)
+            throw new InvalidOperationException($"{action.Name} doesn't target a tile");
+        if (actor.CantUse(action) is string why)
+            throw new InvalidOperationException($"{actor.Name} can't use {action.Name}: {why}");
+        var options = action.MoveTo == MoveTo.Enemy ? Grid.SneakOptions(actor) : Grid.MoveOptions(actor);
+        if (!options.Contains(tile))
+            throw new InvalidOperationException($"{actor.Name} can't {action.Name} to {tile}");
+
+        actor.SpendMana(action.ManaCost);
+        TurnClock.Spend(actor, action.ApCost);
+        var r = new ActionResult(Clock.Tick, actor, action, null);
+        var from = Grid.AnchorOf(actor)!.Value;
+        Grid.MoveTo(actor, tile);
+        r.Add(new Moved(actor, from, tile, action.Name));
+
+        var queue = new Queue<Pending>();
+        foreach (var e in action.Effects)
+            queue.Enqueue(new Pending(Data.Effects[e.Effect], actor, action.Id, actor, action.Tags));
+        Process(queue, r);
+        CollapseAreas(r);
+        return Record(r);
     }
 
     public ActionResult CompleteCast(CastComplete done)
@@ -172,6 +213,7 @@ public sealed class Battle
 
         QueueTriggers(actor, TriggerOn.ActionComplete, other: target, queue, r);
         Process(queue, r);
+        CollapseAreas(r);
         return r;
     }
 
@@ -219,7 +261,19 @@ public sealed class Battle
             r.Add(new Staggered(p.Target, p.Def.Stagger, p.Target.Stagger, broke));
             if (broke) Interrupt(p.Target, r);
         }
-        // Displace (Push/Pull) needs the battle grid; it arrives with it.
+        if (p.Def.Displace != Displace.None && Grid.AnchorOf(p.Target) is { } from && Grid.Shove(p.Target, p.Def.Displace) is { } to)
+            r.Add(new Moved(p.Target, from, to, p.Def.Name));
+    }
+
+    /// <summary>Collapses any area whose front row emptied (deaths, moves, pushes).</summary>
+    void CollapseAreas(ActionResult r)
+    {
+        foreach (var area in new[] { Side.Party, Side.Enemy })
+        {
+            var before = Units.Where(u => u.Alive).ToDictionary(u => u, u => Grid.AnchorOf(u));
+            foreach (var u in Grid.Collapse(area))
+                r.Add(new Moved(u, before[u]!.Value, Grid.AnchorOf(u)!.Value, "collapse"));
+        }
     }
 
     void Interrupt(Unit unit, ActionResult r)

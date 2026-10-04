@@ -12,13 +12,13 @@
     "effects": [{ "effect": "guard", "on": "self" }] },
 
   { "id": "move", "name": "Move", "tags": [],
-    "target": "tile", "apCost": 50 },
+    "target": "tile", "moveTo": "own", "apCost": 50 },
 
   { "id": "dagger_attack", "name": "Dagger Attack", "tags": ["physical", "melee", "light", "finesse"],
     "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 12 },
 
   { "id": "sneak", "name": "Sneak", "tags": ["buff"],
-    "target": "tile", "apCost": 100,
+    "target": "tile", "moveTo": "enemy", "apCost": 100,
     "effects": [{ "effect": "cloak", "on": "self" }] },
 
   { "id": "fire_bolt", "name": "Fire Bolt", "tags": ["arcane", "spell", "ranged", "fire"],
