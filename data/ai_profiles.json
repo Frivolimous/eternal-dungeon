@@ -1,0 +1,31 @@
+// How units choose actions and targets. threatWeight w: targets score w × Threat + (1 − w) × Vulnerability,
+// w between 0.25 and 0.75. Rules are tried in order; the first usable one with a valid target wins.
+// Enemy weights are the brief's placeholders; hero profiles are the simulator's simple scripted AI.
+[
+  { "id": "goblin_grunt", "name": "Grunt", "threatWeight": 0.5,
+    "rules": [ { "action": "goblin_slash" } ] },
+
+  { "id": "goblin_archer", "name": "Archer", "threatWeight": 0.25,
+    "rules": [ { "action": "goblin_shot" } ] },
+
+  { "id": "goblin_shaman", "name": "Shaman", "threatWeight": 0.75,
+    "rules": [ { "action": "mend", "allyHealthBelow": 0.5 }, { "action": "rotting_hex" } ] },
+
+  { "id": "goblin_brute", "name": "Brute", "threatWeight": 0.5,
+    "rules": [ { "action": "brute_smash" } ] },
+
+  { "id": "goblin_chief", "name": "Chief", "threatWeight": 0.6,
+    "rules": [ { "action": "war_cry", "missingBuff": "war_cry" }, { "action": "chief_cleave" } ] },
+
+  { "id": "hero_warrior", "name": "Warrior (scripted)", "threatWeight": 0.25,
+    "rules": [
+      { "action": "defend", "selfHealthBelow": 0.25, "missingBuff": "guard" },
+      { "action": "power_attack" },
+      { "action": "attack" } ] },
+
+  { "id": "hero_rogue", "name": "Rogue (scripted)", "threatWeight": 0.25,
+    "rules": [ { "action": "dagger_attack" }, { "action": "sneak", "notIntruding": true } ] },
+
+  { "id": "hero_elementalist", "name": "Elementalist (scripted)", "threatWeight": 0.25,
+    "rules": [ { "action": "fire_bolt" }, { "action": "frost_shard" }, { "action": "defend" } ] }
+]

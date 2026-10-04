@@ -68,7 +68,16 @@ public sealed class Battle
         return Record(r);
     }
 
-    /// <summary>One buff-clock turn: stagger bars drain, periodic damage and healing land, then buffs count
+    /// <summary><paramref name="unit"/> has nothing it can do: it lets the turn pass (100 AP).</summary>
+    public ActionResult Wait(Unit unit)
+    {
+        var r = new ActionResult(Clock.Tick, unit, null, null);
+        TurnClock.Spend(unit, 100);
+        r.Add(new Waited(unit));
+        return Record(r);
+    }
+
+    /// <summary>One buff-clock turn: stagger bars drain, Health and Mana regenerate, periodic damage and healing land, then buffs count
     /// down and expire.</summary>
     public ActionResult BuffTick()
     {
@@ -76,12 +85,20 @@ public sealed class Battle
         foreach (var unit in Units.Where(u => u.Alive))
         {
             unit.DrainStagger(StaggerDrain);
+            var regen = (int)Math.Round(unit.Stats.Get("h_regen"), MidpointRounding.AwayFromZero);
+            if (regen > 0 && unit.Health < unit.MaxHealth)
+            {
+                var before = unit.Health;
+                r.Add(new Healed(unit, "Regen", unit.Heal(regen), before));
+            }
+            unit.RestoreMana((int)Math.Round(unit.Stats.Get("m_regen"), MidpointRounding.AwayFromZero));
             foreach (var buff in unit.Buffs.ToList())
             {
                 if (buff.Def.PeriodicDamage > 0 && unit.Alive)
                 {
                     var before = unit.Health;
                     var taken = unit.TakeDamage(buff.Def.PeriodicDamage * buff.Stacks);
+                    AddThreat(buff.CasterId, taken.Absorbed + taken.ToHealth);
                     r.Add(new PeriodicDamaged(unit, buff, taken, before));
                     if (taken.Killed) r.Add(new Died(unit));
                 }
@@ -191,6 +208,7 @@ public sealed class Battle
                 var breakdown = Resolution.Damage(actor, action, target);
                 var before = target.Health;
                 var taken = target.TakeDamage(breakdown.Final);
+                actor.ThreatEarned += taken.Absorbed + taken.ToHealth;
                 r.Add(new Damaged(target, breakdown, taken, before));
                 if (taken.Killed) r.Add(new Died(target));
             }
@@ -247,7 +265,9 @@ public sealed class Battle
             var power = p.Caster.Stats.Get("power", p.Tags);
             var amount = (int)Math.Round(p.Def.Heal * (1 + power / 100), MidpointRounding.AwayFromZero);
             var before = p.Target.Health;
-            r.Add(new Healed(p.Target, p.Def.Name, p.Target.Heal(Math.Max(0, amount)), before));
+            var healed = p.Target.Heal(Math.Max(0, amount));
+            p.Caster.ThreatEarned += healed;
+            r.Add(new Healed(p.Target, p.Def.Name, healed, before));
         }
         if (p.Def.ShieldMaxHealth > 0)
         {
@@ -263,6 +283,11 @@ public sealed class Battle
         }
         if (p.Def.Displace != Displace.None && Grid.AnchorOf(p.Target) is { } from && Grid.Shove(p.Target, p.Def.Displace) is { } to)
             r.Add(new Moved(p.Target, from, to, p.Def.Name));
+    }
+
+    void AddThreat(string unitId, double amount)
+    {
+        if (Units.FirstOrDefault(u => u.Id == unitId) is { } u) u.ThreatEarned += amount;
     }
 
     /// <summary>Collapses any area whose front row emptied (deaths, moves, pushes).</summary>

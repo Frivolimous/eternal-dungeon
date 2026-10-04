@@ -37,6 +37,15 @@ public sealed class Unit
 
     /// <summary>The name in combat logs, numbered when a battle has several of the same unit ("Goblin Grunt #2").</summary>
     public string Name { get; set; }
+
+    /// <summary>Threat earned in this battle: damage dealt plus healing done (Anchor: Enemy targeting).</summary>
+    public double ThreatEarned { get; set; }
+
+    /// <summary>Hidden. Threat earned plus the Threat stat (Cloak lowers it).</summary>
+    public double Threat => ThreatEarned + Stats.Get("threat");
+
+    /// <summary>Hidden. Rises as Health drops: the share of Health missing, plus the Vulnerability stat in percent.</summary>
+    public double Vulnerability => 1 - (double)Health / Math.Max(1, MaxHealth) + Stats.Get("vulnerability") / 100;
     public bool Alive => Health > 0;
     public double Act => ActTicks / 100.0;
     public int MaxHealth => (int)Math.Round(Stats.Get("health"));

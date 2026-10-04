@@ -40,6 +40,9 @@ public sealed record Interrupted(Unit Unit, Cast Cast) : Outcome;
 /// <summary>Damage a buff dealt as it ended (delayed damage).</summary>
 public sealed record DelayedDamaged(Unit Target, Buff Buff, DamageTaken Taken, int HealthBefore) : Outcome;
 
+/// <summary>A unit had nothing it could do and let its turn pass.</summary>
+public sealed record Waited(Unit Unit) : Outcome;
+
 /// <summary>A unit lost its turn to Sleep or Fear.</summary>
 public sealed record TurnLost(Unit Unit, string Reason) : Outcome;
 

@@ -56,14 +56,32 @@ public enum UnitSize
 /// <summary>A base stat value on a unit definition: untagged when <see cref="Tag"/> is null.</summary>
 public sealed record StatValue(string Stat, string? Tag, double Value);
 
-/// <summary>A hero or enemy as content: base stats, tag stats, compound stats and its actions.</summary>
+/// <summary>A hero or enemy as content: base stats, tag stats, compound stats, its actions and its AI.</summary>
 public sealed record UnitDef(
     string Id,
     string Name,
     UnitSize Size,
     IReadOnlyList<StatValue> Stats,
     IReadOnlyDictionary<string, double> Compounds,
-    IReadOnlyList<string> Actions);
+    IReadOnlyList<string> Actions,
+    string Ai = "");
+
+/// <summary>
+/// One action-choice rule: use <see cref="Action"/> if it's usable, has a valid target, and every condition
+/// given holds. Rules are tried in order; the first that passes is used.
+/// </summary>
+public sealed record AiRule(
+    string Action,
+    double? AllyHealthBelow = null,
+    double? SelfHealthBelow = null,
+    string? MissingBuff = null,
+    bool NotIntruding = false);
+
+/// <summary>
+/// How a unit picks actions and targets (Anchor: Combat › Enemy targeting). Targets score
+/// w × Threat + (1 − w) × Vulnerability, w = <see cref="ThreatWeight"/>, at most 0.75 either way.
+/// </summary>
+public sealed record AiProfileDef(string Id, string Name, double ThreatWeight, IReadOnlyList<AiRule> Rules);
 
 /// <summary>Who an action is aimed at.</summary>
 public enum ActionTarget { Enemy, Ally, Self, Tile }

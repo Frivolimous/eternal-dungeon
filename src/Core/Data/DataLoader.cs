@@ -13,6 +13,7 @@ public static class DataLoader
     public const string CompoundStatsFile = "compound_stats.json";
     public const string EffectsFile = "effects.json";
     public const string ActionsFile = "actions.json";
+    public const string AiProfilesFile = "ai_profiles.json";
     public const string UnitsFile = "units.json";
 
     /// <summary>AP costs an action may have (Anchor: Combat › Turn order). 200 works like a cooldown.</summary>
@@ -39,8 +40,14 @@ public static class DataLoader
 
         var actions = ReadList(source, ActionsFile, f => ReadAction(f, tags, effectIds));
         var actionIds = actions.Select(a => a.Id).ToHashSet();
-        var units = ReadList(source, UnitsFile, f => ReadUnit(f, tags, stats, compoundIds, actionIds));
-        return new GameData([.. tags.Values], [.. stats.Values], compounds, units, actions, effects);
+        var actionsById = actions.ToDictionary(a => a.Id);
+        var ais = ReadList(source, AiProfilesFile, f => ReadAiProfile(f, actionsById, effectIds));
+        var aiIds = ais.Select(a => a.Id).ToHashSet();
+        var units = ReadList(source, UnitsFile, f => ReadUnit(f, tags, stats, compoundIds, actionIds, aiIds));
+        foreach (var unit in units)
+            if (ais.First(a => a.Id == unit.Ai).Rules.FirstOrDefault(r => !unit.Actions.Contains(r.Action)) is { } missing)
+                throw new DataException(UnitsFile, unit.Id, $"its AI \"{unit.Ai}\" uses \"{missing.Action}\", which isn't in its actions");
+        return new GameData([.. tags.Values], [.. stats.Values], compounds, units, actions, effects, ais);
     }
 
     static EffectDef ReadEffect(JsonField f, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats,
@@ -202,10 +209,38 @@ public static class DataLoader
         return action;
     }
 
-    static UnitDef ReadUnit(JsonField f, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats,
-        HashSet<string> compounds, HashSet<string> actions)
+    /// <summary>The most an AI may lean toward Threat or Vulnerability (Anchor: at most 75% toward one).</summary>
+    public const double MaxAiLean = 0.75;
+
+    static AiProfileDef ReadAiProfile(JsonField f, Dictionary<string, ActionDef> actions, HashSet<string> effects)
     {
-        f.OnlyFields("id", "name", "size", "stats", "tagStats", "compounds", "actions");
+        f.OnlyFields("id", "name", "threatWeight", "rules");
+        var w = f["threatWeight"].Number();
+        if (w < 1 - MaxAiLean || w > MaxAiLean)
+            throw f["threatWeight"].Error($"must be between {1 - MaxAiLean} and {MaxAiLean}, got {w}");
+        var rules = new List<AiRule>();
+        foreach (var r in f["rules"].Items())
+        {
+            r.OnlyFields("action", "allyHealthBelow", "selfHealthBelow", "missingBuff", "notIntruding");
+            var action = r["action"].Id();
+            if (!actions.TryGetValue(action, out var def))
+                throw r["action"].Error($"unknown action \"{action}\" (not in {ActionsFile})");
+            var buff = r.Optional("missingBuff")?.Id();
+            if (buff is not null && !effects.Contains(buff))
+                throw r["missingBuff"].Error($"unknown effect \"{buff}\" (not in {EffectsFile})");
+            if (r.Optional("allyHealthBelow") is { } ally && def.Target != ActionTarget.Ally)
+                throw ally.Error("only ally-targeted actions can pick an ally by Health");
+            rules.Add(new AiRule(action, r.Optional("allyHealthBelow")?.Number(), r.Optional("selfHealthBelow")?.Number(),
+                buff, r.Optional("notIntruding")?.Bool() ?? false));
+        }
+        if (rules.Count == 0) throw f["rules"].Error("needs at least one rule");
+        return new AiProfileDef(f["id"].Id(), f["name"].String(), w, rules);
+    }
+
+    static UnitDef ReadUnit(JsonField f, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats,
+        HashSet<string> compounds, HashSet<string> actions, HashSet<string> ais)
+    {
+        f.OnlyFields("id", "name", "size", "stats", "tagStats", "compounds", "actions", "ai");
 
         var size = f["size"];
         var unitSize = size.Number() switch
@@ -245,7 +280,11 @@ public static class DataLoader
         if (actionList.Count == 0)
             throw f["actions"].Error("a unit needs at least one action");
 
-        var unit = new UnitDef(f["id"].Id(), f["name"].String(), unitSize, values, compoundValues, actionList);
+        var ai = f["ai"].Id();
+        if (!ais.Contains(ai))
+            throw f["ai"].Error($"unknown AI profile \"{ai}\" (not in {AiProfilesFile})");
+
+        var unit = new UnitDef(f["id"].Id(), f["name"].String(), unitSize, values, compoundValues, actionList, ai);
         if (!values.Any(v => v.Stat == "health" && v.Value > 0))
             throw f["stats"].Error("a unit needs health above 0");
         return unit;

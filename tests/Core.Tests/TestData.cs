@@ -11,7 +11,8 @@ static class TestData
     public static GameData With(IEnumerable<ActionDef>? actions = null, IEnumerable<EffectDef>? effects = null) =>
         new(Repo.TagList, Repo.StatList, Repo.CompoundList, Repo.UnitList,
             [.. Repo.ActionList, .. actions ?? []],
-            [.. Repo.EffectList, .. effects ?? []]);
+            [.. Repo.EffectList, .. effects ?? []],
+            Repo.AiProfileList);
 
     public static EffectDef Buff(string id, int turns = 3, bool stacking = false, int maxStacks = int.MaxValue,
         StatValue[]? stats = null, int periodicDamage = 0, TriggerDef[]? triggers = null) =>

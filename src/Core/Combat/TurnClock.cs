@@ -83,7 +83,7 @@ public sealed class TurnClock(IReadOnlyList<Unit> units)
         Unit? best = null;
         foreach (var u in units)
         {
-            if (!u.Alive || u.Casting is not null || u.ActTicks < TurnThreshold) continue;
+            if (!u.Alive || u.Stunned || u.Casting is not null || u.ActTicks < TurnThreshold) continue;
             if (best is null || u.ActTicks > best.ActTicks || (u.ActTicks == best.ActTicks && u.Speed > best.Speed))
                 best = u;
         }
