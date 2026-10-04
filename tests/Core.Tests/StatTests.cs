@@ -208,6 +208,26 @@ public class StatTests
     }
 
     [Fact]
+    public void Compound_stats_are_capped_at_100_points()
+    {
+        var s = NewBlock();
+        s.Add("base", "strength", 80);
+        s.Add("rage", "strength", 50);
+        Assert.Equal(100, s.GetCompound("strength"));
+        Assert.Equal(100, s.Get("power", ["melee"]));
+        Assert.Equal(150, s.Get("power", ["melee", "heavy"]));                // the cap is on points, not contributions
+    }
+
+    [Fact]
+    public void Compounds_above_95_are_flagged_and_the_repo_has_none()
+    {
+        Assert.Empty(Data.DataWarnings.Check(TestData.Repo));
+        var data = new Data.GameData(TestData.Repo.TagList, TestData.Repo.StatList, TestData.Repo.CompoundList,
+            [TestData.Repo.Units["warrior"] with { Compounds = new Dictionary<string, double> { ["strength"] = 96 } }]);
+        Assert.Contains("Strength 96", Assert.Single(Data.DataWarnings.Check(data)));
+    }
+
+    [Fact]
     public void A_compound_alone_cannot_reach_full_chance()
     {
         var s = NewBlock();

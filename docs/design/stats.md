@@ -31,7 +31,7 @@ Attack and defense stats pair up: Penetrate works against Resist, Hit against Av
 
 A compound stat converts into tag stats at a coefficient: 1 means full value, and +0.5 or −0.5 adjusts it. For example, Strength gives Heavy melee 1.5× Power and Light melee 0.5×, while Dexterity adds +0.5× to Light, so light weapons split between the two.
 
-Every recipe row whose tag the action carries counts, adjusters included: Strength 10 gives a Melee Heavy action 10 × (1 + 0.5) = 15 Power, and a Heavy action without Melee 5. Heavy and Light are melee-only tags, so only melee actions carry them. Compound points are percentages, like Power: on a chance stat 1 point is 0.01, so Accuracy 10 adds 0.10 Hit to a melee action. Placeholder: one compound stat adds at most 0.95 to a chance stat on one action.
+Every recipe row whose tag the action carries counts, adjusters included: Strength 10 gives a Melee Heavy action 10 × (1 + 0.5) = 15 Power, and a Heavy action without Melee 5. Heavy and Light are melee-only tags, so only melee actions carry them. Compound points are percentages, like Power: on a chance stat 1 point is 0.01, so Accuracy 10 adds 0.10 Hit to a melee action. Compound stats are hard-capped at 100 points: a value that high means a design error, so the data check warns about any unit given more than 95. As a safety clamp, one compound stat adds at most ±0.95 to a chance stat on one action, so a chance never reaches 100% from a compound alone.
 
 | Compound stat | Tag → effect |
 | --- | --- |
