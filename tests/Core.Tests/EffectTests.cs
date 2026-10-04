@@ -43,6 +43,29 @@ public class EffectTests
     }
 
     [Fact]
+    public void Damage_over_time_locks_in_the_casters_power_and_multiplier()
+    {
+        var data = Repo;
+        var shaman = Ready(U(data, "goblin_shaman", "shaman", Side.Enemy));   // Magic 10: Spell Power 10
+        var warrior = Exposed(U(data, "warrior", "warrior", Side.Party));
+        shaman.Stats.Add("test", "power", 30, "toxic");
+        shaman.Stats.Add("test", "multiplier", 0.5);
+        var battle = new Battle(data, [warrior, shaman], seed: 1);
+
+        battle.Act(shaman, data.Actions["rotting_hex"], warrior);
+        Assert.Equal(1.4 * 1.5, warrior.Buffs.Single().DotFactor, 9);           // Power 40, Multiplier 0.5
+        shaman.Stats.RemoveSource("test");                                       // later changes don't count
+
+        var before = warrior.Health;
+        var tick = battle.BuffTick();
+        Assert.Equal(8, tick.Of<PeriodicDamaged>().Single().Taken.ToHealth);     // 4 × 2.1 = 8.4
+        Assert.Equal(before - 8, warrior.Health);
+
+        warrior.AddShield(5);
+        Assert.Equal(new DamageTaken(5, 3, false), battle.BuffTick().Of<PeriodicDamaged>().Single().Taken);  // Shield still absorbs
+    }
+
+    [Fact]
     public void Buffs_apply_only_after_every_effect_resolves()
     {
         // Listed first: a +50 Power buff on the caster. Listed second: a heal that scales with the caster's Power.

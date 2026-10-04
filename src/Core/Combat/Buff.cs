@@ -16,6 +16,10 @@ public sealed class Buff(EffectDef def, string casterId, string actionId)
     public int Stacks { get; set; } = 1;
     /// <summary>Buff-clock turns left, for buffs with a number of turns.</summary>
     public int Remaining { get; set; } = def.Turns;
+    /// <summary>The caster's Power factor × Multiplier factor for the buff's tags, locked in when it was applied;
+    /// every damage-over-time tick is scaled by it.</summary>
+    public double DotFactor { get; set; } = 1;
+
     /// <summary>The Shield this buff granted, taken back (as far as it's left) when the buff ends.</summary>
     public int ShieldGranted { get; set; }
 

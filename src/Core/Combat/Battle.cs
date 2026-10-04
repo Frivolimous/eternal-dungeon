@@ -97,7 +97,7 @@ public sealed partial class Battle
                 if (buff.Def.PeriodicDamage > 0 && unit.Alive)
                 {
                     var before = unit.Health;
-                    var taken = unit.TakeDamage(buff.Def.PeriodicDamage * buff.Stacks);
+                    var taken = unit.TakeDamage(DotTick(buff));
                     AddThreat(buff.CasterId, taken.Absorbed + taken.ToHealth);
                     r.Add(new PeriodicDamaged(unit, buff, taken, before));
                     if (taken.Killed) AddDeath(unit, r);
@@ -365,6 +365,13 @@ public sealed partial class Battle
             buff.ShieldGranted = 0;
         }
 
+        if (p.Def.PeriodicDamage > 0)
+        {
+            // Damage over time scales with the caster, locked in now (Anchor: Combat › Crowd control).
+            var a = p.Caster.Stats;
+            buff.DotFactor = (1 + a.Get("power", p.Tags) / 100) * (1 + a.Get("multiplier", p.Tags));
+        }
+
         if (p.Def.ShieldMaxHealth > 0)
         {
             buff.ShieldGranted = ShieldAmount(p.Def, unit);
@@ -395,6 +402,13 @@ public sealed partial class Battle
             r.Add(new DelayedDamaged(unit, buff, taken, before));
             if (taken.Killed) AddDeath(unit, r);
         }
+    }
+
+    /// <summary>One damage-over-time tick: the base amount × stacks × the caster's locked-in factors.</summary>
+    static int DotTick(Buff buff)
+    {
+        var raw = buff.Def.PeriodicDamage * buff.Stacks * buff.DotFactor;
+        return raw <= 0 ? 0 : Math.Max(1, (int)Math.Round(raw, MidpointRounding.AwayFromZero));
     }
 
     static int ShieldAmount(EffectDef def, Unit unit) =>

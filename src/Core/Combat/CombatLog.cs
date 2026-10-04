@@ -142,7 +142,7 @@ public static class CombatLog
     {
         var d = b.Buff.Def;
         var bits = new List<string>();
-        if (d.PeriodicDamage > 0) bits.Add($"DoT {d.PeriodicDamage * b.Stacks}/turn");
+        if (d.PeriodicDamage > 0) bits.Add($"DoT {Math.Max(1, (int)Math.Round(d.PeriodicDamage * b.Stacks * b.Buff.DotFactor, MidpointRounding.AwayFromZero))}/turn");
         if (d.PeriodicHeal > 0) bits.Add($"regen {d.PeriodicHeal * b.Stacks}/turn");
         if (d.Cc != CcKind.None) bits.Add(d.Cc.ToString());
         foreach (var s in d.Stats)

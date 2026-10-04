@@ -9,7 +9,6 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 | Rule | Placeholder |
 | --- | --- |
 | Battle time limit | 300 base-speed turns, then a stalemate (no winner). If this ever happens in practice, the encounter is badly designed: investigate rather than tune the limit |
-| Damage over time | A flat amount per buff-clock turn (× stacks); Shield absorbs it; no damage formula |
 | Fear | Skips the unit's turns (later: flee or only defend) |
 | Confusion | Picks its target at random among the action's valid targets. WIP: undecided whether confused units can target allies |
 | Stagger drain | 10 per buff-clock turn. Kept until tuning |

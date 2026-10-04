@@ -56,6 +56,8 @@ Every character starts with Weapon Crit Rating 5% and untagged Crit Mult 0.5, so
 
 CC can target a character or a tile: Slow, Stun, Stagger, Pull/Push/Move, Root, damage over time, delayed damage, stat reduction, action override (Confusion, Fear, Sleep), action restriction (Root, Silence) and conditional effects.
 
+Damage over time scales with the caster: when it's applied, the caster's Power and Multiplier factors for the tags of the action (or proc) that applied it are locked in, and every tick uses them. Shield still absorbs ticks.
+
 **Stagger uses a stagger bar** (the default, to be confirmed in playtesting):
 
 - Each unit has a stagger bar that starts at 0. Stagger damage fills it, and it drains over time.
