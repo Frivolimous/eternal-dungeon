@@ -119,6 +119,11 @@ check. AI-generated art is for placeholders only and must be flagged; nothing fl
   effect + action + caster. Placeholders: periodic damage/heal is a flat amount per buff-clock turn (×
   stacks, Shield absorbs, no formula); an instant heal scales with the caster's Power for the action's tags;
   a cast whose target fell before it completes fizzles.
+- CC (CcKind on a buff): Stun = Speed 0 and interrupts a cast; Root blocks tile-targeted actions; Silence
+  blocks Spell actions; Sleep skips turns until any hit; Fear skips turns (placeholder); Confusion picks a
+  random living target. Slow and stat reduction are negative stats; delayed damage lands when a buff runs
+  out. Stagger bar: Speed halved above 0, stunned at 100 (interrupts a cast, ignores stagger) until it drains
+  to 0; drains 10 per buff-clock turn (placeholder).
 - `Core.Combat` is the battle namespace (a `Battle` namespace would clash with the `Battle` class).
 
 ## To do at the end of M1 (Jeremy asked)

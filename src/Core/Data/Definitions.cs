@@ -114,6 +114,30 @@ public enum TriggerTarget { Self, Other }
 public sealed record TriggerDef(TriggerOn On, string Effect, TriggerTarget Target, double? HealthBelow);
 
 /// <summary>
+/// Crowd control a buff puts on a unit (Anchor: Combat › Crowd control). Slow and stat reduction are plain
+/// negative stats; damage over time is periodic damage; delayed damage lands when the buff ends.
+/// </summary>
+public enum CcKind
+{
+    None,
+    /// <summary>Speed × 0. Interrupts a cast.</summary>
+    Stun,
+    /// <summary>Can't move (actions that target a tile).</summary>
+    Root,
+    /// <summary>Can't use Spell actions.</summary>
+    Silence,
+    /// <summary>Skips its turns; any hit wakes it.</summary>
+    Sleep,
+    /// <summary>Skips its turns (placeholder: later it will flee or only defend).</summary>
+    Fear,
+    /// <summary>Picks its target at random among every living unit, allies included.</summary>
+    Confusion,
+}
+
+/// <summary>Forced movement on the battle grid.</summary>
+public enum Displace { None, Push, Pull }
+
+/// <summary>
 /// An effect or buff (Anchor: Combat › Buffs and effects). An instant effect heals or shields once. A buff
 /// (any other duration) adds stat modifiers while it lasts, can carry a Shield that goes when it ends, can
 /// deal damage or heal on every buff-clock turn, and can have triggers. A buff is unique per source (action +
@@ -131,7 +155,11 @@ public sealed record EffectDef(
     double ShieldMaxHealth,
     int PeriodicDamage,
     int PeriodicHeal,
-    IReadOnlyList<TriggerDef> Triggers)
+    IReadOnlyList<TriggerDef> Triggers,
+    CcKind Cc = CcKind.None,
+    int Stagger = 0,
+    int DelayedDamage = 0,
+    Displace Displace = Displace.None)
 {
     public bool IsBuff => Duration != DurationKind.Instant;
 }

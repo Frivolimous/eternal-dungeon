@@ -1,4 +1,4 @@
-// Starter actions for M1. Numbers are placeholders. Slow, stagger and Sneak's move arrive with CC and the grid.
+// Starter actions for M1. Numbers are placeholders. Sneak's move arrives with the grid.
 // castTime is on the 100 scale: 50 = half a base-speed turn.
 [
   { "id": "attack", "name": "Attack", "tags": ["physical", "melee"],
@@ -25,7 +25,8 @@
     "target": "enemy", "range": "any", "apCost": 100, "manaCost": 10, "baseDamage": 22, "castTime": 50 },
 
   { "id": "frost_shard", "name": "Frost Shard", "tags": ["arcane", "spell", "ranged", "ice", "control"],
-    "target": "enemy", "range": "any", "apCost": 100, "manaCost": 8, "baseDamage": 12 },
+    "target": "enemy", "range": "any", "apCost": 100, "manaCost": 8, "baseDamage": 12,
+    "effects": [{ "effect": "chill" }] },
 
   { "id": "goblin_slash", "name": "Slash", "tags": ["physical", "melee"],
     "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 10 },
@@ -42,7 +43,8 @@
     "effects": [{ "effect": "mend" }] },
 
   { "id": "brute_smash", "name": "Smash", "tags": ["physical", "melee", "heavy", "force"],
-    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 16 },
+    "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 16,
+    "effects": [{ "effect": "smash_stagger" }] },
 
   { "id": "chief_cleave", "name": "Cleave", "tags": ["physical", "melee", "heavy"],
     "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 18 },

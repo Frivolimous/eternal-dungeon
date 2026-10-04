@@ -47,7 +47,7 @@ public static class DataLoader
         List<(JsonField, string)> triggerRefs)
     {
         f.OnlyFields("id", "name", "duration", "stacking", "maxStacks", "stats", "heal", "shieldMaxHealth",
-            "periodicDamage", "periodicHeal", "triggers");
+            "periodicDamage", "periodicHeal", "triggers", "cc", "stagger", "delayedDamage", "displace");
 
         var duration = DurationKind.Instant;
         var turns = 0;
@@ -96,14 +96,25 @@ public static class DataLoader
             f.Optional("shieldMaxHealth")?.Number() ?? 0,
             f.Optional("periodicDamage")?.Int() ?? 0,
             f.Optional("periodicHeal")?.Int() ?? 0,
-            triggers);
+            triggers,
+            f.Optional("cc")?.Enum<CcKind>() ?? CcKind.None,
+            f.Optional("stagger")?.Int() ?? 0,
+            f.Optional("delayedDamage")?.Int() ?? 0,
+            f.Optional("displace")?.Enum<Displace>() ?? Displace.None);
 
         if (!def.IsBuff)
         {
-            foreach (var buffOnly in new[] { "stacking", "maxStacks", "stats", "periodicDamage", "periodicHeal", "triggers" })
+            foreach (var buffOnly in new[] { "stacking", "maxStacks", "stats", "periodicDamage", "periodicHeal", "triggers", "cc", "delayedDamage" })
                 if (f.Optional(buffOnly) is { } field)
                     throw field.Error("only buffs (effects with a duration) can have this");
         }
+        else
+        {
+            foreach (var instantOnly in new[] { "heal", "stagger", "displace" })
+                if (f.Optional(instantOnly) is { } field)
+                    throw field.Error("only instant effects (no duration) can have this");
+        }
+        if (def.Stagger < 0 || def.DelayedDamage < 0) throw f.Error("stagger and delayed damage can't be negative");
         if (def.MaxStacks < 1) throw f["maxStacks"].Error("must be at least 1");
         if (f.Optional("maxStacks") is { } ms && !def.Stacking) throw ms.Error("only stacking buffs have a stack limit");
         if (def.Heal < 0 || def.ShieldMaxHealth < 0 || def.PeriodicDamage < 0 || def.PeriodicHeal < 0)

@@ -29,6 +29,17 @@ public sealed record Fizzled(string Reason) : Outcome;
 
 public sealed record Died(Unit Unit) : Outcome;
 
+/// <summary>Stagger damage. <see cref="Broke"/>: the bar filled and the unit is stunned until it drains.</summary>
+public sealed record Staggered(Unit Target, int Amount, int Bar, bool Broke) : Outcome;
+
+public sealed record Interrupted(Unit Unit, Cast Cast) : Outcome;
+
+/// <summary>Damage a buff dealt as it ended (delayed damage).</summary>
+public sealed record DelayedDamaged(Unit Target, Buff Buff, DamageTaken Taken, int HealthBefore) : Outcome;
+
+/// <summary>A unit lost its turn to Sleep or Fear.</summary>
+public sealed record TurnLost(Unit Unit, string Reason) : Outcome;
+
 /// <summary>
 /// Everything one action did, the Anchor's IActionResult: the action's own hit and damage, then every effect it
 /// queued (including triggered ones) in order, and finally the buffs those effects created, which apply only

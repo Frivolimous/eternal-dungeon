@@ -49,12 +49,28 @@ public sealed class Battle
         return Record(r);
     }
 
-    /// <summary>One buff-clock turn: periodic damage and healing, then buffs count down and expire.</summary>
+    /// <summary>Stagger drained from every bar each buff-clock turn (placeholder).</summary>
+    public const int StaggerDrain = 10;
+
+    /// <summary>
+    /// <paramref name="unit"/> loses its turn to Sleep or Fear: it spends a full turn's AP and does nothing.
+    /// </summary>
+    public ActionResult SkipTurn(Unit unit)
+    {
+        var r = new ActionResult(Clock.Tick, unit, null, null);
+        TurnClock.Spend(unit, 100);
+        r.Add(new TurnLost(unit, unit.Has(CcKind.Sleep) ? "asleep" : "afraid"));
+        return Record(r);
+    }
+
+    /// <summary>One buff-clock turn: stagger bars drain, periodic damage and healing land, then buffs count
+    /// down and expire.</summary>
     public ActionResult BuffTick()
     {
         var r = new ActionResult(Clock.Tick, Units[0], null, null);
         foreach (var unit in Units.Where(u => u.Alive))
         {
+            unit.DrainStagger(StaggerDrain);
             foreach (var buff in unit.Buffs.ToList())
             {
                 if (buff.Def.PeriodicDamage > 0 && unit.Alive)
@@ -85,8 +101,9 @@ public sealed class Battle
     public ActionResult Act(Unit actor, ActionDef action, Unit? target)
     {
         if (!actor.Alive) throw new InvalidOperationException($"{actor.Name} is dead");
-        if (!actor.SpendMana(action.ManaCost))
-            throw new InvalidOperationException($"{actor.Name} lacks the Mana for {action.Name}");
+        if (actor.CantUse(action) is string why)
+            throw new InvalidOperationException($"{actor.Name} can't use {action.Name}: {why}");
+        actor.SpendMana(action.ManaCost);
         TurnClock.Spend(actor, action.ApCost);
 
         if (action.CastTime > 0)
@@ -135,6 +152,12 @@ public sealed class Battle
                 var taken = target.TakeDamage(breakdown.Final);
                 r.Add(new Damaged(target, breakdown, taken, before));
                 if (taken.Killed) r.Add(new Died(target));
+            }
+            if (landed)
+            {
+                // Any hit wakes a sleeper.
+                foreach (var sleep in target.Buffs.Where(b => b.Def.Cc == CcKind.Sleep).ToList())
+                    Expire(target, sleep, r, natural: false);
             }
             if (landed && target.Alive)
                 QueueTriggers(target, TriggerOn.HitTaken, other: actor, queue, r);
@@ -190,6 +213,19 @@ public sealed class Battle
             p.Target.AddShield(amount);
             r.Add(new Shielded(p.Target, p.Def.Name, amount));
         }
+        if (p.Def.Stagger > 0)
+        {
+            var broke = p.Target.TakeStagger(p.Def.Stagger);
+            r.Add(new Staggered(p.Target, p.Def.Stagger, p.Target.Stagger, broke));
+            if (broke) Interrupt(p.Target, r);
+        }
+        // Displace (Push/Pull) needs the battle grid; it arrives with it.
+    }
+
+    void Interrupt(Unit unit, ActionResult r)
+    {
+        if (TurnClock.Interrupt(unit) is { } cast)
+            r.Add(new Interrupted(unit, cast));
     }
 
     void ApplyBuff(Pending p, ActionResult r)
@@ -224,6 +260,7 @@ public sealed class Battle
             unit.AddShield(buff.ShieldGranted);
         }
         r.Add(new BuffApplied(unit, buff, refreshed));
+        if (p.Def.Cc == CcKind.Stun) Interrupt(unit, r);
     }
 
     static void AddStacks(Unit unit, Buff buff, int stacks)
@@ -233,12 +270,20 @@ public sealed class Battle
                 unit.Stats.Add(buff.SourceKey, s.Stat, s.Value, s.Tag);
     }
 
-    static void Expire(Unit unit, Buff buff, ActionResult r)
+    /// <summary>Ends a buff. When it runs its course (<paramref name="natural"/>), its delayed damage lands.</summary>
+    static void Expire(Unit unit, Buff buff, ActionResult r, bool natural = true)
     {
         unit.Stats.RemoveSource(buff.SourceKey);
         unit.RemoveShield(buff.ShieldGranted);
         unit.Buffs.Remove(buff);
         r.Add(new BuffExpired(unit, buff));
+        if (natural && buff.Def.DelayedDamage > 0 && unit.Alive)
+        {
+            var before = unit.Health;
+            var taken = unit.TakeDamage(buff.Def.DelayedDamage * buff.Stacks);
+            r.Add(new DelayedDamaged(unit, buff, taken, before));
+            if (taken.Killed) r.Add(new Died(unit));
+        }
     }
 
     static int ShieldAmount(EffectDef def, Unit unit) =>
