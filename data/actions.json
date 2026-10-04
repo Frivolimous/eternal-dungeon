@@ -1,10 +1,10 @@
 // Starter actions for M1. Numbers are placeholders. Sneak's move arrives with the grid.
 // castTime is on the 100 scale: 50 = half a base-speed turn.
 [
-  { "id": "attack", "name": "Attack", "tags": ["physical", "melee"],
+  { "id": "attack", "name": "Attack", "tags": ["weapon", "physical", "melee"],
     "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 15 },
 
-  { "id": "power_attack", "name": "Power Attack", "tags": ["physical", "melee", "heavy"],
+  { "id": "power_attack", "name": "Power Attack", "tags": ["weapon", "physical", "melee", "heavy"],
     "target": "enemy", "range": "melee", "apCost": 200, "baseDamage": 15, "allDamage": 1.0 },
 
   { "id": "defend", "name": "Defend", "tags": ["buff"],
@@ -14,7 +14,7 @@
   { "id": "move", "name": "Move", "tags": [],
     "target": "tile", "moveTo": "own", "apCost": 50 },
 
-  { "id": "dagger_attack", "name": "Dagger Attack", "tags": ["physical", "melee", "light", "finesse"],
+  { "id": "dagger_attack", "name": "Dagger Attack", "tags": ["weapon", "physical", "melee", "light", "finesse"],
     "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 12 },
 
   { "id": "sneak", "name": "Sneak", "tags": ["buff"],
@@ -28,10 +28,10 @@
     "target": "enemy", "range": "any", "apCost": 100, "manaCost": 8, "baseDamage": 12,
     "effects": [{ "effect": "chill" }] },
 
-  { "id": "goblin_slash", "name": "Slash", "tags": ["physical", "melee"],
+  { "id": "goblin_slash", "name": "Slash", "tags": ["weapon", "physical", "melee"],
     "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 18 },
 
-  { "id": "goblin_shot", "name": "Shot", "tags": ["physical", "ranged", "projectile"],
+  { "id": "goblin_shot", "name": "Shot", "tags": ["weapon", "physical", "ranged", "projectile"],
     "target": "enemy", "range": "any", "apCost": 100, "baseDamage": 16 },
 
   { "id": "rotting_hex", "name": "Rotting Hex", "tags": ["spirit", "spell", "ranged", "toxic", "curse"],
@@ -42,11 +42,11 @@
     "target": "ally", "range": "any", "apCost": 100, "manaCost": 10,
     "effects": [{ "effect": "mend" }] },
 
-  { "id": "brute_smash", "name": "Smash", "tags": ["physical", "melee", "heavy", "force"],
+  { "id": "brute_smash", "name": "Smash", "tags": ["weapon", "physical", "melee", "heavy", "force"],
     "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 20,
     "effects": [{ "effect": "smash_stagger" }] },
 
-  { "id": "chief_cleave", "name": "Cleave", "tags": ["physical", "melee", "heavy"],
+  { "id": "chief_cleave", "name": "Cleave", "tags": ["weapon", "physical", "melee", "heavy"],
     "target": "enemy", "range": "melee", "apCost": 100, "baseDamage": 26 },
 
   { "id": "war_cry", "name": "War Cry", "tags": ["buff"],

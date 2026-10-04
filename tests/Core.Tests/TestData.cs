@@ -13,7 +13,8 @@ static class TestData
             [.. Repo.ActionList, .. actions ?? []],
             [.. Repo.EffectList, .. effects ?? []],
             Repo.AiProfileList,
-            Repo.EncounterList);
+            Repo.EncounterList,
+            Repo.UnitDefaults);
 
     public static EffectDef Buff(string id, int turns = 3, bool stacking = false, int maxStacks = int.MaxValue,
         StatValue[]? stats = null, int periodicDamage = 0, TriggerDef[]? triggers = null) =>

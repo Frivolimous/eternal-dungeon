@@ -2,7 +2,8 @@ namespace EternalDungeon.Core.Data;
 
 // Content definitions read from data/*.json. Anchor: Stat system.
 
-public enum TagGroup { DamageType, Delivery, Style, Function, Element }
+/// <summary>Source: what made the action (Weapon: any weapon attack).</summary>
+public enum TagGroup { DamageType, Delivery, Style, Function, Element, Source }
 
 /// <summary>A label on an action, such as Melee, Fire or Spell.</summary>
 public sealed record TagDef(string Id, string Name, TagGroup Group);

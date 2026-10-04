@@ -5,205 +5,193 @@ Enemies: Goblin Chief 420 HP, Goblin Grunt #1 85 HP, Goblin Grunt #2 85 HP
 [T 0.42] Rogue → Dagger Attack → Goblin Chief
          hit (90%) · 13 dmg (Physical) · Goblin Chief HP 420 → 407
          roll 0.084 vs 0.903 → hit
+         crit rating 0.045 → 4%: roll 0.379 → no crit
          dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
 [T 0.70] Warrior → Power Attack → Goblin Chief
          hit (90%) · 33 dmg (Physical) · Goblin Chief HP 407 → 374
-         roll 0.379 vs 0.903 → hit
+         roll 0.68 vs 0.903 → hit
+         crit rating 0.045 → 4%: roll 0.925 → no crit
          dmg = base 15 × power 1.225 (22.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 2 (1) × all res 1 (0) = 33.075 → 33
 [T 0.80] Elementalist begins casting Fire Bolt at Goblin Chief (ready at T 1.30)
 [T 0.89] Goblin Grunt #1 → Slash → Warrior
-         hit (77%) · 19 dmg (Physical) · Warrior HP 140 → 121
-         roll 0.68 vs 0.77 → hit
-         dmg = base 18 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 18.9 → 19
+         miss (77%)
+         roll 0.992 vs 0.77 → miss
 [T 0.89] Goblin Grunt #2 waits
 [T 1.00] Goblin Chief → War Cry
          applies War Cry (+10 power, 3 turns) on Goblin Chief
-[T 1.25] Rogue → Dagger Attack → Goblin Grunt #1
-         miss (90%)
-         roll 0.925 vs 0.903 → miss
+[T 1.25] Rogue → Dagger Attack → Goblin Chief
+         hit (90%) · 13 dmg (Physical) · Goblin Chief HP 374 → 361
+         roll 0.77 vs 0.903 → hit
+         crit rating 0.045 → 4%: roll 0.719 → no crit
+         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
 [T 1.30] Elementalist → Fire Bolt → Goblin Chief
-         miss (90%)
-         roll 0.992 vs 0.903 → miss
-[T 1.80] Elementalist begins casting Fire Bolt at Goblin Grunt #1 (ready at T 2.30)
+         hit (90%) · 28 dmg (Arcane) · Goblin Chief HP 361 → 333
+         roll 0.85 vs 0.903 → hit
+         dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
+[T 1.80] Elementalist begins casting Fire Bolt at Goblin Chief (ready at T 2.30)
 [T 2.00] Goblin Grunt #1 → Slash → Warrior
-         miss (77%)
-         roll 0.77 vs 0.77 → miss
+         hit (77%) · 19 dmg (Physical) · Warrior HP 140 → 121
+         roll 0.761 vs 0.77 → hit
+         crit rating 0.05 → 5%: roll 0.583 → no crit
+         dmg = base 18 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 18.9 → 19
 [T 2.00] Goblin Grunt #2 waits
 [T 2.09] Rogue → Dagger Attack → Goblin Grunt #1
          hit (90%) · 14 dmg (Physical) · Goblin Grunt #1 HP 85 → 71
-         roll 0.719 vs 0.903 → hit
+         roll 0.682 vs 0.903 → hit
+         crit rating 0.05 → 5%: roll 0.291 → no crit
          dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
-[T 2.18] Goblin Chief → Cleave → Warrior
-         miss (77%)
-         roll 0.85 vs 0.77 → miss
-[T 2.30] Elementalist → Fire Bolt → Goblin Grunt #1
-         hit (90%) · 28 dmg (Arcane) · Goblin Grunt #1 HP 71 → 43
-         roll 0.761 vs 0.903 → hit
+[T 2.18] Goblin Chief → Cleave → Rogue
+         miss (79%)
+         roll 0.801 vs 0.791 → miss
+[T 2.30] Elementalist → Fire Bolt → Goblin Chief
+         hit (90%) · 28 dmg (Arcane) · Goblin Chief HP 333 → 305
+         roll 0.321 vs 0.903 → hit
          dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
 [T 2.70] Warrior → Power Attack → Goblin Grunt #1
-         hit (90%) · 37 dmg (Physical) · Goblin Grunt #1 HP 43 → 6
-         roll 0.583 vs 0.903 → hit
+         hit (90%) · 37 dmg (Physical) · Goblin Grunt #1 HP 71 → 34
+         roll 0.711 vs 0.903 → hit
+         crit rating 0.05 → 5%: roll 0.878 → no crit
          dmg = base 15 × power 1.225 (22.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 2 (1) × all res 1 (0) = 36.75 → 37
 [T 2.80] Elementalist begins casting Fire Bolt at Goblin Grunt #1 (ready at T 3.30)
 [T 2.92] Rogue → Dagger Attack → Goblin Grunt #1
-         hit (90%) · 14 dmg (Physical) · Goblin Grunt #1 HP 6 → 0
-         roll 0.682 vs 0.903 → hit
+         hit (90%) · 14 dmg (Physical) · Goblin Grunt #1 HP 34 → 20
+         roll 0.617 vs 0.903 → hit
+         crit rating 0.05 → 5%: roll 0.851 → no crit
          dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
-         Goblin Grunt #1 falls
+[T 3.12] Goblin Grunt #1 → Slash → Warrior
+         hit (77%) · 19 dmg (Physical) · Warrior HP 121 → 102
+         roll 0.708 vs 0.77 → hit
+         crit rating 0.05 → 5%: roll 0.708 → no crit
+         dmg = base 18 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 18.9 → 19
 [T 3.12] Goblin Grunt #2 waits
 [T 3.30] Elementalist → Fire Bolt → Goblin Grunt #1
-         fizzles: Goblin Grunt #1 has fallen
+         hit (90%) · 28 dmg (Arcane) · Goblin Grunt #1 HP 20 → 0
+         roll 0.093 vs 0.903 → hit
+         dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
+         Goblin Grunt #1 falls
 [T 3.36] Goblin Chief → Cleave → Warrior
-         hit (77%) · 36 dmg (Physical) · Warrior HP 121 → 85
-         roll 0.291 vs 0.77 → hit
+         hit (77%) · 36 dmg (Physical) · Warrior HP 102 → 66
+         roll 0.179 vs 0.77 → hit
+         crit rating 0.05 → 5%: roll 0.436 → no crit
          dmg = base 26 × power 1.4 (40) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 36.4 → 36
 [T 3.75] Rogue → Dagger Attack → Goblin Chief
-         hit (90%) · 13 dmg (Physical) · Goblin Chief HP 374 → 361
-         roll 0.801 vs 0.903 → hit
+         hit (90%) · 13 dmg (Physical) · Goblin Chief HP 305 → 292
+         roll 0.602 vs 0.903 → hit
+         crit rating 0.045 → 4%: roll 0.314 → no crit
          dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
 [T 3.80] Elementalist begins casting Fire Bolt at Goblin Chief (ready at T 4.30)
 [T 4.00] War Cry on Goblin Chief ends
 [T 4.23] Goblin Grunt #2 waits
 [T 4.30] Elementalist → Fire Bolt → Goblin Chief
-         hit (90%) · 28 dmg (Arcane) · Goblin Chief HP 361 → 333
-         roll 0.321 vs 0.903 → hit
+         hit (90%) · 28 dmg (Arcane) · Goblin Chief HP 292 → 264
+         roll 0.489 vs 0.903 → hit
          dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
 [T 4.53] Goblin Chief → War Cry
          applies War Cry (+10 power, 3 turns) on Goblin Chief
 [T 4.59] Rogue → Dagger Attack → Goblin Chief
-         hit (90%) · 13 dmg (Physical) · Goblin Chief HP 333 → 320
-         roll 0.711 vs 0.903 → hit
+         hit (90%) · 13 dmg (Physical) · Goblin Chief HP 264 → 251
+         roll 0.399 vs 0.903 → hit
+         crit rating 0.045 → 4%: roll 0.789 → no crit
          dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
 [T 4.70] Warrior → Power Attack → Goblin Chief
-         hit (90%) · 33 dmg (Physical) · Goblin Chief HP 320 → 287
-         roll 0.878 vs 0.903 → hit
+         hit (90%) · 33 dmg (Physical) · Goblin Chief HP 251 → 218
+         roll 0.635 vs 0.903 → hit
+         crit rating 0.045 → 4%: roll 0.231 → no crit
          dmg = base 15 × power 1.225 (22.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 2 (1) × all res 1 (0) = 33.075 → 33
 [T 4.80] Elementalist begins casting Fire Bolt at Goblin Chief (ready at T 5.30)
 [T 5.30] Elementalist → Fire Bolt → Goblin Chief
-         hit (90%) · 28 dmg (Arcane) · Goblin Chief HP 287 → 259
-         roll 0.617 vs 0.903 → hit
+         hit (90%) · 28 dmg (Arcane) · Goblin Chief HP 218 → 190
+         roll 0.414 vs 0.903 → hit
          dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
 [T 5.34] Goblin Grunt #2 waits
 [T 5.42] Rogue → Dagger Attack → Goblin Chief
-         hit (90%) · 13 dmg (Physical) · Goblin Chief HP 259 → 246
-         roll 0.851 vs 0.903 → hit
+         hit (90%) · 13 dmg (Physical) · Goblin Chief HP 190 → 177
+         roll 0.623 vs 0.903 → hit
+         crit rating 0.045 → 4%: roll 0.863 → no crit
          dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
 [T 5.71] Goblin Chief → Cleave → Warrior
-         hit (77%) · 36 dmg (Physical) · Warrior HP 85 → 49
-         roll 0.708 vs 0.77 → hit
-         dmg = base 26 × power 1.4 (40) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 36.4 → 36
+         miss (77%)
+         roll 0.945 vs 0.77 → miss
 [T 5.80] Elementalist begins casting Fire Bolt at Goblin Chief (ready at T 6.30)
 [T 6.25] Rogue → Dagger Attack → Goblin Chief
-         hit (90%) · 13 dmg (Physical) · Goblin Chief HP 246 → 233
-         roll 0.708 vs 0.903 → hit
+         hit (90%) · 13 dmg (Physical) · Goblin Chief HP 177 → 164
+         roll 0.814 vs 0.903 → hit
+         crit rating 0.045 → 4%: roll 0.747 → no crit
          dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
 [T 6.30] Elementalist → Fire Bolt → Goblin Chief
-         hit (90%) · 28 dmg (Arcane) · Goblin Chief HP 233 → 205
-         roll 0.093 vs 0.903 → hit
+         hit (90%) · 28 dmg (Arcane) · Goblin Chief HP 164 → 136
+         roll 0.785 vs 0.903 → hit
          dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
 [T 6.45] Goblin Grunt #2 waits
 [T 6.70] Warrior → Power Attack → Goblin Chief
-         hit (90%) · 33 dmg (Physical) · Goblin Chief HP 205 → 172
-         roll 0.179 vs 0.903 → hit
+         hit (90%) · 33 dmg (Physical) · Goblin Chief HP 136 → 103
+         roll 0.045 vs 0.903 → hit
+         crit rating 0.045 → 4%: roll 0.469 → no crit
          dmg = base 15 × power 1.225 (22.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 2 (1) × all res 1 (0) = 33.075 → 33
 [T 6.80] Elementalist begins casting Fire Bolt at Goblin Chief (ready at T 7.30)
 [T 6.89] Goblin Chief → Cleave → Warrior
-         hit (77%) · 36 dmg (Physical) · Warrior HP 49 → 13
-         roll 0.436 vs 0.77 → hit
-         dmg = base 26 × power 1.4 (40) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 36.4 → 36
+         miss (77%)
+         roll 0.972 vs 0.77 → miss
 [T 7.00] War Cry on Goblin Chief ends
 [T 7.09] Rogue → Dagger Attack → Goblin Chief
-         hit (90%) · 13 dmg (Physical) · Goblin Chief HP 172 → 159
-         roll 0.602 vs 0.903 → hit
+         hit (90%) · 13 dmg (Physical) · Goblin Chief HP 103 → 90
+         roll 0.537 vs 0.903 → hit
+         crit rating 0.045 → 4%: roll 0.701 → no crit
          dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
 [T 7.30] Elementalist → Fire Bolt → Goblin Chief
-         hit (90%) · 28 dmg (Arcane) · Goblin Chief HP 159 → 131
-         roll 0.314 vs 0.903 → hit
+         hit (90%) · 28 dmg (Arcane) · Goblin Chief HP 90 → 62
+         roll 0.804 vs 0.903 → hit
          dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
 [T 7.56] Goblin Grunt #2 waits
 [T 7.80] Elementalist begins casting Fire Bolt at Goblin Chief (ready at T 8.30)
 [T 7.92] Rogue → Dagger Attack → Goblin Chief
-         hit (90%) · 13 dmg (Physical) · Goblin Chief HP 131 → 118
-         roll 0.489 vs 0.903 → hit
+         hit (90%) · 13 dmg (Physical) · Goblin Chief HP 62 → 49
+         roll 0.818 vs 0.903 → hit
+         crit rating 0.045 → 4%: roll 0.898 → no crit
          dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
 [T 8.06] Goblin Chief → War Cry
          applies War Cry (+10 power, 3 turns) on Goblin Chief
 [T 8.30] Elementalist → Fire Bolt → Goblin Chief
-         hit (90%) · 28 dmg (Arcane) · Goblin Chief HP 118 → 90
-         roll 0.399 vs 0.903 → hit
+         hit (90%) · 28 dmg (Arcane) · Goblin Chief HP 49 → 21
+         roll 0.126 vs 0.903 → hit
          dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
 [T 8.67] Goblin Grunt #2 waits
 [T 8.70] Warrior → Power Attack → Goblin Chief
-         hit (90%) · 33 dmg (Physical) · Goblin Chief HP 90 → 57
-         roll 0.789 vs 0.903 → hit
+         hit (90%) · 33 dmg (Physical) · Goblin Chief HP 21 → 0
+         roll 0.565 vs 0.903 → hit
+         crit rating 0.045 → 4%: roll 0.554 → no crit
          dmg = base 15 × power 1.225 (22.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 2 (1) × all res 1 (0) = 33.075 → 33
-[T 8.75] Rogue → Dagger Attack → Goblin Chief
-         hit (90%) · 13 dmg (Physical) · Goblin Chief HP 57 → 44
-         roll 0.635 vs 0.903 → hit
-         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
-[T 8.80] Elementalist begins casting Fire Bolt at Goblin Chief (ready at T 9.30)
-[T 9.24] Goblin Chief → Cleave → Warrior
-         hit (77%) · 36 dmg (Physical) · Warrior HP 13 → 0
-         roll 0.231 vs 0.77 → hit
-         dmg = base 26 × power 1.4 (40) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 36.4 → 36
-         Warrior falls
-[T 9.30] Elementalist → Fire Bolt → Goblin Chief
-         hit (90%) · 28 dmg (Arcane) · Goblin Chief HP 44 → 16
-         roll 0.414 vs 0.903 → hit
-         dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
-[T 9.59] Rogue → Dagger Attack → Goblin Chief
-         hit (90%) · 13 dmg (Physical) · Goblin Chief HP 16 → 3
-         roll 0.623 vs 0.903 → hit
-         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
-[T 9.78] Goblin Grunt #2 waits
-[T 9.80] Elementalist begins casting Fire Bolt at Goblin Chief (ready at T 10.30)
-[T 10.30] Elementalist → Fire Bolt → Goblin Chief
-         hit (90%) · 28 dmg (Arcane) · Goblin Chief HP 3 → 0
-         roll 0.863 vs 0.903 → hit
-         dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
          Goblin Chief falls
          Goblin Grunt #2 steps forward (r1c2 → r0c2)
-[T 10.42] Rogue → Dagger Attack → Goblin Grunt #2
-         miss (90%)
-         roll 0.945 vs 0.903 → miss
-[T 10.80] Elementalist begins casting Fire Bolt at Goblin Grunt #2 (ready at T 11.30)
-[T 10.89] Goblin Grunt #2 → Slash → Rogue
-         miss (79%)
-         roll 0.814 vs 0.791 → miss
-[T 11.25] Rogue → Dagger Attack → Goblin Grunt #2
+[T 8.75] Rogue → Dagger Attack → Goblin Grunt #2
          hit (90%) · 14 dmg (Physical) · Goblin Grunt #2 HP 85 → 71
-         roll 0.747 vs 0.903 → hit
+         roll 0.857 vs 0.903 → hit
+         crit rating 0.05 → 5%: roll 0.828 → no crit
          dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
-[T 11.30] Elementalist → Fire Bolt → Goblin Grunt #2
+[T 8.80] Elementalist begins casting Fire Bolt at Goblin Grunt #2 (ready at T 9.30)
+[T 9.30] Elementalist → Fire Bolt → Goblin Grunt #2
          hit (90%) · 28 dmg (Arcane) · Goblin Grunt #2 HP 71 → 43
-         roll 0.785 vs 0.903 → hit
+         roll 0.52 vs 0.903 → hit
          dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
-[T 11.80] Elementalist → Defend
-         applies Guard (+0.3 avoid, Shield 8, until next turn) on Elementalist
-[T 12.00] Goblin Grunt #2 → Slash → Rogue
-         hit (79%) · 19 dmg (Physical) · Rogue HP 100 → 81
-         roll 0.045 vs 0.791 → hit
-         dmg = base 18 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 18.9 → 19
-[T 12.09] Rogue → Dagger Attack → Goblin Grunt #2
+[T 9.59] Rogue → Dagger Attack → Goblin Grunt #2
          hit (90%) · 14 dmg (Physical) · Goblin Grunt #2 HP 43 → 29
-         roll 0.469 vs 0.903 → hit
+         roll 0.317 vs 0.903 → hit
+         crit rating 0.05 → 5%: roll 0.192 → no crit
          dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
-[T 12.80] Guard on Elementalist ends
-[T 12.80] Elementalist begins casting Fire Bolt at Goblin Grunt #2 (ready at T 13.30)
-[T 12.92] Rogue → Dagger Attack → Goblin Grunt #2
-         miss (90%)
-         roll 0.972 vs 0.903 → miss
-[T 13.12] Goblin Grunt #2 → Slash → Rogue
-         hit (79%) · 19 dmg (Physical) · Rogue HP 81 → 62
-         roll 0.537 vs 0.791 → hit
-         dmg = base 18 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 18.9 → 19
-[T 13.30] Elementalist → Fire Bolt → Goblin Grunt #2
+[T 9.78] Goblin Grunt #2 → Slash → Warrior
+         hit (77%) · 28 dmg (Physical, crit) · Warrior HP 66 → 38
+         roll 0.644 vs 0.77 → hit
+         crit rating 0.05 → 5%: roll 0.029 → crit; Brutal roll 0.358 → no Brutal
+         dmg = base 18 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) × crit 1.5 (1 × mult 0.5, crit res 0, crit pen 0) = 28.35 → 28
+[T 9.80] Elementalist begins casting Fire Bolt at Goblin Grunt #2 (ready at T 10.30)
+[T 10.30] Elementalist → Fire Bolt → Goblin Grunt #2
          hit (90%) · 28 dmg (Arcane) · Goblin Grunt #2 HP 29 → 1
-         roll 0.701 vs 0.903 → hit
+         roll 0.569 vs 0.903 → hit
          dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
-[T 13.75] Rogue → Dagger Attack → Goblin Grunt #2
+[T 10.42] Rogue → Dagger Attack → Goblin Grunt #2
          hit (90%) · 14 dmg (Physical) · Goblin Grunt #2 HP 1 → 0
-         roll 0.804 vs 0.903 → hit
+         roll 0.776 vs 0.903 → hit
+         crit rating 0.05 → 5%: roll 0.507 → no crit
          dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
          Goblin Grunt #2 falls
-[T 13.75] Victory: the party wins.
+[T 10.42] Victory: the party wins.

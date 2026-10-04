@@ -83,6 +83,7 @@ public class SimulatorTests
                      { "id": "ogre", "name": "Ogre", "size": 2, "stats": { "health": 50 }, "actions": ["wait"], "ai": "idle" }]
                     """,
                 [DataLoader.EncountersFile] = $$"""[{ "id": "e", "name": "E", "party": [{ "unit": "imp", "row": 0, "col": 0 }], "enemies": {{enemies}} }]""",
+                [DataLoader.DefaultsFile] = """{ "unitStats": [] }""",
             })));
 
         Assert.Contains("doesn't fit", Fails("""[{ "unit": "ogre", "row": 0, "col": 2 }]""").Message);

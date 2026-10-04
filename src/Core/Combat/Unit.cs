@@ -16,6 +16,7 @@ public readonly record struct DamageTaken(int Absorbed, int ToHealth, bool Kille
 public sealed class Unit
 {
     public const string BaseSource = "base";
+    public const string DefaultSource = "default";
 
     public string Id { get; }
     public UnitDef Def { get; }
@@ -116,6 +117,8 @@ public sealed class Unit
         Name = def.Name;
         Side = side;
         Stats = new StatBlock(data);
+        foreach (var v in data.UnitDefaults)
+            Stats.Add(DefaultSource, v.Stat, v.Value, v.Tag);
         foreach (var v in def.Stats)
             Stats.Add(BaseSource, v.Stat, v.Value, v.Tag);
         foreach (var (compound, value) in def.Compounds)

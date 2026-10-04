@@ -76,6 +76,15 @@ public sealed class StatBlock(GameData data)
         return Combine.Total(def.Combine, values);
     }
 
+    /// <summary>The stat for <paramref name="tags"/> without its untagged part: tag modifiers and compound
+    /// contributions only. Critical Resist is resist keyed to critical, not all Resist.</summary>
+    public double GetKeyed(string stat, IReadOnlyCollection<string> tags)
+    {
+        var def = Def(stat);
+        var values = Values(stat, m => m.Key.Tag is string t && tags.Contains(t)).Concat(CompoundContributions(def, tags));
+        return Combine.Total(def.Combine, values);
+    }
+
     /// <summary>The total of exactly one key, e.g. just "Fire Power", for display.</summary>
     public double Get(StatKey key) => Total(Def(key.Stat), m => m.Key.Tag == key.Tag);
 

@@ -1,0 +1,7 @@
+// Stats every unit starts with, before its own (source "default").
+{
+  "unitStats": [
+    { "stat": "crit_rating", "tag": "weapon", "value": 0.05 },
+    { "stat": "crit_mult", "value": 0.5 }
+  ]
+}

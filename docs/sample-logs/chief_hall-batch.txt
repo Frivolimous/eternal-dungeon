@@ -1,15 +1,15 @@
 The Goblin Chief · 1000 battles · seeds 1–1000
-Win rate         76.5%  (765 won, 235 lost, 0 stalemates)
-Battle length    14.9 turns on average
-Party HP left    25.2% on average, 0.0% at worst
-Hit rate         86.1% of 42265 attacks
+Win rate         75.7%  (757 won, 243 lost, 0 stalemates)
+Battle length    14.7 turns on average
+Party HP left    25.1% on average, 0.0% at worst
+Hit rate         85.9% of 41634 attacks
 
 Damage dealt per battle
-  Elementalist              289.7
-  Warrior                   147.4
-  Goblin Chief              142.1
-  Rogue                     137.4
-  Goblin Grunt              102.4
+  Elementalist              287.2
+  Warrior                   149.9
+  Goblin Chief              141.3
+  Rogue                     135.8
+  Goblin Grunt              103.6
 
 Hero deaths per battle
   Warrior                     0.7
@@ -17,16 +17,16 @@ Hero deaths per battle
   Elementalist                0.2
 
 Actions used per battle
-  Elementalist: Defend                  1.9
-  Elementalist: Fire Bolt              12.6
-  Goblin Chief: Cleave                  5.5
+  Elementalist: Defend                  1.8
+  Elementalist: Fire Bolt              12.5
+  Goblin Chief: Cleave                  5.4
   Goblin Chief: War Cry                 3.2
-  Goblin Grunt: Slash                   7.5
-  Rogue: Dagger Attack                 11.8
+  Goblin Grunt: Slash                   7.4
+  Rogue: Dagger Attack                 11.4
   Warrior: Power Attack                 5.1
 
 Effects and CC applied per battle
-  Guard                                 1.9
+  Guard                                 1.8
   War Cry                               3.2
   Stagger breaks                        0.0
   Casts interrupted                     0.0

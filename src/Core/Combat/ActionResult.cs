@@ -8,6 +8,13 @@ public abstract record Outcome;
 /// <summary>A success roll against a target. On a miss nothing else lands on that target.</summary>
 public sealed record Attempt(Unit Target, double Chance, Roll Roll) : Outcome;
 
+/// <summary>The crit rolls on a hit: a crit at <see cref="Chance"/>, then a Brutal crit at the same chance.
+/// <see cref="Tiers"/>: 0 none, 1 crit, 2 Brutal.</summary>
+public sealed record CritRolled(Unit Target, double Rating, double Chance, Roll Crit, Roll? Brutal) : Outcome
+{
+    public int Tiers => !Crit.Success ? 0 : Brutal is { Success: true } ? 2 : 1;
+}
+
 public sealed record Damaged(Unit Target, DamageBreakdown Breakdown, DamageTaken Taken, int HealthBefore) : Outcome;
 
 public sealed record PeriodicDamaged(Unit Target, Buff Buff, DamageTaken Taken, int HealthBefore) : Outcome;

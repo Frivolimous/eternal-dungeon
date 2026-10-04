@@ -28,6 +28,7 @@ public class DataLoaderTests
             [DataLoader.EffectsFile] = effects,
             [DataLoader.AiProfilesFile] = ais,
             [DataLoader.EncountersFile] = "[]",
+            [DataLoader.DefaultsFile] = """{ "unitStats": [] }""",
         }));
 
     static DataException LoadFails(string tags = ValidTags, string stats = ValidStats, string compounds = ValidCompounds, string units = ValidUnits, string actions = ValidActions, string effects = "[]", string ais = ValidAis) =>
@@ -67,7 +68,7 @@ public class DataLoaderTests
     {
         var data = DataLoader.LoadDirectory(TestPaths.DataDir);
 
-        Assert.Equal(28, data.TagList.Count);
+        Assert.Equal(29, data.TagList.Count);
         Assert.Equal(TagGroup.Element, data.Tags["fire"].Group);
         Assert.Equal(CombineMode.Dim, data.Stats["hit"].Combine);
         Assert.Equal(CombineMode.Add, data.Stats["multiplier"].Combine);

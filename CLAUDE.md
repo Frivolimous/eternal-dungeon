@@ -144,9 +144,24 @@ check. AI-generated art is for placeholders only and must be flagged; nothing fl
 
 ## To do at the end of M1 (Jeremy asked)
 
-- **Procs, crit included.** Crit is not a separate roll: it will be one of several procs (damage, buffs,
-  special effects) that can apply to any attack. Design them with Jeremy after the other M1 systems. Until
-  then there is no crit; the proc-chance formula exists on its own.
+- **Crit (decided, not built yet).** A core stat, not a proc. Crit Rating (Add, tag-keyed, cap 2.0) →
+  per-hit chance c = (√(1 + 4·Rating) − 1)/2; a crit re-rolls at c for Brutal. Each tier adds Crit Mult
+  (Add, tag-keyed) × (1 − Critical Resist × (1 − Critical Penetrate)). Target's Critical Deval lowers the
+  Rating first. Rolls only on a hit. Defaults: Weapon Crit Rating 0.05, untagged Crit Mult 0.5.
+- **Procs (being designed with Jeremy).** Effects with a trigger, tag filter, chance (Base × (1 + Rate) ×
+  (1 − Deval)) and target; can trigger on crit/Brutal. EternalQuestMobile's Effects.json is the reference.
+  Agreed so far: a before-damage phase as well as after-hit; proc damage uses the full damage formula; every
+  tag on the proc adjusts its chance; proc damage is not an action (no hit roll, no crit, doesn't fire on-hit
+  procs); rolled per target hit; no per-proc limits (limit by granting the proc from a fightStart buff);
+  the old hard-coded `special` effects become data building blocks. Open: stacking of duplicate procs.
+
+## To monitor
+
+- **Is the `weapon` tag needed?** Every weapon attack is exactly one of Melee or Ranged, so Weapon-keyed stats
+  (the default 5% Crit Rating, and later equipment) could instead be split between those two. Revisit once
+  M4 equipment shows whether anything needs "all weapons" that Melee + Ranged can't express.
+- **"Damaged" trigger** fires only when damaged by an action (not by procs or damage over time), for now.
+  Check in playtests whether it should fire on all damage.
 
 ## Open (don't build without Jeremy)
 

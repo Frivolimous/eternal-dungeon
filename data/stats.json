@@ -16,6 +16,8 @@
   { "id": "penetrate", "name": "Penetrate", "group": "attack", "combine": "dim" },
   { "id": "hit", "name": "Hit", "group": "attack", "combine": "dim" },
   { "id": "rate", "name": "Rate", "group": "attack", "combine": "dim" },
+  { "id": "crit_rating", "name": "Crit Rating", "group": "attack", "combine": "add" },
+  { "id": "crit_mult", "name": "Crit Mult", "group": "attack", "combine": "add" },
 
   { "id": "resist", "name": "Resist", "group": "defense", "combine": "dim" },
   { "id": "avoid", "name": "Avoid", "group": "defense", "combine": "dim" },

@@ -30,5 +30,7 @@
   { "id": "ice", "name": "Ice", "group": "element" },
   { "id": "holy", "name": "Holy", "group": "element" },
   { "id": "dark", "name": "Dark", "group": "element" },
-  { "id": "toxic", "name": "Toxic", "group": "element" }
+  { "id": "toxic", "name": "Toxic", "group": "element" },
+
+  { "id": "weapon", "name": "Weapon", "group": "source" }
 ]

@@ -138,6 +138,7 @@ public class TargetingTests
                 [DataLoader.AiProfilesFile] = """[{ "id": "zealot", "name": "Zealot", "threatWeight": 0.9, "rules": [{ "action": "wait" }] }]""",
                 [DataLoader.UnitsFile] = "[]",
                 [DataLoader.EncountersFile] = "[]",
+                [DataLoader.DefaultsFile] = """{ "unitStats": [] }""",
             })));
         Assert.Equal("ai_profiles.json", e.File);
         Assert.Equal("[0].threatWeight", e.Field);

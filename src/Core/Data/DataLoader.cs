@@ -16,6 +16,7 @@ public static class DataLoader
     public const string AiProfilesFile = "ai_profiles.json";
     public const string UnitsFile = "units.json";
     public const string EncountersFile = "encounters.json";
+    public const string DefaultsFile = "defaults.json";
 
     /// <summary>Each side's area on the battle grid (Anchor: 3×2 by default).</summary>
     public const int AreaCols = 3, AreaRows = 2;
@@ -53,7 +54,11 @@ public static class DataLoader
                 throw new DataException(UnitsFile, unit.Id, $"its AI \"{unit.Ai}\" uses \"{missing.Action}\", which isn't in its actions");
         var unitsById = units.ToDictionary(u => u.Id);
         var encounters = ReadList(source, EncountersFile, f => ReadEncounter(f, unitsById));
-        return new GameData([.. tags.Values], [.. stats.Values], compounds, units, actions, effects, ais, encounters);
+        var defaultsText = source.Read(DefaultsFile) ?? throw new DataException(DefaultsFile, "", "file is missing");
+        var defaults = JsonField.Parse(DefaultsFile, defaultsText);
+        defaults.OnlyFields("unitStats");
+        var unitDefaults = defaults["unitStats"].Items().Select(s => ReadStatEntry(s, tags, stats, tagRequired: false)).ToList();
+        return new GameData([.. tags.Values], [.. stats.Values], compounds, units, actions, effects, ais, encounters, unitDefaults);
     }
 
     static EffectDef ReadEffect(JsonField f, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats,

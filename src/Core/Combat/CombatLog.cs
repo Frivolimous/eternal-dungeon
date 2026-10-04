@@ -75,6 +75,7 @@ public static class CombatLog
         var parts = new List<string>();
         var full = new List<string>();
         var rest = new List<string>();
+        var crit = outcomes.OfType<CritRolled>().FirstOrDefault()?.Tiers ?? 0;
         foreach (var o in outcomes)
         {
             switch (o)
@@ -86,10 +87,15 @@ public static class CombatLog
                     break;
                 case Damaged d:
                     var type = action is null ? "" : DamageType(data, action);
-                    parts.Add($"{d.Breakdown.Final} dmg{(type.Length > 0 ? $" ({type})" : "")}");
+                    var kinds = new[] { type, crit switch { 2 => "Brutal", 1 => "crit", _ => "" } }.Where(k => k.Length > 0).ToList();
+                    parts.Add($"{d.Breakdown.Final} dmg{(kinds.Count > 0 ? $" ({string.Join(", ", kinds)})" : "")}");
                     if (d.Taken.Absorbed > 0) parts.Add($"Shield absorbs {d.Taken.Absorbed}");
                     parts.Add($"{d.Target.Name} HP {d.HealthBefore} → {d.HealthBefore - d.Taken.ToHealth}");
                     if (level == LogLevel.Full) full.Add(Breakdown(d.Breakdown));
+                    break;
+                case CritRolled c when level == LogLevel.Full:
+                    full.Add($"crit rating {F(c.Rating, 3)} → {Pct(c.Chance)}: roll {F(c.Crit.Value, 3)} → {(c.Crit.Success ? "crit" : "no crit")}"
+                        + (c.Brutal is { } b ? $"; Brutal roll {F(b.Value, 3)} → {(b.Success ? "Brutal" : "no Brutal")}" : ""));
                     break;
                 default:
                     if (Describe(o) is string text) rest.Add(text);
@@ -149,6 +155,7 @@ public static class CombatLog
         + $" × resist {F(d.ResistFactor, 3)} (res {F(d.Resist, 3)}, pen {F(d.Penetrate, 3)})"
         + $" × all dmg {F(d.AllDamageFactor, 3)} ({F(d.AllDamage, 2)})"
         + $" × all res {F(d.AllResistFactor, 3)} ({F(d.AllResist, 3)})"
+        + (d.CritTiers > 0 ? $" × crit {F(d.CritFactor, 3)} ({d.CritTiers} × mult {F(d.CritMult, 2)}, crit res {F(d.CritResist, 3)}, crit pen {F(d.CritPenetrate, 3)})" : "")
         + $" = {F(d.Raw, 3)} → {d.Final}";
 
     static string DamageType(GameData data, ActionDef action) =>

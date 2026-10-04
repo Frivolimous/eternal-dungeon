@@ -205,7 +205,8 @@ public sealed class Battle
             landed = roll.Success;
             if (landed && action.DealsDamage)
             {
-                var breakdown = Resolution.Damage(actor, action, target);
+                var tiers = RollCrit(actor, action, target, r);
+                var breakdown = Resolution.Damage(actor, action, target, tiers);
                 var before = target.Health;
                 var taken = target.TakeDamage(breakdown.Final);
                 actor.ThreatEarned += taken.Absorbed + taken.ToHealth;
@@ -233,6 +234,19 @@ public sealed class Battle
         Process(queue, r);
         CollapseAreas(r);
         return r;
+    }
+
+    /// <summary>Crit on a successful hit (Anchor: Combat › Formulas): roll at the chance from Crit Rating; on a crit,
+    /// roll again at the same chance for Brutal. No roll when the chance is 0. Returns the tiers (0–2).</summary>
+    int RollCrit(Unit actor, ActionDef action, Unit target, ActionResult r)
+    {
+        var rating = Resolution.CritRating(actor, action, target);
+        var chance = Resolution.CritChance(rating);
+        if (chance <= 0) return 0;
+        var crit = Rng.Roll(chance);
+        var outcome = new CritRolled(target, rating, chance, crit, crit.Success ? Rng.Roll(chance) : null);
+        r.Add(outcome);
+        return outcome.Tiers;
     }
 
     /// <summary>An effect waiting in the queue: what, from whom (caster + action = the buff source), onto whom.</summary>
