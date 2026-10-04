@@ -43,8 +43,8 @@ public static class Resolution
 
     /// <summary>
     /// Proc = Base × (1 + Rate) ÷ (1 + Deval), Rate and Deval both summed (Anchor: Combat › Procs). Rate 0.5 means
-    /// "50% more often"; equal Rate and Deval cancel; Deval never makes a unit immune. Not capped at 1: the
-    /// caller turns any excess into amount.
+    /// "50% more often"; equal Rate and Deval cancel; Deval never makes a unit immune. Not capped here: the
+    /// caller stops it at 1 (excess Rate is lost).
     /// </summary>
     public static double ProcChance(double baseChance, double rate, double deval) =>
         Math.Max(0, baseChance * (1 + rate) / Math.Max(MinDevalDivisor, 1 + deval));

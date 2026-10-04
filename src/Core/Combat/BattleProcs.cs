@@ -42,15 +42,14 @@ public sealed partial class Battle
 
     /// <summary>
     /// One copy's chance: Base × (1 + owner's Rate) ÷ (1 + target's Deval), all over the proc's tags; Deval only
-    /// when the proc lands on someone else. Above 100% the chance stops at 1 and the excess becomes a scale on
-    /// the proc's amounts (lost if it has none).
+    /// when the proc lands on someone else. It stops at 100%: excess Rate is lost and never scales amounts. Amounts
+    /// grow only when several copies of the same proc merge.
     /// </summary>
-    public static (double Chance, double Scale) CopyChance(ProcDef def, Unit owner, Unit target)
+    public static double CopyChance(ProcDef def, Unit owner, Unit target)
     {
         var rate = owner.Stats.Get("rate", def.Tags);
         var deval = target == owner ? 0 : target.Stats.Get("deval", def.Tags);
-        var chance = Resolution.ProcChance(def.Chance, rate, deval);
-        return chance > 1 ? (1, def.HasAmounts ? chance : 1) : (chance, 1);
+        return Math.Min(1, Resolution.ProcChance(def.Chance, rate, deval));
     }
 
     /// <summary>What a proc reacts to: who owns it, the other unit in the event, the action involved, and how much
@@ -78,16 +77,17 @@ public sealed partial class Battle
             switch (def.Duplicates)
             {
                 case Duplicates.Merge:
-                    var (chance, scale) = MergeCopies(copies);
+                    // Every copy of one proc has the same amounts, so each weighs 1 and the merged scale is the
+                    // expected number of copies firing ÷ the merged chance.
+                    var (chance, scale) = MergeCopies(copies.Select(c => (c, 1.0)));
                     RollProc(def, owner, target, chance, scale, e);
                     break;
                 case Duplicates.Separate:
-                    foreach (var (c, s) in copies)
-                        RollProc(def, owner, target, c, s, e);
+                    foreach (var c in copies)
+                        RollProc(def, owner, target, c, 1, e);
                     break;
                 case Duplicates.Unique:
-                    var best = copies.MaxBy(c => c.Chance * c.Scale);
-                    RollProc(def, owner, target, best.Chance, best.Scale, e);
+                    RollProc(def, owner, target, copies.Max(), 1, e);
                     break;
             }
         }

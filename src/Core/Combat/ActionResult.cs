@@ -28,7 +28,7 @@ public sealed record BuffApplied(Unit Target, Buff Buff, bool Refreshed, int Sta
 
 public sealed record BuffExpired(Unit Target, Buff Buff) : Outcome;
 
-/// <summary>A proc's roll. <see cref="Scale"/> multiplies its amounts (merged copies, chance above 100%).</summary>
+/// <summary>A proc's roll. <see cref="Scale"/> multiplies its amounts (only merged copies raise it).</summary>
 public sealed record ProcRolled(Unit Owner, ProcDef Proc, Unit Target, double Chance, Roll Roll, double Scale) : Outcome;
 
 /// <summary>Damage from a proc: through the damage formula with the proc's tags, but not an action.</summary>

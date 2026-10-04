@@ -98,20 +98,24 @@ public class ProcTests
         var g = U(Repo, "goblin_grunt", "g", Side.Enemy);
         var dazzle = Repo.Procs["dazzling"];                                   // 5%, tags holy + control
         w.Stats.Add("test", "rate", 0.5, "control");
-        Assert.Equal(0.075, Battle.CopyChance(dazzle, w, g).Chance, Precision);
+        Assert.Equal(0.075, Battle.CopyChance(dazzle, w, g), Precision);
         g.Stats.Add("test", "deval", 0.2, "control");                         // Tenacity-style resistance
-        Assert.Equal(0.0625, Battle.CopyChance(dazzle, w, g).Chance, Precision);   // 0.075 ÷ 1.2
-        Assert.Equal(0.075, Battle.CopyChance(dazzle, w, w).Chance, Precision);   // own Deval doesn't count on self
+        Assert.Equal(0.0625, Battle.CopyChance(dazzle, w, g), Precision);   // 0.075 ÷ 1.2
+        Assert.Equal(0.075, Battle.CopyChance(dazzle, w, w), Precision);   // own Deval doesn't count on self
     }
 
     [Fact]
-    public void Chance_above_100_percent_becomes_amount_or_is_lost()
+    public void Rate_above_100_percent_is_lost_and_never_scales_amounts()
     {
-        var w = U(Repo, "warrior", "w", Side.Party);
-        var g = U(Repo, "goblin_grunt", "g", Side.Enemy);
+        var w = Sure(U(Repo, "warrior", "w", Side.Party, "flaming"));
+        var g = Sure(U(Repo, "goblin_grunt", "g", Side.Enemy));
         w.Stats.Add("test", "rate", 0.5);
-        Assert.Equal((1.0, 1.5), Battle.CopyChance(Repo.Procs["flaming"], w, g));                   // amounts: 150% → ×1.5
-        Assert.Equal((1.0, 1.0), Battle.CopyChance(Repo.Procs["dazzling"] with { Chance = 1 }, w, g)); // a state: excess lost
+        Assert.Equal(1, Battle.CopyChance(Repo.Procs["flaming"], w, g));                  // 150% stops at 100%
+
+        var b = new Battle(Repo, [w, g], seed: 1);
+        var r = Hit(b, w, "attack", g);
+        Assert.Equal(1, r.Of<ProcRolled>().Single().Scale);
+        Assert.Equal(5, r.Of<ProcDamaged>().Single().Breakdown.Base);                     // not 7.5
     }
 
     // ---- Results ----

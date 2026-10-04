@@ -104,7 +104,7 @@ A proc is an effect that fires on an event, with a chance. Units have procs of t
 | Trigger tags | Optional filter: the event's action must carry at least one of them (Spikey: struck by Melee) |
 | Phase | After the hit by default. A hit proc can be marked before damage, to change that hit (e.g. extra Penetrate for this hit only) |
 | Chance | Base × (1 + Rate) ÷ (1 + Deval), Rate and Deval both summed (Add), using every tag on the proc; the target's Deval applies only when the proc lands on someone else. No base chance means 100% |
-| Above 100% | The chance stops at 100%; the excess scales the proc's amounts (150% for 20 damage fires at 100% for 30). Procs with no amounts lose the excess |
+| Above 100% | The chance stops at 100% and the excess is lost: Rate never scales a proc's amounts. Amounts grow only when several copies of the same proc merge (see below) |
 | Target | The owner, or the other unit in the event (the target of the owner's action, or the attacker) |
 | Results | Building blocks in data: damage, heal, Shield, heal a share of the hit's damage (lifesteal), stat changes for this hit (before damage), and applying any effect or buff (CC, push, buffs) |
 | Proc damage | Goes through the full damage formula with the proc's own tags. It is not an action: no hit roll, no crit, and it never triggers procs. Nothing a proc causes triggers further procs |
