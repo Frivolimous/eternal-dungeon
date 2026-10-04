@@ -3,7 +3,7 @@
 This is the source of truth for Eternal Dungeon's design. Everything here is decided unless it's listed under Open questions or marked as a placeholder. Earlier notes and spreadsheets are retired.
 
 - **Design Anchor (this folder):** design decisions, updated as each design point is settled.
-- **Final project brief (later):** an implementation-ready spec for Claude, written from this anchor once the open questions are settled.
+- **Build briefs ([docs/briefs/](../briefs/)):** what to build per milestone, with acceptance criteria. Briefs are written from this Anchor, and the Anchor wins wherever they disagree.
 - When a decision changes, the old version goes under Superseded with the reason, so nothing is silently lost.
 
 The Anchor moved here from claude.ai on 2026-10-04 and is versioned with the code: a rule change and its code change land in the same commit. The claude.ai doc is retired.

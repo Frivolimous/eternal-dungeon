@@ -9,14 +9,18 @@ Combat is purely turn-based and speed-driven, fought on small grids. Each hero i
 ```
 
 ```latex
-\text{Dmg} = \text{Base} \times \sum\text{Power} \times \sum\text{Mult} \times \big(1 - \sum\text{Resist} \times (1 - \text{Pen})\big) \times \text{AllDmg} \times (1 - \text{AllResist})
+\text{Dmg} = \text{Base} \times \Big(1 + \frac{\sum\text{Power}}{100}\Big) \times \big(1 + \sum\text{Mult}\big) \times \big(1 - \text{Resist} \times (1 - \text{Pen})\big) \times (1 + \text{AllDmg}) \times (1 - \text{AllResist}) \times \text{Crit}
+```
+
+```latex
+\text{Crit} = 1 + \text{tiers} \times \text{CritMult} \times \big(1 - \text{CritResist} \times (1 - \text{CritPen})\big)
 ```
 
 ```latex
 \text{Proc} = \text{Base} \times (1 + \text{Rate}_{dim}) \times (1 - \text{Deval}_{dim})
 ```
 
-Crit is a core stat, not a proc. Crit Rating (Add, tag-keyed, hard cap 200%) converts into a per-hit crit chance c = (√(1 + 4 × Rating) − 1) / 2. A crit rolls again at the same chance for a Brutal crit, so expected damage rises in a straight line with Rating. Each tier adds Crit Mult (Add, tag-keyed): Damage × (1 + tiers × Crit Mult × (1 − Critical Resist × (1 − Critical Penetrate))). The target's Critical Deval lowers the Rating before the conversion. Crit rolls only on a successful hit. The character sheet shows the Rating with both chances: Rating 100% gives 62% crit and 62% Brutal.
+Crit is a core stat, not a proc. Crit Rating (Add, tag-keyed, hard cap 200%) converts into a per-hit crit chance c = (√(1 + 4 × Rating) − 1) / 2. A crit rolls again at the same chance for a Brutal crit, so expected damage rises in a straight line with Rating. Each tier adds Crit Mult (Add, tag-keyed): Damage × (1 + tiers × Crit Mult × (1 − Critical Resist × (1 − Critical Penetrate))). The target's Critical Deval lowers the Rating before the conversion: Rating × (1 − Critical Deval), then the 200% cap. Critical Resist and Critical Penetrate count only their Critical-keyed parts, since the untagged parts already applied to the hit. Crit rolls only on a successful hit. The character sheet shows the Rating with both chances as shares of all hits: Rating 100% gives a 62% crit chance, and 38% of hits are Brutal (62% of crits).
 
 Power and Multiplier scale damage as percentages. Power factor = 1 + total Power / 100, so Fire Power 50 means +50% damage on Fire actions. Multiplier factor = 1 + total Multiplier, so 0.2 means +20%.
 

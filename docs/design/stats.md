@@ -62,9 +62,9 @@ Which stats use each mode:
 
 | Mode | Stats |
 | --- | --- |
-| Add | Health, H.Regen, Mana, M.Regen, Speed, Initiative, Threat, Vulnerability, Base Dmg, Power, Multiplier |
+| Add | Health, H.Regen, Mana, M.Regen, Speed, Initiative, Threat, Vulnerability, All Damage, Base Dmg, Power, Multiplier, Crit Rating (hard cap 200%), Crit Mult |
 | Mult | None for now. Reserved for rare, build-defining effects. |
-| Dim | Penetrate, Hit, Rate, Resist, Avoid, Deval |
+| Dim | All Resist, Penetrate, Hit, Rate, Resist, Avoid, Deval |
 
 Negative Dim modifiers (debuffs such as a curse giving −0.2 Avoid) stack separately from positive ones, each by the Dim formula, and the negative total is subtracted: Avoid +0.5 and +0.2 give 0.6, two −0.2 curses give 0.36, so Avoid is 0.24. The result can go below 0. Every Dim modifier stays strictly between −1 and 1.
 

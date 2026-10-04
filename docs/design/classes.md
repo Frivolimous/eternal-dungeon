@@ -7,7 +7,7 @@ There are 15 classes in three families of five. Each family's bonus shapes the e
 | Warrior | Primary+ | Power Attack: deals ×2 damage | Balanced melee attacker | Balanced | Bruiser | Basic | Melee |
 | Berserker | Primary+ | Enrage: temporary +damage | Offensive melee attacker | Offensive | Bruiser | Rage | Melee |
 | Defender | Primary+ | Shield Wall: shields the whole party | Defensive meat stick | Defensive | Tank | Basic | Melee |
-| Captain | Primary+ | Inspire Precision: +accuracy and crit rate | Defensive support | Defensive | Support | Allies | Flexible |
+| Captain | Primary+ | Inspire Precision: +Accuracy and Crit Rating | Defensive support | Defensive | Support | Allies | Flexible |
 | Beastmaster | Primary+ | Companion: adds another unit | Versatile companion | Utility | Support | Companion | Flexible |
 | Rogue | Belt+ | Sneak: moves into enemy tiles and cloaks (dodge, −threat) | Sneaking and big strikes | Offensive | Carry | Stealth | Flexible |
 | Ranger | Belt+ | Mark Target: +damage vs. the target | Ranged and crits | Offensive | Carry | Basic | Ranged |
