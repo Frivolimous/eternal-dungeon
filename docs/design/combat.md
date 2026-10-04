@@ -35,6 +35,8 @@ Every character starts with Weapon Crit Rating 5% and untagged Crit Mult 0.5, so
 - Actions cost AP out of the 100-point meter: 50 is half a turn, 100 a full turn, and 200 works like a cooldown.
 - Spells have a casting timer. The Arcanist's Meddle staggers an enemy while it's casting.
 - Buffs and Regen run on their own clock at base Speed 100, so a 3-turn buff lasts 3 base-speed turns whatever the buffed hero's own Speed. Speed, Act and AP are integers on the 100 scale, while chance-type stats (Avoid, Resist, Rate, Deval) are 0–1 internally and shown as percentages.
+- Events at the same moment resolve in a fixed order: the buff clock first, then completed casts, then turns.
+- If both sides fall at the same moment, it counts as a party wipe.
 - **No real-time clock.** Ticks are simulated instantly until the next unit reaches 100 Act, and the game waits for the player on each hero turn. A quick animation shows the meters filling. Every "over time" effect (stagger drain, buffs, Regen) counts ticks, not seconds.
 
 ## Battlefield
@@ -45,6 +47,7 @@ Every character starts with Weapon Crit Rating 5% and untagged Crit Mult 0.5, so
 - Rogues on either side can teleport into the opposing area.
 - Enemies usually appear in front. In an Ambushed battle they appear on all sides, and in a Surrounding battle the party flanks them.
 - When an area's front row empties, the area collapses forward. Some actions reposition enemies.
+- Push and Pull move a unit one row back or forward within its area, only if the tiles are free.
 - Enemy size is its footprint: size 1 takes 1 tile (a person), size 1.5 takes 2 tiles in a column, front and back (a troll), and size 2 takes a 2×2 block of 4 tiles (a Balrog).
 
 ## Crowd control
@@ -66,7 +69,8 @@ Enemies pick targets by weighing Threat against Vulnerability, and each AI type 
 
 - Each source can apply a buff only once, unless the buff is explicitly stacking. Source = action plus caster, so 3 different poison spells give 3 poisons, and the same buff from 3 casters stacks 3 times.
 - Re-stacking a stacking buff resets its timer.
-- Effect triggers: on being hit (with a state check), on turn start, on action complete (with a state check), and periodically on the buff clock.
+- Buffs can deal damage or heal on every buff-clock turn, and can grant procs while they last (see Procs).
+- Instant heals scale with the caster's Power for the action's tags, like damage.
 - All effects queue into one IActionResult. Buffs created by effects are applied only after every effect resolves.
 - The same effect from several sources stacks its stats (Critical from many sources). Merely similar effects stay separate (two different poison procs).
 
