@@ -86,7 +86,7 @@ public static class CombatLog
                         full.Add($"roll {F(a.Roll.Value, 3)} vs {F(a.Chance, 3)} → {(a.Roll.Success ? "hit" : "miss")}");
                     break;
                 case Damaged d:
-                    var type = action is null ? "" : DamageType(data, action);
+                    var type = action is null ? "" : DamageTags(data, action.Tags);
                     var kinds = new[] { type, crit switch { 2 => "Brutal", 1 => "crit", _ => "" } }.Where(k => k.Length > 0).ToList();
                     parts.Add($"{d.Breakdown.Final} dmg{(kinds.Count > 0 ? $" ({string.Join(", ", kinds)})" : "")}");
                     if (d.Taken.Absorbed > 0) parts.Add($"Shield absorbs {d.Taken.Absorbed}");
@@ -168,14 +168,12 @@ public static class CombatLog
         + (d.CritTiers > 0 ? $" × crit {F(d.CritFactor, 3)} ({d.CritTiers} × mult {F(d.CritMult, 2)}, crit res {F(d.CritResist, 3)}, crit pen {F(d.CritPenetrate, 3)})" : "")
         + $" = {F(d.Raw, 3)} → {d.Final}";
 
-    static string ProcTypes(GameData data, ProcDef proc)
-    {
-        var names = proc.Tags.Select(t => data.Tags[t]).Where(t => t.Group is TagGroup.DamageType or TagGroup.Element).Select(t => t.Name).ToList();
-        return names.Count > 0 ? $" ({string.Join(", ", names)})" : "";
-    }
+    static string ProcTypes(GameData data, ProcDef proc) =>
+        DamageTags(data, proc.Tags) is { Length: > 0 } names ? $" ({names})" : "";
 
-    static string DamageType(GameData data, ActionDef action) =>
-        action.Tags.Select(t => data.Tags[t]).FirstOrDefault(t => t.Group == TagGroup.DamageType)?.Name ?? "";
+    /// <summary>The damage-relevant tags (damage types and elements) in tag order: "Arcane, Fire".</summary>
+    static string DamageTags(GameData data, IEnumerable<string> tags) =>
+        string.Join(", ", tags.Select(t => data.Tags[t]).Where(t => t.Group is TagGroup.DamageType or TagGroup.Element).Select(t => t.Name));
 
     /// <summary>Row and column; marked when the unit stands in the other side's area.</summary>
     static string Pos(Unit u, Tile t) => $"r{t.Row}c{t.Col}{(t.Area != u.Side ? " (opposing area)" : "")}";

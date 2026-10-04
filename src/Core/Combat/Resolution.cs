@@ -68,11 +68,6 @@ public static class Resolution
         SuccessChance(attacker.Stats.Get("hit", action.Tags), target.Stats.Get("avoid", action.Tags));
 
     /// <summary>
-    /// Damage from <paramref name="attacker"/>'s action to <paramref name="target"/>. Attack stats come from the
-    /// attacker and defense stats from the target, all for the action's tags. Base adds the attacker's Base Dmg
-    /// to the action's base damage, and the action's All Damage adds to the attacker's.
-    /// </summary>
-    /// <summary>
     /// Damage from a proc: the full formula over the proc's own tags, with <paramref name="amount"/> as its base
     /// (plus the owner's Base Dmg for those tags). No crit: crit is on actions.
     /// </summary>
@@ -91,6 +86,11 @@ public static class Resolution
             AllResist: d.Get("all_resist"));
     }
 
+    /// <summary>
+    /// Damage from <paramref name="attacker"/>'s action to <paramref name="target"/>. Attack stats come from the
+    /// attacker and defense stats from the target, all for the action's tags. Base adds the attacker's Base Dmg
+    /// to the action's base damage, and the action's All Damage adds to the attacker's.
+    /// </summary>
     /// <param name="critTiers">0 (no crit), 1 (crit) or 2 (Brutal). Critical Resist and Penetrate count only their
     /// Critical-keyed parts: the untagged ones already applied to the hit.</param>
     public static DamageBreakdown Damage(Unit attacker, ActionDef action, Unit target, int critTiers = 0)
