@@ -65,7 +65,8 @@ public sealed record UnitDef(
     IReadOnlyList<StatValue> Stats,
     IReadOnlyDictionary<string, double> Compounds,
     IReadOnlyList<string> Actions,
-    string Ai = "");
+    string Ai = "",
+    IReadOnlyList<string>? Procs = null);
 
 /// <summary>
 /// One action-choice rule: use <see cref="Action"/> if it's usable, has a valid target, and every condition
@@ -131,17 +132,55 @@ public sealed record ActionDef(
 /// affected unit's next turn starts.</summary>
 public enum DurationKind { Instant, Turns, UntilNextTurn }
 
-/// <summary>When a buff's trigger fires (Anchor: Combat › Buffs and effects). Periodic effects are
-/// <see cref="EffectDef.PeriodicDamage"/> and <see cref="EffectDef.PeriodicHeal"/>.</summary>
-public enum TriggerOn { HitTaken, TurnStart, ActionComplete }
+/// <summary>The event a proc fires on (Anchor: Combat › Procs). Hit, Miss, Crit, Brutal and ActionComplete are the
+/// owner's own actions; Struck, Avoided and Damaged are actions against the owner (Damaged: only damage from
+/// an action).</summary>
+public enum ProcTrigger { Hit, Miss, Crit, Brutal, ActionComplete, Struck, Avoided, Damaged, TurnStart, FightStart }
 
-/// <summary>Who a triggered effect lands on: the buffed unit, or the other unit in the event (the attacker
-/// for <see cref="TriggerOn.HitTaken"/>, the action's target for <see cref="TriggerOn.ActionComplete"/>).</summary>
-public enum TriggerTarget { Self, Other }
+/// <summary>Who a proc lands on: its owner, or the other unit in the event (the owner's target, or the attacker).</summary>
+public enum ProcTarget { Self, Other }
 
-/// <summary>A buff's trigger: when <see cref="On"/> happens and the state check passes, apply <see cref="Effect"/>.
-/// The only state check so far: the buffed unit's Health is below a share of its maximum.</summary>
-public sealed record TriggerDef(TriggerOn On, string Effect, TriggerTarget Target, double? HealthBelow);
+/// <summary>When a Hit proc resolves: after the hit (default), or before its damage, to change that hit.</summary>
+public enum ProcPhase { AfterHit, BeforeDamage }
+
+/// <summary>How copies of the same proc on one unit combine (Anchor: Combat › Procs).</summary>
+public enum Duplicates
+{
+    /// <summary>One roll at 1 − Π(1 − chance); amounts weighted by chance so the expected amount is unchanged.</summary>
+    Merge,
+    /// <summary>Each copy rolls on its own.</summary>
+    Separate,
+    /// <summary>Only the strongest copy counts.</summary>
+    Unique,
+}
+
+/// <summary>
+/// A proc: when <see cref="Trigger"/> happens (and the event's action carries one of <see cref="TriggerTags"/>, if
+/// any), roll <see cref="Chance"/> × (1 + Rate) × (1 − Deval) over <see cref="Tags"/>, then apply its building
+/// blocks. Amounts (damage, heal, Shield, lifesteal share, this-hit stats) scale with the chance overflow and
+/// add across merged copies; <see cref="Effect"/> (any instant effect or buff, CC included) is a state that
+/// never adds up. Proc damage goes through the damage formula with the proc's tags, and is not an action.
+/// </summary>
+public sealed record ProcDef(
+    string Id,
+    string Name,
+    ProcTrigger Trigger,
+    IReadOnlyList<string> TriggerTags,
+    IReadOnlyList<string> Tags,
+    double Chance,
+    ProcTarget Target,
+    ProcPhase Phase,
+    Duplicates Duplicates,
+    double Damage,
+    double Heal,
+    double Shield,
+    double Lifesteal,
+    IReadOnlyList<StatValue> HitStats,
+    string? Effect,
+    double? OwnerHealthBelow)
+{
+    public bool HasAmounts => Damage > 0 || Heal > 0 || Shield > 0 || Lifesteal > 0 || HitStats.Count > 0;
+}
 
 /// <summary>
 /// Crowd control a buff puts on a unit (Anchor: Combat › Crowd control). Slow and stat reduction are plain
@@ -170,7 +209,7 @@ public enum Displace { None, Push, Pull }
 /// <summary>
 /// An effect or buff (Anchor: Combat › Buffs and effects). An instant effect heals or shields once. A buff
 /// (any other duration) adds stat modifiers while it lasts, can carry a Shield that goes when it ends, can
-/// deal damage or heal on every buff-clock turn, and can have triggers. A buff is unique per source (action +
+/// deal damage or heal on every buff-clock turn, and can grant procs while it lasts. A buff is unique per source (action +
 /// caster) unless <see cref="Stacking"/>.
 /// </summary>
 public sealed record EffectDef(
@@ -185,7 +224,7 @@ public sealed record EffectDef(
     double ShieldMaxHealth,
     int PeriodicDamage,
     int PeriodicHeal,
-    IReadOnlyList<TriggerDef> Triggers,
+    IReadOnlyList<string> Procs,
     CcKind Cc = CcKind.None,
     int Stagger = 0,
     int DelayedDamage = 0,

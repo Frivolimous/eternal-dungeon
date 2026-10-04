@@ -54,8 +54,8 @@ run the main scene and see its prints. Exports need the 4.7.2 .NET export templa
 ## Layout
 
 ```
-data/              JSON content: tags, stats, compound_stats, effects, actions, ai_profiles, units,
-                   encounters (loaded in that order; later files reference earlier ones). Embedded into the
+data/              JSON content: tags, stats, compound_stats, effects, procs, actions, ai_profiles, units,
+                   encounters, defaults (loaded in that order; later files reference earlier ones). Embedded into the
                    game assembly at build.
 src/Core/          rules library, plain C#, no Godot
 src/Sim/           command-line tool (assembly name `sim`): data/asset checks now, battle simulator in M1
@@ -119,8 +119,8 @@ check. AI-generated art is for placeholders only and must be flagged; nothing fl
   Same-tick events: buff tick, then cast completions, then turns. A casting unit keeps gaining Act but takes no
   turn until its cast completes or is interrupted (choices of Claude's, not in the Anchor).
 
-- Effects (Battle.cs): the action's hit and damage come first, then queued effects in order (triggers join
-  the same queue), then every buff created, so a buff never boosts the action that made it. Buff source =
+- Effects (Battle.cs): the action's hit and damage come first, then queued effects in order (proc effects
+  join the same queue), then every buff created, so a buff never boosts the action that made it. Buff source =
   effect + action + caster. Placeholders: periodic damage/heal is a flat amount per buff-clock turn (×
   stacks, Shield absorbs, no formula); an instant heal scales with the caster's Power for the action's tags;
   a cast whose target fell before it completes fizzles.
@@ -138,22 +138,24 @@ check. AI-generated art is for placeholders only and must be flagged; nothing fl
   Threat stat), scaled against the highest among the candidates (placeholder); Vulnerability = share of
   Health missing (+ Vulnerability stat / 100). AI profiles (ai_profiles.json) hold w and ordered action rules;
   the heroes' profiles are the simulator's scripted AI. A unit with no valid rule steps forward or waits.
-- Balance target for the starter encounters: 70–90% party wins in `sim batch` (currently ~86/81/77%). Tests
+- Crit (Resolution.CritChance/CritRating, Battle.RollCrit): a core stat, not a proc. Crit Rating (Add,
+  tag-keyed, cap 2.0) → per-hit chance c = (√(1 + 4·Rating) − 1)/2; a crit re-rolls at c for Brutal. Each
+  tier adds Crit Mult × (1 − Critical Resist × (1 − Critical Penetrate)), Critical-keyed parts only. The
+  target's Critical Deval lowers the Rating first. Only an action's direct damage crits. defaults.json gives
+  every unit Weapon Crit Rating 0.05 and untagged Crit Mult 0.5.
+- Procs (procs.json, BattleProcs.cs; Anchor › Procs): units own procs; buffs grant them while active. Trigger
+  (+ optional triggerTags filter and ownerHealthBelow); chance = Base × (1 + Rate) × (1 − Deval) over the
+  proc's tags (Deval only when it lands on someone else), capped at 1 with the excess scaling amounts.
+  Building blocks: damage (full formula, proc tags, no crit), heal, shield, lifesteal, hitStats
+  (before_damage phase, this hit only), effect (any buff/CC, through the queue). Duplicates: merge (one roll
+  at 1 − Π(1 − p), amounts Σp·a ÷ merged chance; states from the strongest copy), separate, unique. Proc
+  damage is not an action, and nothing a proc causes fires procs (FireProcs is called only from action and
+  clock events). Resolve order: hit roll → miss/avoided or before-damage procs → crit → damage →
+  hit/crit/brutal procs → struck/damaged procs → action effects → action-complete procs → buffs. The example
+  procs (ported from EternalQuestMobile) aren't on any starter unit yet.
+- Balance target for the starter encounters: 70–90% party wins in `sim batch` (currently ~86/78/76%). Tests
   read Health and damage from the data, not hard-coded numbers, wherever tuning could change them.
 - `Core.Combat` is the battle namespace (a `Battle` namespace would clash with the `Battle` class).
-
-## To do at the end of M1 (Jeremy asked)
-
-- **Crit (decided, not built yet).** A core stat, not a proc. Crit Rating (Add, tag-keyed, cap 2.0) →
-  per-hit chance c = (√(1 + 4·Rating) − 1)/2; a crit re-rolls at c for Brutal. Each tier adds Crit Mult
-  (Add, tag-keyed) × (1 − Critical Resist × (1 − Critical Penetrate)). Target's Critical Deval lowers the
-  Rating first. Rolls only on a hit. Defaults: Weapon Crit Rating 0.05, untagged Crit Mult 0.5.
-- **Procs (being designed with Jeremy).** Effects with a trigger, tag filter, chance (Base × (1 + Rate) ×
-  (1 − Deval)) and target; can trigger on crit/Brutal. EternalQuestMobile's Effects.json is the reference.
-  Agreed so far: a before-damage phase as well as after-hit; proc damage uses the full damage formula; every
-  tag on the proc adjusts its chance; proc damage is not an action (no hit roll, no crit, doesn't fire on-hit
-  procs); rolled per target hit; no per-proc limits (limit by granting the proc from a fightStart buff);
-  the old hard-coded `special` effects become data building blocks. Open: stacking of duplicate procs.
 
 ## To monitor
 

@@ -11,6 +11,7 @@ public static class BattleRunner
 
     public static Side? Run(Battle battle, double timeLimit = DefaultTimeLimit)
     {
+        battle.Start();
         while (battle.Winner is null && battle.Clock.Time <= timeLimit)
             Step(battle);
         return battle.Winner;

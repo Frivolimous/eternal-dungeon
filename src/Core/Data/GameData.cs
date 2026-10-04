@@ -10,8 +10,12 @@ public sealed class GameData(
     IReadOnlyList<EffectDef>? effectList = null,
     IReadOnlyList<AiProfileDef>? aiProfileList = null,
     IReadOnlyList<EncounterDef>? encounterList = null,
-    IReadOnlyList<StatValue>? unitDefaults = null)
+    IReadOnlyList<StatValue>? unitDefaults = null,
+    IReadOnlyList<ProcDef>? procList = null)
 {
+    public IReadOnlyList<ProcDef> ProcList { get; } = procList ?? [];
+    public IReadOnlyDictionary<string, ProcDef> Procs { get; } = (procList ?? []).ToDictionary(p => p.Id);
+
     /// <summary>Stats every unit starts with (defaults.json), before its own.</summary>
     public IReadOnlyList<StatValue> UnitDefaults { get; } = unitDefaults ?? [];
 

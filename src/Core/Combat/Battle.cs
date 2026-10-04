@@ -7,7 +7,7 @@ namespace EternalDungeon.Core.Combat;
 /// action, which target) come from outside; this class only applies them. Every change is reported as an
 /// <see cref="ActionResult"/>, appended to <see cref="Results"/> in order.
 /// </summary>
-public sealed class Battle
+public sealed partial class Battle
 {
     /// <summary>Guard against triggers that keep triggering each other.</summary>
     public const int MaxQueuedEffects = 100;
@@ -49,7 +49,7 @@ public sealed class Battle
         foreach (var buff in unit.Buffs.Where(b => b.Def.Duration == DurationKind.UntilNextTurn).ToList())
             Expire(unit, buff, r);
         var queue = new Queue<Pending>();
-        QueueTriggers(unit, TriggerOn.TurnStart, other: null, queue, r);
+        FireProcs(ProcTrigger.TurnStart, new ProcEvent(unit, null, null, 0, queue, r));
         Process(queue, r);
         return Record(r);
     }
@@ -203,24 +203,42 @@ public sealed class Battle
             var roll = Rng.Roll(chance);
             r.Add(new Attempt(target, chance, roll));
             landed = roll.Success;
-            if (landed && action.DealsDamage)
+            if (!landed)
             {
-                var tiers = RollCrit(actor, action, target, r);
-                var breakdown = Resolution.Damage(actor, action, target, tiers);
-                var before = target.Health;
-                var taken = target.TakeDamage(breakdown.Final);
-                actor.ThreatEarned += taken.Absorbed + taken.ToHealth;
-                r.Add(new Damaged(target, breakdown, taken, before));
-                if (taken.Killed) r.Add(new Died(target));
+                FireProcs(ProcTrigger.Miss, new ProcEvent(actor, target, action, 0, queue, r));
+                FireProcs(ProcTrigger.Avoided, new ProcEvent(target, actor, action, 0, queue, r));
             }
-            if (landed)
+            else
             {
+                // Before-damage procs can change this hit; their this-hit stats go once the damage is dealt.
+                FireProcs(ProcTrigger.Hit, new ProcEvent(actor, target, action, 0, queue, r), ProcPhase.BeforeDamage);
+                var tiers = 0;
+                var dealt = 0;
+                if (action.DealsDamage && target.Alive)
+                {
+                    tiers = RollCrit(actor, action, target, r);
+                    var breakdown = Resolution.Damage(actor, action, target, tiers);
+                    var before = target.Health;
+                    var taken = target.TakeDamage(breakdown.Final);
+                    dealt = taken.Absorbed + taken.ToHealth;
+                    actor.ThreatEarned += dealt;
+                    r.Add(new Damaged(target, breakdown, taken, before));
+                    if (taken.Killed) r.Add(new Died(target));
+                }
+                actor.Stats.RemoveSource(ThisHitSource);
+
                 // Any hit wakes a sleeper.
                 foreach (var sleep in target.Buffs.Where(b => b.Def.Cc == CcKind.Sleep).ToList())
                     Expire(target, sleep, r, natural: false);
+
+                var hit = new ProcEvent(actor, target, action, dealt, queue, r);
+                FireProcs(ProcTrigger.Hit, hit);
+                if (tiers >= 1) FireProcs(ProcTrigger.Crit, hit);
+                if (tiers >= 2) FireProcs(ProcTrigger.Brutal, hit);
+                var struck = new ProcEvent(target, actor, action, dealt, queue, r);
+                FireProcs(ProcTrigger.Struck, struck);
+                if (dealt > 0) FireProcs(ProcTrigger.Damaged, struck);
             }
-            if (landed && target.Alive)
-                QueueTriggers(target, TriggerOn.HitTaken, other: actor, queue, r);
         }
 
         if (landed)
@@ -230,7 +248,7 @@ public sealed class Battle
                 queue.Enqueue(new Pending(Data.Effects[e.Effect], actor, action.Id, on, action.Tags));
             }
 
-        QueueTriggers(actor, TriggerOn.ActionComplete, other: target, queue, r);
+        FireProcs(ProcTrigger.ActionComplete, new ProcEvent(actor, target, action, 0, queue, r));
         Process(queue, r);
         CollapseAreas(r);
         return r;
@@ -381,21 +399,6 @@ public sealed class Battle
 
     static int ShieldAmount(EffectDef def, Unit unit) =>
         (int)Math.Round(def.ShieldMaxHealth * unit.MaxHealth, MidpointRounding.AwayFromZero);
-
-    /// <summary>Queues the effects of <paramref name="owner"/>'s triggers for <paramref name="on"/> whose state
-    /// check passes.</summary>
-    void QueueTriggers(Unit owner, TriggerOn on, Unit? other, Queue<Pending> queue, ActionResult r)
-    {
-        foreach (var buff in owner.Buffs.ToList())
-            foreach (var t in buff.Def.Triggers.Where(t => t.On == on))
-            {
-                if (t.HealthBelow is double share && owner.Health >= share * owner.MaxHealth) continue;
-                var target = t.Target == TriggerTarget.Self ? owner : other;
-                if (target is null) continue;
-                r.Add(new Triggered(owner, buff, t));
-                queue.Enqueue(new Pending(Data.Effects[t.Effect], owner, $"trigger:{buff.Def.Id}", target, []));
-            }
-    }
 
     ActionResult Record(ActionResult r)
     {

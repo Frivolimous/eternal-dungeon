@@ -26,6 +26,7 @@ public class DataLoaderTests
             [DataLoader.UnitsFile] = units,
             [DataLoader.ActionsFile] = actions,
             [DataLoader.EffectsFile] = effects,
+            [DataLoader.ProcsFile] = "[]",
             [DataLoader.AiProfilesFile] = ais,
             [DataLoader.EncountersFile] = "[]",
             [DataLoader.DefaultsFile] = """{ "unitStats": [] }""",

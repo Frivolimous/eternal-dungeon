@@ -47,13 +47,13 @@ public class CcTests
     [Fact]
     public void Stun_stops_the_meter_and_interrupts_a_cast()
     {
-        var data = WithCc(Cc("daze", CcKind.Stun));
+        var data = WithCc(Cc("test_daze", CcKind.Stun));
         var w = U(data, "warrior", "w", Side.Party);
         var mage = U(data, "elementalist", "mage", Side.Party);
         var b = new Battle(data, [w, mage], seed: 1);
         b.Clock.BeginCast(mage, "fire_bolt", null, 50);
 
-        var r = Apply(b, w, mage, "apply_daze");
+        var r = Apply(b, w, mage, "apply_test_daze");
         Assert.Single(r.Of<Interrupted>());
         Assert.Null(mage.Casting);
         Assert.Equal(0, mage.Speed);

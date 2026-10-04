@@ -28,7 +28,11 @@ public sealed record BuffApplied(Unit Target, Buff Buff, bool Refreshed, int Sta
 
 public sealed record BuffExpired(Unit Target, Buff Buff) : Outcome;
 
-public sealed record Triggered(Unit Owner, Buff Buff, TriggerDef Trigger) : Outcome;
+/// <summary>A proc's roll. <see cref="Scale"/> multiplies its amounts (merged copies, chance above 100%).</summary>
+public sealed record ProcRolled(Unit Owner, ProcDef Proc, Unit Target, double Chance, Roll Roll, double Scale) : Outcome;
+
+/// <summary>Damage from a proc: through the damage formula with the proc's tags, but not an action.</summary>
+public sealed record ProcDamaged(Unit Owner, Unit Target, ProcDef Proc, DamageBreakdown Breakdown, DamageTaken Taken, int HealthBefore) : Outcome;
 
 public sealed record CastStarted(int CastTime, long ReadyAt) : Outcome;
 

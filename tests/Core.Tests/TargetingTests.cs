@@ -134,6 +134,7 @@ public class TargetingTests
                 [DataLoader.StatsFile] = """[{ "id": "health", "name": "Health", "group": "character", "combine": "add" }]""",
                 [DataLoader.CompoundStatsFile] = "[]",
                 [DataLoader.EffectsFile] = "[]",
+                [DataLoader.ProcsFile] = "[]",
                 [DataLoader.ActionsFile] = """[{ "id": "wait", "name": "Wait", "tags": [], "target": "self", "apCost": 100 }]""",
                 [DataLoader.AiProfilesFile] = """[{ "id": "zealot", "name": "Zealot", "threatWeight": 0.9, "rules": [{ "action": "wait" }] }]""",
                 [DataLoader.UnitsFile] = "[]",

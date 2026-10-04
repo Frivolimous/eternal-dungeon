@@ -18,5 +18,10 @@
   { "id": "chill", "name": "Chill", "duration": 2,
     "stats": [ { "stat": "speed", "value": -30 } ] },
 
-  { "id": "smash_stagger", "name": "Stagger", "stagger": 35 }
+  { "id": "smash_stagger", "name": "Stagger", "stagger": 35 },
+
+  { "id": "daze", "name": "Dazed", "duration": 1, "cc": "stun" },
+
+  { "id": "berserk", "name": "Berserk", "duration": 3,
+    "stats": [ { "stat": "power", "value": 25 } ] }
 ]

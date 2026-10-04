@@ -136,16 +136,15 @@ public class EffectTests
     }
 
     [Fact]
-    public void Triggered_effects_join_the_same_queue()
+    public void Effects_from_a_buffs_procs_join_the_same_queue()
     {
-        // Thorns: when hit, put Rot on the attacker; Second Wind: when hit below half Health, shield yourself.
+        // Thorns grants two procs: when struck, put Rot on the attacker; when struck below half Health, shield yourself.
         var data = With(
             actions: [Action("bless", ActionTarget.Self, new EffectRef("thorns", EffectAim.Self))],
-            effects: [
-                Buff("thorns", triggers: [
-                    new(TriggerOn.HitTaken, "rot", TriggerTarget.Other, null),
-                    new(TriggerOn.HitTaken, "second_wind", TriggerTarget.Self, 0.5)]),
-                Instant("second_wind", shieldMaxHealth: 0.1)]);
+            effects: [Buff("thorns", procs: ["thorn_rot", "second_wind"])],
+            procs: [
+                Proc("thorn_rot", ProcTrigger.Struck, ProcTarget.Other) with { Effect = "rot" },
+                Proc("second_wind", ProcTrigger.Struck, ProcTarget.Self) with { Shield = 14, OwnerHealthBelow = 0.5 }]);
         var w = Exposed(Ready(U(data, "warrior", "w", Side.Party)));
         var g = Ready(U(data, "goblin_grunt", "g", Side.Enemy));
         var battle = new Battle(data, [w, g], seed: 1);
@@ -156,7 +155,7 @@ public class EffectTests
             o => Assert.IsType<Attempt>(o),
             o => Assert.IsType<CritRolled>(o),                              // Slash is a weapon attack: 5% Crit Rating
             o => Assert.IsType<Damaged>(o),
-            o => Assert.Equal("rot", Assert.IsType<Triggered>(o).Trigger.Effect),
+            o => Assert.Equal("thorn_rot", Assert.IsType<ProcRolled>(o).Proc.Id),
             o => Assert.Equal(g, Assert.IsType<BuffApplied>(o).Target));  // Second Wind's check failed: Health is high
         Assert.Equal(0, w.Shield);
 

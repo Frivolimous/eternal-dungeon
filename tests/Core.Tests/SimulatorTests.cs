@@ -76,6 +76,7 @@ public class SimulatorTests
                 [DataLoader.StatsFile] = """[{ "id": "health", "name": "Health", "group": "character", "combine": "add" }]""",
                 [DataLoader.CompoundStatsFile] = "[]",
                 [DataLoader.EffectsFile] = "[]",
+                [DataLoader.ProcsFile] = "[]",
                 [DataLoader.ActionsFile] = """[{ "id": "wait", "name": "Wait", "tags": [], "target": "self", "apCost": 100 }]""",
                 [DataLoader.AiProfilesFile] = """[{ "id": "idle", "name": "Idle", "threatWeight": 0.5, "rules": [{ "action": "wait" }] }]""",
                 [DataLoader.UnitsFile] = """

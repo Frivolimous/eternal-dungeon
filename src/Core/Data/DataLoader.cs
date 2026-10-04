@@ -12,6 +12,7 @@ public static class DataLoader
     public const string StatsFile = "stats.json";
     public const string CompoundStatsFile = "compound_stats.json";
     public const string EffectsFile = "effects.json";
+    public const string ProcsFile = "procs.json";
     public const string ActionsFile = "actions.json";
     public const string AiProfilesFile = "ai_profiles.json";
     public const string UnitsFile = "units.json";
@@ -35,20 +36,22 @@ public static class DataLoader
             throw new DataException(CompoundStatsFile, "", $"\"{clash.Id}\" is both a stat and a compound stat");
         var compoundIds = compounds.Select(c => c.Id).ToHashSet();
 
-        // Triggers point at effects in the same file, so their ids are checked once the whole file is read.
-        var triggerRefs = new List<(JsonField Field, string Effect)>();
-        var effects = ReadList(source, EffectsFile, f => ReadEffect(f, tags, stats, triggerRefs));
+        // Effects (buffs) grant procs and procs apply effects, so each side's references are checked once both are read.
+        var procRefs = new List<(JsonField Field, string Proc)>();
+        var effects = ReadList(source, EffectsFile, f => ReadEffect(f, tags, stats, procRefs));
         var effectIds = effects.Select(e => e.Id).ToHashSet();
-        foreach (var (field, effect) in triggerRefs)
-            if (!effectIds.Contains(effect))
-                throw field.Error($"unknown effect \"{effect}\"");
+        var procs = ReadList(source, ProcsFile, f => ReadProc(f, tags, stats, effectIds));
+        var procIds = procs.Select(p => p.Id).ToHashSet();
+        foreach (var (field, proc) in procRefs)
+            if (!procIds.Contains(proc))
+                throw field.Error($"unknown proc \"{proc}\" (not in {ProcsFile})");
 
         var actions = ReadList(source, ActionsFile, f => ReadAction(f, tags, effectIds));
         var actionIds = actions.Select(a => a.Id).ToHashSet();
         var actionsById = actions.ToDictionary(a => a.Id);
         var ais = ReadList(source, AiProfilesFile, f => ReadAiProfile(f, actionsById, effectIds));
         var aiIds = ais.Select(a => a.Id).ToHashSet();
-        var units = ReadList(source, UnitsFile, f => ReadUnit(f, tags, stats, compoundIds, actionIds, aiIds));
+        var units = ReadList(source, UnitsFile, f => ReadUnit(f, tags, stats, compoundIds, actionIds, aiIds, procIds));
         foreach (var unit in units)
             if (ais.First(a => a.Id == unit.Ai).Rules.FirstOrDefault(r => !unit.Actions.Contains(r.Action)) is { } missing)
                 throw new DataException(UnitsFile, unit.Id, $"its AI \"{unit.Ai}\" uses \"{missing.Action}\", which isn't in its actions");
@@ -58,14 +61,14 @@ public static class DataLoader
         var defaults = JsonField.Parse(DefaultsFile, defaultsText);
         defaults.OnlyFields("unitStats");
         var unitDefaults = defaults["unitStats"].Items().Select(s => ReadStatEntry(s, tags, stats, tagRequired: false)).ToList();
-        return new GameData([.. tags.Values], [.. stats.Values], compounds, units, actions, effects, ais, encounters, unitDefaults);
+        return new GameData([.. tags.Values], [.. stats.Values], compounds, units, actions, effects, ais, encounters, unitDefaults, procs);
     }
 
     static EffectDef ReadEffect(JsonField f, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats,
-        List<(JsonField, string)> triggerRefs)
+        List<(JsonField, string)> procRefs)
     {
         f.OnlyFields("id", "name", "duration", "stacking", "maxStacks", "stats", "heal", "shieldMaxHealth",
-            "periodicDamage", "periodicHeal", "triggers", "cc", "stagger", "delayedDamage", "displace");
+            "periodicDamage", "periodicHeal", "procs", "cc", "stagger", "delayedDamage", "displace");
 
         var duration = DurationKind.Instant;
         var turns = 0;
@@ -89,17 +92,11 @@ public static class DataLoader
         foreach (var s in f.Optional("stats")?.Items() ?? [])
             statValues.Add(ReadStatEntry(s, tags, stats, tagRequired: false));
 
-        var triggers = new List<TriggerDef>();
-        foreach (var t in f.Optional("triggers")?.Items() ?? [])
+        var grantedProcs = new List<string>();
+        foreach (var p in f.Optional("procs")?.Items() ?? [])
         {
-            t.OnlyFields("on", "effect", "target", "healthBelow");
-            var effect = t["effect"].Id();
-            triggerRefs.Add((t["effect"], effect));
-            triggers.Add(new TriggerDef(
-                t["on"].Enum<TriggerOn>(),
-                effect,
-                t.Optional("target")?.Enum<TriggerTarget>() ?? TriggerTarget.Self,
-                t.Optional("healthBelow")?.Number()));
+            procRefs.Add((p, p.Id()));
+            grantedProcs.Add(p.Id());
         }
 
         var def = new EffectDef(
@@ -114,7 +111,7 @@ public static class DataLoader
             f.Optional("shieldMaxHealth")?.Number() ?? 0,
             f.Optional("periodicDamage")?.Int() ?? 0,
             f.Optional("periodicHeal")?.Int() ?? 0,
-            triggers,
+            grantedProcs,
             f.Optional("cc")?.Enum<CcKind>() ?? CcKind.None,
             f.Optional("stagger")?.Int() ?? 0,
             f.Optional("delayedDamage")?.Int() ?? 0,
@@ -122,7 +119,7 @@ public static class DataLoader
 
         if (!def.IsBuff)
         {
-            foreach (var buffOnly in new[] { "stacking", "maxStacks", "stats", "periodicDamage", "periodicHeal", "triggers", "cc", "delayedDamage" })
+            foreach (var buffOnly in new[] { "stacking", "maxStacks", "stats", "periodicDamage", "periodicHeal", "procs", "cc", "delayedDamage" })
                 if (f.Optional(buffOnly) is { } field)
                     throw field.Error("only buffs (effects with a duration) can have this");
         }
@@ -157,6 +154,69 @@ public static class DataLoader
                 throw f["stat"].Error($"{def.Name} is a character stat and can't be keyed to a tag");
         }
         return new StatValue(stat, tag, ReadStatValue(f["value"], def));
+    }
+
+    static readonly ProcTrigger[] HitTriggers =
+        [ProcTrigger.Hit, ProcTrigger.Crit, ProcTrigger.Brutal, ProcTrigger.Struck, ProcTrigger.Damaged];
+
+    static ProcDef ReadProc(JsonField f, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats, HashSet<string> effects)
+    {
+        f.OnlyFields("id", "name", "trigger", "triggerTags", "tags", "chance", "target", "phase", "duplicates",
+            "damage", "heal", "shield", "lifesteal", "hitStats", "effect", "ownerHealthBelow");
+
+        List<string> TagList(string field)
+        {
+            var list = new List<string>();
+            foreach (var t in f.Optional(field)?.Items() ?? [])
+            {
+                var tag = t.Id();
+                if (!tags.ContainsKey(tag))
+                    throw t.Error($"unknown tag \"{tag}\" (not in {TagsFile})");
+                list.Add(tag);
+            }
+            return list;
+        }
+
+        var trigger = f["trigger"].Enum<ProcTrigger>();
+        var phase = f.Optional("phase")?.Enum<ProcPhase>() ?? ProcPhase.AfterHit;
+        var effect = f.Optional("effect")?.Id();
+        if (effect is not null && !effects.Contains(effect))
+            throw f["effect"].Error($"unknown effect \"{effect}\" (not in {EffectsFile})");
+
+        var proc = new ProcDef(
+            f["id"].Id(),
+            f["name"].String(),
+            trigger,
+            TagList("triggerTags"),
+            TagList("tags"),
+            f.Optional("chance")?.Number() ?? 1,
+            f["target"].Enum<ProcTarget>(),
+            phase,
+            f.Optional("duplicates")?.Enum<Duplicates>() ?? Duplicates.Merge,
+            f.Optional("damage")?.Number() ?? 0,
+            f.Optional("heal")?.Number() ?? 0,
+            f.Optional("shield")?.Number() ?? 0,
+            f.Optional("lifesteal")?.Number() ?? 0,
+            [.. (f.Optional("hitStats")?.Items() ?? []).Select(s => ReadStatEntry(s, tags, stats, tagRequired: false))],
+            effect,
+            f.Optional("ownerHealthBelow")?.Number());
+
+        if (proc.Chance <= 0) throw f["chance"].Error("must be above 0");
+        if (proc.Damage < 0 || proc.Heal < 0 || proc.Shield < 0 || proc.Lifesteal < 0)
+            throw f.Error("damage, heal, shield and lifesteal can't be negative");
+        if (!proc.HasAmounts && effect is null)
+            throw f.Error("does nothing: give it damage, heal, shield, lifesteal, hitStats or an effect");
+        if (phase == ProcPhase.BeforeDamage && trigger != ProcTrigger.Hit)
+            throw f["phase"].Error("only hit procs can resolve before damage");
+        if (proc.HitStats.Count > 0 && phase != ProcPhase.BeforeDamage)
+            throw f["hitStats"].Error("this-hit stats need phase before_damage");
+        if (proc.Lifesteal > 0 && Array.IndexOf(HitTriggers, trigger) < 0)
+            throw f["lifesteal"].Error("lifesteal needs a trigger with a hit (hit, crit, brutal, struck, damaged)");
+        if (proc.Target == ProcTarget.Other && trigger is ProcTrigger.TurnStart or ProcTrigger.FightStart)
+            throw f["target"].Error("turn start and fight start have no other unit: use self");
+        if (proc.Damage > 0 && proc.Target == ProcTarget.Self)
+            throw f["damage"].Error("a proc can't damage its own owner");
+        return proc;
     }
 
     static ActionDef ReadAction(JsonField f, Dictionary<string, TagDef> tags, HashSet<string> effects)
@@ -284,9 +344,9 @@ public static class DataLoader
     }
 
     static UnitDef ReadUnit(JsonField f, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats,
-        HashSet<string> compounds, HashSet<string> actions, HashSet<string> ais)
+        HashSet<string> compounds, HashSet<string> actions, HashSet<string> ais, HashSet<string> procs)
     {
-        f.OnlyFields("id", "name", "size", "stats", "tagStats", "compounds", "actions", "ai");
+        f.OnlyFields("id", "name", "size", "stats", "tagStats", "compounds", "actions", "ai", "procs");
 
         var size = f["size"];
         var unitSize = size.Number() switch
@@ -330,7 +390,16 @@ public static class DataLoader
         if (!ais.Contains(ai))
             throw f["ai"].Error($"unknown AI profile \"{ai}\" (not in {AiProfilesFile})");
 
-        var unit = new UnitDef(f["id"].Id(), f["name"].String(), unitSize, values, compoundValues, actionList, ai);
+        var unitProcs = new List<string>();
+        foreach (var p in f.Optional("procs")?.Items() ?? [])
+        {
+            var id = p.Id();
+            if (!procs.Contains(id))
+                throw p.Error($"unknown proc \"{id}\" (not in {ProcsFile})");
+            unitProcs.Add(id);
+        }
+
+        var unit = new UnitDef(f["id"].Id(), f["name"].String(), unitSize, values, compoundValues, actionList, ai, unitProcs);
         if (!values.Any(v => v.Stat == "health" && v.Value > 0))
             throw f["stats"].Error("a unit needs health above 0");
         return unit;

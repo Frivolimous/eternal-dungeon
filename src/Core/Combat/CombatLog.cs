@@ -97,6 +97,17 @@ public static class CombatLog
                     full.Add($"crit rating {F(c.Rating, 3)} → {Pct(c.Chance)}: roll {F(c.Crit.Value, 3)} → {(c.Crit.Success ? "crit" : "no crit")}"
                         + (c.Brutal is { } b ? $"; Brutal roll {F(b.Value, 3)} → {(b.Success ? "Brutal" : "no Brutal")}" : ""));
                     break;
+                case ProcRolled p:
+                    if (p.Roll.Success)
+                        rest.Add($"{p.Owner.Name}'s {p.Proc.Name} procs ({Pct(p.Chance)}{(p.Scale > 1.0001 ? $", ×{F(p.Scale, 2)}" : "")})"
+                            + (level == LogLevel.Full ? $": roll {F(p.Roll.Value, 3)}" : ""));
+                    else if (level == LogLevel.Full)
+                        rest.Add($"{p.Owner.Name}'s {p.Proc.Name} doesn't proc ({Pct(p.Chance)}): roll {F(p.Roll.Value, 3)}");
+                    break;
+                case ProcDamaged pd:
+                    rest.Add($"{pd.Proc.Name} deals {pd.Breakdown.Final} dmg{ProcTypes(data, pd.Proc)} to {pd.Target.Name} (HP {pd.HealthBefore} → {pd.HealthBefore - pd.Taken.ToHealth})");
+                    if (level == LogLevel.Full) rest.Add(Breakdown(pd.Breakdown));
+                    break;
                 default:
                     if (Describe(o) is string text) rest.Add(text);
                     break;
@@ -116,7 +127,6 @@ public static class CombatLog
         BuffExpired e => $"{e.Buff.Def.Name} on {e.Target.Name} ends",
         PeriodicDamaged p => $"{p.Buff.Def.Name} deals {p.Taken.Absorbed + p.Taken.ToHealth} to {p.Target.Name} (HP {p.HealthBefore} → {p.HealthBefore - p.Taken.ToHealth})",
         DelayedDamaged p => $"{p.Buff.Def.Name} bursts for {p.Taken.Absorbed + p.Taken.ToHealth} on {p.Target.Name} (HP {p.HealthBefore} → {p.HealthBefore - p.Taken.ToHealth})",
-        Triggered t => $"{t.Buff.Def.Name} on {t.Owner.Name} triggers",
         Staggered s => $"staggers {s.Target.Name} +{s.Amount} (bar {s.Bar}{(s.Broke ? ", broken: stunned" : "")})",
         Interrupted i => $"{i.Unit.Name}'s cast is interrupted",
         Fizzled f => $"fizzles: {f.Reason}",
@@ -157,6 +167,12 @@ public static class CombatLog
         + $" × all res {F(d.AllResistFactor, 3)} ({F(d.AllResist, 3)})"
         + (d.CritTiers > 0 ? $" × crit {F(d.CritFactor, 3)} ({d.CritTiers} × mult {F(d.CritMult, 2)}, crit res {F(d.CritResist, 3)}, crit pen {F(d.CritPenetrate, 3)})" : "")
         + $" = {F(d.Raw, 3)} → {d.Final}";
+
+    static string ProcTypes(GameData data, ProcDef proc)
+    {
+        var names = proc.Tags.Select(t => data.Tags[t]).Where(t => t.Group is TagGroup.DamageType or TagGroup.Element).Select(t => t.Name).ToList();
+        return names.Count > 0 ? $" ({string.Join(", ", names)})" : "";
+    }
 
     static string DamageType(GameData data, ActionDef action) =>
         action.Tags.Select(t => data.Tags[t]).FirstOrDefault(t => t.Group == TagGroup.DamageType)?.Name ?? "";

@@ -17,6 +17,7 @@ public sealed class BatchSummary
     readonly Dictionary<string, int> actionUses = [];
     readonly Dictionary<string, int> effectsApplied = [];
     readonly Dictionary<string, int> heroDeaths = [];
+    readonly Dictionary<string, int> procsFired = [];
     int staggerBreaks, interrupts, misses, attempts;
 
     public int Battles => battles;
@@ -65,6 +66,12 @@ public sealed class BatchSummary
                     case Interrupted:
                         interrupts++;
                         break;
+                    case ProcRolled { Roll.Success: true } p:
+                        Bump(procsFired, $"{p.Owner.Def.Name}: {p.Proc.Name}");
+                        break;
+                    case ProcDamaged pd:
+                        AddDamage(pd.Owner.Def.Name, pd.Taken);
+                        break;
                 }
             }
         }
@@ -105,7 +112,11 @@ public sealed class BatchSummary
             sb.AppendLine($"  {effect,-32} {Per(n),8}");
         sb.AppendLine($"  {"Stagger breaks",-32} {Per(staggerBreaks),8}");
         sb.AppendLine($"  {"Casts interrupted",-32} {Per(interrupts),8}");
-        sb.AppendLine($"  {"Procs",-32} {"none yet (designed at the end of M1)",8}");
+        sb.AppendLine();
+        sb.AppendLine("Procs fired per battle");
+        foreach (var (proc, n) in procsFired.OrderBy(kv => kv.Key))
+            sb.AppendLine($"  {proc,-32} {Per(n),8}");
+        if (procsFired.Count == 0) sb.AppendLine("  none (no starter unit has procs yet)");
         return sb.ToString();
     }
 }

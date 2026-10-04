@@ -99,7 +99,7 @@ int Data()
     var data = LoadData();
     Console.WriteLine($"{GameInfo.Title} {GameInfo.Version}: data OK");
     Console.WriteLine($"  {data.TagList.Count} tags, {data.StatList.Count} stats, {data.CompoundList.Count} compound stats, " +
-        $"{data.EffectList.Count} effects, {data.ActionList.Count} actions, {data.AiProfileList.Count} AI profiles, " +
+        $"{data.EffectList.Count} effects, {data.ProcList.Count} procs, {data.ActionList.Count} actions, {data.AiProfileList.Count} AI profiles, " +
         $"{data.UnitList.Count} units, {data.EncounterList.Count} encounters");
     return 0;
 }
