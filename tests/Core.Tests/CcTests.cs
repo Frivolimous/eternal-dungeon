@@ -156,8 +156,10 @@ public class CcTests
         Assert.Equal(Unit.StaggerMax, tank.Stagger);
         Assert.Equal(0, tank.Speed);
 
-        Apply(b, brute, tank, "brute_smash");                             // white bar: no more stagger
+        var white = Apply(b, brute, tank, "brute_smash");                 // white bar: no more stagger
         Assert.Equal(Unit.StaggerMax, tank.Stagger);
+        Assert.Empty(white.Of<Staggered>());
+        Assert.Equal(new StaggerIgnored(tank), white.Of<StaggerIgnored>().Single());
 
         for (var i = 0; i < 9; i++) b.BuffTick();
         Assert.Equal(10, tank.Stagger);

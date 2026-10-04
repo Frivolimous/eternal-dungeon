@@ -47,6 +47,9 @@ public sealed record Moved(Unit Unit, Tile From, Tile To, string Why) : Outcome;
 /// <summary>Stagger damage. <see cref="Broke"/>: the bar filled and the unit is stunned until it drains.</summary>
 public sealed record Staggered(Unit Target, int Amount, int Bar, bool Broke) : Outcome;
 
+/// <summary>Stagger that landed on a unit whose bar is already broken (white): it takes none.</summary>
+public sealed record StaggerIgnored(Unit Target) : Outcome;
+
 public sealed record Interrupted(Unit Unit, Cast Cast) : Outcome;
 
 /// <summary>Damage a buff dealt as it ended (delayed damage).</summary>

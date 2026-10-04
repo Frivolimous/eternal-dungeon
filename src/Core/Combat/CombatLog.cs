@@ -127,6 +127,7 @@ public static class CombatLog
         BuffExpired e => $"{e.Buff.Def.Name} on {e.Target.Name} ends",
         PeriodicDamaged p => $"{p.Buff.Def.Name} deals {p.Taken.Absorbed + p.Taken.ToHealth} to {p.Target.Name} (HP {p.HealthBefore} → {p.HealthBefore - p.Taken.ToHealth})",
         DelayedDamaged p => $"{p.Buff.Def.Name} bursts for {p.Taken.Absorbed + p.Taken.ToHealth} on {p.Target.Name} (HP {p.HealthBefore} → {p.HealthBefore - p.Taken.ToHealth})",
+        StaggerIgnored s => $"{s.Target.Name} is broken: no stagger",
         Staggered s => $"staggers {s.Target.Name} +{s.Amount} (bar {s.Bar}{(s.Broke ? ", broken: stunned" : "")})",
         Interrupted i => $"{i.Unit.Name}'s cast is interrupted",
         Fizzled f => f.Reason.Contains(" fizzles") ? f.Reason : $"fizzles: {f.Reason}",

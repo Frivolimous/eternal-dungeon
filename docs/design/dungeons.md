@@ -36,6 +36,7 @@ Known weakness: players can explore everything, so there's little real choice ab
 
 ## Run outcomes
 
+- **Attrition:** HP and Mana carry over between rooms on a floor, with some healing between fights (how much and from what is open).
 - **Completing a dungeon:** beating the boss of its last scripted floor completes the dungeon. That unlocks the next dungeon and raises the dungeon level of every participating hero.
 - **Extended floors:** instead of leaving, the party can push on into endless floors that get harder each time, with better loot.
 - **Retreat:** the party leaves for Town and keeps all progress, but the dungeon isn't completed.

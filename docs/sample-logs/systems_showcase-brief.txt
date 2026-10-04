@@ -80,7 +80,7 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Hexer 160 HP
 [T 7.00] Chill on Goblin Hexer ends
 [T 7.00] Goblin Brute → Smash → Warrior
          hit (73%) · 22 dmg (Physical) · Warrior HP 48 → 26
-         staggers Warrior +60 (bar 70)
+         Warrior is broken: no stagger
 [T 7.09] Rogue → Dagger Attack → Goblin Hexer
          hit (90%) · 14 dmg (Physical) · Goblin Hexer HP 18 → 4
 [T 7.30] Elementalist → Fire Bolt → Goblin Hexer
@@ -105,7 +105,7 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Hexer 160 HP
          hit (93%) · 13 dmg (Physical) · Goblin Brute HP 118 → 105
 [T 10.59] Goblin Brute → Smash → Warrior
          hit (73%) · 22 dmg (Physical) · Warrior HP 26 → 4
-         staggers Warrior +60 (bar 40)
+         Warrior is broken: no stagger
 [T 10.80] Elementalist → Frost Shard → Goblin Brute
          hit (93%) · 15 dmg (Arcane, Ice) · Goblin Brute HP 105 → 90
          applies Chill (-30 speed, 2 turns) on Goblin Brute

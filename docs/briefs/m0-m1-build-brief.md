@@ -244,4 +244,4 @@ Claude uses these placeholders as written, keeps them in data where possible, an
 | Starting Act | Initiative value, 0–100 |
 | Enemy AI weight w | Grunt 0.5, Archer 0.25, Shaman 0.75, Brute 0.5, Chief 0.6 |
 
-All stat values for heroes and enemies are Claude's to pick so the starter encounters are winnable but not trivial (target win rate around 70–90% in `sim batch`).
+All stat values for heroes and enemies are Claude's to pick so the starter encounters run cleanly. (A 70–90% win-rate target was dropped on 2026-10-04: balance is deferred until after M2, and fights chain on a floor.)

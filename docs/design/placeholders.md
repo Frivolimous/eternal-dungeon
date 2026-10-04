@@ -18,6 +18,7 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 | Battle time limit | 300 base-speed turns, then a stalemate (no winner). If this ever happens in practice, the encounter is badly designed: investigate rather than tune the limit |
 | Confusion | Picks its target at random among the action's valid targets. WIP: undecided whether confused units can target allies |
 | Stagger drain | 10 per buff-clock turn. Kept until tuning |
+| Stagger break length | A break stuns until the bar drains, about 10 turns (showcase seed 42: the Warrior is out from T 4.15 to T 14.27). Revisit in the combat balance pass after M2: for example a faster drain while white, or a fixed 1–2 turn stun |
 
 ## Battlefield
 

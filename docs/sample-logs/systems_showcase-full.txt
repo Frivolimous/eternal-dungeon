@@ -138,7 +138,7 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Hexer 160 HP
          roll 0.537 vs 0.727 → hit
          crit rating 0.05 → 5%: roll 0.701 → no crit
          dmg = base 17 × power 1.3 (30) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 22.1 → 22
-         staggers Warrior +60 (bar 70)
+         Warrior is broken: no stagger
 [T 7.09] Rogue → Dagger Attack → Goblin Hexer
          hit (90%) · 14 dmg (Physical) · Goblin Hexer HP 18 → 4
          roll 0.804 vs 0.903 → hit
@@ -188,7 +188,7 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Hexer 160 HP
          roll 0.569 vs 0.727 → hit
          crit rating 0.05 → 5%: roll 0.776 → no crit
          dmg = base 17 × power 1.3 (30) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 22.1 → 22
-         staggers Warrior +60 (bar 40)
+         Warrior is broken: no stagger
 [T 10.80] Elementalist → Frost Shard → Goblin Brute
          hit (93%) · 15 dmg (Arcane, Ice) · Goblin Brute HP 105 → 90
          roll 0.507 vs 0.931 → hit

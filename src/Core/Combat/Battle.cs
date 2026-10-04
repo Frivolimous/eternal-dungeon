@@ -313,9 +313,14 @@ public sealed partial class Battle
         }
         if (p.Def.Stagger > 0)
         {
-            var broke = p.Target.TakeStagger(p.Def.Stagger);
-            r.Add(new Staggered(p.Target, p.Def.Stagger, p.Target.Stagger, broke));
-            if (broke) Interrupt(p.Target, r);
+            if (p.Target.StaggerBroken)
+                r.Add(new StaggerIgnored(p.Target));
+            else
+            {
+                var broke = p.Target.TakeStagger(p.Def.Stagger);
+                r.Add(new Staggered(p.Target, p.Def.Stagger, p.Target.Stagger, broke));
+                if (broke) Interrupt(p.Target, r);
+            }
         }
         if (p.Def.Displace != Displace.None && Grid.AnchorOf(p.Target) is { } from && Grid.Shove(p.Target, p.Def.Displace) is { } to)
             r.Add(new Moved(p.Target, from, to, p.Def.Name));
