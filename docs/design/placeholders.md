@@ -23,11 +23,11 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 
 | Rule | Placeholder |
 | --- | --- |
-| Sneak | Kept; tune later. Moves the Rogue to any empty tile in the enemy area. A unit standing in the other side's area can melee anyone there, and anyone there can melee it |
+| Sneak | Kept until after M2. Moves the Rogue to any empty tile in the enemy area. A unit standing in the other side's area can melee anyone there, and anyone there can melee it |
 
 ## Enemy targeting
 
-Threat, its scale and Vulnerability: review after M2 playtests.
+Threat, its scale and Vulnerability: kept until after M2, then reviewed from playtests.
 
 | Rule | Placeholder |
 | --- | --- |

@@ -33,6 +33,7 @@ Every character starts with Weapon Crit Rating 5% and untagged Crit Mult 0.5, so
 - Each unit starts combat with Act = Initiative and gains Speed every tick. Speed 100 is the base.
 - At 100 Act, it's that unit's turn. Act can go above 100, giving extra turns, or below 0, delaying the turn.
 - Actions cost AP out of the 100-point meter: 50 is half a turn, 100 a full turn, and 200 works like a cooldown.
+- There are no cooldowns: an action’s AP cost is the only limit on how often it can be used (a 200-AP action delays the unit’s next turn).
 - Spells have a casting timer. The Arcanist's Meddle staggers an enemy while it's casting.
 - A unit's Act meter stops filling while it casts, and resumes when the cast completes, fizzles or is interrupted.
 - A cast fizzles if its target dies, the caster dies, or it's interrupted. There is no retargeting.
