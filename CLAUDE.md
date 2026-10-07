@@ -126,9 +126,9 @@ The rules themselves are in the Anchor; this is the map from rule to code.
 - **Grid** (`BattleGrid.cs`), **AI** (`UnitAi.cs`, profiles in ai_profiles.json; the heroes' profiles are the
   simulator's scripted AI), **runner** (`BattleRunner.cs`), **logs** (`CombatLog.cs`), **batch**
   (`BatchSummary.cs`), **encounters** (`EncounterSetup.cs`).
-- **Game screen side** (, , ): a session runs the battle turn by turn,
+- **Game screen side** (`BattleSession.cs`, `Replay.cs`, `Preview.cs`): a session runs the battle turn by turn,
   pausing on each hero's turn (unless auto-battle), and records every hero decision; seed + decisions = a replay
-  that reproduces the battle exactly. AI-made hero decisions are marked  and re-asked on replay, because the
+  that reproduces the battle exactly. AI-made hero decisions are marked `auto` and re-asked on replay, because the
   AI's tie-breaks roll the battle RNG. Previews (target numbers, ghost marker, timeline) are pure: UI code must never
   roll the battle RNG or call the AI just to look (a test checks previews change nothing).
 - `Core.Combat` is the battle namespace (a `Battle` namespace would clash with the `Battle` class).
