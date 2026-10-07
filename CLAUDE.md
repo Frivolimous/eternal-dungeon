@@ -9,7 +9,7 @@ Eternal Dungeon: a roguelike party dungeon crawler with speed-driven turn-based 
 design, playtesting, review and art.
 
 - **Design Anchor** (the spec, single source of truth): [docs/design/](docs/design/README.md), one file per
-  area (stats, combat, classes, equipment, dungeons, meta, production), plus
+  area (stats, combat, presentation, classes, equipment, dungeons, exploration, meta, production), plus
   [placeholders.md](docs/design/placeholders.md) (rules Claude chose, for Jeremy to review),
   [open-questions.md](docs/design/open-questions.md) and [superseded.md](docs/design/superseded.md).
 - **Build briefs** (what to build, acceptance criteria): [docs/briefs/](docs/briefs/). M0 + M1 is done; the
@@ -161,7 +161,7 @@ The rules themselves are in the Anchor; this is the map from rule to code.
   roll the battle RNG or call the AI just to look (a test checks previews change nothing).
 - `Core.Combat` is the battle namespace (a `Battle` namespace would clash with the `Battle` class).
 - **Balance is deferred:** combat balance waits until after M2, dungeon balance until after M3. Until then the
-  starter encounters only need to run cleanly (fights chain on a floor, so a single-fight win rate is the wrong
+  starter encounters only need to run cleanly (fights chain through a dungeon's Maps with no passive regeneration, so a single-fight win rate is the wrong
   target). The fourth encounter, `systems_showcase`, exists so every M1 system fires in a typical seed (a test
   checks it). Tests
   read Health and damage from the data, not hard-coded numbers, wherever tuning could change them. The example

@@ -18,6 +18,8 @@ A tag stat is written TAG STAT value, and it combines the same way as its base s
 
 Attack and defense stats pair up: Penetrate works against Resist, Hit against Avoid, and Rate against Deval.
 
+Naming: Penetrate is **Pen** for short (never "Penetration"), the spell-avoid compound is **Turn** (never "Turning"), and the crit stats are **C.Rate** and **C.Mult** (see Combat › Formulas).
+
 ## Tags
 
 - **Primary damage types:** Arcane, Chemical, Physical, Spirit.

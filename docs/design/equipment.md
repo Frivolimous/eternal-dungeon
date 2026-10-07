@@ -35,6 +35,7 @@ Each class a hero takes (Primary, Secondary and Dabble alike) adds one point to 
 | Max level | 20 |
 | Skills per hero | 9 (5 + 3 + 1) |
 | Levels per skill | 5 |
+| Masteries per class | 3 (at 1, 6 and 11 points in its tree) |
 | Primary equipment slots | 4 (Weapon, Off-hand, Armor, Helmet) |
 | Item levels | 15 |
 | Artifacts equipped | 3 |
