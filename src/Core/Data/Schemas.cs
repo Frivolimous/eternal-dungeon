@@ -17,7 +17,7 @@ public static class Schemas
 
     static Column[] StatEntry => [Id("stat"), Id("tag", required: false), Number("value", required: true)];
 
-    public static readonly TableSchema Tags = Top("tags", Enum<TagGroup>("group", required: true));
+    public static readonly TableSchema Tags = Top("tags", Enum<TagGroup>("group", required: true), List("implies"));
 
     public static readonly TableSchema Stats = Top("stats",
         Enum<StatGroup>("group", required: true),

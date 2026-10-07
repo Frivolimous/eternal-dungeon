@@ -186,8 +186,23 @@ public class StatTests
     public void Every_matching_row_counts()
     {
         var s = NewBlock();
+        s.Add("base", "intellect", 10);
+        Assert.Equal(15, s.Get("power", ["gadget", "cryptic"]));            // 10 × (1 + 0.5)
+    }
+
+    [Fact]
+    public void Elemental_is_one_row_on_the_elemental_tag_that_fire_electric_and_ice_imply()
+    {
+        var fireBolt = TestData.Repo.Actions["fire_bolt"];
+        Assert.Contains("elemental", fireBolt.Tags);
+        Assert.Contains("elemental", TestData.Repo.Actions["frost_shard"].Tags);
+        Assert.DoesNotContain("elemental", TestData.Repo.Actions["hex_bolt"].Tags);    // Dark isn't Elemental
+        Assert.Contains("elemental", TestData.Repo.Procs["flaming"].Tags);
+
+        var s = NewBlock();
         s.Add("base", "elemental", 10);
-        Assert.Equal(20, s.Get("power", ["spell", "fire", "ice"]));         // 10 × (1 + 1)
+        Assert.Equal(10, s.Get("power", fireBolt.Tags));                    // once, however many elements
+        Assert.Equal(0, s.Get("power", ["spell", "dark"]));
     }
 
     [Fact]

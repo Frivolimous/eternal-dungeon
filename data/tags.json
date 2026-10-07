@@ -21,11 +21,12 @@
   { "id": "curse", "name": "Curse", "group": "function" },
   { "id": "control", "name": "Control", "group": "function" },
   { "id": "critical", "name": "Critical", "group": "function" },
-  { "id": "fire", "name": "Fire", "group": "element" },
-  { "id": "electric", "name": "Electric", "group": "element" },
-  { "id": "ice", "name": "Ice", "group": "element" },
+  { "id": "fire", "name": "Fire", "group": "element", "implies": ["elemental"] },
+  { "id": "electric", "name": "Electric", "group": "element", "implies": ["elemental"] },
+  { "id": "ice", "name": "Ice", "group": "element", "implies": ["elemental"] },
   { "id": "holy", "name": "Holy", "group": "element" },
   { "id": "dark", "name": "Dark", "group": "element" },
   { "id": "toxic", "name": "Toxic", "group": "element" },
-  { "id": "weapon", "name": "Weapon", "group": "source" }
+  { "id": "weapon", "name": "Weapon", "group": "source" },
+  { "id": "elemental", "name": "Elemental", "group": "family" }
 ]

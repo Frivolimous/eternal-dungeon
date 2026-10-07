@@ -27,7 +27,7 @@ Godot's translation system, so the simulator and the game print the same lines. 
 
 | Table | One row is | Notes |
 | --- | --- | --- |
-| `tags` | A tag (Fire, Melee, Spell…) | `group`: damage_type, delivery, style, function, element or source |
+| `tags` | A tag (Fire, Melee, Spell…) | `group`: damage_type, delivery, style, function, element, source or family. `implies`: tags every action and proc with this tag also carries (Fire, Electric and Ice imply Elemental); implied tags can't imply others. Proc trigger filters don't get them |
 | `stats` | A stat | `combine`: add, dim or mult. `point_value`: what one compound point adds (Power 1, others 0.01) |
 | `compound_stats` | A compound stat (Strength…) | Its recipe is in `compound_stat_rows` |
 | `compound_stat_rows` | One recipe row | Points × `coef` go to that tag's stat |

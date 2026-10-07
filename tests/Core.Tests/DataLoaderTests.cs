@@ -67,7 +67,7 @@ public class DataLoaderTests
     {
         var data = DataLoader.LoadDirectory(TestPaths.DataDir);
 
-        Assert.Equal(29, data.TagList.Count);
+        Assert.Equal(30, data.TagList.Count);
         Assert.Equal(TagGroup.Element, data.Tags["fire"].Group);
         Assert.Equal(CombineMode.Dim, data.Stats["hit"].Combine);
         Assert.Equal(CombineMode.Add, data.Stats["multiplier"].Combine);
@@ -94,6 +94,39 @@ public class DataLoaderTests
         Assert.Contains("mult", mult.Message);
 
         Assert.Contains("at least one row", Fails(("compound_stat_rows", "[]")).Message);
+    }
+
+    [Fact]
+    public void Implied_tags_must_exist_and_imply_nothing_themselves()
+    {
+        static DataException TagsFail(string tags) => Fails(("tags", tags));
+
+        var unknown = TagsFail("""[{ "id": "fire", "name": "Fire", "group": "element", "implies": ["elemental"] }]""");
+        Assert.Equal(("tags.json", "[0].implies"), (unknown.File, unknown.Field));
+        Assert.Contains("elemental", unknown.Message);
+
+        Assert.Contains("itself", TagsFail("""[{ "id": "fire", "name": "Fire", "group": "element", "implies": ["fire"] }]""").Message);
+
+        var chain = TagsFail("""
+            [{ "id": "fire", "name": "Fire", "group": "element", "implies": ["elemental"] },
+             { "id": "elemental", "name": "Elemental", "group": "family", "implies": ["magic"] },
+             { "id": "magic", "name": "Magic", "group": "family" }]
+            """);
+        Assert.Equal("[0].implies", chain.Field);
+    }
+
+    [Fact]
+    public void Actions_and_procs_carry_their_implied_tags_but_trigger_filters_dont()
+    {
+        var data = LoadTables(Base(
+            ("tags", """
+                [{ "id": "fire", "name": "Fire", "group": "element", "implies": ["elemental"] },
+                 { "id": "elemental", "name": "Elemental", "group": "family" }]
+                """),
+            ("procs", """[{ "id": "p", "name": "P", "trigger": "struck", "trigger_tags": ["fire"], "tags": ["fire"], "target": "other", "damage": 1 }]""")));
+        Assert.Equal(["fire", "elemental"], data.Actions["poke"].Tags);
+        Assert.Equal(["fire", "elemental"], data.Procs["p"].Tags);
+        Assert.Equal(["fire"], data.Procs["p"].TriggerTags);
     }
 
     static DataException ActionFails(string action) => Fails(

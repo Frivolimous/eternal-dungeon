@@ -2,11 +2,13 @@ namespace EternalDungeon.Core.Data;
 
 // Content definitions read from data/*.json. Anchor: Stat system.
 
-/// <summary>Source: what made the action (Weapon: any weapon attack).</summary>
-public enum TagGroup { DamageType, Delivery, Style, Function, Element, Source }
+/// <summary>Source: what made the action (Weapon: any weapon attack). Family: a tag carried because another tag
+/// implies it (Elemental, from Fire, Electric and Ice).</summary>
+public enum TagGroup { DamageType, Delivery, Style, Function, Element, Source, Family }
 
-/// <summary>A label on an action, such as Melee, Fire or Spell.</summary>
-public sealed record TagDef(string Id, string Name, TagGroup Group);
+/// <summary>A label on an action, such as Melee, Fire or Spell. Every action or proc carrying it also carries the
+/// tags it <see cref="Implies"/> (Fire implies Elemental).</summary>
+public sealed record TagDef(string Id, string Name, TagGroup Group, IReadOnlyList<string>? Implies = null);
 
 /// <summary>How a stat combines when modifiers are added or removed (Anchor: Combine modes).</summary>
 public enum CombineMode

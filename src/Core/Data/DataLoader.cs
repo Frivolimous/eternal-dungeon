@@ -60,7 +60,7 @@ public static class DataLoader
     {
         CheckParents(t);
 
-        var tags = t["tags"].Rows.Select(r => new TagDef(r.Str("id"), r.Str("name"), r.Enum<TagGroup>("group"))).ToDictionary(x => x.Id);
+        var tags = ReadTags(t);
         var stats = t["stats"].Rows.Select(ReadStat).ToDictionary(s => s.Id);
         foreach (var r in t["compound_stats"].Rows)
             if (stats.ContainsKey(r.Str("id")))
@@ -178,7 +178,30 @@ public static class DataLoader
         return value;
     }
 
-    static List<string> TagList(Row r, string column, Dictionary<string, TagDef> tags, DataTables t)
+    /// <summary>The tags table. An implied tag must exist and imply nothing itself, so implication is one step.</summary>
+    static Dictionary<string, TagDef> ReadTags(DataTables t)
+    {
+        var rows = t["tags"].Rows;
+        var ids = rows.Select(r => r.Str("id")).ToHashSet();
+        var implying = rows.Where(r => r.List("implies").Count > 0).Select(r => r.Str("id")).ToHashSet();
+        var tags = new Dictionary<string, TagDef>();
+        foreach (var r in rows)
+        {
+            var implies = r.List("implies");
+            foreach (var x in implies)
+            {
+                if (!ids.Contains(x)) throw r.Error("implies", $"unknown tag \"{x}\" (not in {t["tags"].File})");
+                if (x == r.Str("id")) throw r.Error("implies", "a tag can't imply itself");
+                if (implying.Contains(x)) throw r.Error("implies", $"\"{x}\" implies tags itself; implied tags can't imply others");
+            }
+            tags[r.Str("id")] = new TagDef(r.Str("id"), r.Str("name"), r.Enum<TagGroup>("group"), implies.Count > 0 ? [.. implies] : null);
+        }
+        return tags;
+    }
+
+    /// <summary>A list of tag ids. With <paramref name="withImplied"/>, the tags they imply are added after them
+    /// (an action or proc tagged Fire also carries Elemental); filters such as trigger tags leave it off.</summary>
+    static List<string> TagList(Row r, string column, Dictionary<string, TagDef> tags, DataTables t, bool withImplied = false)
     {
         var list = new List<string>();
         foreach (var tag in r.List(column))
@@ -189,6 +212,9 @@ public static class DataLoader
                 throw r.Error(column, $"tag \"{tag}\" is listed twice");
             list.Add(tag);
         }
+        if (withImplied)
+            foreach (var implied in list.ToList().SelectMany(x => tags[x].Implies ?? []))
+                if (!list.Contains(implied)) list.Add(implied);
         return list;
     }
 
@@ -257,7 +283,7 @@ public static class DataLoader
             r.Str("name"),
             trigger,
             TagList(r, "trigger_tags", tags, t),
-            TagList(r, "tags", tags, t),
+            TagList(r, "tags", tags, t, withImplied: true),
             r.Num("chance"),
             r.Enum<ProcTarget>("target"),
             phase,
@@ -290,7 +316,7 @@ public static class DataLoader
 
     static ActionDef ReadAction(Row r, DataTables t, Dictionary<string, TagDef> tags, HashSet<string> effects)
     {
-        var actionTags = TagList(r, "tags", tags, t);
+        var actionTags = TagList(r, "tags", tags, t, withImplied: true);
 
         // Heavy and Light are weapon weights, found only on melee actions (Jeremy, 2026-10-04).
         if (actionTags.FirstOrDefault(x => x is "heavy" or "light") is { } weight && !actionTags.Contains("melee"))

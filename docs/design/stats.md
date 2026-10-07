@@ -25,6 +25,7 @@ Attack and defense stats pair up: Penetrate works against Resist, Hit against Av
 - **Style:** Light, Heavy, Finesse, Cryptic, Mystic.
 - **Function:** Force, Meta, Buff, Curse, Control, Critical.
 - **Elements:** Fire, Electric, Ice, Holy, Dark, Toxic.
+- **Elemental:** a tag in its own right. Every action or effect with Fire, Electric or Ice also carries Elemental (the data says it once, on the tag: Fire implies Elemental). Holy, Dark and Toxic aren't Elemental. So Elemental Resist, Elemental Deval, Elemental Turn and Elemental Pen work as plain tag stats.
 - **Source:** Weapon (every weapon attack). To monitor: every weapon attack is also Melee or Ranged, so Weapon may turn out unnecessary.
 
 ## Compound stats
@@ -39,7 +40,7 @@ Every recipe row whose tag the action carries counts, adjusters included: Streng
 | Dexterity | Ranged Power 1 · Light +0.5 · Finesse +0.5 |
 | Intellect | Gadget Power 1 and Rate 0.1 · Cryptic Power +0.5 and Rate +0.05 |
 | Magic | Spell Power 1 · Mystic +0.5 |
-| Elemental | Fire, Electric and Ice Power 1 each |
+| Elemental | Elemental Power 1 |
 | Accuracy | Melee Hit 1 · Projectile Hit 1 · Grenade Hit +0.5 |
 | Parry | Melee Avoid 1 |
 | Block | Melee Avoid 1 · Projectile Avoid +0.5 |
