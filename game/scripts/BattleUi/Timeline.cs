@@ -111,7 +111,11 @@ public partial class Timeline : Control
             DrawRect(box, ghost is not null ? Ui.Gold : now ? Ui.Gold : new Color(side, 0.8f), false, ghost is not null || now ? 2 : 1);
             var portrait = new Rect2(4, 4, 34, 34);
             if (screen.Main.Art.Portrait(unit.Def.Id) is { } tex)
-                DrawTextureRect(tex, portrait, false);
+            {
+                // A tall portrait shows its top square (the face), not the whole image squashed.
+                var side0 = Math.Min(tex.GetWidth(), tex.GetHeight());
+                DrawTextureRectRegion(tex, portrait, new Rect2(0, 0, side0, side0));
+            }
             else
             {
                 DrawRect(portrait, side.Darkened(0.45f));

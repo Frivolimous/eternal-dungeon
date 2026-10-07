@@ -57,6 +57,10 @@ Running Godot (from the repo root, `$g` = the console exe; `dotnet build` first 
 `& $g --path game` plays the game (debug menu). `& $g --headless --path game --import` after adding assets.
 Exports need the 4.7.2 .NET export templates (Editor > Manage Export Templates).
 
+**Art masters to a style:** `& $g --headless --path game -- --resize-art <masters folder> <style>` crops each master
+(named by its art id, any size) from the centre to the right shape, resizes it (Lanczos) to the exact size in
+docs/art-requests.md and writes `game/assets/styles/<style>/<id>.png`. Masters stay outside game/.
+
 **Screenshot mode** checks UI work without anyone at the screen (it opens a window briefly: headless doesn't render):
 `& $g --path game -- --screenshot docs/screenshots/x.png --encounter goblin_patrol --seed 42 --actions 6`, plus
 optionally `--layout side_on`, `--style <folder>`, `--replay f.replay.json`, `--select-hero` (stop at the next hero

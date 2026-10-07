@@ -33,6 +33,14 @@ public partial class Main : Control
             GD.PushError(e.Message);
             return;
         }
+        var args = OS.GetCmdlineUserArgs();
+        if (Array.IndexOf(args, "--resize-art") is var at and >= 0)
+        {
+            if (at + 2 < args.Length) ArtResizer.Run(Data, args[at + 1], args[at + 2]);
+            else GD.PrintErr("Usage: --resize-art <masters folder> <style>");
+            GetTree().Quit();
+            return;
+        }
         Text.Use(Data.Text);
         var translation = new Translation { Locale = Data.Text.Language };
         foreach (var (key, value) in Data.Text.All)

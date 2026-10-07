@@ -105,6 +105,9 @@ public static class ArtCatalog
         sb.AppendLine("- Only portraits are needed to start; everything marked optional falls back to a generated placeholder, and a");
         sb.AppendLine("  missing portrait does too (never a crash).");
         sb.AppendLine("- AI-made placeholders: list the style in `game/assets/manifest.json` with `aiPlaceholder: true`.");
+        sb.AppendLine("- Masters can be any size: name each file by its id (`portrait_warrior.png`) and run");
+        sb.AppendLine("  `godot --headless --path game -- --resize-art <masters folder> <style>`. It crops each from the centre to");
+        sb.AppendLine("  the right shape and resizes it to the exact size below. Keep the masters outside `game/`.");
         foreach (var group in all.GroupBy(r => r.Group))
         {
             sb.AppendLine();
