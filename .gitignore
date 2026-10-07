@@ -23,3 +23,6 @@ builds/
 !.vscode/settings.json
 Thumbs.db
 .DS_Store
+
+# Art masters (full-size sources for --resize-art; kept outside git)
+art-source/
