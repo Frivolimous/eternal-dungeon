@@ -47,15 +47,22 @@ dotnet run --project src/Sim -- export-tsv sheets    # every data table as a TSV
 dotnet run --project src/Sim -- import-tsv sheets    # validate the TSVs, print changes, write data/*.json
 dotnet run --project src/Sim -- format-data          # rewrite data/*.json in canonical form (after hand edits)
 dotnet run --project src/Sim -- replay fight.replay.json   # play a replay saved by the game, print its log
-dotnet run --project src/Sim -- assets               # check the asset manifest, list AI placeholders
+dotnet run --project src/Sim -- assets               # check the asset manifest and art styles, list AI placeholders
+dotnet run --project src/Sim -- art-requests         # rewrite docs/art-requests.md (a test checks it's current)
 dotnet test --filter-method "*Bad_enum*"             # one test by name (wildcards allowed)
 powershell -ExecutionPolicy Bypass -File tools/build.ps1   # export Windows + Linux builds into builds/
 ```
 
-Running Godot headless (from the repo root, `$g` = the console exe):
-`& $g --headless --path game --import` after adding assets, `& $g --headless --path game --quit-after 30` to
-run the main scene and see its prints. Exports need the 4.7.2 .NET export templates
-(Editor > Manage Export Templates).
+Running Godot (from the repo root, `$g` = the console exe; `dotnet build` first so the game assembly is current):
+`& $g --path game` plays the game (debug menu). `& $g --headless --path game --import` after adding assets.
+Exports need the 4.7.2 .NET export templates (Editor > Manage Export Templates).
+
+**Screenshot mode** checks UI work without anyone at the screen (it opens a window briefly: headless doesn't render):
+`& $g --path game -- --screenshot docs/screenshots/x.png --encounter goblin_patrol --seed 42 --actions 6`, plus
+optionally `--layout side_on`, `--style <folder>`, `--replay f.replay.json`, `--select-hero` (stop at the next hero
+turn and show a target preview), `--keys 1,Tab,Enter` (press keys at that turn, to test keyboard play),
+`--save-replay f` and `--save-log f` (the in-game log, to compare with `sim replay f`). Look at the PNG after any
+visual change.
 
 **Git: work and commit on `master`.** Never create a branch unless Jeremy asks.
 
@@ -69,7 +76,12 @@ src/Sim/           command-line tool (assembly name `sim`): battle simulator, da
 docs/design/       the Design Anchor;  docs/briefs/  build briefs;  docs/sample-logs/  simulator output
 tests/Core.Tests/  xUnit tests for Core
 game/              Godot .NET project: presentation and input only
-  assets/manifest.json   every image, its size and its AI-placeholder flag
+  scripts/Main.cs        app root: data, translations, settings, menu ↔ battle; screenshot mode (ScreenshotJob)
+  scripts/BattleUi/      the battle screen: BattleScreen (turn flow, input, animation), BoardView (3D table and
+                         layouts), CardView/CardFace (cards), Timeline, DetailsPanel, ActionButton, StatusIcon
+  assets/manifest.json   fixed images (size, AI-placeholder flag) and the art styles
+  assets/styles/<style>/ one folder per candidate art style, images by ArtCatalog id (docs/art-requests.md)
+docs/screenshots/  reference screenshots from screenshot mode
 tools/build.ps1    export script
 builds/            export output (not committed)
 ```
@@ -94,6 +106,13 @@ invalid data). When you add a table or column: its schema in `Schemas.cs` (a new
 **No hard-coded text.** Every word shown to a player, including the combat log, comes from `data/strings.csv`
 (`Strings`, `GameData.Text`; Godot's CSV translation format, named placeholders `{actor}`). Core formats the log
 from it; the game registers the same file with Godot's TranslationServer. When you add text, add its key there.
+
+**Game screen (game/scripts/BattleUi).** It drives a Core `BattleSession` one clock event at a time and animates
+each result; it reads state, never changes it except through the session. Everything the player points at is a
+focusable 2D control laid over the 3D cards (`BattleScreen` keeps them aligned each frame), so mouse, keyboard and a
+future controller share one focus, and every hover preview also shows on focus. Text: `Text.T`/`Text.F` (or a
+`reason.*` key for Core's reason codes). Watch the `Side` (Core vs Godot) and `Text` (helper vs Button.Text) name
+clashes: the BattleUi files alias them.
 
 **Asset pipeline.** Every image loads through `game/assets/manifest.json` (id, path relative to
 `game/assets`, width, height, `aiPlaceholder`, optional note), so final art drops in without code changes.

@@ -103,12 +103,34 @@ public class SessionTests
             s.Advance();
         }
         s.AutoBattle = true;
-        if (s.Awaiting is { } waiting)
-            s.Choose(Pick(s.Battle, waiting));
+        if (s.Awaiting is not null)
+            s.ChooseByAi();                                                // the turn in progress goes to the AI too
         s.Advance();
         Assert.True(s.Over);
         Assert.Contains(s.Choices, c => c.Auto);
         Assert.Equal(Log(s.Battle), Log(s.ToReplay().Play(Repo).Battle));
+    }
+
+    [Fact]
+    public void Stepping_one_event_at_a_time_plays_the_same_battle()
+    {
+        var stepped = new BattleSession(Repo, Repo.Encounters["chief_hall"], 11) { AutoBattle = true };
+        while (!stepped.Over) stepped.Step();
+        var whole = new BattleSession(Repo, Repo.Encounters["chief_hall"], 11) { AutoBattle = true };
+        whole.Advance();
+        Assert.Equal(Log(whole.Battle), Log(stepped.Battle));
+    }
+
+    [Fact]
+    public void Every_reason_code_has_text()
+    {
+        string[] codes = ["not_enough_mana", "rooted", "silenced", "afraid", "target_down", "only_targets_self", "not_an_ally",
+            "not_an_enemy", "targets_a_tile", "out_of_reach", "not_in_front_row", "nowhere_to_move", "no_valid_target"];
+        foreach (var code in codes) Assert.True(Repo.Text.Has("reason." + code), code);
+        var src = Path.Combine(TestPaths.RepoRoot, "src", "Core", "Combat");
+        var used = Directory.GetFiles(src, "*.cs").SelectMany(f => System.Text.RegularExpressions.Regex.Matches(File.ReadAllText(f),
+            @"return ""([a-z_]+)""").Select(m => m.Groups[1].Value));
+        Assert.All(used, code => Assert.Contains(code, codes));
     }
 
     [Fact]

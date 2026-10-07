@@ -1,6 +1,6 @@
 [
   { "id": "goblin_patrol", "name": "Goblin Patrol" },
   { "id": "brute_squad", "name": "Brute Squad" },
-  { "id": "chief_hall", "name": "The Goblin Chief" },
+  { "id": "chief_hall", "name": "The Goblin Chief", "layout": "side_on" },
   { "id": "systems_showcase", "name": "Systems Showcase" }
 ]

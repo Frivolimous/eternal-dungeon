@@ -721,6 +721,8 @@ public partial class BattleScreen : Control
         var image = GetViewport().GetTexture().GetImage();
         System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(job.Path)!);
         image.SavePng(job.Path);
+        if (job.SaveReplay is { } replayPath) System.IO.File.WriteAllText(replayPath, Session.ToReplay().ToJson());
+        if (job.SaveLog is { } logPath) System.IO.File.WriteAllText(logPath, log.GetParsedText());
         GD.Print($"Screenshot saved: {job.Path}");
         GetTree().Quit();
     }

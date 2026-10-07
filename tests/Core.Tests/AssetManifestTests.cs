@@ -14,6 +14,49 @@ public class AssetManifestTests
     }
 
     [Fact]
+    public void Art_requests_doc_is_up_to_date()
+    {
+        var doc = File.ReadAllText(Path.Combine(TestPaths.RepoRoot, "docs", "art-requests.md")).Replace("\r\n", "\n");
+        Assert.True(doc == ArtCatalog.Markdown(TestData.Repo).Replace("\r\n", "\n"), "run sim art-requests");
+    }
+
+    [Fact]
+    public void The_art_catalog_covers_every_unit_and_sizes_art_at_twice_its_display()
+    {
+        var all = ArtCatalog.All(TestData.Repo);
+        foreach (var unit in TestData.Repo.UnitList)
+        {
+            var portrait = all.Single(r => r.Id == ArtCatalog.PortraitId(unit.Id));
+            var (w, h) = ArtCatalog.PortraitDisplay(unit.Size);
+            Assert.Equal((w * 2, h * 2), (portrait.Width, portrait.Height));
+            Assert.False(portrait.Optional);
+        }
+        Assert.Equal(all.Count, all.Select(r => r.Id).Distinct().Count());
+        Assert.All(all.Where(r => r.Group != "Portraits"), r => Assert.True(r.Optional));
+    }
+
+    [Fact]
+    public void Styles_are_listed_in_the_manifest_and_checked_against_the_catalog()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "ed-styles-" + Guid.NewGuid().ToString("N"));
+        var dir = Path.Combine(root, "styles", "ink");
+        Directory.CreateDirectory(dir);
+        try
+        {
+            File.WriteAllText(Path.Combine(dir, "portrait_nobody.png"), "");
+            var manifest = AssetManifest.Parse("""{ "assets": [], "styles": [{ "id": "ink", "name": "Ink", "aiPlaceholder": true }] }""");
+            var missing = new Dictionary<string, int>();
+            var problems = manifest.CheckStyles(root, ArtCatalog.All(TestData.Repo), missing);
+            Assert.Contains(problems, p => p.Contains("portrait_nobody.png") && p.Contains("not in the art catalog"));
+            Assert.Equal(TestData.Repo.UnitList.Count, missing["ink"]);
+
+            var unlisted = AssetManifest.Parse("""{ "assets": [] }""").CheckStyles(root, ArtCatalog.All(TestData.Repo));
+            Assert.Contains(unlisted, p => p.Contains("not listed"));
+        }
+        finally { Directory.Delete(root, true); }
+    }
+
+    [Fact]
     public void Lists_only_flagged_assets()
     {
         var manifest = AssetManifest.Parse("""

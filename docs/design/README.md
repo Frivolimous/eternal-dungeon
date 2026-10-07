@@ -13,6 +13,7 @@ The Anchor moved here from claude.ai on 2026-10-04 and is versioned with the cod
 - [Terminology](terminology.md)
 - [Stat system](stats.md)
 - [Combat](combat.md)
+- [Presentation](presentation.md): how battles look and feel on screen
 - [Classes & skills](classes.md)
 - [Equipment & character power](equipment.md)
 - [Dungeons & adventure](dungeons.md)

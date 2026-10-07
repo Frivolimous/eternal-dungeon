@@ -35,3 +35,18 @@ Threat, its scale and Vulnerability: kept until after M2, then reviewed from pla
 | Threat | Damage dealt + healing done in this battle, plus the Threat stat (Cloak −50) |
 | Threat vs. Vulnerability scale | Threat is divided by the highest Threat among the possible targets, so both are 0–1 |
 | Vulnerability | The share of Health missing, plus the Vulnerability stat ÷ 100 |
+
+## Presentation
+
+| Rule | Placeholder |
+| --- | --- |
+| Camera | Straight down and orthographic (no perspective), so cards show at exactly their design size and text stays sharp. Lift shows as a slightly larger card with its shadow offset |
+| Card and tile sizes | Small card 124×140 px on a 136×150 px tile at 1280×800; portraits 110×110 (Tall 110×220, Large 246×246). Art is twice that |
+| Enemy lanes | Enemy column 0 is on the left in the vertical layout, as for the party (not mirrored) |
+| Timeline | The next 10 turns, assuming each unit keeps its Speed and spends 100 AP a turn |
+| Ghost marker | Replaces the hero's next predicted turn on the timeline |
+| Statuses on cards | One icon per kind: each crowd-control kind, damage over time, and generic buff and debuff (a buff from an ally is a buff, from an enemy a debuff) |
+| Pacing | 0.5 s per action at 1×, 0.25 s at 2×, none at Instant; floating numbers stay at least 0.6 s |
+| Keys | S cycles speed, A toggles auto-battle, Space or a click skips an animation |
+| Text size | 85%, 100%, 115% or 130% |
+| Replays | Saved in the game's user folder as `<date>_<encounter>_<seed>.replay.json`, listed in the debug menu |
