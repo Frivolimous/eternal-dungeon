@@ -9,5 +9,6 @@
     <ProjectReference Include="..\src\Core\EternalDungeon.Core.csproj" />
     <!-- Data ships inside the game assembly, so exports carry it. Read with DataSource.FromAssembly. -->
     <EmbeddedResource Include="..\data\*.json" LogicalName="data/%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\data\strings.csv" LogicalName="data/%(Filename)%(Extension)" />
   </ItemGroup>
 </Project>

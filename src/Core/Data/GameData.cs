@@ -12,8 +12,12 @@ public sealed class GameData(
     IReadOnlyList<EncounterDef>? encounterList = null,
     IReadOnlyList<StatValue>? unitDefaults = null,
     IReadOnlyList<ProcDef>? procList = null,
-    DefaultActions? defaultActions = null)
+    DefaultActions? defaultActions = null,
+    Strings? text = null)
 {
+    /// <summary>Every piece of text the game shows (strings.csv).</summary>
+    public Strings Text { get; } = text ?? Strings.Parse("keys,en\n");
+
     /// <summary>The actions every unit has on top of its own, or null when the data defines none.</summary>
     public DefaultActions? DefaultActions { get; } = defaultActions;
 

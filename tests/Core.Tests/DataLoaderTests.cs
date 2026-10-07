@@ -191,6 +191,18 @@ public class DataLoaderTests
     }
 
     [Fact]
+    public void Strings_read_godots_csv_format()
+    {
+        var s = Strings.Parse("keys,en\nlog.hp,\"{target} HP {before} → {after}\"\nui.quote,\"say \"\"hi\"\", then go\"\nui.plain,Start\n");
+        Assert.Equal("Grunt HP 5 → 0", s.Format("log.hp", ("target", "Grunt"), ("before", 5), ("after", 0)));
+        Assert.Equal("say \"hi\", then go", s["ui.quote"]);
+        Assert.Equal("Start", s["ui.plain"]);
+        Assert.Equal("[ui.nothing]", s["ui.nothing"]);
+        Assert.Contains("duplicate", Assert.Throws<DataException>(() => Strings.Parse("keys,en\na,1\na,2\n")).Message);
+        Assert.True(Repo.Text.Has("log.victory"));
+    }
+
+    [Fact]
     public void Ordered_child_rows_follow_their_order_column()
     {
         var data = LoadTables(Base(

@@ -91,6 +91,10 @@ definitions; errors name file, row and column (`stats.json [4].combine: …`, or
 invalid data). When you add a table or column: its schema in `Schemas.cs` (a new table also goes in
 `Schemas.BeforeUnits` or `AfterUnits`), the reading in `DataLoader`, data/README.md, and tests for its errors.
 
+**No hard-coded text.** Every word shown to a player, including the combat log, comes from `data/strings.csv`
+(`Strings`, `GameData.Text`; Godot's CSV translation format, named placeholders `{actor}`). Core formats the log
+from it; the game registers the same file with Godot's TranslationServer. When you add text, add its key there.
+
 **Asset pipeline.** Every image loads through `game/assets/manifest.json` (id, path relative to
 `game/assets`, width, height, `aiPlaceholder`, optional note), so final art drops in without code changes.
 `sim assets` lists every flagged asset and fails on missing files or wrong PNG/SVG sizes; a test runs the same

@@ -89,7 +89,7 @@ public sealed partial class Battle
             if (regen > 0 && unit.Health < unit.MaxHealth)
             {
                 var before = unit.Health;
-                r.Add(new Healed(unit, "Regen", unit.Heal(regen), before));
+                r.Add(new Healed(unit, null, unit.Heal(regen), before));
             }
             unit.RestoreMana((int)Math.Round(unit.Stats.Get("m_regen"), MidpointRounding.AwayFromZero));
             foreach (var buff in unit.Buffs.ToList())
@@ -185,7 +185,7 @@ public sealed partial class Battle
         if (target is { Alive: false })
         {
             var r = new ActionResult(Clock.Tick, done.Unit, action, target);
-            r.Add(new Fizzled($"{target.Name} has fallen"));
+            r.Add(new Fizzled(FizzleReason.TargetFell, done.Unit, action, target));
             return Record(r);
         }
         return Record(Resolve(done.Unit, action, target));
@@ -429,7 +429,7 @@ public sealed partial class Battle
         r.Add(new Died(unit));
         if (unit.CastLostOnDeath is { } cast)
         {
-            r.Add(new Fizzled($"{unit.Name}'s {Data.Actions[cast.ActionId].Name} fizzles: the caster fell"));
+            r.Add(new Fizzled(FizzleReason.CasterFell, unit, Data.Actions[cast.ActionId], null));
             unit.CastLostOnDeath = null;
         }
     }

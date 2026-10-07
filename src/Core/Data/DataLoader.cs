@@ -53,10 +53,10 @@ public static class DataLoader
 
     public static GameData LoadDirectory(string directory) => Load(DataSource.FromDirectory(directory));
 
-    public static GameData Load(DataSource source) => Build(DataTables.FromJson(source));
+    public static GameData Load(DataSource source) => Build(DataTables.FromJson(source), Strings.Load(source));
 
     /// <summary>Validates <paramref name="t"/> and builds the game's content from it.</summary>
-    public static GameData Build(DataTables t)
+    public static GameData Build(DataTables t, Strings? text = null)
     {
         CheckParents(t);
 
@@ -98,7 +98,7 @@ public static class DataLoader
         var unitsById = units.ToDictionary(u => u.Id);
         var encounters = t["encounters"].Rows.Select(r => ReadEncounter(r, t, unitsById)).ToList();
         return new GameData([.. tags.Values], [.. stats.Values], compounds, units, [.. actions.Values], effects, [.. ais.Values],
-            encounters, unitDefaults, procs, defaultActions);
+            encounters, unitDefaults, procs, defaultActions, text);
     }
 
     /// <summary>Every child row must point at a row of its parent table.</summary>

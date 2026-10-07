@@ -261,7 +261,7 @@ public class EffectTests
         mage.TakeDamage(mage.Health - 1);
         g.ActTicks = TurnClock.TurnThreshold;
         var r = battle.Act(g, data.Actions["goblin_slash"], mage);
-        Assert.Contains(r.Of<Fizzled>(), f => f.Reason.Contains("Fire Bolt fizzles"));
+        Assert.Contains(r.Of<Fizzled>(), f => f.Reason == FizzleReason.CasterFell && f.Action.Id == "fire_bolt");
         Assert.Null(mage.Casting);
         Assert.DoesNotContain(Enumerable.Range(0, 5).Select(_ => battle.Clock.Next()), e => e is CastComplete);
     }

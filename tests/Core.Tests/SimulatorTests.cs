@@ -53,6 +53,19 @@ public class SimulatorTests
         Assert.True(seen.SetEquals(["Move", "Sneak", "collapse", "shove"]), string.Join(", ", seen));
     }
 
+    /// <summary>Every log line comes from strings.csv: a missing key would show as [key].</summary>
+    [Fact]
+    public void Logs_have_no_missing_strings()
+    {
+        foreach (var encounter in TestData.Repo.Encounters.Keys)
+            for (ulong seed = 1; seed <= 20; seed++)
+            {
+                var log = CombatLog.Write(Play(encounter, seed), LogLevel.Full);
+                Assert.DoesNotMatch(@"\[[a-z_]+\.[a-z_.]+\]", log);
+                Assert.DoesNotMatch(@"\{[a-z_]+\}", log);
+            }
+    }
+
     [Fact]
     public void Every_encounter_runs_to_a_finish()
     {

@@ -19,7 +19,8 @@ public sealed record Damaged(Unit Target, DamageBreakdown Breakdown, DamageTaken
 
 public sealed record PeriodicDamaged(Unit Target, Buff Buff, DamageTaken Taken, int HealthBefore) : Outcome;
 
-public sealed record Healed(Unit Target, string Source, int Amount, int HealthBefore) : Outcome;
+/// <summary>Healing. <see cref="Source"/> is the effect's name, or null for Health Regen.</summary>
+public sealed record Healed(Unit Target, string? Source, int Amount, int HealthBefore) : Outcome;
 
 public sealed record Shielded(Unit Target, string Source, int Amount) : Outcome;
 
@@ -37,7 +38,10 @@ public sealed record ProcDamaged(Unit Owner, Unit Target, ProcDef Proc, DamageBr
 public sealed record CastStarted(int CastTime, long ReadyAt) : Outcome;
 
 /// <summary>A cast completed after its target fell or was otherwise gone, so it had no effect.</summary>
-public sealed record Fizzled(string Reason) : Outcome;
+public enum FizzleReason { TargetFell, CasterFell }
+
+/// <summary>A cast that came to nothing: its target or its caster fell first.</summary>
+public sealed record Fizzled(FizzleReason Reason, Unit Caster, ActionDef Action, Unit? Target) : Outcome;
 
 public sealed record Died(Unit Unit) : Outcome;
 

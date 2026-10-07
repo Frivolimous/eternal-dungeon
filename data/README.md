@@ -16,6 +16,13 @@ Rules for every table:
 - Files are always written in one canonical form. After editing JSON by hand, run `sim format-data`.
 - All numbers are placeholders until tuning (combat balance after M2).
 
+## Text
+
+`strings.csv` holds every piece of text the game shows, by key, in Godot's CSV translation format (a `keys`
+column, then one column per language). The combat log is built from it, and the game registers the same file with
+Godot's translation system, so the simulator and the game print the same lines. Placeholders are named:
+`{actor} → {action}`. A missing key shows as `[key]`. Content names (units, actions, effects) stay in the tables.
+
 ## Tables
 
 | Table | One row is | Notes |

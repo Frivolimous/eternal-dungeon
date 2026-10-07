@@ -11,6 +11,7 @@ static class TestData
     public static GameData LoadTables(params (string Table, string Json)[] tables)
     {
         var files = Schemas.Names.ToDictionary(n => n + ".json", _ => "[]");
+        files[Strings.FileName] = "keys,en\n";
         foreach (var (table, json) in tables) files[table + ".json"] = json;
         return DataLoader.Load(DataSource.FromFiles(files));
     }
@@ -28,7 +29,8 @@ static class TestData
             Repo.EncounterList,
             Repo.UnitDefaults,
             [.. Repo.ProcList, .. procs ?? []],
-            Repo.DefaultActions);
+            Repo.DefaultActions,
+            Repo.Text);
 
     public static EffectDef Buff(string id, int turns = 3, bool stacking = false, int maxStacks = int.MaxValue,
         StatValue[]? stats = null, int periodicDamage = 0, string[]? procs = null) =>
