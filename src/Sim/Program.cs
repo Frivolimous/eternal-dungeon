@@ -28,6 +28,7 @@ try
         "export-tsv" => ExportTsv(),
         "import-tsv" => ImportTsv(),
         "format-data" => FormatData(),
+        "replay" => PlayReplay(),
         _ => Help(),
     };
 }
@@ -69,6 +70,27 @@ int ImportTsv()
     var current = DataTables.FromJson(DataSource.FromDirectory(DataDir()));
     var update = DataExchange.ImportTsv(DataSource.FromDirectory(dir), current);   // throws before writing anything
     return Write(update, "Imported");
+}
+
+int PlayReplay()
+{
+    var file = positional ?? throw new OptionException("Give the replay file, for example: sim replay fight" + Replay.Extension);
+    var level = options.Get("log-level") == "full" ? LogLevel.Full : LogLevel.Brief;
+    var replay = Replay.Parse(File.ReadAllText(file), Path.GetFileName(file));
+    var session = replay.Play(LoadData());
+    Console.WriteLine($"{session.Encounter.Name} · seed {replay.Seed} · replay of {replay.Choices.Count} hero decisions");
+    Console.WriteLine(Roster(session.Battle));
+    Console.WriteLine();
+    if (session.Over)
+        Console.Write(CombatLog.Write(session.Battle, level));
+    else
+    {
+        foreach (var r in session.Battle.Results)
+            foreach (var line in CombatLog.Lines(session.Battle, r, level))
+                Console.WriteLine(line);
+        Console.WriteLine($"The replay ends here: {session.Awaiting?.Name} is waiting for a decision.");
+    }
+    return 0;
 }
 
 int FormatData()
@@ -187,6 +209,7 @@ int Help()
           data                                                       load and validate data/*.json
           export-tsv <folder>                                        write every data table as a TSV (for spreadsheets)
           import-tsv <folder>                                        validate TSVs, print the changes, write data/*.json
+          replay <file> [--log-level brief|full]                     play a replay saved by the game, print its log
           format-data                                                rewrite data/*.json in canonical form
           assets                                                     check the asset manifest, list AI placeholders
         """);

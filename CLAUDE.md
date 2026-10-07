@@ -46,6 +46,7 @@ dotnet run --project src/Sim -- data                 # load and validate data/*.
 dotnet run --project src/Sim -- export-tsv sheets    # every data table as a TSV in sheets/ (for spreadsheets)
 dotnet run --project src/Sim -- import-tsv sheets    # validate the TSVs, print changes, write data/*.json
 dotnet run --project src/Sim -- format-data          # rewrite data/*.json in canonical form (after hand edits)
+dotnet run --project src/Sim -- replay fight.replay.json   # play a replay saved by the game, print its log
 dotnet run --project src/Sim -- assets               # check the asset manifest, list AI placeholders
 dotnet test --filter-method "*Bad_enum*"             # one test by name (wildcards allowed)
 powershell -ExecutionPolicy Bypass -File tools/build.ps1   # export Windows + Linux builds into builds/
@@ -125,6 +126,11 @@ The rules themselves are in the Anchor; this is the map from rule to code.
 - **Grid** (`BattleGrid.cs`), **AI** (`UnitAi.cs`, profiles in ai_profiles.json; the heroes' profiles are the
   simulator's scripted AI), **runner** (`BattleRunner.cs`), **logs** (`CombatLog.cs`), **batch**
   (`BatchSummary.cs`), **encounters** (`EncounterSetup.cs`).
+- **Game screen side** (, , ): a session runs the battle turn by turn,
+  pausing on each hero's turn (unless auto-battle), and records every hero decision; seed + decisions = a replay
+  that reproduces the battle exactly. AI-made hero decisions are marked  and re-asked on replay, because the
+  AI's tie-breaks roll the battle RNG. Previews (target numbers, ghost marker, timeline) are pure: UI code must never
+  roll the battle RNG or call the AI just to look (a test checks previews change nothing).
 - `Core.Combat` is the battle namespace (a `Battle` namespace would clash with the `Battle` class).
 - **Balance is deferred:** combat balance waits until after M2, dungeon balance until after M3. Until then the
   starter encounters only need to run cleanly (fights chain on a floor, so a single-fight win rate is the wrong
