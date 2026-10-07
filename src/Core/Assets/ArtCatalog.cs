@@ -1,0 +1,120 @@
+using EternalDungeon.Core.Combat;
+using EternalDungeon.Core.Data;
+
+namespace EternalDungeon.Core.Assets;
+
+/// <summary>One image a style provides: its id (the file name, without .png), exact size, and what it shows.</summary>
+public sealed record ArtRequest(string Id, int Width, int Height, string Group, string Description, bool Optional);
+
+/// <summary>
+/// Every styled image the game uses (M2 brief §9), derived from the data so the list never goes stale. A style is a
+/// folder <c>game/assets/styles/{style}/</c> with these ids as PNGs at exactly these sizes. Art is drawn at 2× its
+/// size on screen at the 1280×800 reference layout, so it stays sharp on larger screens. Images hold no text: names,
+/// numbers and bars are drawn by the game. Anything missing falls back to a generated placeholder.
+/// </summary>
+public static class ArtCatalog
+{
+    public const string DefaultState = "default";
+
+    /// <summary>Optional portrait states; a missing one falls back to the default portrait. Later they may be
+    /// animations instead of stills, with no code changes.</summary>
+    public static readonly (string State, string Description)[] PortraitStates =
+    [
+        ("low_hp", "below a third of its Health"),
+        ("hurt", "just took damage"),
+        ("attacking", "using an action"),
+        ("casting", "casting a spell"),
+        ("knocked_out", "fallen (shown before the card flips face down)"),
+    ];
+
+    /// <summary>On-screen sizes at the reference layout (the art is twice these).</summary>
+    public static (int W, int H) PortraitDisplay(UnitSize size) => size switch
+    {
+        UnitSize.Small => (110, 110),
+        UnitSize.Tall => (110, 220),
+        _ => (246, 246),
+    };
+
+    public static (int W, int H) CardDisplay(UnitSize size) => size switch
+    {
+        UnitSize.Small => (124, 140),
+        UnitSize.Tall => (124, 252),
+        _ => (260, 276),
+    };
+
+    public const int ActionIconDisplay = 32, StatusIconDisplay = 18;
+
+    public static string PortraitId(string unitId, string state = DefaultState) =>
+        state == DefaultState ? $"portrait_{unitId}" : $"portrait_{unitId}_{state}";
+
+    public static string SizeName(UnitSize size) => JsonField.SnakeCase(size.ToString());
+
+    public static string ActionIconId(string actionId) => $"icon_action_{actionId}";
+
+    public static string StatusIconId(string status) => $"icon_status_{status}";
+
+    /// <summary>The status icons: one per crowd-control kind, plus generic buff, debuff and damage over time.</summary>
+    public static readonly string[] Statuses =
+        [.. Enum.GetValues<CcKind>().Where(c => c != CcKind.None).Select(c => JsonField.SnakeCase(c.ToString())), "buff", "debuff", "dot"];
+
+    public static List<ArtRequest> All(GameData data)
+    {
+        var list = new List<ArtRequest>();
+        foreach (var unit in data.UnitList)
+        {
+            var (w, h) = PortraitDisplay(unit.Size);
+            var shape = unit.Size switch
+            {
+                UnitSize.Small => "square",
+                UnitSize.Tall => "1:2, tall (rotated 90° by the game when the board is side-on)",
+                _ => "square, large",
+            };
+            var side = data.EncounterList.Any(e => e.Party.Any(p => p.Unit == unit.Id)) ? "hero" : "enemy";
+            list.Add(new ArtRequest(PortraitId(unit.Id), w * 2, h * 2, "Portraits", $"{unit.Name} ({side}), {shape}", false));
+            foreach (var (state, what) in PortraitStates)
+                list.Add(new ArtRequest(PortraitId(unit.Id, state), w * 2, h * 2, "Portrait states", $"{unit.Name}, {what}", true));
+        }
+        foreach (var size in Enum.GetValues<UnitSize>())
+        {
+            var (w, h) = CardDisplay(size);
+            list.Add(new ArtRequest($"card_frame_{SizeName(size)}", w * 2, h * 2, "Cards",
+                $"Card frame for a {SizeName(size)} unit, transparent where the portrait and bars show through", true));
+            list.Add(new ArtRequest($"card_back_{SizeName(size)}", w * 2, h * 2, "Cards", $"Card back for a {SizeName(size)} unit (a fallen unit's card lies face down)", true));
+        }
+        foreach (var action in data.ActionList)
+            list.Add(new ArtRequest(ActionIconId(action.Id), ActionIconDisplay * 2, ActionIconDisplay * 2, "Action icons",
+                $"{action.Name} ({string.Join(", ", action.Tags)})", true));
+        foreach (var status in Statuses)
+            list.Add(new ArtRequest(StatusIconId(status), StatusIconDisplay * 2, StatusIconDisplay * 2, "Status icons",
+                $"{status.Replace('_', ' ')}: a distinct shape, readable without colour", true));
+        return list;
+    }
+
+    /// <summary>docs/art-requests.md: every image with its id, size and description.</summary>
+    public static string Markdown(GameData data)
+    {
+        var all = All(data);
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("# Art requests");
+        sb.AppendLine();
+        sb.AppendLine("Generated by `sim art-requests` from the data: don't edit by hand. Every image the battle screen uses, per art style.");
+        sb.AppendLine();
+        sb.AppendLine("- A style is a folder `game/assets/styles/<style>/` holding these files as `<id>.png`, at exactly these sizes.");
+        sb.AppendLine("- Sizes are **2× the size on screen** at the 1280×800 reference layout, so art stays sharp on larger screens.");
+        sb.AppendLine("- No text in images: names, numbers, bars and icons are drawn by the game.");
+        sb.AppendLine("- Only portraits are needed to start; everything marked optional falls back to a generated placeholder, and a");
+        sb.AppendLine("  missing portrait does too (never a crash).");
+        sb.AppendLine("- AI-made placeholders: list the style in `game/assets/manifest.json` with `aiPlaceholder: true`.");
+        foreach (var group in all.GroupBy(r => r.Group))
+        {
+            sb.AppendLine();
+            sb.AppendLine($"## {group.Key}");
+            sb.AppendLine();
+            sb.AppendLine("| Id | Size | Needed | Shows |");
+            sb.AppendLine("| --- | --- | --- | --- |");
+            foreach (var r in group)
+                sb.AppendLine($"| `{r.Id}` | {r.Width}×{r.Height} | {(r.Optional ? "optional" : "yes")} | {r.Description} |");
+        }
+        return sb.ToString();
+    }
+}

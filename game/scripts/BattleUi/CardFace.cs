@@ -1,0 +1,156 @@
+using EternalDungeon.Core.Assets;
+using EternalDungeon.Core.Combat;
+using EternalDungeon.Core.Data;
+using Godot;
+using Side = EternalDungeon.Core.Combat.Side;
+
+namespace EternalDungeon.Game.BattleUi;
+
+/// <summary>How a card is highlighted on the board.</summary>
+public enum CardMark { None, Active, Valid, Hovered }
+
+/// <summary>
+/// The front of a unit's card, drawn into its own viewport (twice its size, for sharpness) and shown on the 3D card
+/// (M2 brief §3): portrait (or a generated placeholder), name, HP bar with numbers and Shield, the Act meter along
+/// the left edge (a cast's progress while casting), the stagger bar (white while broken) and status icons. All text
+/// comes from the engine; images hold none.
+/// </summary>
+public partial class CardFace : Control
+{
+    public Unit Unit { get; }
+    readonly BattleScreen screen;
+    readonly bool rotatePortrait;
+    public CardMark Mark { get; set; }
+
+    public CardFace(BattleScreen screen, Unit unit, Vector2 size, bool rotatePortrait)
+    {
+        this.screen = screen;
+        Unit = unit;
+        this.rotatePortrait = rotatePortrait;
+        Size = size;
+        CustomMinimumSize = size;
+    }
+
+    /// <summary>Portrait rectangle: 10 px from the left (the Act meter), 4 px from the top, full width otherwise.</summary>
+    Rect2 PortraitRect
+    {
+        get
+        {
+            var (w, h) = ArtCatalog.PortraitDisplay(Unit.Def.Size);
+            if (rotatePortrait) (w, h) = (h, w);
+            var x = 10 + (Size.X - 14 - w) / 2;
+            return new Rect2(x, 4, w, h);
+        }
+    }
+
+    public override void _Draw()
+    {
+        var font = GetThemeDefaultFont();
+        var side = Ui.Side(Unit.Side);
+        var bg = Unit.Side == Side.Party ? new Color(0.15f, 0.2f, 0.3f) : new Color(0.3f, 0.15f, 0.15f);
+        DrawRect(new Rect2(Vector2.Zero, Size), bg);
+
+        // Portrait, or a generated placeholder: a gradient in the side's colour and the unit's initials.
+        var p = PortraitRect;
+        var texture = screen.Main.Art.Portrait(Unit.Def.Id, PortraitState());
+        if (texture is not null)
+        {
+            if (rotatePortrait)
+            {
+                DrawSetTransform(p.Position + new Vector2(p.Size.X, 0), Mathf.Pi / 2, Vector2.One);
+                DrawTextureRect(texture, new Rect2(0, 0, p.Size.Y, p.Size.X), false);
+                DrawSetTransform(Vector2.Zero, 0, Vector2.One);
+            }
+            else
+                DrawTextureRect(texture, p, false);
+        }
+        else
+        {
+            DrawRect(p, side.Darkened(0.55f));
+            DrawRect(new Rect2(p.Position, new Vector2(p.Size.X, p.Size.Y * 0.5f)), new Color(side.Darkened(0.35f), 0.6f));
+            var initials = string.Concat(Unit.Def.Name.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(w => w[0]));
+            var big = Mathf.RoundToInt(Mathf.Min(p.Size.X, p.Size.Y) * 0.36f);
+            DrawString(font, new Vector2(p.Position.X, p.Position.Y + p.Size.Y * 0.5f + big * 0.35f), initials,
+                HorizontalAlignment.Center, p.Size.X, big, new Color(Ui.Ink, 0.8f));
+        }
+
+        // Name banner along the bottom of the portrait.
+        var banner = new Rect2(p.Position.X, p.End.Y - 18, p.Size.X, 18);
+        DrawRect(banner, new Color(0, 0, 0, 0.65f));
+        DrawString(font, banner.Position + new Vector2(3, 13), Unit.Name, HorizontalAlignment.Center, banner.Size.X - 6, 11, Ui.Ink);
+
+        // Status icons along the top of the portrait.
+        var x = p.Position.X + 2;
+        foreach (var status in Statuses(Unit, screen.Session.Battle))
+        {
+            StatusIcon.Draw(this, status, new Rect2(x, p.Position.Y + 2, ArtCatalog.StatusIconDisplay, ArtCatalog.StatusIconDisplay), screen.Main.Art);
+            x += ArtCatalog.StatusIconDisplay + 2;
+        }
+
+        // Act meter (or cast progress) up the left edge.
+        var meter = new Rect2(3, 4, 5, Size.Y - 8);
+        DrawRect(meter, new Color(0, 0, 0, 0.5f));
+        var tick = screen.Session.Battle.Clock.Tick;
+        var (fill, color) = Unit.Casting is { } cast
+            ? ((float)(tick - cast.StartedAt) / Math.Max(1, cast.CompletesAt - cast.StartedAt), Ui.Mana)
+            : ((float)(Unit.Act / 100.0), Ui.Act);
+        fill = Mathf.Clamp(fill, 0, 1);
+        DrawRect(new Rect2(meter.Position.X, meter.End.Y - meter.Size.Y * fill, meter.Size.X, meter.Size.Y * fill), color);
+
+        // Stagger bar, then the HP bar with numbers and Shield.
+        var barX = p.Position.X;
+        var barW = p.Size.X;
+        var y = p.End.Y + 2;
+        DrawRect(new Rect2(barX, y, barW, 4), new Color(0, 0, 0, 0.5f));
+        if (Unit.Stagger > 0)
+            DrawRect(new Rect2(barX, y, barW * Unit.Stagger / Unit.StaggerMax, 4), Unit.StaggerBroken ? Colors.White : Ui.Stagger);
+        y += 6;
+        var hp = new Rect2(barX, y, barW, 14);
+        DrawRect(hp, new Color(0, 0, 0, 0.6f));
+        var share = (float)Unit.Health / Math.Max(1, Unit.MaxHealth);
+        DrawRect(new Rect2(hp.Position, new Vector2(hp.Size.X * share, hp.Size.Y)), share < 1f / 3 ? Ui.HealthLow : Ui.Health);
+        if (Unit.Shield > 0)
+        {
+            var sw = Mathf.Min(hp.Size.X, hp.Size.X * Unit.Shield / Math.Max(1, Unit.MaxHealth));
+            DrawRect(new Rect2(hp.End.X - sw, hp.Position.Y, sw, 4), Ui.Shield);
+        }
+        var hpText = Unit.Shield > 0 ? Text.F("ui.hp_shield", ("hp", Unit.Health), ("max", Unit.MaxHealth), ("shield", Unit.Shield))
+                                     : Text.F("ui.hp", ("hp", Unit.Health), ("max", Unit.MaxHealth));
+        DrawString(font, hp.Position + new Vector2(0, 11), hpText, HorizontalAlignment.Center, hp.Size.X, 11, Colors.White);
+
+        // Highlight: the active hero glows gold, valid targets green, the hovered target white.
+        var mark = Mark switch
+        {
+            CardMark.Active => Ui.Gold,
+            CardMark.Valid => Ui.Valid,
+            CardMark.Hovered => Colors.White,
+            _ => new Color(side, 0.7f),
+        };
+        DrawRect(new Rect2(Vector2.One, Size - Vector2.One * 2), mark, false, Mark == CardMark.None ? 2 : 4);
+        if (screen.Main.Art.Get($"card_frame_{ArtCatalog.SizeName(Unit.Def.Size)}") is { } frame && !rotatePortrait)
+            DrawTextureRect(frame, new Rect2(Vector2.Zero, Size), false);
+    }
+
+    string PortraitState()
+    {
+        if (!Unit.Alive) return "knocked_out";
+        if (Unit.Casting is not null) return "casting";
+        return Unit.Health < Unit.MaxHealth / 3.0 ? "low_hp" : ArtCatalog.DefaultState;
+    }
+
+    /// <summary>The status icons to show: crowd control by kind, damage over time, then other buffs and debuffs.</summary>
+    public static List<string> Statuses(Unit unit, Battle battle)
+    {
+        var list = new List<string>();
+        if (unit.StaggerBroken) list.Add("stun");
+        foreach (var b in unit.Buffs)
+        {
+            string status;
+            if (b.Def.Cc != CcKind.None) status = JsonField.SnakeCase(b.Def.Cc.ToString());
+            else if (b.Def.PeriodicDamage > 0) status = "dot";
+            else status = battle.Units.FirstOrDefault(u => u.Id == b.CasterId)?.Side == unit.Side ? "buff" : "debuff";
+            if (!list.Contains(status)) list.Add(status);
+        }
+        return list;
+    }
+}

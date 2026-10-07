@@ -109,14 +109,15 @@ public sealed class Unit
     /// <summary>The last action this unit used, for "not twice in a row" AI rules.</summary>
     public string? LastActionId { get; set; }
 
-    /// <summary>Why the unit can't use <paramref name="action"/> right now, or null if it can.</summary>
+    /// <summary>Why the unit can't use <paramref name="action"/> right now, as a reason code (shown through the
+    /// strings table as <c>reason.{code}</c>), or null if it can.</summary>
     public string? CantUse(ActionDef action)
     {
-        if (action.ManaCost > Mana) return "not enough Mana";
+        if (action.ManaCost > Mana) return "not_enough_mana";
         if (action.Target == ActionTarget.Tile && Has(CcKind.Root)) return "rooted";
         if (action.Tags.Contains("spell") && Has(CcKind.Silence)) return "silenced";
         if (Afraid && action.Id != data.DefaultActions?.Defend && action.Id != data.DefaultActions?.Move)
-            return "afraid: can only Defend or Move away from the front";
+            return "afraid";
         return null;
     }
 

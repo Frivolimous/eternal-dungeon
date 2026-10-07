@@ -56,27 +56,39 @@ public sealed class BattleSession
     /// </summary>
     public List<ActionResult> Advance()
     {
+        var results = new List<ActionResult>();
+        while (!Over && Awaiting is null)
+            results.AddRange(Step());
+        return results;
+    }
+
+    /// <summary>
+    /// Plays one clock event (a buff tick, a cast completing, or a turn) and returns its results, so the screen can
+    /// show each event with the state it left. The first step also starts the battle (fight-start procs). Stops short
+    /// (returns nothing more) once a hero is waiting or the battle is over.
+    /// </summary>
+    public List<ActionResult> Step()
+    {
         if (Awaiting is not null) throw new InvalidOperationException($"Waiting for {Awaiting.Name}'s decision");
         var first = Battle.Results.Count;
         if (!Started)
         {
             Started = true;
             Battle.Start();
+            return Battle.Results.Skip(first).ToList();
         }
-        while (!Over && Awaiting is null)
+        if (Over) return [];
+        switch (Battle.Clock.Next())
         {
-            switch (Battle.Clock.Next())
-            {
-                case BuffTick:
-                    Battle.BuffTick();
-                    break;
-                case CastComplete done:
-                    Battle.CompleteCast(done);
-                    break;
-                case TurnReady turn:
-                    TurnStarts(turn.Unit);
-                    break;
-            }
+            case BuffTick:
+                Battle.BuffTick();
+                break;
+            case CastComplete done:
+                Battle.CompleteCast(done);
+                break;
+            case TurnReady turn:
+                TurnStarts(turn.Unit);
+                break;
         }
         return Battle.Results.Skip(first).ToList();
     }
@@ -143,7 +155,7 @@ public sealed class BattleSession
         if (action.Target == ActionTarget.Tile)
             return choice.Tile is { } t && Options.TilesFor(Battle, unit, action).Contains(t) ? null : "can't move there";
         if (action.Target == ActionTarget.Self) return null;
-        if (Confused(unit, action)) return Options.TargetsFor(Battle, unit, action).Count > 0 ? null : "no valid target";
+        if (Confused(unit, action)) return Options.TargetsFor(Battle, unit, action).Count > 0 ? null : "no_valid_target";
         if (choice.Target is null) return "needs a target";
         var target = Battle.Units.FirstOrDefault(u => u.Id == choice.Target);
         return target is null ? "unknown target" : Battle.Grid.CantTarget(unit, action, target);
@@ -158,6 +170,21 @@ public sealed class BattleSession
         Awaiting = null;
         var first = Battle.Results.Count;
         Apply(unit, choice);
+        return Battle.Results.Skip(first).ToList();
+    }
+
+    /// <summary>The waiting hero's turn goes to its AI (auto-battle switched on mid-turn). Recorded as an AI decision,
+    /// exactly as if auto-battle had been on when the turn started.</summary>
+    public List<ActionResult> ChooseByAi()
+    {
+        var unit = Awaiting ?? throw new InvalidOperationException("no hero is waiting for a decision");
+        Awaiting = null;
+        var first = Battle.Results.Count;
+        var decision = UnitAi.Decide(Battle, unit);
+        choices.Add(decision is null
+            ? new Choice(unit.Id, "", Auto: true)
+            : new Choice(unit.Id, decision.Action.Id, decision.Target?.Id, decision.Tile, Auto: true));
+        Play(unit, decision);
         return Battle.Results.Skip(first).ToList();
     }
 
@@ -218,8 +245,8 @@ public static class Options
         if (unit.CantUse(action) is string why) return why;
         return action.Target switch
         {
-            ActionTarget.Tile when TilesFor(battle, unit, action).Count == 0 => "nowhere to move",
-            ActionTarget.Enemy or ActionTarget.Ally when TargetsFor(battle, unit, action).Count == 0 => "no valid target",
+            ActionTarget.Tile when TilesFor(battle, unit, action).Count == 0 => "nowhere_to_move",
+            ActionTarget.Enemy or ActionTarget.Ally when TargetsFor(battle, unit, action).Count == 0 => "no_valid_target",
             _ => null,
         };
     }

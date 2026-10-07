@@ -7,22 +7,68 @@ namespace EternalDungeon.Core.Assets;
 /// <summary>One image the game loads, at a fixed path and size so final art drops in without code changes.</summary>
 public sealed record AssetEntry(string Id, string Path, int Width, int Height, bool AiPlaceholder, string? Note);
 
+/// <summary>A candidate art style: a folder of images with the ids and sizes in <see cref="ArtCatalog"/>.</summary>
+public sealed record ArtStyle(string Id, string Name, bool AiPlaceholder, string? Note);
+
 /// <summary>
-/// game/assets/manifest.json: every image, with its size and whether it's an AI placeholder.
-/// Anchor: Art pipeline. No flagged asset may remain at release.
+/// game/assets/manifest.json: every fixed image (with its size and whether it's an AI placeholder), and the art
+/// styles, each a folder under assets/styles/ (flagged as a whole). Anchor: Art pipeline. No flagged asset may remain
+/// at release.
 /// </summary>
-public sealed partial class AssetManifest(IReadOnlyList<AssetEntry> entries)
+public sealed partial class AssetManifest(IReadOnlyList<AssetEntry> entries, IReadOnlyList<ArtStyle>? styles = null)
 {
     public const string FileName = "manifest.json";
+    public const string StylesFolder = "styles";
 
     public IReadOnlyList<AssetEntry> Entries { get; } = entries;
+    public IReadOnlyList<ArtStyle> Styles { get; } = styles ?? [];
 
     public IEnumerable<AssetEntry> AiPlaceholders => Entries.Where(e => e.AiPlaceholder);
+
+    /// <summary>
+    /// Problems with the style folders: folders not in the manifest (or the reverse), files that aren't in the art
+    /// catalog, and wrong sizes. Missing images aren't problems (they fall back to placeholders); <paramref name="missing"/>
+    /// counts them per style.
+    /// </summary>
+    public IReadOnlyList<string> CheckStyles(string assetsDirectory, IReadOnlyList<ArtRequest> catalog, Dictionary<string, int>? missing = null)
+    {
+        var problems = new List<string>();
+        var root = System.IO.Path.Combine(assetsDirectory, StylesFolder);
+        var folders = Directory.Exists(root) ? Directory.GetDirectories(root).Select(System.IO.Path.GetFileName).ToHashSet() : [];
+        foreach (var folder in folders.Where(f => Styles.All(s => s.Id != f)))
+            problems.Add($"styles/{folder}: not listed in {FileName}");
+        var byId = catalog.ToDictionary(r => r.Id);
+        foreach (var style in Styles)
+        {
+            var dir = System.IO.Path.Combine(root, style.Id);
+            if (!Directory.Exists(dir))
+            {
+                problems.Add($"style {style.Id}: folder styles/{style.Id} not found");
+                continue;
+            }
+            var present = new HashSet<string>();
+            foreach (var file in Directory.GetFiles(dir).Where(f => !f.EndsWith(".import")))
+            {
+                var name = System.IO.Path.GetFileName(file);
+                var id = System.IO.Path.GetFileNameWithoutExtension(file);
+                if (!name.EndsWith(".png", StringComparison.OrdinalIgnoreCase) || !byId.TryGetValue(id, out var request))
+                {
+                    problems.Add($"styles/{style.Id}/{name}: not in the art catalog (see docs/art-requests.md)");
+                    continue;
+                }
+                present.Add(id);
+                if (ImageSize(file) is var (w, h) && (w != request.Width || h != request.Height))
+                    problems.Add($"styles/{style.Id}/{name}: should be {request.Width}×{request.Height}, file is {w}×{h}");
+            }
+            if (missing is not null) missing[style.Id] = catalog.Count(r => !r.Optional && !present.Contains(r.Id));
+        }
+        return problems;
+    }
 
     public static AssetManifest Parse(string text)
     {
         var root = JsonField.Parse(FileName, text);
-        root.OnlyFields("assets");
+        root.OnlyFields("assets", "styles");
         var seen = new HashSet<string>();
         var entries = new List<AssetEntry>();
         foreach (var f in root["assets"].Items())
@@ -41,7 +87,15 @@ public sealed partial class AssetManifest(IReadOnlyList<AssetEntry> entries)
                 throw f["width"].Error("width and height must be positive");
             entries.Add(entry);
         }
-        return new AssetManifest(entries);
+        var styles = new List<ArtStyle>();
+        foreach (var f in root.Optional("styles")?.Items() ?? [])
+        {
+            f.OnlyFields("id", "name", "aiPlaceholder", "note");
+            var style = new ArtStyle(f["id"].Id(), f["name"].String(), f["aiPlaceholder"].Bool(), f.Optional("note")?.String());
+            if (styles.Any(s => s.Id == style.Id)) throw f["id"].Error($"duplicate style \"{style.Id}\"");
+            styles.Add(style);
+        }
+        return new AssetManifest(entries, styles);
     }
 
     public static AssetManifest Load(string assetsDirectory) =>

@@ -29,6 +29,7 @@ try
         "import-tsv" => ImportTsv(),
         "format-data" => FormatData(),
         "replay" => PlayReplay(),
+        "art-requests" => ArtRequests(),
         _ => Help(),
     };
 }
@@ -192,11 +193,24 @@ int Assets()
     Console.WriteLine($"{manifest.Entries.Count} assets in the manifest, {flagged.Count} flagged as AI placeholders.");
     foreach (var e in flagged)
         Console.WriteLine($"  AI  {e.Id,-24} {e.Path} ({e.Width}×{e.Height}){(e.Note is null ? "" : "  " + e.Note)}");
+    var missing = new Dictionary<string, int>();
+    problems = [.. problems, .. manifest.CheckStyles(dir, ArtCatalog.All(LoadData()), missing)];
+    foreach (var style in manifest.Styles)
+        Console.WriteLine($"  {(style.AiPlaceholder ? "AI" : "  ")}  style {style.Id,-18} {style.Name}: {missing.GetValueOrDefault(style.Id)} required image(s) missing (placeholders shown)");
     foreach (var p in problems)
         Console.WriteLine($"  !!  {p}");
     if (flagged.Count > 0)
         Console.WriteLine("Every flagged asset must be replaced by human-made art before release.");
     return problems.Count > 0 ? 1 : 0;
+}
+
+int ArtRequests()
+{
+    var path = Path.Combine(root, "docs", "art-requests.md");
+    var text = ArtCatalog.Markdown(LoadData());
+    File.WriteAllText(path, text);
+    Console.WriteLine($"Wrote {path} ({ArtCatalog.All(LoadData()).Count} images)");
+    return 0;
 }
 
 int Help()
@@ -211,7 +225,8 @@ int Help()
           import-tsv <folder>                                        validate TSVs, print the changes, write data/*.json
           replay <file> [--log-level brief|full]                     play a replay saved by the game, print its log
           format-data                                                rewrite data/*.json in canonical form
-          assets                                                     check the asset manifest, list AI placeholders
+          assets                                                     check the asset manifest and art styles, list AI placeholders
+          art-requests                                               write docs/art-requests.md (every image a style needs)
         """);
     return command == "help" ? 0 : 1;
 }

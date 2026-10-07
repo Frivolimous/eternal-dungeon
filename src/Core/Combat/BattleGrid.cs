@@ -211,33 +211,33 @@ public sealed class BattleGrid
     /// <summary>Why <paramref name="actor"/> can't aim <paramref name="action"/> at <paramref name="target"/>, or null.</summary>
     public string? CantTarget(Unit actor, ActionDef action, Unit target)
     {
-        if (!target.Alive) return "target is down";
+        if (!target.Alive) return "target_down";
         switch (action.Target)
         {
             case ActionTarget.Self:
-                return target == actor ? null : "only targets self";
+                return target == actor ? null : "only_targets_self";
             case ActionTarget.Ally:
-                if (target.Side != actor.Side) return "not an ally";
+                if (target.Side != actor.Side) return "not_an_ally";
                 break;
             case ActionTarget.Enemy:
-                if (target.Side == actor.Side) return "not an enemy";
+                if (target.Side == actor.Side) return "not_an_enemy";
                 break;
             case ActionTarget.Tile:
-                return "targets a tile";
+                return "targets_a_tile";
         }
         if (action.Range is not (ActionRange.Melee or ActionRange.Reach) || action.Target != ActionTarget.Enemy)
             return null;
-        if (AnchorOf(actor) is not { } a || AnchorOf(target) is not { } b) return "out of reach";
+        if (AnchorOf(actor) is not { } a || AnchorOf(target) is not { } b) return "out_of_reach";
 
         // Close combat inside one area: an intruder and the side it stands among.
         if (a.Area == b.Area) return null;
-        if (Intruding(target)) return "out of reach";
-        if (!InFrontRow(actor)) return "not in the front row";
+        if (Intruding(target)) return "out_of_reach";
+        if (!InFrontRow(actor)) return "not_in_front_row";
         var reach = action.Range == ActionRange.Reach ? 2 : 1;
         var across = Fronts.Where(f => f.Touches(a.Area) && f.Other(a.Area) == b.Area);
         return across.Any(f => DepthOf(actor, f.EdgeOf(a.Area)) == 0 && DepthOf(target, f.EdgeOf(b.Area)) < reach)
             ? null
-            : "out of reach";
+            : "out_of_reach";
     }
 
     /// <summary>Where <paramref name="unit"/> could step with Move: an empty tile next to it in the area it

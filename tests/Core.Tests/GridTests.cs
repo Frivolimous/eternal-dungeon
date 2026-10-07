@@ -60,12 +60,12 @@ public class GridTests
         var bolt = Repo.Actions["fire_bolt"];
 
         Assert.Null(grid.CantTarget(warrior, attack, front));
-        Assert.Equal("out of reach", grid.CantTarget(warrior, attack, back));
+        Assert.Equal("out_of_reach", grid.CantTarget(warrior, attack, back));
         Assert.Null(grid.CantTarget(warrior, spear, back));
-        Assert.Equal("not in the front row", grid.CantTarget(mage, attack, front));
+        Assert.Equal("not_in_front_row", grid.CantTarget(mage, attack, front));
         Assert.Null(grid.CantTarget(mage, bolt, back));
-        Assert.Equal("not an enemy", grid.CantTarget(warrior, attack, mage));
-        Assert.Equal("not an ally", grid.CantTarget(mage, Repo.Actions["mend"], front));
+        Assert.Equal("not_an_enemy", grid.CantTarget(warrior, attack, mage));
+        Assert.Equal("not_an_ally", grid.CantTarget(mage, Repo.Actions["mend"], front));
     }
 
     [Fact]
