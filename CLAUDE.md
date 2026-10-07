@@ -57,7 +57,7 @@ Running Godot (from the repo root, `$g` = the console exe; `dotnet build` first 
 `& $g --path game` plays the game (debug menu). `& $g --headless --path game --import` after adding assets.
 Exports need the 4.7.2 .NET export templates (Editor > Manage Export Templates).
 
-**Art masters to a style:** `toolsesize-art.bat <style> [masters folder]` (masters default to `art-source/<style>/`,
+**Art masters to a style:** `tools\resize-art.bat <style> [masters folder]` (masters default to `art-source/<style>/`,
 which git ignores) builds the game, then runs `& $g --headless --path game -- --resize-art <folder> <style>`: it crops each master
 (named by its art id, any size) from the centre to the right shape, resizes it (Lanczos) to the exact size in
 docs/art-requests.md and writes `game/assets/styles/<style>/<id>.png`. Masters stay outside game/.
