@@ -60,7 +60,7 @@ public class TargetingTests
     }
 
     [Fact]
-    public void Vulnerability_rises_as_health_drops_and_cloak_lowers_threat()
+    public void Vulnerability_rises_as_health_drops_and_stealth_lowers_threat()
     {
         var rogue = U("rogue", "rogue", Side.Party);
         Assert.Equal(0, rogue.Vulnerability);
@@ -68,7 +68,7 @@ public class TargetingTests
         Assert.Equal(0.25, rogue.Vulnerability, 12);
 
         rogue.ThreatEarned = 80;
-        rogue.Stats.Add("cloak", "threat", -50);
+        rogue.Stats.Add("stealth", "threat", -50);
         Assert.Equal(30, rogue.Threat);
     }
 

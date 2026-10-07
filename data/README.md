@@ -35,10 +35,10 @@ Godot's translation system, so the simulator and the game print the same lines. 
 | `effect_stats` | A stat a buff changes | `tag` is optional |
 | `procs` | A proc | `chance`: the base chance (default 1 = 100%). Amounts (damage, heal, shield, lifesteal, hit stats) add up only across merged copies; an effect never adds up. The example procs are ported from EternalQuestMobile and aren't on any starter unit yet |
 | `proc_hit_stats` | A this-hit stat of a before_damage proc | |
-| `actions` | An action | `cast_time` is on the 100 scale: 50 = half a base-speed turn. `move_to`: own (Move) or enemy (Sneak) for tile actions |
+| `actions` | An action | `cast_time` is on the 100 scale: 50 = half a base-speed turn. `move_to`: own (Move) or own_or_enemy (also any empty tile in the enemy area) for tile actions. `replaces`: attack, defend or move: for a unit that has this action, it takes that default's place (the Rogue's Move, from the Stealth mastery) |
 | `action_effects` | An effect an action applies, in `order` | `on`: target (default) or self |
 | `ai_profiles` | How a unit picks actions and targets | `threat_weight` w: targets score w × Threat + (1 − w) × Vulnerability, between 0.25 and 0.75. Hero profiles are the simulator's scripted AI |
-| `ai_rules` | One rule, in `order` | The first usable rule with a valid target wins |
+| `ai_rules` | One rule, in `order` | The first usable rule with a valid target wins. `to_enemy_area`: a move that can enter the enemy area goes there. With no rule usable, a unit Attacks, else steps toward the front, else Defends |
 | `units` | A hero or enemy | `size` 1, 1.5 or 2. Then one column per stat (untagged values) and one per compound stat. Base Hit 0.95 and Avoid 0.05 are placeholders |
 | `unit_tag_stats` | A tag-keyed stat on a unit | Such as Fire Power 50 |
 | `encounters` | A fixed battle | `layout`: vertical (default) or side_on; presentation only |

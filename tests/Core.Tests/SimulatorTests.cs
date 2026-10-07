@@ -28,7 +28,7 @@ public class SimulatorTests
     /// <summary>
     /// Core is front-relative: the same fight on a board whose areas face each other along other edges (the party's
     /// area turned on its side and facing with its last column, the enemy's facing with its last row) plays out
-    /// exactly the same. Range, Move, Sneak, Push/Pull and collapse all run in these fights.
+    /// exactly the same. Range, Move (also the Rogue's into the enemy area), Push/Pull and collapse all run in these fights.
     /// </summary>
     [Fact]
     public void The_same_fight_plays_identically_on_a_rotated_board()
@@ -48,9 +48,14 @@ public class SimulatorTests
                 Assert.Equal(CombatLog.Write(normal, LogLevel.Full), CombatLog.Write(rotated, LogLevel.Full));
                 Assert.NotEqual(normal.Grid.AnchorOf(normal.Units[0]), rotated.Grid.AnchorOf(rotated.Units[0]));
                 foreach (var m in rotated.Results.SelectMany(r => r.Of<Moved>()))
-                    seen.Add(m.Why is "Move" or "collapse" or "Sneak" ? m.Why : "shove");
+                    seen.Add(m.Why switch
+                    {
+                        "Move" when rotated.Grid.SideOf(m.To) != m.Unit.Side => "into the enemy area",
+                        "Move" or "collapse" => m.Why,
+                        _ => "shove",
+                    });
             }
-        Assert.True(seen.SetEquals(["Move", "Sneak", "collapse", "shove"]), string.Join(", ", seen));
+        Assert.True(seen.SetEquals(["Move", "into the enemy area", "collapse", "shove"]), string.Join(", ", seen));
     }
 
     /// <summary>Every log line comes from strings.csv: a missing key would show as [key].</summary>
@@ -85,8 +90,8 @@ public class SimulatorTests
         var checks = new Dictionary<string, Func<Outcome, bool>>
         {
             ["Slow"] = o => o is BuffApplied { Buff.Def.Id: "chill" },
-            ["Sneak"] = o => o is Moved { Why: "Sneak" },
-            ["Move"] = o => o is Moved { Why: "Move" },
+            ["Stealth move"] = o => o is Moved { Why: "Move" } m && InEnemyArea(m.Unit, m.To),
+            ["Move"] = o => o is Moved { Why: "Move" } m && !InEnemyArea(m.Unit, m.To),
             ["Defend"] = o => o is BuffApplied { Buff.Def.Id: "guard" },
             ["Stagger break"] = o => o is Staggered { Broke: true },
             ["Cast interrupt"] = o => o is Interrupted,
@@ -103,6 +108,9 @@ public class SimulatorTests
         }
         Assert.All(seen, kv => Assert.True(kv.Value >= 10, $"{kv.Key} fired in only {kv.Value} of 20 seeds"));
     }
+
+    /// <summary>On the default board (one party and one enemy area).</summary>
+    static bool InEnemyArea(Unit unit, Tile tile) => (tile.Area == BattleGrid.EnemyArea) != (unit.Side == Side.Enemy);
 
     [Fact]
     public void Duplicate_units_are_numbered_and_placed_as_the_data_says()

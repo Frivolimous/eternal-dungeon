@@ -35,7 +35,7 @@ public sealed record Front(int AreaA, Edge EdgeA, int AreaB, Edge EdgeB)
 /// front with the lowest lane. Dead units leave their tiles. When an area's front row has no living unit, the area
 /// collapses forward.</para>
 /// <para>Range (placeholders): Melee from depth 0 across a front to the other area's depth 0; Reach also its depth 1;
-/// Any reaches every tile. A unit standing in the other side's area (Sneak) can melee anyone there and be meleed by
+/// Any reaches every tile. A unit standing in the other side's area (the Rogue's Move) can melee anyone there and be meleed by
 /// anyone there.</para>
 /// <para>M2 supports one front per area. With several (M3: Ambushed, Surrounding) range already checks every front
 /// between the two areas; footprints, Push/Pull and collapse use an area's first front, and collapse is skipped for
@@ -261,14 +261,26 @@ public sealed class BattleGrid
     public IEnumerable<Tile> RetreatOptions(Unit unit) =>
         AnchorOf(unit) is { } at ? MoveOptions(unit).Where(t => Depth(t) > Depth(at)) : [];
 
-    /// <summary>Where <paramref name="unit"/> could Sneak to: any empty tile in an area of the other side.</summary>
-    public IEnumerable<Tile> SneakOptions(Unit unit)
+    /// <summary>Any empty tile in an area of the other side (Small units only): where the Rogue's Move can go.</summary>
+    public IEnumerable<Tile> EnemyAreaOptions(Unit unit)
     {
         if (unit.Def.Size != UnitSize.Small) return [];
         return InOrder(Areas.Where(a => a.Side != unit.Side).SelectMany(a => TilesOf(a.Id)).Where(t => At(t) is null));
     }
 
-    /// <summary>Moves a unit, without range rules (Move, Sneak and Push/Pull check those).</summary>
+    /// <summary>Where a tile action takes <paramref name="unit"/>: Move's neighbours, plus the other side's empty
+    /// tiles for a Move that can enter the enemy area. Feared units are limited further by the caller.</summary>
+    public IEnumerable<Tile> TileOptions(Unit unit, ActionDef action) => action.MoveTo switch
+    {
+        Data.MoveTo.Own => MoveOptions(unit),
+        Data.MoveTo.OwnOrEnemy => MoveOptions(unit).Concat(EnemyAreaOptions(unit)).Distinct(),
+        _ => [],
+    };
+
+    /// <summary>The tile is in an area of the other side from <paramref name="unit"/>.</summary>
+    public bool InEnemyArea(Unit unit, Tile tile) => SideOf(tile) != unit.Side;
+
+    /// <summary>Moves a unit, without range rules (Move and Push/Pull check those).</summary>
     public void MoveTo(Unit unit, Tile anchor)
     {
         if (!Fits(unit, anchor))

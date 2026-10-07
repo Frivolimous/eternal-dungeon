@@ -86,7 +86,8 @@ public sealed record AiRule(
     bool NotIntruding = false,
     bool NotTwiceInARow = false,
     string? TargetMissingBuff = null,
-    bool TargetCasting = false);
+    bool TargetCasting = false,
+    bool ToEnemyArea = false);
 
 /// <summary>
 /// The actions every unit has on top of its own (defaults.json): a basic weapon Attack, Defend and Move. Fear
@@ -95,6 +96,14 @@ public sealed record AiRule(
 public sealed record DefaultActions(string Attack, string Defend, string Move)
 {
     public IEnumerable<string> All => [Attack, Defend, Move];
+
+    public string For(DefaultRole role) => role switch
+    {
+        DefaultRole.Attack => Attack,
+        DefaultRole.Defend => Defend,
+        DefaultRole.Move => Move,
+        _ => throw new ArgumentOutOfRangeException(nameof(role)),
+    };
 }
 
 /// <summary>
@@ -125,8 +134,13 @@ public enum ActionTarget { Enemy, Ally, Self, Tile }
 /// </summary>
 public enum ActionRange { Melee, Reach, Any }
 
-/// <summary>Where a tile-targeted action moves its user: within its own area (Move) or into the other side's (Sneak).</summary>
-public enum MoveTo { None, Own, Enemy }
+/// <summary>Where a tile-targeted action moves its user: a neighbouring tile in the area it stands in (Move), or
+/// that or any empty tile in the other side's area (the Rogue's Move, with the Stealth mastery).</summary>
+public enum MoveTo { None, Own, OwnOrEnemy }
+
+/// <summary>Which default action an action takes the place of for a unit that has it (the Rogue's Move replaces
+/// Move). Masteries that modify basic actions use this.</summary>
+public enum DefaultRole { None, Attack, Defend, Move }
 
 /// <summary>Who an action's effect lands on: the action's target or the unit acting.</summary>
 public enum EffectAim { Target, Self }
@@ -147,7 +161,8 @@ public sealed record ActionDef(
     double AllDamage,
     int CastTime,
     IReadOnlyList<EffectRef> Effects,
-    MoveTo MoveTo = MoveTo.None)
+    MoveTo MoveTo = MoveTo.None,
+    DefaultRole Replaces = DefaultRole.None)
 {
     public bool DealsDamage => BaseDamage > 0;
 }

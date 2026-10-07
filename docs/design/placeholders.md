@@ -24,7 +24,8 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 
 | Rule | Placeholder |
 | --- | --- |
-| Sneak | Kept until after M2. Moves the Rogue to any empty tile in the enemy area. A unit standing in the other side's area can melee anyone there, and anyone there can melee it |
+| Stealth mastery | Until masteries exist as a system (M3–M4), the Rogue unit has it built in: its Move (50 AP, like Move) reaches a neighbouring tile or any empty tile in the enemy area, and applies Stealth until its next turn. A unit standing in the other side's area can melee anyone there, and anyone there can melee it. There is no way back to its own area yet |
+| Stealth | +0.5 Avoid and −50 Threat until the unit's next turn (the old Cloak numbers). Attacking doesn't break it yet; the Rogue tree's "crits don't break Stealth" suggests attacks should, to decide with the skill trees |
 
 ## Enemy targeting
 
@@ -32,7 +33,7 @@ Threat, its scale and Vulnerability: kept until after M2, then reviewed from pla
 
 | Rule | Placeholder |
 | --- | --- |
-| Threat | Damage dealt + healing done in this battle, plus the Threat stat (Cloak −50) |
+| Threat | Damage dealt + healing done in this battle, plus the Threat stat (Stealth −50) |
 | Threat vs. Vulnerability scale | Threat is divided by the highest Threat among the possible targets, so both are 0–1 |
 | Vulnerability | The share of Health missing, plus the Vulnerability stat ÷ 100 |
 

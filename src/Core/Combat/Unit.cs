@@ -45,7 +45,7 @@ public sealed class Unit
     /// <summary>Threat earned in this battle: damage dealt plus healing done (Anchor: Enemy targeting).</summary>
     public double ThreatEarned { get; set; }
 
-    /// <summary>Hidden. Threat earned plus the Threat stat (Cloak lowers it).</summary>
+    /// <summary>Hidden. Threat earned plus the Threat stat (Stealth lowers it).</summary>
     public double Threat => ThreatEarned + Stats.Get("threat");
 
     /// <summary>Hidden. Rises as Health drops: the share of Health missing, plus the Vulnerability stat in percent.</summary>
@@ -116,7 +116,7 @@ public sealed class Unit
         if (action.ManaCost > Mana) return "not_enough_mana";
         if (action.Target == ActionTarget.Tile && Has(CcKind.Root)) return "rooted";
         if (action.Tags.Contains("spell") && Has(CcKind.Silence)) return "silenced";
-        if (Afraid && action.Id != data.DefaultActions?.Defend && action.Id != data.DefaultActions?.Move)
+        if (Afraid && action.Id != data.DefaultFor(Def, DefaultRole.Defend) && action.Id != data.DefaultFor(Def, DefaultRole.Move))
             return "afraid";
         return null;
     }

@@ -31,6 +31,47 @@ public class DefaultActionTests
     }
 
     [Fact]
+    public void An_action_can_replace_a_default_for_the_units_that_have_it()
+    {
+        Assert.Equal(["dagger_attack", "attack", "defend", "stealth_move"], Repo.ActionsOf(Repo.Units["rogue"]));
+        Assert.Equal("stealth_move", Repo.DefaultFor(Repo.Units["rogue"], DefaultRole.Move));
+        Assert.Equal("move", Repo.DefaultFor(Repo.Units["warrior"], DefaultRole.Move));
+
+        static DataException ReplacementFails(string actions, string units) => TestData.TablesFail(
+            ("tags", "[]"), ("stats", """[{ "id": "health", "name": "Health", "group": "character", "combine": "add" }]"""),
+            ("compound_stats", "[]"), ("compound_stat_rows", "[]"),
+            ("actions", $$"""
+                [{ "id": "attack", "name": "Attack", "target": "enemy", "range": "melee", "ap_cost": 100, "base_damage": 5 },
+                 { "id": "defend", "name": "Defend", "target": "self", "ap_cost": 100 },
+                 { "id": "move", "name": "Move", "target": "tile", "ap_cost": 50, "move_to": "own" },
+                 {{actions}}]
+                """),
+            ("defaults", """[{ "key": "attack_action", "value": "attack" }, { "key": "defend_action", "value": "defend" }, { "key": "move_action", "value": "move" }]"""),
+            ("ai_profiles", """[{ "id": "basic", "name": "Basic", "threat_weight": 0.5 }]"""),
+            ("ai_rules", """[{ "profile": "basic", "order": 1, "action": "attack" }]"""),
+            ("units", $"[{units}]"));
+
+        var notAMove = ReplacementFails("""{ "id": "x", "name": "X", "target": "self", "ap_cost": 100, "replaces": "move" }""", "");
+        Assert.Equal(("actions.json", "[3].replaces"), (notAMove.File, notAMove.Field));
+
+        var twice = ReplacementFails("""
+            { "id": "x", "name": "X", "target": "tile", "ap_cost": 50, "move_to": "own_or_enemy", "replaces": "move" },
+            { "id": "y", "name": "Y", "target": "tile", "ap_cost": 50, "move_to": "own", "replaces": "move" }
+            """, """{ "id": "u", "name": "U", "size": 1, "health": 1, "actions": ["x", "y"], "ai": "basic" }""");
+        Assert.Equal(("units.json", "[0].actions"), (twice.File, twice.Field));
+    }
+
+    [Fact]
+    public void To_enemy_area_needs_a_move_that_can_go_there()
+    {
+        var e = TestData.TablesFail(
+            ("actions", """[{ "id": "move", "name": "Move", "target": "tile", "ap_cost": 50, "move_to": "own" }]"""),
+            ("ai_profiles", """[{ "id": "basic", "name": "Basic", "threat_weight": 0.5 }]"""),
+            ("ai_rules", """[{ "profile": "basic", "order": 1, "action": "move", "to_enemy_area": true }]"""));
+        Assert.Equal(("ai_rules.json", "[0].to_enemy_area"), (e.File, e.Field));
+    }
+
+    [Fact]
     public void A_unit_with_nothing_to_do_steps_forward_or_else_defends()
     {
         var grunt1 = U(Repo, "goblin_grunt", "g1", Side.Enemy);

@@ -74,7 +74,8 @@ public static class Schemas
         Number("base_damage", @default: 0),
         Number("all_damage", @default: 0),
         Int("cast_time", @default: 0),
-        Enum<MoveTo>("move_to", @default: MoveTo.None));
+        Enum<MoveTo>("move_to", @default: MoveTo.None),
+        Enum<DefaultRole>("replaces", @default: DefaultRole.None));
 
     public static readonly TableSchema ActionEffects = Child("action_effects", "actions", "action", ["order"],
         Int("order", required: true), Id("effect"), Enum<EffectAim>("on", @default: EffectAim.Target));
@@ -90,7 +91,8 @@ public static class Schemas
         Bool("not_intruding"),
         Bool("not_twice_in_a_row"),
         Id("target_missing_buff", required: false),
-        Bool("target_casting"));
+        Bool("target_casting"),
+        Bool("to_enemy_area"));
 
     /// <summary>Fixed columns of the units table; one column per stat and per compound stat follows them.</summary>
     public static readonly string[] UnitFixedColumns = ["id", "name", "size", "actions", "ai", "procs", "note"];

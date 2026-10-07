@@ -229,13 +229,13 @@ public static class Options
             _ => UnitAi.ValidTargets(battle, unit, action),
         };
 
-    /// <summary>Tiles a tile action can go to: Move's neighbours (only away from the front when Feared), or Sneak's
-    /// tiles in the other side's area.</summary>
+    /// <summary>Tiles a tile action can go to: Move's neighbours (only away from the front when Feared), plus the
+    /// other side's empty tiles for the Rogue's Move.</summary>
     public static List<Tile> TilesFor(Battle battle, Unit unit, ActionDef action)
     {
         if (action.Target != ActionTarget.Tile) return [];
         if (unit.Afraid) return [.. battle.Grid.RetreatOptions(unit)];
-        return [.. action.MoveTo == MoveTo.Enemy ? battle.Grid.SneakOptions(unit) : battle.Grid.MoveOptions(unit)];
+        return [.. battle.Grid.TileOptions(unit, action)];
     }
 
     /// <summary>Why <paramref name="unit"/> can't use <paramref name="action"/> now (no Mana, Silenced, Rooted,

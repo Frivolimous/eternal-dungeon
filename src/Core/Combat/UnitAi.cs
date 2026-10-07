@@ -17,7 +17,7 @@ public static class UnitAi
     public static Decision? Decide(Battle battle, Unit unit)
     {
         if (unit.Afraid)
-            return Default(battle, unit, d => d.Move, battle.Grid.RetreatOptions(unit)) ?? Default(battle, unit, d => d.Defend);
+            return Default(battle, unit, DefaultRole.Move, battle.Grid.RetreatOptions(unit)) ?? Default(battle, unit, DefaultRole.Defend);
 
         var profile = battle.Data.AiProfiles[unit.Def.Ai];
         foreach (var rule in profile.Rules)
@@ -34,14 +34,14 @@ public static class UnitAi
         }
         if (DefaultAttack(battle, unit, profile.ThreatWeight) is { } attack) return attack;
         var forward = battle.Grid.ForwardOptions(unit);
-        return Default(battle, unit, d => d.Move, forward) ?? Default(battle, unit, d => d.Defend);
+        return Default(battle, unit, DefaultRole.Move, forward) ?? Default(battle, unit, DefaultRole.Defend);
     }
 
     /// <summary>The default Attack at the best-scoring valid target, if the unit can use it and has one.</summary>
     static Decision? DefaultAttack(Battle battle, Unit unit, double w)
     {
-        if (battle.Data.DefaultActions is not { } defaults) return null;
-        var action = battle.Data.Actions[defaults.Attack];
+        if (battle.Data.DefaultFor(unit.Def, DefaultRole.Attack) is not { } id) return null;
+        var action = battle.Data.Actions[id];
         if (unit.CantUse(action) is not null) return null;
         return Choose(battle, unit, action, new AiRule(action.Id), w);
     }
@@ -54,7 +54,9 @@ public static class UnitAi
                 return new Decision(action, unit, null);
 
             case ActionTarget.Tile:
-                var tiles = (action.MoveTo == MoveTo.Enemy ? battle.Grid.SneakOptions(unit) : battle.Grid.MoveOptions(unit)).ToList();
+                var tiles = battle.Grid.TileOptions(unit, action)
+                    .Where(t => !rule.ToEnemyArea || battle.Grid.InEnemyArea(unit, t))
+                    .ToList();
                 return tiles.Count > 0 ? new Decision(action, null, tiles[0]) : null;
 
             case ActionTarget.Ally:
@@ -99,12 +101,12 @@ public static class UnitAi
         return tied.Count == 1 ? tied[0] : tied[rng.NextInt(tied.Count)];
     }
 
-    /// <summary>One of the default actions (defaults.json), if the unit can use it: a Move to the first of
-    /// <paramref name="tiles"/>, or Defend.</summary>
-    static Decision? Default(Battle battle, Unit unit, Func<DefaultActions, string> role, IEnumerable<Tile>? tiles = null)
+    /// <summary>One of the unit's default actions (defaults.json, or its own replacement), if it can use it: a Move to
+    /// the first of <paramref name="tiles"/>, or Defend.</summary>
+    static Decision? Default(Battle battle, Unit unit, DefaultRole role, IEnumerable<Tile>? tiles = null)
     {
-        if (battle.Data.DefaultActions is not { } defaults) return null;
-        var action = battle.Data.Actions[role(defaults)];
+        if (battle.Data.DefaultFor(unit.Def, role) is not { } id) return null;
+        var action = battle.Data.Actions[id];
         if (unit.CantUse(action) is not null) return null;
         if (action.Target != ActionTarget.Tile) return new Decision(action, unit, null);
         var tile = (tiles ?? []).Cast<Tile?>().FirstOrDefault();

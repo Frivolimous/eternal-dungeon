@@ -1,6 +1,6 @@
 [
   { "id": "guard", "name": "Guard", "duration": "until_next_turn", "shield_max_health": 0.1 },
-  { "id": "cloak", "name": "Cloak", "duration": "until_next_turn" },
+  { "id": "stealth", "name": "Stealth", "duration": "until_next_turn" },
   { "id": "rot", "name": "Rot", "duration": "turns", "turns": 3, "periodic_damage": 4 },
   { "id": "mend", "name": "Mend", "heal": 20 },
   { "id": "war_cry", "name": "War Cry", "duration": "turns", "turns": 3, "stacking": true, "max_stacks": 3 },

@@ -90,7 +90,13 @@ public static class DataLoader
         foreach (var r in t["units"].Rows)
         {
             var unit = ReadUnit(r, t, tags, stats, compoundIds, actions, ais, procIds);
-            var has = unit.Actions.Concat(defaultActions?.All ?? []).ToHashSet();
+            var replaced = unit.Actions.Select(a => actions[a].Replaces).Where(x => x != DefaultRole.None).ToList();
+            if (replaced.GroupBy(x => x).FirstOrDefault(g => g.Count() > 1) is { } twice)
+                throw r.Error("actions", $"two actions replace the default {JsonField.SnakeCase(twice.Key.ToString())}");
+            var has = unit.Actions
+                .Concat(defaultActions is null ? [] : new[] { DefaultRole.Attack, DefaultRole.Defend, DefaultRole.Move }
+                    .Where(x => !replaced.Contains(x)).Select(defaultActions.For))
+                .ToHashSet();
             if (ais[unit.Ai].Rules.FirstOrDefault(x => !has.Contains(x.Action)) is { } missing)
                 throw r.Error("ai", $"its AI \"{unit.Ai}\" uses \"{missing.Action}\", which isn't in its actions or the default actions");
             units.Add(unit);
@@ -351,9 +357,12 @@ public static class DataLoader
             r.Num("all_damage"),
             r.Int("cast_time"),
             effectRefs,
-            r.Enum<MoveTo>("move_to"));
+            r.Enum<MoveTo>("move_to"),
+            r.Enum<DefaultRole>("replaces"));
         if ((action.Target == ActionTarget.Tile) != (action.MoveTo != MoveTo.None))
-            throw r.Error("move_to", "tile actions need move_to (own or enemy), and only they can have it");
+            throw r.Error("move_to", "tile actions need move_to (own or own_or_enemy), and only they can have it");
+        if (action.Replaces != DefaultRole.None && !FitsRole(action, action.Replaces, out var what))
+            throw r.Error("replaces", $"an action replacing the default {JsonField.SnakeCase(action.Replaces.ToString())} must be {what}");
         if (action.ManaCost < 0) throw r.Error("mana_cost", "can't be negative");
         if (action.BaseDamage < 0) throw r.Error("base_damage", "can't be negative");
         if (action.CastTime < 0) throw r.Error("cast_time", "can't be negative");
@@ -383,8 +392,11 @@ public static class DataLoader
             var casting = x.Bool("target_casting");
             if ((targetBuff is not null || casting) && def.Target != ActionTarget.Enemy)
                 throw x.Error("action", "target conditions need an enemy-targeted action");
+            var toEnemyArea = x.Bool("to_enemy_area");
+            if (toEnemyArea && def.MoveTo != MoveTo.OwnOrEnemy)
+                throw x.Error("to_enemy_area", "needs a move that can enter the enemy area (move_to own_or_enemy)");
             rules.Add(new AiRule(def.Id, x.OptNum("ally_health_below"), x.OptNum("self_health_below"), buff,
-                x.Bool("not_intruding"), x.Bool("not_twice_in_a_row"), targetBuff, casting));
+                x.Bool("not_intruding"), x.Bool("not_twice_in_a_row"), targetBuff, casting, toEnemyArea));
         }
         if (rules.Count == 0) throw r.Error($"needs at least one rule in {t["ai_rules"].File}");
         return new AiProfileDef(r.Str("id"), r.Str("name"), w, rules);
@@ -401,19 +413,32 @@ public static class DataLoader
         if (keys.FirstOrDefault(k => rows.All(r => r.Str("key") != k)) is { } missing)
             throw new DataException(t["defaults"].File, "", $"needs all of {string.Join(", ", keys)} (missing {missing})");
 
-        string Get(string key, Func<ActionDef, bool> fits, string what)
+        string Get(string key, DefaultRole role)
         {
             var row = rows.First(r => r.Str("key") == key);
             var id = row.Str("value");
             if (!actions.TryGetValue(id, out var def))
                 throw row.Error("value", $"unknown action \"{id}\" (not in {t["actions"].File})");
-            if (!fits(def)) throw row.Error("value", $"the {key.Replace('_', ' ')} must be {what}");
+            if (!FitsRole(def, role, out var what) || (role == DefaultRole.Move && def.MoveTo != MoveTo.Own))
+                throw row.Error("value", $"the {key.Replace('_', ' ')} must be {(role == DefaultRole.Move ? "a move within the unit's own area" : what)}");
+            if (def.Replaces != DefaultRole.None)
+                throw row.Error("value", $"\"{id}\" replaces a default action, so it can't be one");
             return def.Id;
         }
-        return new DefaultActions(
-            Get(AttackKey, a => a.Target == ActionTarget.Enemy && a.DealsDamage, "an enemy-targeted action that deals damage"),
-            Get(DefendKey, a => a.Target == ActionTarget.Self, "self-targeted"),
-            Get(MoveKey, a => a.MoveTo == MoveTo.Own, "a move within the unit's own area"));
+        return new DefaultActions(Get(AttackKey, DefaultRole.Attack), Get(DefendKey, DefaultRole.Defend), Get(MoveKey, DefaultRole.Move));
+    }
+
+    /// <summary>Whether an action can serve as the default <paramref name="role"/>, and if not, what it must be.</summary>
+    static bool FitsRole(ActionDef a, DefaultRole role, out string what)
+    {
+        (var fits, what) = role switch
+        {
+            DefaultRole.Attack => (a.Target == ActionTarget.Enemy && a.DealsDamage, "an enemy-targeted action that deals damage"),
+            DefaultRole.Defend => (a.Target == ActionTarget.Self, "self-targeted"),
+            DefaultRole.Move => (a.Target == ActionTarget.Tile, "a tile action (a move)"),
+            _ => (true, ""),
+        };
+        return fits;
     }
 
     static UnitDef ReadUnit(Row r, DataTables t, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats,

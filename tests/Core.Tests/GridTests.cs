@@ -101,7 +101,7 @@ public class GridTests
     }
 
     [Fact]
-    public void Sneak_goes_into_the_enemy_area_where_melee_works_both_ways()
+    public void The_rogues_move_goes_into_the_enemy_area_where_melee_works_both_ways()
     {
         var rogue = U("rogue", "rogue", Side.Party);
         var warrior = U("warrior", "warrior", Side.Party);
@@ -115,9 +115,14 @@ public class GridTests
         var b = new Battle(Repo, [rogue, warrior, grunt, archer], seed: 1, grid);
 
         rogue.ActTicks = TurnClock.TurnThreshold;
-        var r = b.ActAt(rogue, Repo.Actions["sneak"], E(1, 2));
-        Assert.Single(r.Of<BuffApplied>());                              // Cloak
+        var move = Repo.Actions[Repo.DefaultFor(rogue.Def, DefaultRole.Move)!];
+        Assert.Equal("stealth_move", move.Id);                           // the Stealth mastery replaces Move
+        Assert.Contains(E(1, 2), Options.TilesFor(b, rogue, move));
+        Assert.Contains(P(1, 1), Options.TilesFor(b, rogue, move));   // and it still steps within its own area
+        var r = b.ActAt(rogue, move, E(1, 2));
+        Assert.Equal("stealth", r.Of<BuffApplied>().Single().Buff.Def.Id);
         Assert.True(grid.Intruding(rogue));
+        Assert.Throws<InvalidOperationException>(() => b.ActAt(warrior, Repo.Actions["move"], E(1, 0)));   // others can't
 
         Assert.Null(grid.CantTarget(rogue, Repo.Actions["dagger_attack"], archer));   // a back-row target
         Assert.Null(grid.CantTarget(archer, Repo.Actions["goblin_slash"], rogue));

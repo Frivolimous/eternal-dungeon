@@ -140,8 +140,8 @@ public sealed partial class Battle
         return Record(Resolve(actor, action, target));
     }
 
-    /// <summary>A tile-targeted action: Move steps to an empty tile next to the unit in the area it stands in;
-    /// Sneak goes to any empty tile in the other side's area. Then the action's effects apply.</summary>
+    /// <summary>A tile-targeted action: Move steps to an empty tile next to the unit in the area it stands in; the
+    /// Rogue's Move can also go to any empty tile in the other side's area. Then the action's effects apply.</summary>
     public ActionResult ActAt(Unit actor, ActionDef action, Tile tile)
     {
         if (!actor.Alive) throw new InvalidOperationException($"{actor.Name} is dead");
@@ -149,9 +149,7 @@ public sealed partial class Battle
             throw new InvalidOperationException($"{action.Name} doesn't target a tile");
         if (actor.CantUse(action) is string why)
             throw new InvalidOperationException($"{actor.Name} can't use {action.Name}: {why}");
-        var options = action.MoveTo == MoveTo.Enemy ? Grid.SneakOptions(actor) : Grid.MoveOptions(actor);
-        if (actor.Afraid)
-            options = Grid.RetreatOptions(actor);
+        var options = actor.Afraid ? Grid.RetreatOptions(actor) : Grid.TileOptions(actor, action);
         if (!options.Contains(tile))
             throw new InvalidOperationException($"{actor.Name} can't {action.Name} to {tile}");
 

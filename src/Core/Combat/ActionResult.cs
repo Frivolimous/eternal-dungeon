@@ -45,7 +45,7 @@ public sealed record Fizzled(FizzleReason Reason, Unit Caster, ActionDef Action,
 
 public sealed record Died(Unit Unit) : Outcome;
 
-/// <summary>A unit changed tiles: by Move or Sneak, pushed or pulled, or the area collapsing forward.</summary>
+/// <summary>A unit changed tiles: by Move (the Rogue's can enter the enemy area), pushed or pulled, or the area collapsing forward.</summary>
 public sealed record Moved(Unit Unit, Tile From, Tile To, string Why) : Outcome;
 
 /// <summary>Stagger damage. <see cref="Broke"/>: the bar filled and the unit is stunned until it drains.</summary>

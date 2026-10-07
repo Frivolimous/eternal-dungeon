@@ -51,7 +51,7 @@ Every character starts with Weapon C.Rate 5% and untagged C.Mult 0.5, so every w
 - Each side has its own area, 3×2 or 2×3 by default. Abilities can grow it to 4×2 or 3×3.
 - At most 6 units are on the map: the 4 party heroes plus overflow from mercenaries and pets.
 - Heroes move freely within their area, and enemies generally stay put. Every action has a Range.
-- Rogues on either side can teleport into the opposing area.
+- Rogues on either side can enter the opposing area: with the Stealth mastery (the Rogue's first), Move can also go to any empty tile in the enemy area, and every Move grants Stealth for 1 turn (less Threat). This replaces the old Sneak action.
 - Enemies usually appear in front. In an Ambushed battle they appear on all sides, and in a Surrounding battle the party flanks them.
 - When an area's front row empties, the area collapses forward. Some actions reposition enemies.
 - Push and Pull move a unit one row back or forward within its area, only if the tiles are free.

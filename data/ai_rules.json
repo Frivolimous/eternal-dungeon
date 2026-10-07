@@ -13,7 +13,7 @@
   { "profile": "hero_warrior", "order": 4, "action": "attack" },
   { "profile": "hero_rogue", "order": 1, "action": "defend", "self_health_below": 0.25, "not_twice_in_a_row": true },
   { "profile": "hero_rogue", "order": 2, "action": "dagger_attack" },
-  { "profile": "hero_rogue", "order": 3, "action": "sneak", "not_intruding": true },
+  { "profile": "hero_rogue", "order": 3, "action": "stealth_move", "not_intruding": true, "to_enemy_area": true },
   { "profile": "hero_elementalist", "order": 1, "action": "frost_shard", "not_twice_in_a_row": true, "target_missing_buff": "chill" },
   { "profile": "hero_elementalist", "order": 2, "action": "fire_bolt" }
 ]
