@@ -1,8 +1,6 @@
 [
   { "id": "health", "name": "Health", "group": "character", "combine": "add" },
-  { "id": "h_regen", "name": "H.Regen", "group": "character", "combine": "add" },
   { "id": "mana", "name": "Mana", "group": "character", "combine": "add" },
-  { "id": "m_regen", "name": "M.Regen", "group": "character", "combine": "add" },
   { "id": "speed", "name": "Speed", "group": "character", "combine": "add", "integer": true },
   { "id": "initiative", "name": "Initiative", "group": "character", "combine": "add", "integer": true },
   { "id": "threat", "name": "Threat", "group": "character", "combine": "add", "hidden": true },

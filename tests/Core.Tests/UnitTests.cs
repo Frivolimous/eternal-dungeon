@@ -20,7 +20,8 @@ public class UnitTests
         Assert.Equal(15, w.Stats.Get("power", ["physical", "melee"]));   // Strength 15 × 1
 
         var e = Make("elementalist");
-        Assert.Equal(60, e.Mana);
+        Assert.Equal(TestData.Repo.Units["elementalist"].Stats.Single(s => s.Stat == "mana" && s.Tag is null).Value, e.Mana);
+        Assert.Equal(e.MaxMana, e.Mana);
     }
 
     [Fact]
@@ -58,11 +59,24 @@ public class UnitTests
     public void Mana_is_spent_only_when_there_is_enough()
     {
         var e = Make("elementalist");
-        Assert.True(e.SpendMana(45));
+        Assert.True(e.SpendMana(e.MaxMana - 15));
         Assert.False(e.SpendMana(20));
         Assert.Equal(15, e.Mana);
-        e.RestoreMana(100);
-        Assert.Equal(60, e.Mana);
+        e.RestoreMana(e.MaxMana + 100);
+        Assert.Equal(e.MaxMana, e.Mana);
+    }
+
+    [Fact]
+    public void Health_and_mana_never_regenerate_on_their_own()
+    {
+        var e = Make("elementalist");
+        var g = Make("goblin_grunt", Side.Enemy);
+        var battle = new Battle(TestData.Repo, [e, g], seed: 1);
+        e.TakeDamage(30);
+        e.SpendMana(40);
+        for (var i = 0; i < 10; i++) battle.BuffTick();
+        Assert.Equal(e.MaxHealth - 30, e.Health);
+        Assert.Equal(e.MaxMana - 40, e.Mana);
     }
 
     [Fact]

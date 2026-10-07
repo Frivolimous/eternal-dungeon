@@ -77,21 +77,14 @@ public sealed partial class Battle
         return Record(r);
     }
 
-    /// <summary>One buff-clock turn: stagger bars drain, Health and Mana regenerate, periodic damage and healing land, then buffs count
-    /// down and expire.</summary>
+    /// <summary>One buff-clock turn: stagger bars drain, periodic damage and healing land, then buffs count down and
+    /// expire. There is no passive Health or Mana regeneration.</summary>
     public ActionResult BuffTick()
     {
         var r = new ActionResult(Clock.Tick, Units[0], null, null);
         foreach (var unit in Units.Where(u => u.Alive))
         {
             unit.DrainStagger(StaggerDrain);
-            var regen = (int)Math.Round(unit.Stats.Get("h_regen"), MidpointRounding.AwayFromZero);
-            if (regen > 0 && unit.Health < unit.MaxHealth)
-            {
-                var before = unit.Health;
-                r.Add(new Healed(unit, null, unit.Heal(regen), before));
-            }
-            unit.RestoreMana((int)Math.Round(unit.Stats.Get("m_regen"), MidpointRounding.AwayFromZero));
             foreach (var buff in unit.Buffs.ToList())
             {
                 if (buff.Def.PeriodicDamage > 0 && unit.Alive)

@@ -9,8 +9,8 @@ public sealed record Decision(ActionDef Action, Unit? Target, Tile? Tile);
 /// Picks actions and targets from a unit's AI profile (Anchor: Combat › Enemy targeting). Rules are tried in
 /// order; the first whose action is usable, whose conditions hold and that has a valid target wins. Enemy
 /// targets score w × Threat + (1 − w) × Vulnerability. Heroes use the same rules in the simulator, since there
-/// is no player input yet. With no rule usable, a unit uses its default actions: it Moves toward the front if it
-/// can, otherwise it Defends. A feared unit only Moves away from the front, or Defends.
+/// is no player input yet. With no rule usable, a unit uses its default actions: it Attacks if it has a valid
+/// target, otherwise it Moves toward the front if it can, otherwise it Defends. A feared unit only Moves away from the front, or Defends.
 /// </summary>
 public static class UnitAi
 {
@@ -32,8 +32,18 @@ public static class UnitAi
             if (Choose(battle, unit, action, rule, profile.ThreatWeight) is { } decision)
                 return decision;
         }
+        if (DefaultAttack(battle, unit, profile.ThreatWeight) is { } attack) return attack;
         var forward = battle.Grid.ForwardOptions(unit);
         return Default(battle, unit, d => d.Move, forward) ?? Default(battle, unit, d => d.Defend);
+    }
+
+    /// <summary>The default Attack at the best-scoring valid target, if the unit can use it and has one.</summary>
+    static Decision? DefaultAttack(Battle battle, Unit unit, double w)
+    {
+        if (battle.Data.DefaultActions is not { } defaults) return null;
+        var action = battle.Data.Actions[defaults.Attack];
+        if (unit.CantUse(action) is not null) return null;
+        return Choose(battle, unit, action, new AiRule(action.Id), w);
     }
 
     static Decision? Choose(Battle battle, Unit unit, ActionDef action, AiRule rule, double w)

@@ -1,0 +1,11 @@
+action	order	effect	on
+defend	1	guard	self
+sneak	1	cloak	self
+frost_shard	1	chill	
+shield_bash	1	daze	
+shield_bash	2	push	
+hex_bolt	1	dread	
+rotting_hex	1	rot	
+mend	1	mend	
+brute_smash	1	smash_stagger	
+war_cry	1	war_cry	self

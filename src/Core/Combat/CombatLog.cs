@@ -143,7 +143,7 @@ public static class CombatLog
 
     static string? Describe(BattleGrid grid, Strings s, Outcome o) => o switch
     {
-        Healed h when h.Amount > 0 => s.Format("log.healed", ("source", h.Source ?? s["log.regen"]), ("target", h.Target.Name), ("amount", h.Amount),
+        Healed h when h.Amount > 0 => s.Format("log.healed", ("source", h.Source), ("target", h.Target.Name), ("amount", h.Amount),
             ("before", h.HealthBefore), ("after", h.HealthBefore + h.Amount)),
         Healed => null,
         Shielded x => s.Format("log.shielded", ("source", x.Source), ("target", x.Target.Name), ("amount", x.Amount)),
@@ -174,7 +174,7 @@ public static class CombatLog
         var bits = new List<string>();
         if (d.PeriodicDamage > 0)
             bits.Add(s.Format("log.buff_dot", ("amount", Math.Max(1, (int)Math.Round(d.PeriodicDamage * b.Stacks * b.Buff.DotFactor, MidpointRounding.AwayFromZero)))));
-        if (d.PeriodicHeal > 0) bits.Add(s.Format("log.buff_regen", ("amount", d.PeriodicHeal * b.Stacks)));
+        if (d.PeriodicHeal > 0) bits.Add(s.Format("log.buff_hot", ("amount", d.PeriodicHeal * b.Stacks)));
         if (d.Cc != CcKind.None) bits.Add(CcName(s, d.Cc));
         foreach (var x in d.Stats)
         {

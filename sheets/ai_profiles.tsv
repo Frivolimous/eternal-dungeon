@@ -1,0 +1,10 @@
+id	name	threat_weight	note
+goblin_grunt	Grunt	0.5	
+goblin_archer	Archer	0.25	
+goblin_shaman	Shaman	0.75	
+goblin_brute	Brute	0.5	
+goblin_chief	Chief	0.6	
+goblin_hexer	Hexer	0.5	
+hero_warrior	Warrior (scripted)	0.25	
+hero_rogue	Rogue (scripted)	0.25	
+hero_elementalist	Elementalist (scripted)	0.25	

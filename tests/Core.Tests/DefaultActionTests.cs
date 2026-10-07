@@ -50,6 +50,22 @@ public class DefaultActionTests
     }
 
     [Fact]
+    public void A_caster_out_of_mana_falls_back_on_the_default_attack()
+    {
+        var shaman = U(Repo, "goblin_shaman", "s", Side.Enemy);
+        var e = U(Repo, "elementalist", "e", Side.Party);
+        var grid = new BattleGrid();
+        grid.Place(e, P(0, 1));
+        grid.Place(shaman, E(0, 2));
+        var b = new Battle(Repo, [e, shaman], seed: 1, grid);
+        e.SpendMana(e.MaxMana);
+        shaman.SpendMana(shaman.MaxMana);
+
+        Assert.Equal(("attack", shaman), (UnitAi.Decide(b, e)!.Action.Id, UnitAi.Decide(b, e)!.Target));
+        Assert.Equal(("attack", e), (UnitAi.Decide(b, shaman)!.Action.Id, UnitAi.Decide(b, shaman)!.Target));
+    }
+
+    [Fact]
     public void Fear_allows_only_defend_or_moving_away_from_the_front()
     {
         var data = With(actions: [Action("scare", ActionTarget.Ally, new EffectRef("dread", EffectAim.Target))]);

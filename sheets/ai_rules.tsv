@@ -1,0 +1,18 @@
+profile	order	action	ally_health_below	self_health_below	missing_buff	not_intruding	not_twice_in_a_row	target_missing_buff	target_casting
+goblin_grunt	1	goblin_slash							
+goblin_archer	1	goblin_shot							
+goblin_shaman	1	mend	0.5						
+goblin_shaman	2	rotting_hex							
+goblin_brute	1	brute_smash							
+goblin_chief	1	war_cry			war_cry				
+goblin_chief	2	chief_cleave							
+goblin_hexer	1	hex_bolt							
+hero_warrior	1	shield_bash							TRUE
+hero_warrior	2	defend		0.3			TRUE		
+hero_warrior	3	power_attack					TRUE		
+hero_warrior	4	attack							
+hero_rogue	1	defend		0.25			TRUE		
+hero_rogue	2	dagger_attack							
+hero_rogue	3	sneak				TRUE			
+hero_elementalist	1	frost_shard					TRUE	chill	
+hero_elementalist	2	fire_bolt							

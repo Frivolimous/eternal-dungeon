@@ -78,10 +78,10 @@ Each class a hero takes (Primary, Secondary and Dabble alike) adds one point to 
 | Off-hand | Any weapon | Dual-wield: −25% weapon accuracy, 2 attacks, plus the weapon's own traits | That weapon's tier |
 | Armor | Cloth | Unarmored | 0 |
 | Armor | Light | A bit of health, −speed | 0 |
-| Armor | Robe | Mana regen | 0 |
+| Armor | Robe | Mana | 0 |
 | Armor | Medium | Health, −speed | 1 |
 | Armor | Gi | Unarmored, dodge | 1 |
-| Armor | Cerulean | Mana regen | 1 |
+| Armor | Cerulean | Mana | 1 |
 | Armor | Tabi | Unarmored, C.Rate | 1 |
 | Armor | Heavy | Health, −dodge, −speed | 2 |
 | Helmet | Light | A bit of health, −speed | 0 |

@@ -39,10 +39,10 @@ Every character starts with Weapon C.Rate 5% and untagged C.Mult 0.5, so every w
 - Spells have a casting timer. The Arcanist's Meddle staggers an enemy while it's casting.
 - A unit's Act meter stops filling while it casts, and resumes when the cast completes, fizzles or is interrupted.
 - A cast fizzles if its target dies, the caster dies, or it's interrupted. There is no retargeting.
-- Buffs and Regen run on their own clock at base Speed 100, so a 3-turn buff lasts 3 base-speed turns whatever the buffed hero's own Speed. Speed, Act and AP are integers on the 100 scale, while chance-type stats (Avoid, Resist, Rate, Deval) are 0–1 internally and shown as percentages.
+- Buffs run on their own clock at base Speed 100, so a 3-turn buff lasts 3 base-speed turns whatever the buffed hero's own Speed. Speed, Act and AP are integers on the 100 scale, while chance-type stats (Avoid, Resist, Rate, Deval) are 0–1 internally and shown as percentages.
 - Events at the same moment resolve in a fixed order: the buff clock first, then completed casts, then turns.
 - If both sides fall at the same moment, it counts as a party wipe.
-- **No real-time clock.** Ticks are simulated instantly until the next unit reaches 100 Act, and the game waits for the player on each hero turn. A quick animation shows the meters filling. Every "over time" effect (stagger drain, buffs, Regen) counts ticks, not seconds.
+- **No real-time clock.** Ticks are simulated instantly until the next unit reaches 100 Act, and the game waits for the player on each hero turn. A quick animation shows the meters filling. Every "over time" effect (stagger drain, buffs, damage or healing over time) counts ticks, not seconds. There is no passive Health or Mana regeneration: healing or Mana over time exists only as effects, like damage over time.
 
 ## Battlefield
 
@@ -67,7 +67,7 @@ Every unit, heroes and enemies, has three default actions on top of its own skil
 | Defend | 100 | +0.3 Avoid and a Shield of 10% max Health until the unit's next turn |
 | Move | 50 | One tile within the unit's own area |
 
-A unit with no valid target for its skills uses these: it Moves to step into an empty front tile if it can, otherwise it Defends. This keeps "enemies generally stay put" true while stopping melee enemies from waiting behind their own front line.
+A unit with no usable skill (no valid target, or not enough Mana) uses these: it Attacks if it has a valid target, otherwise it Moves to step into an empty front tile if it can, otherwise it Defends. This keeps "enemies generally stay put" true while stopping melee enemies from waiting behind their own front line.
 
 ## Crowd control
 

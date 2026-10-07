@@ -19,8 +19,8 @@ public sealed record Damaged(Unit Target, DamageBreakdown Breakdown, DamageTaken
 
 public sealed record PeriodicDamaged(Unit Target, Buff Buff, DamageTaken Taken, int HealthBefore) : Outcome;
 
-/// <summary>Healing. <see cref="Source"/> is the effect's name, or null for Health Regen.</summary>
-public sealed record Healed(Unit Target, string? Source, int Amount, int HealthBefore) : Outcome;
+/// <summary>Healing. <see cref="Source"/> is the name of the effect, buff or proc that healed.</summary>
+public sealed record Healed(Unit Target, string Source, int Amount, int HealthBefore) : Outcome;
 
 public sealed record Shielded(Unit Target, string Source, int Amount) : Outcome;
 

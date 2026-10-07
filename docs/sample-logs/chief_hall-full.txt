@@ -247,13 +247,16 @@ Enemies: Goblin Chief 370 HP, Goblin Grunt #1 85 HP, Goblin Grunt #2 85 HP
          dmg = base 15 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15.75 → 16
 [T 16.10] Goblin Chief → War Cry
          applies War Cry (+10 power, 3 turns) on Goblin Chief
-[T 16.80] Elementalist begins casting Fire Bolt at Goblin Chief (ready at T 17.30)
-[T 17.00] Chill on Goblin Chief ends
+[T 16.80] Elementalist → Attack → Goblin Chief
+         hit (90%) · 14 dmg (Physical) · Goblin Chief HP 11 → 0
+         roll 0.683 vs 0.903 → hit
+         C.Rate 0.05 → 5%: roll 0.324 → no crit
+         dmg = base 15 × power 1 (0) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 13.5 → 14
+         Goblin Chief falls
 [T 17.00] Goblin Grunt #2 → Slash → Elementalist
          hit (86%) · 16 dmg (Physical) · Elementalist HP 4 → 0
-         roll 0.683 vs 0.855 → hit
-         C.Rate 0.05 → 5%: roll 0.324 → no crit
+         roll 0.248 vs 0.855 → hit
+         C.Rate 0.05 → 5%: roll 0.073 → no crit
          dmg = base 15 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15.75 → 16
          Elementalist falls
-         Elementalist's Fire Bolt fizzles: the caster fell
 [T 17.00] Defeat: the party has fallen.

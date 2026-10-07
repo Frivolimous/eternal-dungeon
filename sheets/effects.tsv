@@ -1,0 +1,12 @@
+id	name	duration	turns	stacking	max_stacks	heal	shield_max_health	periodic_damage	periodic_heal	procs	cc	stagger	delayed_damage	displace	note
+guard	Guard	until_next_turn					0.1								
+cloak	Cloak	until_next_turn													
+rot	Rot	turns	3					4							
+mend	Mend					20									
+war_cry	War Cry	turns	3	TRUE	3										
+chill	Chill	turns	2												
+smash_stagger	Stagger											60			
+daze	Dazed	turns	1								stun				
+dread	Dread	turns	2								fear				
+push	Push													push	
+berserk	Berserk	turns	3												
