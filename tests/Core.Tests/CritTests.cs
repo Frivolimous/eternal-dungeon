@@ -2,7 +2,7 @@ using EternalDungeon.Core.Combat;
 
 namespace EternalDungeon.Core.Tests;
 
-// Crit (Anchor: Combat › Formulas): Crit Rating → per-hit chance, Brutal at the same chance, Crit Mult per tier.
+// Crit (Anchor: Combat › Formulas): C.Rate → per-hit chance, Brutal at the same chance, C.Mult per tier.
 public class CritTests
 {
     const int Precision = 12;
@@ -10,7 +10,7 @@ public class CritTests
     static Unit U(string def, string id, Side side) => new(id, TestData.Repo.Units[def], side, TestData.Repo);
 
     [Fact]
-    public void Rating_converts_so_that_c_plus_c_squared_equals_the_rating()
+    public void C_rate_converts_so_that_c_plus_c_squared_equals_it()
     {
         Assert.Equal(0, Resolution.CritChance(0));
         Assert.Equal((Math.Sqrt(5) - 1) / 2, Resolution.CritChance(1), Precision);   // 61.8%
@@ -19,38 +19,38 @@ public class CritTests
         foreach (var r in new[] { 0.05, 0.5, 1.3 })
         {
             var c = Resolution.CritChance(r);
-            Assert.Equal(r, c + c * c, Precision);                                    // expected tiers = rating
+            Assert.Equal(r, c + c * c, Precision);                                    // expected tiers = C.Rate
         }
     }
 
     [Fact]
-    public void Every_unit_starts_with_weapon_crit_and_half_crit_mult()
+    public void Every_unit_starts_with_weapon_c_rate_and_half_c_mult()
     {
         var w = U("warrior", "w", Side.Party);
         var g = U("goblin_grunt", "g", Side.Enemy);
-        Assert.Equal(0.05, Resolution.CritRating(w, TestData.Repo.Actions["attack"], g), Precision);
-        Assert.Equal(0, Resolution.CritRating(U("elementalist", "e", Side.Party), TestData.Repo.Actions["fire_bolt"], g));
-        Assert.Equal(0.5, w.Stats.Get("crit_mult", TestData.Repo.Actions["fire_bolt"].Tags));   // untagged: spells too
+        Assert.Equal(0.05, Resolution.CRate(w, TestData.Repo.Actions["attack"], g), Precision);
+        Assert.Equal(0, Resolution.CRate(U("elementalist", "e", Side.Party), TestData.Repo.Actions["fire_bolt"], g));
+        Assert.Equal(0.5, w.Stats.Get("c_mult", TestData.Repo.Actions["fire_bolt"].Tags));   // untagged: spells too
 
         var e = U("elementalist", "e2", Side.Party);
-        e.Stats.Add("ring", "crit_rating", 0.2, "spell");                              // a spell gains crit without its own mult
-        Assert.Equal(0.2, Resolution.CritRating(e, TestData.Repo.Actions["fire_bolt"], g), Precision);
+        e.Stats.Add("ring", "c_rate", 0.2, "spell");                              // a spell gains crit without its own mult
+        Assert.Equal(0.2, Resolution.CRate(e, TestData.Repo.Actions["fire_bolt"], g), Precision);
     }
 
     [Fact]
-    public void Critical_deval_lowers_the_rating_before_the_curve()
+    public void Critical_deval_lowers_c_rate_before_the_curve()
     {
         var w = U("warrior", "w", Side.Party);
         var g = U("goblin_grunt", "g", Side.Enemy);
-        w.Stats.Add("test", "crit_rating", 0.95);                                      // Rating 1.0 with the default 0.05
+        w.Stats.Add("test", "c_rate", 0.95);                                      // C.Rate 1.0 with the default 0.05
         g.Stats.Add("test", "deval", 0.25, "critical");
-        Assert.Equal(0.8, Resolution.CritRating(w, TestData.Repo.Actions["attack"], g), Precision);   // 1.0 ÷ 1.25
+        Assert.Equal(0.8, Resolution.CRate(w, TestData.Repo.Actions["attack"], g), Precision);   // 1.0 ÷ 1.25
         g.Stats.Add("curse", "deval", 0.5);                                            // untagged Deval isn't Critical Deval
-        Assert.Equal(0.8, Resolution.CritRating(w, TestData.Repo.Actions["attack"], g), Precision);
+        Assert.Equal(0.8, Resolution.CRate(w, TestData.Repo.Actions["attack"], g), Precision);
     }
 
     [Fact]
-    public void Each_tier_adds_crit_mult_reduced_by_critical_resist()
+    public void Each_tier_adds_c_mult_reduced_by_critical_resist()
     {
         var w = U("warrior", "w", Side.Party);
         var g = U("goblin_grunt", "g", Side.Enemy);
@@ -74,7 +74,7 @@ public class CritTests
     {
         var w = U("warrior", "w", Side.Party);
         var g = U("goblin_grunt", "g", Side.Enemy);
-        w.Stats.Add("test", "crit_rating", 0.5);
+        w.Stats.Add("test", "c_rate", 0.5);
         var battle = new Battle(TestData.Repo, [w, g], seed: 3);
         int hits = 0, crits = 0, brutals = 0, misses = 0;
 
@@ -99,7 +99,7 @@ public class CritTests
             Assert.Equal(roll.Tiers, r.Of<Damaged>().Single().Breakdown.CritTiers);
         }
         Assert.True(misses > 0);
-        // Rating 0.55 → c ≈ 0.42: about 42% of hits crit and 42% of those go Brutal.
+        // C.Rate 0.55 → c ≈ 0.42: about 42% of hits crit and 42% of those go Brutal.
         Assert.InRange((double)crits / hits, 0.34, 0.50);
         Assert.InRange((double)brutals / crits, 0.30, 0.55);
     }
@@ -110,7 +110,7 @@ public class CritTests
         var shaman = U("goblin_shaman", "s", Side.Enemy);
         var w = U("warrior", "w", Side.Party);
         w.Stats.Add("test", "avoid", -0.9);
-        shaman.Stats.Add("test", "crit_rating", 2);                                     // even at the cap
+        shaman.Stats.Add("test", "c_rate", 2);                                     // even at the cap
         var battle = new Battle(TestData.Repo, [w, shaman], seed: 1);
         shaman.ActTicks = TurnClock.TurnThreshold;
 

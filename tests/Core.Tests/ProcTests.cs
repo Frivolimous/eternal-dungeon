@@ -222,7 +222,7 @@ public class ProcTests
 
         g.Stats.RemoveSource("test");
         g.Stats.Add("test", "avoid", -0.9);
-        w.Stats.Add("test", "crit_rating", 2);                                // always crits: Explosive fires
+        w.Stats.Add("test", "c_rate", 2);                                // always crits: Explosive fires
         var crit = Hit(b, w, "attack", g);
         Assert.Contains(crit.Of<ProcRolled>(), p => p.Proc.Id == "explosive" && p.Roll.Success);
     }

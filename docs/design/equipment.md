@@ -58,16 +58,16 @@ Each class a hero takes (Primary, Secondary and Dabble alike) adds one point to 
 
 | Slot | Item | Trait | Tier |
 | --- | --- | --- | --- |
-| Weapon | 1h Dagger | Crit Rating | 0 |
+| Weapon | 1h Dagger | C.Rate | 0 |
 | Weapon | 1h Mace | Magic power, stun | 0 |
 | Weapon | 2h Staff | Magic power | 0 |
 | Weapon | 2h Gloves | Monk, 2 attacks | 0 |
 | Weapon | 1h Sling | Light | 0 |
-| Weapon | Crossbow | Slow, Crit Mult | 0 |
-| Weapon | 1h Axe | Crit Mult | 1 |
-| Weapon | 2h Axe | Crit Mult | 1 |
+| Weapon | Crossbow | Slow, C.Mult | 0 |
+| Weapon | 1h Axe | C.Mult | 1 |
+| Weapon | 2h Axe | C.Mult | 1 |
 | Weapon | 2h Spear | Reach | 1 |
-| Weapon | 2h Halberd | Crit Rating | 1 |
+| Weapon | 2h Halberd | C.Rate | 1 |
 | Weapon | 2h Bo | Stun, monk | 1 |
 | Weapon | Bow | Pure damage | 1 |
 | Weapon | 1h Sword | Pure damage | 2 |
@@ -82,7 +82,7 @@ Each class a hero takes (Primary, Secondary and Dabble alike) adds one point to 
 | Armor | Medium | Health, −speed | 1 |
 | Armor | Gi | Unarmored, dodge | 1 |
 | Armor | Cerulean | Mana regen | 1 |
-| Armor | Tabi | Unarmored, Crit Rating | 1 |
+| Armor | Tabi | Unarmored, C.Rate | 1 |
 | Armor | Heavy | Health, −dodge, −speed | 2 |
 | Helmet | Light | A bit of health, −speed | 0 |
 | Helmet | Medium | Health, −speed | 1 |

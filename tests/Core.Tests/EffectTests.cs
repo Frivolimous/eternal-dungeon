@@ -176,7 +176,7 @@ public class EffectTests
         var r = battle.Act(g, data.Actions["goblin_slash"], w);
         Assert.Collection(r.Outcomes,
             o => Assert.IsType<Attempt>(o),
-            o => Assert.IsType<CritRolled>(o),                              // Slash is a weapon attack: 5% Crit Rating
+            o => Assert.IsType<CritRolled>(o),                              // Slash is a weapon attack: 5% C.Rate
             o => Assert.IsType<Damaged>(o),
             o => Assert.Equal("thorn_rot", Assert.IsType<ProcRolled>(o).Proc.Id),
             o => Assert.Equal(g, Assert.IsType<BuffApplied>(o).Target));  // Second Wind's check failed: Health is high

@@ -69,8 +69,8 @@ public partial class DetailsPanel : PanelContainer
             Stat(data, "hit", u.Stats.Get("hit"), pct: true),
             Stat(data, "avoid", u.Stats.Get("avoid"), pct: true),
             Stat(data, "power", u.Stats.Get("power"), pct: false),
-            Stat(data, "crit_rating", u.Stats.Get("crit_rating", ["weapon"]), pct: true),
-            Stat(data, "crit_mult", u.Stats.Get("crit_mult"), pct: true),
+            Stat(data, "c_rate", u.Stats.Get("c_rate", ["weapon"]), pct: true),
+            Stat(data, "c_mult", u.Stats.Get("c_mult"), pct: true),
         };
         sb.Append(Escape(string.Join("   ", stats))).Append('\n');
 

@@ -12,7 +12,7 @@ public sealed record DamageBreakdown(
     double AllDamage,
     double AllResist,
     int CritTiers = 0,
-    double CritMult = 0,
+    double CMult = 0,
     double CritResist = 0,
     double CritPenetrate = 0)
 {
@@ -22,8 +22,8 @@ public sealed record DamageBreakdown(
     public double AllDamageFactor => 1 + AllDamage;
     public double AllResistFactor => 1 - AllResist;
 
-    /// <summary>1 + tiers × Crit Mult × (1 − Critical Resist × (1 − Critical Penetrate)); 1 when it didn't crit.</summary>
-    public double CritFactor => 1 + CritTiers * CritMult * (1 - CritResist * (1 - CritPenetrate));
+    /// <summary>1 + tiers × C.Mult × (1 − Critical Resist × (1 − Critical Penetrate)); 1 when it didn't crit.</summary>
+    public double CritFactor => 1 + CritTiers * CMult * (1 - CritResist * (1 - CritPenetrate));
 
     /// <summary>The unrounded result, never below 0.</summary>
     public double Raw => Math.Max(0, Base * PowerFactor * MultiplierFactor * ResistFactor * AllDamageFactor * AllResistFactor * CritFactor);
@@ -49,24 +49,24 @@ public static class Resolution
     public static double ProcChance(double baseChance, double rate, double deval) =>
         Math.Max(0, baseChance * (1 + rate) / Math.Max(MinDevalDivisor, 1 + deval));
 
-    /// <summary>Crit Rating's hard cap (Anchor: 200%).</summary>
-    public const double MaxCritRating = 2;
+    /// <summary>C.Rate's hard cap (Anchor: 200%).</summary>
+    public const double MaxCRate = 2;
 
     /// <summary>
-    /// The per-hit chance of a crit for a Crit Rating, and again of a Brutal crit after one:
-    /// c = (√(1 + 4 × Rating) − 1) / 2, so c + c² = Rating and expected damage rises in a straight line.
-    /// Rating 1 gives 61.8%; Rating 2 (the cap) gives 100%.
+    /// The per-hit chance of a crit for a C.Rate, and again of a Brutal crit after one:
+    /// c = (√(1 + 4 × C.Rate) − 1) / 2, so c + c² = C.Rate and expected damage rises in a straight line.
+    /// C.Rate 1 gives 61.8%; C.Rate 2 (the cap) gives 100%.
     /// </summary>
-    public static double CritChance(double rating)
+    public static double CritChance(double cRate)
     {
-        var r = Math.Clamp(rating, 0, MaxCritRating);
+        var r = Math.Clamp(cRate, 0, MaxCRate);
         return (Math.Sqrt(1 + 4 * r) - 1) / 2;
     }
 
-    /// <summary>The attacker's Crit Rating for the action's tags ÷ (1 + the target's Critical Deval), capped.</summary>
-    public static double CritRating(Unit attacker, ActionDef action, Unit target) =>
-        Math.Clamp(attacker.Stats.Get("crit_rating", action.Tags) / Math.Max(MinDevalDivisor, 1 + target.Stats.GetKeyed("deval", Critical)),
-            0, MaxCritRating);
+    /// <summary>The attacker's C.Rate for the action's tags ÷ (1 + the target's Critical Deval), capped.</summary>
+    public static double CRate(Unit attacker, ActionDef action, Unit target) =>
+        Math.Clamp(attacker.Stats.Get("c_rate", action.Tags) / Math.Max(MinDevalDivisor, 1 + target.Stats.GetKeyed("deval", Critical)),
+            0, MaxCRate);
 
     static readonly string[] Critical = ["critical"];
 
@@ -115,7 +115,7 @@ public static class Resolution
             AllDamage: a.Get("all_damage") + action.AllDamage,
             AllResist: d.Get("all_resist"),
             CritTiers: critTiers,
-            CritMult: critTiers > 0 ? a.Get("crit_mult", tags) : 0,
+            CMult: critTiers > 0 ? a.Get("c_mult", tags) : 0,
             CritResist: critTiers > 0 ? d.GetKeyed("resist", Critical) : 0,
             CritPenetrate: critTiers > 0 ? a.GetKeyed("penetrate", Critical) : 0);
     }

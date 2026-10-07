@@ -46,7 +46,7 @@ public static class Preview
             normal = Resolution.Damage(actor, action, target).Final;
             crit = Resolution.Damage(actor, action, target, 1).Final;
             brutal = Resolution.Damage(actor, action, target, 2).Final;
-            c = Resolution.CritChance(Resolution.CritRating(actor, action, target));
+            c = Resolution.CritChance(Resolution.CRate(actor, action, target));
         }
         return new TargetPreview(target, hit, normal, crit, brutal, c, c, action.Effects, Procs(battle, actor, action, target),
             BattleSession.Confused(actor, action));

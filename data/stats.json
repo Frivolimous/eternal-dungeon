@@ -15,8 +15,8 @@
   { "id": "penetrate", "name": "Penetrate", "group": "attack", "combine": "dim" },
   { "id": "hit", "name": "Hit", "group": "attack", "combine": "dim" },
   { "id": "rate", "name": "Rate", "group": "attack", "combine": "add" },
-  { "id": "crit_rating", "name": "Crit Rating", "group": "attack", "combine": "add" },
-  { "id": "crit_mult", "name": "Crit Mult", "group": "attack", "combine": "add" },
+  { "id": "c_rate", "name": "C.Rate", "group": "attack", "combine": "add" },
+  { "id": "c_mult", "name": "C.Mult", "group": "attack", "combine": "add" },
   { "id": "resist", "name": "Resist", "group": "defense", "combine": "dim" },
   { "id": "avoid", "name": "Avoid", "group": "defense", "combine": "dim" },
   { "id": "deval", "name": "Deval", "group": "defense", "combine": "add" }

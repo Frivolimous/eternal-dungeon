@@ -13,20 +13,22 @@ Combat is purely turn-based and speed-driven, fought on small grids. Each hero i
 ```
 
 ```latex
-\text{Crit} = 1 + \text{tiers} \times \text{CritMult} \times \big(1 - \text{CritResist} \times (1 - \text{CritPen})\big)
+\text{Crit} = 1 + \text{tiers} \times \text{C.Mult} \times \big(1 - \text{CritResist} \times (1 - \text{CritPen})\big)
 ```
 
 ```latex
 \text{Proc} = \text{Base} \times (1 + \sum\text{Rate}) \div (1 + \sum\text{Deval})
 ```
 
-Crit is a core stat, not a proc. Crit Rating (Add, tag-keyed, hard cap 200%) converts into a per-hit crit chance c = (√(1 + 4 × Rating) − 1) / 2. A crit rolls again at the same chance for a Brutal crit, so expected damage rises in a straight line with Rating. Each tier adds Crit Mult (Add, tag-keyed): Damage × (1 + tiers × Crit Mult × (1 − Critical Resist × (1 − Critical Penetrate))). The target's Critical Deval lowers the Rating before the conversion: Rating ÷ (1 + Critical Deval), then the 200% cap. Critical Resist and Critical Penetrate count only their Critical-keyed parts, since the untagged parts already applied to the hit. Crit rolls only on a successful hit. The character sheet shows the Rating with both chances as shares of all hits: Rating 100% gives a 62% crit chance, and 38% of hits are Brutal (62% of crits).
+Crit is a core stat, not a proc. C.Rate (Add, tag-keyed, hard cap 200%) converts into a per-hit crit chance c = (√(1 + 4 × C.Rate) − 1) / 2. A crit rolls again at the same chance for a Brutal crit, so expected damage rises in a straight line with C.Rate. Each tier adds C.Mult (Add, tag-keyed): Damage × (1 + tiers × C.Mult × (1 − Critical Resist × (1 − Critical Pen))). The target's Critical Deval lowers C.Rate before the conversion: C.Rate ÷ (1 + Critical Deval), then the 200% cap. Critical Resist and Critical Pen count only their Critical-keyed parts, since the untagged parts already applied to the hit. Crit rolls only on a successful hit. The character sheet shows C.Rate with both chances as shares of all hits: C.Rate 100% gives a 62% crit chance, and 38% of hits are Brutal (62% of crits).
+
+The crit stats are always written **C.Rate** and **C.Mult**, never spelled out: under the TAG STAT convention "Critical Rate" would mean the Rate stat on Critical-tagged actions (like Critical Resist, Critical Deval and Critical Pen), which is a different thing.
 
 Power and Multiplier scale damage as percentages. Power factor = 1 + total Power / 100, so Fire Power 50 means +50% damage on Fire actions. Multiplier factor = 1 + total Multiplier, so 0.2 means +20%.
 
 Base is the action's base damage plus the attacker's Base Dmg stat for the action's tags. An action's own damage bonus goes into All Damage: Power Attack carries All Damage 1.0, so it deals ×2, and a +0.2 Multiplier ring stacks on top as a separate ×1.2. Damage rounds to the nearest whole number, with a minimum of 1 on a successful damaging hit.
 
-Every character starts with Weapon Crit Rating 5% and untagged Crit Mult 0.5, so every weapon can crit (×1.5, Brutal ×2.0), and any action that gains Crit Rating can crit without needing its own Crit Mult. Procs are designed separately: effects with a trigger and a chance, which can trigger on crit and on Brutal.
+Every character starts with Weapon C.Rate 5% and untagged C.Mult 0.5, so every weapon can crit (×1.5, Brutal ×2.0), and any action that gains C.Rate can crit without needing its own C.Mult. Procs are designed separately: effects with a trigger and a chance, which can trigger on crit and on Brutal.
 
 ## Turn order
 

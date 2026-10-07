@@ -26,3 +26,4 @@
 | Fortification | Physical Resist 1 · Critical Resist 1 · Critical Deval 1 | Critical Deval removed (2026-10-04) |
 | Intellect Rate | Gadget Rate 1 · Cryptic Rate +0.5 | Gadget Rate 0.1 · Cryptic Rate +0.05 (2026-10-04) |
 | Proc chance above 100% | The excess scaled the proc's amounts (150% for 20 damage fired at 100% for 30) | The excess is lost; amounts grow only when copies of the same proc merge (2026-10-04) |
+| Crit stat names | Crit Rating and Crit Mult | C.Rate and C.Mult, never written out: under TAG STAT, "Critical Rate" would mean Rate on Critical-tagged actions (like Critical Resist and Critical Pen). Same formula (2026-10-07) |

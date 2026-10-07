@@ -12,7 +12,7 @@ A tag stat is written TAG STAT value, and it combines the same way as its base s
 | Group | Stats |
 | --- | --- |
 | Character (untagged) | Health, H.Regen, Mana, M.Regen, Speed, Initiative, Threat, Vulnerability (hidden), All Damage, All Resist |
-| Attack (tag-keyed) | Base Dmg, Power, Multiplier, Penetrate, Hit, Rate, Crit Rating, Crit Mult |
+| Attack (tag-keyed) | Base Dmg, Power, Multiplier, Penetrate, Hit, Rate, C.Rate, C.Mult |
 | Defense (tag-keyed) | Resist, Avoid, Devaluation (Deval) |
 | Vitals | Health (from skills and armor), Mana (from skills and some gear), Action (from Speed), Shield (from blocking, actions and spells) |
 
@@ -62,7 +62,7 @@ Which stats use each mode:
 
 | Mode | Stats |
 | --- | --- |
-| Add | Health, H.Regen, Mana, M.Regen, Speed, Initiative, Threat, Vulnerability, All Damage, Base Dmg, Power, Multiplier, Rate, Deval, Crit Rating (hard cap 200%), Crit Mult |
+| Add | Health, H.Regen, Mana, M.Regen, Speed, Initiative, Threat, Vulnerability, All Damage, Base Dmg, Power, Multiplier, Rate, Deval, C.Rate (hard cap 200%), C.Mult |
 | Mult | None for now. Reserved for rare, build-defining effects. |
 | Dim | All Resist, Penetrate, Hit, Resist, Avoid |
 

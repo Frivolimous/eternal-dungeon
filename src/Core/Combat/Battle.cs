@@ -258,15 +258,15 @@ public sealed partial class Battle
         return r;
     }
 
-    /// <summary>Crit on a successful hit (Anchor: Combat › Formulas): roll at the chance from Crit Rating; on a crit,
+    /// <summary>Crit on a successful hit (Anchor: Combat › Formulas): roll at the chance from C.Rate; on a crit,
     /// roll again at the same chance for Brutal. No roll when the chance is 0. Returns the tiers (0–2).</summary>
     int RollCrit(Unit actor, ActionDef action, Unit target, ActionResult r)
     {
-        var rating = Resolution.CritRating(actor, action, target);
-        var chance = Resolution.CritChance(rating);
+        var cRate = Resolution.CRate(actor, action, target);
+        var chance = Resolution.CritChance(cRate);
         if (chance <= 0) return 0;
         var crit = Rng.Roll(chance);
-        var outcome = new CritRolled(target, rating, chance, crit, crit.Success ? Rng.Roll(chance) : null);
+        var outcome = new CritRolled(target, cRate, chance, crit, crit.Success ? Rng.Roll(chance) : null);
         r.Add(outcome);
         return outcome.Tiers;
     }

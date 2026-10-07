@@ -170,7 +170,7 @@ The rules themselves are in the Anchor; this is the map from rule to code.
 ## To monitor
 
 - **Is the `weapon` tag needed?** Every weapon attack is exactly one of Melee or Ranged, so Weapon-keyed stats
-  (the default 5% Crit Rating, and later equipment) could instead be split between those two. Revisit once
+  (the default 5% C.Rate, and later equipment) could instead be split between those two. Revisit once
   M4 equipment shows whether anything needs "all weapons" that Melee + Ranged can't express.
 - **"Damaged" trigger** fires only when damaged by an action (not by procs or damage over time), for now.
   Check in playtests whether it should fire on all damage.

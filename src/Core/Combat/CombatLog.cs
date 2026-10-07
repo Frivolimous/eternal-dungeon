@@ -106,7 +106,7 @@ public static class CombatLog
                     if (level == LogLevel.Full) full.Add(Breakdown(s, d.Breakdown));
                     break;
                 case CritRolled c when level == LogLevel.Full:
-                    full.Add(s.Format("log.crit_roll", ("rating", F(c.Rating, 3)), ("chance", Pct(c.Chance)), ("roll", F(c.Crit.Value, 3)),
+                    full.Add(s.Format("log.crit_roll", ("c_rate", F(c.CRate, 3)), ("chance", Pct(c.Chance)), ("roll", F(c.Crit.Value, 3)),
                                  ("result", s[c.Crit.Success ? "log.crit_yes" : "log.crit_no"]))
                              + (c.Brutal is { } b
                                  ? s.Format("log.brutal_roll", ("roll", F(b.Value, 3)), ("result", s[b.Success ? "log.brutal_yes" : "log.brutal_no"]))
@@ -200,7 +200,7 @@ public static class CombatLog
         ("all_damage_factor", F(d.AllDamageFactor, 3)), ("all_damage", F(d.AllDamage, 2)),
         ("all_resist_factor", F(d.AllResistFactor, 3)), ("all_resist", F(d.AllResist, 3)),
         ("crit", d.CritTiers > 0
-            ? s.Format("log.breakdown_crit", ("crit_factor", F(d.CritFactor, 3)), ("tiers", d.CritTiers), ("crit_mult", F(d.CritMult, 2)),
+            ? s.Format("log.breakdown_crit", ("crit_factor", F(d.CritFactor, 3)), ("tiers", d.CritTiers), ("c_mult", F(d.CMult, 2)),
                 ("crit_resist", F(d.CritResist, 3)), ("crit_pen", F(d.CritPenetrate, 3)))
             : ""),
         ("raw", F(d.Raw, 3)), ("final", d.Final));
