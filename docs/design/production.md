@@ -14,13 +14,23 @@ Claude is the main developer and Jeremy owns design, playtesting, review and art
 | M5 Content & endgame | All 15 classes, dungeons 3–5, Shadow World, extended Maps, Reincarnation and Artifacts, the economy, simulator-driven balancing | Balance and pacing passes |
 | M6 Steam | Steamworks (achievements, cloud saves), controller and Steam Deck support, settings, demo build, launch or Early Access | Store page, demo, Steam Next Fest |
 
+## Status
+
+- **M0, M1:** done.
+- **M2:** closed at Jeremy's checkpoint, 2026-10-08 (see the end of the M2 brief). Ink is the art style for now. Carried
+  forward, not blocking M3: a review of the combat log, action hover and selection info and the information screens;
+  hero portrait state art; all non-portrait art.
+- **Balance:** single fights are not balanced on their own. From M3, fights are balanced for attrition between battles
+  and for a dungeon's win rate (Jeremy, 2026-10-08).
+- **M3:** next; its build brief comes first.
+
 The battle simulator runs thousands of automated fights to check class power, Dim stacking and the power-share targets before anything is playtested.
 
 ## Parallel tracks (Jeremy)
 
 | Track | Needed by |
 | --- | --- |
-| Art style decision | End of M2 |
+| Art style decision | End of M2: Ink for now (2026-10-08) |
 | Steam store page and capsule art (first human-made art) | M3–M4, to start collecting wishlists |
 | Economy design | M5 |
 | Final in-game art | M4 onward, replacing placeholders |

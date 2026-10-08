@@ -55,7 +55,7 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 | Intents | On each enemy's next turn-order chip, bottom right (Jeremy, 2026-10-08; the timeline is 152 px wide to fit it): the action's icon (its initial until icons exist) and the target's face; "↑" for a Move, "?" while Confused, "…" when it will wait. A changed plan flashes the box gold. The details panel shows an enemy's plan in words and a hero's share of the party's threat |
 | Stagger and interrupt feedback | Stagger: "−N Act" floats on the card and rides on the unit's timeline chip as it slides back. Interrupt: the card shakes and "Interrupted" floats (the brief's "cast ring breaking" waits for a cast ring; the cast shows on the card's side meter today) |
 | Statuses on cards | One icon per kind: each crowd-control kind, damage over time, and generic buff and debuff (a buff from an ally is a buff, from an enemy a debuff) |
-| Pacing | 0.5 s per action at 1×, 0.25 s at 2×, none at Instant; floating numbers stay at least 0.6 s |
+| Pacing | 1 s per action at 0.5×, 0.5 s at 1×, 0.25 s at 2×, none at Instant; floating numbers stay at least 0.6 s. Fine for now (Jeremy, 2026-10-08); revisit when visuals and effects are polished |
 | Keys | S cycles speed, A toggles auto-battle, Space or a click skips an animation |
 | Text size | 85%, 100%, 115% or 130% |
 | Replays | Saved in the game's user folder as `<date>_<encounter>_<seed>.replay.json`, listed in the debug menu |

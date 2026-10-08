@@ -208,22 +208,29 @@ a test checks that previewing changes nothing (the battle plays identically with
 
 ## Acceptance criteria
 
-- [ ] `dotnet test` passes, including the front-model board tests, the export-then-import byte-for-byte round
+- [x] `dotnet test` passes, including the front-model board tests, the export-then-import byte-for-byte round
       trip, and the previews-change-nothing test.
-- [ ] `sim export-tsv` / `sim import-tsv` work, with a change summary and nothing written on invalid data.
-- [ ] The game launches to the debug menu. Every encounter, including the showcase encounter, can be played to
+- [x] `sim export-tsv` / `sim import-tsv` work, with a change summary and nothing written on invalid data.
+- [x] The game launches to the debug menu. Every encounter, including the showcase encounter, can be played to
       victory or defeat with the mouse alone, and with the keyboard alone.
-- [ ] The timeline, ghost marker, target previews, details panel and log all show correct values: a replay saved
+- [x] The timeline, ghost marker, target previews, details panel and log all show correct values: a replay saved
       from the game gives the same log in `sim replay`.
-- [ ] Hero deaths flip face down. Speed settings and skip work. Auto-battle completes fights.
-- [ ] One encounter also runs in a side-on layout and plays correctly (same replay, same log).
-- [ ] Screenshot mode produces PNGs, and reference screenshots are in `docs/screenshots/`.
-- [ ] `sim art-requests` writes `docs/art-requests.md`, and the game runs with whatever art is present (missing
+- [x] Hero deaths flip face down. Speed settings and skip work. Auto-battle completes fights.
+- [x] One encounter also runs in a side-on layout and plays correctly (same replay, same log).
+- [x] Screenshot mode produces PNGs, and reference screenshots are in `docs/screenshots/`.
+- [x] `sim art-requests` writes `docs/art-requests.md`, and the game runs with whatever art is present (missing
       art falls back to a generated placeholder card, never a crash).
-- [ ] No UI text is hard-coded, and no text is baked into images. Statuses are readable without color.
-- [ ] The Anchor has `presentation.md` and an updated Battlefield section, and `CLAUDE.md` lists any new commands.
-- [ ] The 2026-10-07 decisions show in the game: C.Rate and C.Mult in the details panel, no regeneration, casters
+- [x] No UI text is hard-coded, and no text is baked into images. Statuses are readable without color.
+- [x] The Anchor has `presentation.md` and an updated Battlefield section, and `CLAUDE.md` lists any new commands.
+- [x] The 2026-10-07 decisions show in the game: C.Rate and C.Mult in the details panel, no regeneration, casters
       that run dry fall back on Attack, and the Rogue's Move enters the enemy area with Stealth (no Sneak button).
-- [ ] **Checkpoint:** Jeremy plays several fights, judges the feel, and picks an art style. Also worth judging:
+- [x] **Checkpoint:** Jeremy plays several fights, judges the feel, and picks an art style. Also worth judging:
       whether fights feel right with finite Mana (Elementalist 120), and whether the Rogue's 50-AP Stealth Move is
       too cheap compared with the old 100-AP Sneak.
+
+**Checkpoint, 2026-10-08 (Jeremy):** M2 is closed. Mouse and keyboard play both work. Finite Mana and the Rogue's
+50-AP Stealth Move are fine. Intents, the taunt and the reworked stagger feel good. Animation pace is fine for now
+(revisit with visual polish; a 0.5× speed was added). The Ink style stays for now. Fight balance is deliberately left
+alone: M3 balances for attrition across a dungeon and the dungeon's win rate, not single fights. Carried forward,
+to do later: a review of the combat log, the information on action hover and selection, and the information screens;
+testing hero portrait state art; all non-portrait art.

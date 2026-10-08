@@ -58,7 +58,7 @@ so looking can't change a battle.
 - Casting shows on the card's meter, then the effect travels to the target. Statuses are icons on the card; Stun
   tilts the card. A stagger floats "−20 Act" on the card, and the unit's timeline portrait slides back to its later turn
   carrying the same number. An interrupt empties the cast meter, shakes the card and floats "Interrupted".
-- **Pacing:** about 0.5 s per enemy action at 1×. Speeds 1×, 2× and near-instant; a click skips the current animation.
+- **Pacing:** about 0.5 s per enemy action at 1×. Speeds 0.5×, 1×, 2× and near-instant; a click skips the current animation.
 
 ## Input, text and accessibility
 
