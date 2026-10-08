@@ -97,14 +97,23 @@ public partial class CardFace : Control
         fill = Mathf.Clamp(fill, 0, 1);
         DrawRect(new Rect2(meter.Position.X, meter.End.Y - meter.Size.Y * fill, meter.Size.X, meter.Size.Y * fill), color);
 
-        // Stagger bar, then the HP bar with numbers and Shield.
+        // Stagger bar, the Mana gauge (units with Mana only), then the HP bar with numbers and Shield. With Mana the two
+        // thin bars share the stagger bar's space, so every card keeps its size.
         var barX = p.Position.X;
         var barW = p.Size.X;
         var y = p.End.Y + 2;
-        DrawRect(new Rect2(barX, y, barW, 4), new Color(0, 0, 0, 0.5f));
+        var hasMana = Unit.MaxMana > 0;
+        var thin = hasMana ? 3 : 4;
+        DrawRect(new Rect2(barX, y, barW, thin), new Color(0, 0, 0, 0.5f));
         if (Unit.Stagger > 0)
-            DrawRect(new Rect2(barX, y, barW * Unit.Stagger / Unit.StaggerMax, 4), Unit.StaggerBroken ? Colors.White : Ui.Stagger);
-        y += 6;
+            DrawRect(new Rect2(barX, y, barW * Unit.Stagger / Unit.StaggerMax, thin), Unit.StaggerBroken ? Colors.White : Ui.Stagger);
+        y += thin + (hasMana ? 1 : 2);
+        if (hasMana)
+        {
+            DrawRect(new Rect2(barX, y, barW, thin), new Color(0, 0, 0, 0.5f));
+            DrawRect(new Rect2(barX, y, barW * Unit.Mana / Unit.MaxMana, thin), Ui.Mana);
+            y += thin + 1;
+        }
         var hp = new Rect2(barX, y, barW, 14);
         DrawRect(hp, new Color(0, 0, 0, 0.6f));
         var share = (float)Unit.Health / Math.Max(1, Unit.MaxHealth);

@@ -11,7 +11,8 @@ only how they're shown. Choices Claude made beyond these are under Presentation 
   the same in any layout. **Vertical** (default): party at the bottom, enemies at the top, front rows facing.
   **Side-on**: party left, enemies right. Each encounter names its layout.
 - **Cards:** the face shows the portrait, name, HP bar with numbers, Shield, the Act meter along one edge (a cast's
-  progress while casting), the stagger bar (white while broken) and status icons. Images hold no text: everything
+  progress while casting), the stagger bar (white while broken), a Mana gauge for units that have Mana, and status
+  icons. Images hold no text: everything
   written on a card comes from the engine.
 - **Card size follows footprint:** a single card for size 1, a double card over 2 tiles for size 1.5, a large card
   over a 2×2 block for size 2. Portraits are square for sizes 1 and 2 and 1:2 for size 1.5. When a size-1.5 card lies

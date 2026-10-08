@@ -130,6 +130,33 @@ public class GridTests
     }
 
     [Fact]
+    public void From_the_enemy_area_the_rogue_can_move_back_to_any_empty_tile_of_its_own()
+    {
+        var rogue = U("rogue", "rogue", Side.Party);
+        var warrior = U("warrior", "warrior", Side.Party);
+        var grunt = U("goblin_grunt", "grunt", Side.Enemy);
+        var grid = new BattleGrid();
+        grid.Place(warrior, P(0, 0));
+        grid.Place(rogue, E(1, 2));                                      // already in the enemy area
+        grid.Place(grunt, E(0, 0));
+        var b = new Battle(Repo, [rogue, warrior, grunt], seed: 1, grid);
+        var move = Repo.Actions[Repo.DefaultFor(rogue.Def, DefaultRole.Move)!];
+
+        var tiles = Options.TilesFor(b, rogue, move);
+        Assert.Contains(P(1, 2), tiles);                                 // any empty tile at home, not just next to it
+        Assert.Contains(P(0, 2), tiles);
+        Assert.DoesNotContain(P(0, 0), tiles);                           // the Warrior's tile
+        Assert.Contains(E(0, 2), tiles);                                 // and it can still move about the enemy area
+
+        rogue.ActTicks = TurnClock.TurnThreshold;
+        b.ActAt(rogue, move, P(1, 2));
+        Assert.False(grid.Intruding(rogue));
+        Assert.DoesNotContain(P(0, 0), Options.TilesFor(b, rogue, move));
+        Assert.Empty(grid.HomeAreaOptions(rogue));                        // back home: no more jumps within its own area
+        Assert.Empty(grid.HomeAreaOptions(warrior));                      // and nobody else gets one
+    }
+
+    [Fact]
     public void The_area_collapses_forward_when_its_front_row_empties()
     {
         var warrior = U("warrior", "warrior", Side.Party);

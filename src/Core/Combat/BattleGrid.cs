@@ -268,12 +268,21 @@ public sealed class BattleGrid
         return InOrder(Areas.Where(a => a.Side != unit.Side).SelectMany(a => TilesOf(a.Id)).Where(t => At(t) is null));
     }
 
+    /// <summary>Any empty tile in the unit's own side's areas, while it stands in the enemy area (Small units only):
+    /// how a Rogue that went in comes back.</summary>
+    public IEnumerable<Tile> HomeAreaOptions(Unit unit)
+    {
+        if (unit.Def.Size != UnitSize.Small || !Intruding(unit)) return [];
+        return InOrder(Areas.Where(a => a.Side == unit.Side).SelectMany(a => TilesOf(a.Id)).Where(t => At(t) is null));
+    }
+
     /// <summary>Where a tile action takes <paramref name="unit"/>: Move's neighbours, plus the other side's empty
-    /// tiles for a Move that can enter the enemy area. Feared units are limited further by the caller.</summary>
+    /// tiles for a Move that can enter the enemy area, plus its own side's empty tiles while it stands in the enemy
+    /// area. Feared units are limited further by the caller.</summary>
     public IEnumerable<Tile> TileOptions(Unit unit, ActionDef action) => action.MoveTo switch
     {
-        Data.MoveTo.Own => MoveOptions(unit),
-        Data.MoveTo.OwnOrEnemy => MoveOptions(unit).Concat(EnemyAreaOptions(unit)).Distinct(),
+        Data.MoveTo.Own => MoveOptions(unit).Concat(HomeAreaOptions(unit)).Distinct(),
+        Data.MoveTo.OwnOrEnemy => MoveOptions(unit).Concat(EnemyAreaOptions(unit)).Concat(HomeAreaOptions(unit)).Distinct(),
         _ => [],
     };
 
