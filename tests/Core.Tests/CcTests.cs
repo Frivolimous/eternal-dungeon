@@ -26,7 +26,7 @@ public class CcTests
     }
 
     static GameData WithCc(params EffectDef[] effects) => With(
-        actions: [.. effects.Select(e => Action("apply_" + e.Id, ActionTarget.Ally, new EffectRef(e.Id, EffectAim.Target)))],
+        actions: [.. effects.Select(e => Action("apply_" + e.Id, ActionTarget.Ally, e.Id))],
         effects: effects);
 
     [Fact]

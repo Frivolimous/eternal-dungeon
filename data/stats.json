@@ -11,7 +11,7 @@
   { "id": "power", "name": "Power", "group": "attack", "combine": "add", "point_value": 1 },
   { "id": "multiplier", "name": "Multiplier", "group": "attack", "combine": "add" },
   { "id": "penetrate", "name": "Penetrate", "group": "attack", "combine": "dim" },
-  { "id": "hit", "name": "Hit", "group": "attack", "combine": "dim" },
+  { "id": "hit", "name": "Hit", "group": "attack", "combine": "dim", "base": 1 },
   { "id": "rate", "name": "Rate", "group": "attack", "combine": "add" },
   { "id": "c_rate", "name": "C.Rate", "group": "attack", "combine": "add" },
   { "id": "c_mult", "name": "C.Mult", "group": "attack", "combine": "add" },

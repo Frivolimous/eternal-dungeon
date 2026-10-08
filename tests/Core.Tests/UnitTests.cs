@@ -12,9 +12,12 @@ public class UnitTests
     public void A_new_unit_starts_full_with_act_at_initiative()
     {
         var w = Make("warrior");
-        Assert.Equal(140, w.MaxHealth);
-        Assert.Equal(140, w.Health);
-        Assert.Equal(30, w.Act);
+        // Its own Health and Initiative add to the default stats'.
+        double Total(string stat) => TestData.Repo.UnitDefaults.Concat(TestData.Repo.Units["warrior"].Stats)
+            .Where(s => s.Stat == stat && s.Tag is null).Sum(s => s.Value);
+        Assert.Equal(Total("health"), w.MaxHealth);
+        Assert.Equal(w.MaxHealth, w.Health);
+        Assert.Equal(Total("initiative"), w.Act);
         Assert.Equal(0, w.Shield);
         Assert.True(w.Alive);
         Assert.Equal(15, w.Stats.Get("power", ["physical", "melee"]));   // Strength 15 × 1

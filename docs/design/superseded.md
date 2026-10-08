@@ -45,3 +45,5 @@
 | Move | 50 AP to one neighbouring tile | 50 AP to any empty tile in the area the unit stands in; Fear: any tile further back (2026-10-08) |
 | Forward collapse | Every unit standing in the area stepped forward, including a Rogue from the other side, which also stopped the collapse while it stood in the front row | Only the area's own units count and step; a Rogue keeps its tile or moves to the front-most free one, then its own area, then a new back row (2026-10-08) |
 | Confusion | A random valid target for the unit's chosen action; heroes still chose the action | No choice at all: a random action at a random target in reach, allies included (2026-10-08) |
+| AP costs | Every action cost exactly 50, 100 or 200 AP | Any whole number above 0 (2026-10-08) |
+| Base Hit | Hit started from a placeholder 0.95 per unit (a Dim stat can't hold 1) | Hit is offset by 1: 100% by default, modifiers combine from 0, and Hit above 100% only cancels Avoid (2026-10-08) |

@@ -566,7 +566,7 @@ public partial class BattleScreen : Control
             }
         }
         foreach (var e in p.Effects)
-            parts.Add(F("ui.preview_applies", ("effect", Battle.Data.Effects[e.Effect].Name)));
+            parts.Add(F("ui.preview_applies", ("effect", Battle.Data.Effects[e].Name)));
         if (p.Procs.Count > 0)
             parts.Add(F("ui.preview_procs", ("procs", string.Join(T("log.list_separator"), p.Procs.Select(x => $"{x.Proc.Name} {CombatLog.Pct(x.Chance)}")))));
         return string.Join(T("log.separator"), parts);

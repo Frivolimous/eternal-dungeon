@@ -48,7 +48,7 @@ public class ProcTests
     {
         var flaming = Repo.Procs["flaming"] with { Id = "flame_test", Duplicates = rule };
         var data = With(
-            actions: [Action("oil", ActionTarget.Self, new EffectRef("fire_oil", EffectAim.Self))],
+            actions: [Action("oil", ActionTarget.Self, "fire_oil")],
             effects: [Buff("fire_oil", turns: 9, procs: ["flame_test"])],
             procs: [flaming]);
         var w = U(data, "warrior", "w", Side.Party, "flame_test");          // one copy of its own...

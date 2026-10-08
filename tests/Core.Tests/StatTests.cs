@@ -51,13 +51,13 @@ public class StatTests
         Assert.Equal(0.5, Combine.Remove(CombineMode.Dim, 0.75, 0.5), Precision);
 
         var s = NewBlock();
-        s.Add("a", "hit", 0.3);
-        s.Add("b", "hit", 0.6);
-        s.Add("c", "hit", 0.25);
-        var before = s.Get("hit");
+        s.Add("a", "avoid", 0.3);
+        s.Add("b", "avoid", 0.6);
+        s.Add("c", "avoid", 0.25);
+        var before = s.Get("avoid");
         s.RemoveSource("b");
-        Assert.Equal(Combine.Remove(CombineMode.Dim, before, 0.6), s.Get("hit"), Precision);
-        Assert.Equal(1 - 0.7 * 0.75, s.Get("hit"), Precision);
+        Assert.Equal(Combine.Remove(CombineMode.Dim, before, 0.6), s.Get("avoid"), Precision);
+        Assert.Equal(1 - 0.7 * 0.75, s.Get("avoid"), Precision);
     }
 
     [Fact]
@@ -133,8 +133,24 @@ public class StatTests
         s.Add("base", "hit", 0.5);
         s.Add("bow", "hit", 0.5, "ranged");                              // "Ranged Hit 0.5"
 
-        Assert.Equal(0.75, s.Get("hit", ["physical", "ranged"]), Precision);
-        Assert.Equal(0.5, s.Get("hit", ["physical", "melee"]), Precision);
+        // Hit has base 1: the modifiers combine as usual (0.5 dim 0.5 = 0.75), then the base is added.
+        Assert.Equal(1.75, s.Get("hit", ["physical", "ranged"]), Precision);
+        Assert.Equal(1.5, s.Get("hit", ["physical", "melee"]), Precision);
+    }
+
+    [Fact]
+    public void A_stats_base_is_added_after_its_modifiers_combine()
+    {
+        var s = NewBlock();
+        Assert.Equal(1, s.Get("hit"));                                   // every unit hits 100% by default
+        Assert.Equal(0, s.Get("avoid"));
+
+        s.Add("curse", "hit", -0.1);
+        s.Add("rusty", "hit", -0.1);
+        Assert.Equal(1 - (1 - 0.9 * 0.9), s.Get("hit"), Precision);      // −0.1 dim −0.1 = −0.19: Hit 0.81
+        Assert.Equal(0.81, s.Get(new StatKey("hit")), Precision);        // the untagged key includes the base
+        s.Add("scope", "hit", 0.2, "ranged");
+        Assert.Equal(0.2, s.GetKeyed("hit", ["ranged"]), Precision);     // keyed parts only: no base
     }
 
     // ---- Negative chance modifiers ----
@@ -210,9 +226,8 @@ public class StatTests
     public void Compound_points_are_percent_on_chance_stats()
     {
         var s = NewBlock();
-        s.Add("base", "hit", 0.95);
         s.Add("base", "accuracy", 10);
-        Assert.Equal(1 - 0.05 * 0.9, s.Get("hit", ["physical", "melee"]), Precision);  // 0.95 dim 0.10 = 0.955
+        Assert.Equal(1.1, s.Get("hit", ["physical", "melee"]), Precision);            // base 1 + 10 × 0.01
 
         s.Add("base", "dodge", 20);
         Assert.Equal(0.3, s.Get("avoid", ["physical", "projectile", "grenade"]), Precision);  // 0.20 × 1.5

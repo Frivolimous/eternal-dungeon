@@ -125,7 +125,7 @@ public class DefaultActionTests
     [Fact]
     public void Fear_allows_only_defend_or_moving_away_from_the_front()
     {
-        var data = With(actions: [Action("scare", ActionTarget.Ally, new EffectRef("dread", EffectAim.Target))]);
+        var data = With(actions: [Action("scare", ActionTarget.Ally, "dread")]);
         var w = U(data, "warrior", "w", Side.Party);
         var rogue = U(data, "rogue", "r", Side.Party);
         var grid = new BattleGrid();
@@ -154,7 +154,7 @@ public class DefaultActionTests
     [Fact]
     public void A_feared_unit_alone_in_its_front_row_defends_instead_of_stepping_back()
     {
-        var data = With(actions: [Action("scare", ActionTarget.Ally, new EffectRef("dread", EffectAim.Target))]);
+        var data = With(actions: [Action("scare", ActionTarget.Ally, "dread")]);
         var w = U(data, "warrior", "w", Side.Party);
         var mage = U(data, "elementalist", "e", Side.Party);
         var grid = new BattleGrid();

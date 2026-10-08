@@ -24,7 +24,8 @@ public static class Schemas
         Enum<CombineMode>("combine", required: true),
         Bool("integer"),
         Bool("hidden"),
-        Number("point_value", @default: 0.01));
+        Number("point_value", @default: 0.01),
+        Number("base", @default: 0));
 
     public static readonly TableSchema CompoundStats = Top("compound_stats");
 
@@ -75,11 +76,9 @@ public static class Schemas
         Number("base_damage", @default: 0),
         Number("all_damage", @default: 0),
         Int("cast_time", @default: 0),
+        List("effects"),
         Enum<MoveTo>("move_to", @default: MoveTo.None),
         Enum<DefaultRole>("replaces", @default: DefaultRole.None));
-
-    public static readonly TableSchema ActionEffects = Child("action_effects", "actions", "action", ["order"],
-        Int("order", required: true), Id("effect"), Enum<EffectAim>("on", @default: EffectAim.Target));
 
     public static readonly TableSchema AiProfiles = Top("ai_profiles", Number("threat_weight", required: true));
 
@@ -123,7 +122,7 @@ public static class Schemas
 
     /// <summary>The tables loaded before units, whose columns depend on the stats and compound stats.</summary>
     public static readonly TableSchema[] BeforeUnits =
-        [Tags, Stats, CompoundStats, CompoundStatRows, Effects, EffectStats, Procs, ProcHitStats, Actions, ActionEffects, AiProfiles, AiRules];
+        [Tags, Stats, CompoundStats, CompoundStatRows, Effects, EffectStats, Procs, ProcHitStats, Actions, AiProfiles, AiRules];
 
     /// <summary>The tables loaded after units.</summary>
     public static readonly TableSchema[] AfterUnits = [UnitTagStats, Encounters, EncounterUnits, Defaults, DefaultStats];

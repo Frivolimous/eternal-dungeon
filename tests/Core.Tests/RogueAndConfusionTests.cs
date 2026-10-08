@@ -48,7 +48,7 @@ public class RogueAndConfusionTests
     // ---- Confusion ----
 
     static GameData Confusing => With(
-        actions: [Action("confuse", ActionTarget.Ally, new EffectRef("test_confusion", EffectAim.Target))],
+        actions: [Action("confuse", ActionTarget.Ally, "test_confusion")],
         effects: [Buff("test_confusion", turns: 50) with { Cc = CcKind.Confusion }]);
 
     [Fact]

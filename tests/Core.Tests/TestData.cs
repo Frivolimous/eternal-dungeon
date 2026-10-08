@@ -43,7 +43,7 @@ static class TestData
     public static ProcDef Proc(string id, ProcTrigger trigger, ProcTarget target, double chance = 1, string[]? tags = null) =>
         new(id, id, trigger, [], tags ?? [], chance, target, ProcPhase.AfterHit, Duplicates.Merge, 0, 0, 0, 0, [], null, null);
 
-    public static ActionDef Action(string id, ActionTarget target, params EffectRef[] effects) =>
+    public static ActionDef Action(string id, ActionTarget target, params string[] effects) =>
         new(id, id, target == ActionTarget.Enemy ? ["physical", "melee"] : ["buff"], target,
             target is ActionTarget.Enemy or ActionTarget.Ally ? ActionRange.Any : null,
             100, 0, target == ActionTarget.Enemy ? 10 : 0, 0, 0, effects);

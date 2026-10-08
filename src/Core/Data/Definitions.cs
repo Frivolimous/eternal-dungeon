@@ -31,10 +31,13 @@ public sealed record StatDef(
     CombineMode Combine,
     bool Integer,
     bool Hidden,
-    double PointValue = 0.01)
+    double PointValue = 0.01,
+    double Base = 0)
 {
     // PointValue: what one compound-stat point adds to this stat. Compound points are percentages, so a stat
     // written as a fraction (Hit 0.10, Rate 0.5) gets 0.01 a point; Power, written in points, gets 1.
+    // Base: added after the modifiers combine, wherever the stat is read. Hit has Base 1: its modifiers start
+    // from 0 and combine as usual (Dim), and the result is offset, so every unit hits 100% by default.
 
     /// <summary>Whether the stat can be written as a tag stat, such as "Fire Power 50".</summary>
     public bool TagKeyed => Group != StatGroup.Character;
@@ -142,12 +145,6 @@ public enum MoveTo { None, Own, OwnOrEnemy }
 /// Move). Masteries that modify basic actions use this.</summary>
 public enum DefaultRole { None, Attack, Defend, Move }
 
-/// <summary>Who an action's effect lands on: the action's target or the unit acting.</summary>
-public enum EffectAim { Target, Self }
-
-/// <summary>An effect an action applies. On an enemy-targeted action it applies only when the action succeeds.</summary>
-public sealed record EffectRef(string Effect, EffectAim On);
-
 /// <summary>Something a unit can do on its turn (Anchor: Combat).</summary>
 public sealed record ActionDef(
     string Id,
@@ -160,7 +157,7 @@ public sealed record ActionDef(
     double BaseDamage,
     double AllDamage,
     int CastTime,
-    IReadOnlyList<EffectRef> Effects,
+    IReadOnlyList<string> Effects,
     MoveTo MoveTo = MoveTo.None,
     DefaultRole Replaces = DefaultRole.None)
 {

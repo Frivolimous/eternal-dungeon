@@ -70,7 +70,7 @@ public class EffectTests
     {
         // Listed first: a +50 Power buff on the caster. Listed second: a heal that scales with the caster's Power.
         var data = With(
-            actions: [Action("rally", ActionTarget.Self, new("pump", EffectAim.Self), new("patch", EffectAim.Self))],
+            actions: [Action("rally", ActionTarget.Self, "pump", "patch")],
             effects: [Buff("pump", stats: [new("power", null, 50)]), Instant("patch", heal: 20)]);
         var w = Ready(U(data, "warrior", "w", Side.Party));
         w.TakeDamage(100);
@@ -88,7 +88,7 @@ public class EffectTests
     public void The_same_source_refreshes_a_buff_and_another_source_adds_one()
     {
         var data = With(
-            actions: [Action("shout", ActionTarget.Ally, new EffectRef("brave", EffectAim.Target))],
+            actions: [Action("shout", ActionTarget.Ally, "brave")],
             effects: [Buff("brave", turns: 3, stats: [new("power", null, 10)])]);
         var a = Ready(U(data, "warrior", "a", Side.Party));
         var b = Ready(U(data, "warrior", "b", Side.Party));
@@ -138,8 +138,8 @@ public class EffectTests
     public void The_same_effect_from_several_sources_stacks_and_similar_effects_stay_separate()
     {
         var data = With(
-            actions: [Action("hex_a", ActionTarget.Enemy, new EffectRef("rot", EffectAim.Target)),
-                      Action("hex_b", ActionTarget.Enemy, new EffectRef("blight", EffectAim.Target))],
+            actions: [Action("hex_a", ActionTarget.Enemy, "rot"),
+                      Action("hex_b", ActionTarget.Enemy, "blight")],
             effects: [Buff("blight", turns: 3, periodicDamage: 4)]);    // same numbers as Rot, a different effect
         var s1 = U(data, "goblin_shaman", "s1", Side.Enemy);
         var s2 = U(data, "goblin_shaman", "s2", Side.Enemy);
@@ -163,7 +163,7 @@ public class EffectTests
     {
         // Thorns grants two procs: when struck, put Rot on the attacker; when struck below half Health, shield yourself.
         var data = With(
-            actions: [Action("bless", ActionTarget.Self, new EffectRef("thorns", EffectAim.Self))],
+            actions: [Action("bless", ActionTarget.Self, "thorns")],
             effects: [Buff("thorns", procs: ["thorn_rot", "second_wind"])],
             procs: [
                 Proc("thorn_rot", ProcTrigger.Struck, ProcTarget.Other) with { Effect = "rot" },
@@ -196,14 +196,15 @@ public class EffectTests
         var w = Ready(U(data, "warrior", "w", Side.Party));
         var battle = new Battle(data, [w], seed: 1);
 
+        var avoid = w.Stats.Get("avoid");
         battle.Act(w, data.Actions["defend"], null);
-        Assert.Equal(14, w.Shield);                                       // 10% of 140
-        Assert.Equal(1 - 0.95 * 0.7, w.Stats.Get("avoid"), 12);          // 0.05 dim 0.3
+        Assert.Equal((int)Math.Round(w.MaxHealth * 0.1), w.Shield);       // Guard: 10% of max Health
+        Assert.Equal(1 - (1 - avoid) * 0.7, w.Stats.Get("avoid"), 12);   // its Avoid dim 0.3
 
         w.TakeDamage(5);
         battle.StartTurn(w);
         Assert.Equal(0, w.Shield);
-        Assert.Equal(0.05, w.Stats.Get("avoid"), 12);
+        Assert.Equal(avoid, w.Stats.Get("avoid"), 12);
         Assert.Empty(w.Buffs);
     }
 

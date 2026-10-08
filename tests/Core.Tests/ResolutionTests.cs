@@ -91,12 +91,31 @@ public class ResolutionTests
         var warrior = Make("warrior", Side.Party);                       // Parry 10: Melee Avoid +0.10
         var grunt = Make("goblin_grunt", Side.Enemy);
         var archer = Make("goblin_archer", Side.Enemy);
+        var slash = TestData.Repo.Actions["goblin_slash"];
+        var shot = TestData.Repo.Actions["goblin_shot"];
 
-        Assert.Equal(0.95 * 0.95, Resolution.SuccessChance(warrior, TestData.Repo.Actions["attack"], grunt), Precision);
-        // Warrior Avoid vs melee: 0.05 dim 0.10 = 0.145, so 0.9 × 0.855.
-        Assert.Equal(0.7695, Resolution.SuccessChance(grunt, TestData.Repo.Actions["goblin_slash"], warrior), Precision);
-        // Parry doesn't help against arrows.
-        Assert.Equal(0.855, Resolution.SuccessChance(archer, TestData.Repo.Actions["goblin_shot"], warrior), Precision);
+        // The warrior's Avoid against melee is its plain Avoid dim 0.10 from Parry; against arrows Parry doesn't count.
+        var avoid = warrior.Stats.Get("avoid");
+        Assert.Equal(1 - (1 - avoid) * 0.9, warrior.Stats.Get("avoid", slash.Tags), Precision);
+        Assert.Equal(avoid, warrior.Stats.Get("avoid", shot.Tags), Precision);
+        Assert.Equal(Resolution.SuccessChance(grunt.Stats.Get("hit", slash.Tags), 1 - (1 - avoid) * 0.9),
+            Resolution.SuccessChance(grunt, slash, warrior), Precision);
+        Assert.Equal(Resolution.SuccessChance(archer.Stats.Get("hit", shot.Tags), avoid),
+            Resolution.SuccessChance(archer, shot, warrior), Precision);
+    }
+
+    [Fact]
+    public void Hit_above_100_percent_only_cancels_avoid()
+    {
+        var warrior = Make("warrior", Side.Party);
+        var grunt = Make("goblin_grunt", Side.Enemy);
+        var attack = TestData.Repo.Actions["attack"];
+        warrior.Stats.Add("test", "hit", 0.2 - (warrior.Stats.Get("hit") - 1));   // Hit 120%
+        grunt.Stats.Add("test", "avoid", 0.3 - grunt.Stats.Get("avoid"));        // Avoid 30%, if it had none
+
+        Assert.Equal(1.2, warrior.Stats.Get("hit", attack.Tags), Precision);
+        Assert.Equal(0.84, Resolution.SuccessChance(warrior, attack, grunt), Precision);     // 1.2 × 0.7
+        Assert.Equal(1, Resolution.SuccessChance(1.2, 0));                                   // never above 100%
     }
 
     [Fact]

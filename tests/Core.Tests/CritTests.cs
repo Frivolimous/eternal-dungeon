@@ -75,6 +75,7 @@ public class CritTests
         var w = U("warrior", "w", Side.Party);
         var g = U("goblin_grunt", "g", Side.Enemy);
         w.Stats.Add("test", "c_rate", 0.5);
+        g.Stats.Add("test", "avoid", 0.2);                               // so some attacks miss (Hit is 100% by default)
         var battle = new Battle(TestData.Repo, [w, g], seed: 3);
         int hits = 0, crits = 0, brutals = 0, misses = 0;
 

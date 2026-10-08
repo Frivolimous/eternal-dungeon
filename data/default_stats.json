@@ -1,4 +1,8 @@
 [
   { "stat": "c_rate", "tag": "weapon", "value": 0.05 },
-  { "stat": "c_mult", "value": 0.5 }
+  { "stat": "c_mult", "value": 0.5 },
+  { "stat": "health", "value": 50 },
+  { "stat": "speed", "value": 100 },
+  { "stat": "initiative", "value": 0 },
+  { "stat": "avoid", "value": 0 }
 ]

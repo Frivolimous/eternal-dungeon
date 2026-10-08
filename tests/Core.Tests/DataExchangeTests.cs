@@ -73,7 +73,9 @@ public class DataExchangeTests
         Assert.Matches(@"^row \d+, health$", e.Field);
         Assert.Contains(". decimal point", e.Message);
 
-        var rules = EditedTsv("units", t => SetCell(t, "goblin_grunt", "health", "0"));
+        // A unit's own Health adds to the default stats' Health, so cancelling it out leaves 0.
+        var defaultHealth = RepoTables()["default_stats"].Rows.Where(r => r.Str("stat") == "health").Sum(r => r.Num("value"));
+        var rules = EditedTsv("units", t => SetCell(t, "goblin_grunt", "health", (-defaultHealth).ToString(System.Globalization.CultureInfo.InvariantCulture)));
         var invalid = Assert.Throws<DataException>(() => DataExchange.ImportTsv(DataSource.FromFiles(rules), RepoTables()));
         Assert.Contains("health above 0", invalid.Message);
     }

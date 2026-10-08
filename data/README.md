@@ -49,20 +49,19 @@ Godot's translation system, so the simulator and the game print the same lines. 
 | Table | One row is | Notes |
 | --- | --- | --- |
 | `tags` | A tag (Fire, Melee, Spell…) | `group`: damage_type, delivery, style, function, element, source or family. `implies`: tags every action and proc with this tag also carries (Fire, Electric and Ice imply Elemental); implied tags can't imply others. Proc trigger filters don't get them |
-| `stats` | A stat | `combine`: add, dim or mult. `point_value`: what one compound point adds (Power 1, others 0.01) |
+| `stats` | A stat | `combine`: add, dim or mult. `point_value`: what one compound point adds (Power 1, others 0.01). `base`: added after the modifiers combine, wherever the stat is read (Hit 1: everyone hits 100% by default, and Hit modifiers start from 0) |
 | `compound_stats` | A compound stat (Strength…) | Its recipe is in `compound_stat_rows` |
 | `compound_stat_rows` | One recipe row | Points × `coef` go to that tag's stat |
 | `effects` | An effect or buff | `duration`: instant (default), `turns` (set `turns`), or until_next_turn. `shield_max_health`: a Shield worth that share of max Health; a buff's Shield goes when the buff ends. Stat changes are in `effect_stats`. `break_on_attack`: the buff ends when its holder uses an enemy-targeted action (Stealth) |
 | `effect_stats` | A stat a buff changes | `tag` is optional |
 | `procs` | A proc | `chance`: the base chance (default 1 = 100%). Amounts (damage, heal, shield, lifesteal, hit stats) add up only across merged copies; an effect never adds up. The example procs are ported from EternalQuestMobile and aren't on any starter unit yet |
 | `proc_hit_stats` | A this-hit stat of a before_damage proc | |
-| `actions` | An action | `cast_time` is on the 100 scale: 50 = half a base-speed turn. `move_to`: own (Move) or own_or_enemy (also any empty tile in the enemy area) for tile actions. `replaces`: attack, defend or move: for a unit that has this action, it takes that default's place (the Rogue's Move, from the Stealth mastery) |
-| `action_effects` | An effect an action applies, in `order` | `on`: target (default) or self |
+| `actions` | An action | `ap_cost`: any whole number above 0 (100 = a full turn). `cast_time` is on the 100 scale: 50 = half a base-speed turn. `effects`: the effects it applies, in order, on its target (on the user for self and tile actions). `move_to`: own (Move) or own_or_enemy (also any empty tile in the enemy area) for tile actions. `replaces`: attack, defend or move: for a unit that has this action, it takes that default's place (the Rogue's Move, from the Stealth mastery) |
 | `ai_profiles` | How a unit picks actions and targets | `threat_weight` w: targets score w × Threat + (1 − w) × Vulnerability, between 0.25 and 0.75. Hero profiles are the simulator's scripted AI |
 | `ai_rules` | One rule, in `order` | The first usable rule with a valid target wins. `to_enemy_area`: a move that can enter the enemy area goes there. With no rule usable, a unit Attacks, else steps toward the front, else Defends |
-| `units` | A hero or enemy | `size` 1, 1.5 or 2. Then one column per stat (untagged values) and one per compound stat. Base Hit 0.95 and Avoid 0.05 are placeholders |
+| `units` | A hero or enemy | `size` 1, 1.5 or 2. Then one column per stat (untagged values) and one per compound stat. Stat values add to the default stats (Health 50 + the unit's 90 = 140), so a unit can leave Health empty |
 | `unit_tag_stats` | A tag-keyed stat on a unit | Such as Fire Power 50 |
 | `encounters` | A fixed battle | `layout`: vertical (default) or side_on; presentation only |
 | `encounter_units` | A unit in an encounter, per `side` in `order` | `row` 0 is the front (front-relative); Tall and Large units anchor at their front-left tile. Each area is 3 columns × 2 rows |
 | `defaults` | A setting (`key`, `value`) | `attack_action`, `defend_action`, `move_action`: every unit's default actions (Fear allows only Defend and Move) |
-| `default_stats` | A stat every unit starts with, before its own | |
+| `default_stats` | A stat every unit starts with | Each row is an ordinary modifier: a unit's own value combines with it by the stat's mode (a default Avoid 0.05 and a unit's 0.3 give 0.335 by Dim). Only `base` in `stats` offsets a stat |

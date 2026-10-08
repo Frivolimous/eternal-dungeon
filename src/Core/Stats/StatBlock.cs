@@ -58,7 +58,7 @@ public sealed class StatBlock(GameData data)
 
     /// <summary>The untagged total: the whole value of a character stat, or the part of an attack/defense stat
     /// that applies to every action. Compound stats only feed tag stats, so they never count here.</summary>
-    public double Get(string stat) => Total(Def(stat), m => m.Key.Tag is null);
+    public double Get(string stat) => Def(stat).Base + Total(Def(stat), m => m.Key.Tag is null);
 
     /// <summary>The stat as it applies to an action carrying <paramref name="actionTags"/>.</summary>
     public double Get(string stat, IReadOnlyCollection<string> actionTags)
@@ -66,10 +66,10 @@ public sealed class StatBlock(GameData data)
         var def = Def(stat);
         var values = Values(stat, m => m.Key.Tag is null || actionTags.Contains(m.Key.Tag))
             .Concat(CompoundContributions(def, actionTags));
-        return Combine.Total(def.Combine, values);
+        return def.Base + Combine.Total(def.Combine, values);
     }
 
-    /// <summary>The stat for <paramref name="tags"/> without its untagged part: tag modifiers and compound
+    /// <summary>The stat for <paramref name="tags"/> without its untagged part (or its base): tag modifiers and compound
     /// contributions only. Critical Resist is resist keyed to critical, not all Resist.</summary>
     public double GetKeyed(string stat, IReadOnlyCollection<string> tags)
     {
@@ -78,8 +78,9 @@ public sealed class StatBlock(GameData data)
         return Combine.Total(def.Combine, values);
     }
 
-    /// <summary>The total of exactly one key, e.g. just "Fire Power", for display.</summary>
-    public double Get(StatKey key) => Total(Def(key.Stat), m => m.Key.Tag == key.Tag);
+    /// <summary>The total of exactly one key, e.g. just "Fire Power", for display. The untagged key includes
+    /// the stat's base.</summary>
+    public double Get(StatKey key) => (key.Tag is null ? Def(key.Stat).Base : 0) + Total(Def(key.Stat), m => m.Key.Tag == key.Tag);
 
     /// <summary>A compound stat's own total: its points from every source, added, with no cap.</summary>
     public double GetCompound(string compound) =>

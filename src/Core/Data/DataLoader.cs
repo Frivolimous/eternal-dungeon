@@ -42,9 +42,6 @@ public static class DataLoader
     /// <summary>Each side's area on the battle grid (Anchor: 3×2 by default).</summary>
     public const int AreaCols = 3, AreaRows = 2;
 
-    /// <summary>AP costs an action may have (Anchor: Combat › Turn order).</summary>
-    public static readonly int[] ApCosts = [50, 100, 200];
-
     /// <summary>The most an AI may lean toward Threat or Vulnerability (Anchor: at most 75% toward one).</summary>
     public const double MaxAiLean = 0.75;
 
@@ -90,6 +87,11 @@ public static class DataLoader
         foreach (var r in t["units"].Rows)
         {
             var unit = ReadUnit(r, t, tags, stats, compoundIds, actions, ais, procIds);
+            // Every unit starts with the default stats, so its own row only adds to them.
+            var health = stats["health"].Base + Combine.Total(stats["health"].Combine,
+                unitDefaults.Concat(unit.Stats).Where(v => v.Stat == "health" && v.Tag is null).Select(v => v.Value));
+            if (health <= 0)
+                throw r.Error("health", $"a unit needs health above 0 (its own plus the default stats), got {health}");
             var replaced = unit.Actions.Select(a => actions[a].Replaces).Where(x => x != DefaultRole.None).ToList();
             if (replaced.GroupBy(x => x).FirstOrDefault(g => g.Count() > 1) is { } twice)
                 throw r.Error("actions", $"two actions replace the default {JsonField.SnakeCase(twice.Key.ToString())}");
@@ -132,7 +134,7 @@ public static class DataLoader
     static StatDef ReadStat(Row r)
     {
         var stat = new StatDef(r.Str("id"), r.Str("name"), r.Enum<StatGroup>("group"), r.Enum<CombineMode>("combine"),
-            r.Bool("integer"), r.Bool("hidden"), r.Num("point_value"));
+            r.Bool("integer"), r.Bool("hidden"), r.Num("point_value"), r.Num("base"));
         if (stat.Integer && stat.Combine != CombineMode.Add)
             throw r.Error("integer", "only stats that combine by add can be integers");
         return stat;
@@ -335,16 +337,14 @@ public static class DataLoader
             throw r.Error("range", $"is required for a {JsonField.SnakeCase(target.ToString())} action");
 
         var ap = r.Int("ap_cost");
-        if (Array.IndexOf(ApCosts, ap) < 0)
-            throw r.Error("ap_cost", $"expected one of {string.Join(", ", ApCosts)}, got {ap}");
+        // Any cost on the 100 scale (Anchor: Combat › Turn order); 0 would let a unit act without the clock moving.
+        if (ap <= 0)
+            throw r.Error("ap_cost", $"must be above 0, got {ap}");
 
-        var effectRefs = new List<EffectRef>();
-        foreach (var e in ChildrenOf(t, "action_effects", r.Str("id")))
-        {
-            if (!effects.Contains(e.Str("effect")))
-                throw e.Error("effect", $"unknown effect \"{e.Str("effect")}\" (not in {t["effects"].File})");
-            effectRefs.Add(new EffectRef(e.Str("effect"), e.Enum<EffectAim>("on")));
-        }
+        // In order; each lands on the action's target, or on the actor for self and tile actions.
+        foreach (var e in r.List("effects"))
+            if (!effects.Contains(e))
+                throw r.Error("effects", $"unknown effect \"{e}\" (not in {t["effects"].File})");
 
         var action = new ActionDef(
             r.Str("id"),
@@ -357,7 +357,7 @@ public static class DataLoader
             r.Num("base_damage"),
             r.Num("all_damage"),
             r.Int("cast_time"),
-            effectRefs,
+            r.List("effects"),
             r.Enum<MoveTo>("move_to"),
             r.Enum<DefaultRole>("replaces"));
         if ((action.Target == ActionTarget.Tile) != (action.MoveTo != MoveTo.None))
@@ -474,8 +474,6 @@ public static class DataLoader
             if (!procs.Contains(id))
                 throw r.Error("procs", $"unknown proc \"{id}\" (not in {t["procs"].File})");
 
-        if (!values.Any(v => v.Stat == "health" && v.Value > 0))
-            throw r.Error("health", "a unit needs health above 0");
         return new UnitDef(r.Str("id"), r.Str("name"), size, values, compoundValues, r.List("actions"), ai, r.List("procs"));
     }
 

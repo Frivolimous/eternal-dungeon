@@ -19,7 +19,7 @@ public sealed record TargetPreview(
     int? BrutalDamage,
     double CritChance,
     double BrutalChance,
-    IReadOnlyList<EffectRef> Effects,
+    IReadOnlyList<string> Effects,
     IReadOnlyList<ProcChance> Procs);
 
 /// <summary>When a unit's turns would come: when its cast completes (if the action has a cast time) and when its

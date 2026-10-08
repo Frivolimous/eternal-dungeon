@@ -140,7 +140,7 @@ public class DataLoaderTests
     [Fact]
     public void Action_errors_name_the_column()
     {
-        Assert.Equal("[0].ap_cost", ActionFails("""{ "id": "a", "name": "A", "target": "self", "ap_cost": 75 }""").Field);
+        Assert.Equal("[0].ap_cost", ActionFails("""{ "id": "a", "name": "A", "target": "self", "ap_cost": 0 }""").Field);
         Assert.Equal("[0].tags", ActionFails("""{ "id": "a", "name": "A", "tags": ["heavy"], "target": "enemy", "range": "any", "ap_cost": 100 }""").Field);
         Assert.Equal("[0].range", ActionFails("""{ "id": "a", "name": "A", "tags": ["fire"], "target": "enemy", "ap_cost": 100 }""").Field);
         Assert.Contains("lava", ActionFails("""{ "id": "a", "name": "A", "tags": ["fire", "lava"], "target": "self", "ap_cost": 100 }""").Message);

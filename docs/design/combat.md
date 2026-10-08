@@ -20,6 +20,8 @@ Combat is purely turn-based and speed-driven, fought on small grids. Each hero i
 \text{Proc} = \text{Base} \times (1 + \sum\text{Rate}) \div (1 + \sum\text{Deval})
 ```
 
+Hit is 100% by default: its modifiers combine from 0 (Dim, like every chance stat) and the total is 1 + that. Bonuses push Hit above 100%, curses below. Success is capped at 100%, so Hit above 100% only cancels Avoid: Hit 120% against Avoid 30% succeeds 1.2 × 0.7 = 84% (Jeremy, 2026-10-08).
+
 Crit is a core stat, not a proc. C.Rate (Add, tag-keyed, hard cap 200%) converts into a per-hit crit chance c = (√(1 + 4 × C.Rate) − 1) / 2. A crit rolls again at the same chance for a Brutal crit, so expected damage rises in a straight line with C.Rate. Each tier adds C.Mult (Add, tag-keyed): Damage × (1 + tiers × C.Mult × (1 − Critical Resist × (1 − Critical Pen))). The target's Critical Deval lowers C.Rate before the conversion: C.Rate ÷ (1 + Critical Deval), then the 200% cap. Critical Resist and Critical Pen count only their Critical-keyed parts, since the untagged parts already applied to the hit. Crit rolls only on a successful hit. The character sheet shows C.Rate with both chances as shares of all hits: C.Rate 100% gives a 62% crit chance, and 38% of hits are Brutal (62% of crits).
 
 The crit stats are always written **C.Rate** and **C.Mult**, never spelled out: under the TAG STAT convention "Critical Rate" would mean the Rate stat on Critical-tagged actions (like Critical Resist, Critical Deval and Critical Pen), which is a different thing.
@@ -34,7 +36,7 @@ Every character starts with Weapon C.Rate 5% and untagged C.Mult 0.5, so every w
 
 - Each unit starts combat with Act = Initiative and gains Speed every tick. Speed 100 is the base.
 - At 100 Act, it's that unit's turn. Act can go above 100, giving extra turns, or below 0, delaying the turn.
-- Actions cost AP out of the 100-point meter: 50 is half a turn, 100 a full turn, and 200 works like a cooldown.
+- Actions cost AP out of the 100-point meter, any whole number above 0: 50 is half a turn, 100 a full turn, and 200 works like a cooldown (any cost allowed, Jeremy, 2026-10-08).
 - There are no cooldowns: an action’s AP cost is the only limit on how often it can be used (a 200-AP action delays the unit’s next turn).
 - Spells have a casting timer. The Arcanist's Meddle staggers an enemy while it's casting.
 - A unit's Act meter stops filling while it casts, and resumes when the cast completes, fizzles or is interrupted.

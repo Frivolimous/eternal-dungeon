@@ -166,7 +166,7 @@ public sealed partial class Battle
 
         var queue = new Queue<Pending>();
         foreach (var e in action.Effects)
-            queue.Enqueue(new Pending(Data.Effects[e.Effect], actor, action.Id, actor, action.Tags));
+            queue.Enqueue(new Pending(Data.Effects[e], actor, action.Id, actor, action.Tags));
         Process(queue, r);
         CollapseAreas(r);
         return Record(r);
@@ -242,8 +242,9 @@ public sealed partial class Battle
         if (landed)
             foreach (var e in action.Effects)
             {
-                var on = e.On == EffectAim.Self ? actor : target ?? actor;
-                queue.Enqueue(new Pending(Data.Effects[e.Effect], actor, action.Id, on, action.Tags));
+                // On the target; on the actor for self and tile actions, which have no other unit.
+                var on = target ?? actor;
+                queue.Enqueue(new Pending(Data.Effects[e], actor, action.Id, on, action.Tags));
             }
 
         FireProcs(ProcTrigger.ActionComplete, new ProcEvent(actor, target, action, 0, queue, r));
