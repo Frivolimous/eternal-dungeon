@@ -4,155 +4,126 @@ Enemies: Goblin Chief 370 HP, Goblin Grunt #1 85 HP, Goblin Grunt #2 85 HP
 
 [T 0.59] Rogue → Dagger Attack → Goblin Chief
          hit (100%) · 11 dmg (Physical) · Goblin Chief HP 370 → 359
-[T 1.00] Warrior → Power Attack → Goblin Chief
-         hit (100%) · 33 dmg (Physical) · Goblin Chief HP 359 → 326
-[T 1.00] Elementalist → Frost Shard → Goblin Chief
-         hit (100%) · 15 dmg (Arcane, Ice) · Goblin Chief HP 326 → 311
-         applies Chill (-30 speed, 2 turns) on Goblin Chief
+[T 1.00] Warrior → Power Attack → Goblin Grunt #1
+         hit (100%) · 37 dmg (Physical) · Goblin Grunt #1 HP 85 → 48
+[T 1.00] Elementalist → Frost Shard → Goblin Grunt #2
+         hit (100%) · 15 dmg (Arcane, Ice) · Goblin Grunt #2 HP 85 → 70
+         applies Chill (-30 speed, 2 turns) on Goblin Grunt #2
 [T 1.12] Goblin Grunt #1 → Slash → Warrior
-         hit (81%) · 16 dmg (Physical) · Warrior HP 140 → 124
-[T 1.12] Goblin Grunt #2 → Defend
+         miss (81%)
+[T 1.17] Goblin Grunt #2 → Defend
          applies Guard (+0.3 avoid, Shield 9, until next turn) on Goblin Grunt #2
-[T 1.21] Rogue → Dagger Attack → Goblin Chief
-         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 311 → 300
-[T 1.28] Goblin Chief → War Cry
+[T 1.18] Goblin Chief → War Cry
          applies War Cry (+10 power, 3 turns) on Goblin Chief
+[T 1.21] Rogue → Dagger Attack → Goblin Chief
+         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 359 → 348
 [T 1.84] Rogue → Dagger Attack → Goblin Chief
-         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 300 → 289
+         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 348 → 337
 [T 2.00] Elementalist begins casting Fire Bolt at Goblin Grunt #1 (ready at T 2.50)
 [T 2.23] Goblin Grunt #1 → Slash → Warrior
-         hit (81%) · 16 dmg (Physical) · Warrior HP 124 → 108
-[T 2.23] Guard on Goblin Grunt #2 ends
-[T 2.23] Goblin Grunt #2 → Defend
-         applies Guard (+0.3 avoid, Shield 9, until next turn) on Goblin Grunt #2
+         hit (81%) · 16 dmg (Physical) · Warrior HP 140 → 124
+[T 2.36] Goblin Chief → Cleave → Warrior
+         hit (81%) · 28 dmg (Physical) · Warrior HP 124 → 96
 [T 2.46] Rogue → Dagger Attack → Goblin Chief
-         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 289 → 278
+         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 337 → 326
 [T 2.50] Elementalist → Fire Bolt → Goblin Grunt #1
-         hit (100%) · 28 dmg (Arcane, Fire) · Goblin Grunt #1 HP 85 → 57
-[T 3.00] Chill on Goblin Chief ends
-[T 3.00] Warrior → Attack → Goblin Grunt #1
-         hit (100%) · 17 dmg (Physical) · Goblin Grunt #1 HP 57 → 40
-[T 3.06] Goblin Chief → Cleave → Warrior
-         hit (81%) · 28 dmg (Physical) · Warrior HP 108 → 80
-[T 3.09] Rogue → Dagger Attack → Goblin Chief
-         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 278 → 267
-[T 3.34] Goblin Grunt #1 → Slash → Warrior
-         hit (81%) · 16 dmg (Physical) · Warrior HP 80 → 64
-[T 3.34] Guard on Goblin Grunt #2 ends
-[T 3.34] Goblin Grunt #2 → Defend
+         hit (100%) · 28 dmg (Arcane, Fire) · Goblin Grunt #1 HP 48 → 20
+[T 2.84] Guard on Goblin Grunt #2 ends
+[T 2.84] Goblin Grunt #2 → Defend
          applies Guard (+0.3 avoid, Shield 9, until next turn) on Goblin Grunt #2
+[T 3.00] Chill on Goblin Grunt #2 ends
+[T 3.00] Warrior → Attack → Goblin Grunt #1
+         hit (100%) · 17 dmg (Physical) · Goblin Grunt #1 HP 20 → 3
+[T 3.09] Rogue → Dagger Attack → Goblin Chief
+         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 326 → 315
+[T 3.34] Goblin Grunt #1 → Slash → Warrior
+         hit (81%) · 16 dmg (Physical) · Warrior HP 96 → 80
 [T 3.50] Elementalist → Frost Shard → Goblin Grunt #1
-         hit (100%) · 15 dmg (Arcane, Ice) · Goblin Grunt #1 HP 40 → 25
-         applies Chill (-30 speed, 2 turns) on Goblin Grunt #1
-[T 3.71] Rogue → Dagger Attack → Goblin Chief
-         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 267 → 256
-[T 4.00] War Cry on Goblin Chief ends
-[T 4.00] Warrior → Power Attack → Goblin Grunt #1
-         hit (100%) · 37 dmg (Physical) · Goblin Grunt #1 HP 25 → 0
+         hit (100%) · 15 dmg (Arcane, Ice) · Goblin Grunt #1 HP 3 → 0
          Goblin Grunt #1 falls
-[T 4.24] Goblin Chief → Cleave → Warrior
-         hit (81%) · 26 dmg (Physical) · Warrior HP 64 → 38
+[T 3.53] Goblin Chief → Cleave → Warrior
+         hit (81%) · 28 dmg (Physical) · Warrior HP 80 → 52
+[T 3.71] Rogue → Dagger Attack → Goblin Chief
+         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 315 → 304
+[T 4.00] War Cry on Goblin Chief ends
+[T 4.00] Warrior → Power Attack → Goblin Chief
+         hit (100%) · 48 dmg (Physical, crit) · Goblin Chief HP 304 → 256
+[T 4.00] Guard on Goblin Grunt #2 ends
+[T 4.00] Goblin Grunt #2 → Defend
+         applies Guard (+0.3 avoid, Shield 9, until next turn) on Goblin Grunt #2
 [T 4.34] Rogue → Dagger Attack → Goblin Chief
          hit (100%) · 11 dmg (Physical) · Goblin Chief HP 256 → 245
-[T 4.45] Guard on Goblin Grunt #2 ends
-[T 4.45] Goblin Grunt #2 → Defend
-         applies Guard (+0.3 avoid, Shield 9, until next turn) on Goblin Grunt #2
-[T 4.50] Elementalist begins casting Fire Bolt at Goblin Chief (ready at T 5.00)
+[T 4.50] Elementalist begins casting Fire Bolt at Goblin Grunt #2 (ready at T 5.00)
+[T 4.71] Goblin Chief → Cleave → Warrior
+         hit (81%) · 26 dmg (Physical) · Warrior HP 52 → 26
 [T 4.96] Rogue → Dagger Attack → Goblin Chief
          hit (100%) · 11 dmg (Physical) · Goblin Chief HP 245 → 234
-[T 5.00] Elementalist → Fire Bolt → Goblin Chief
-         hit (100%) · 28 dmg (Arcane, Fire) · Goblin Chief HP 234 → 206
-[T 5.42] Goblin Chief → War Cry
-         applies War Cry (+10 power, 3 turns) on Goblin Chief
-[T 5.56] Guard on Goblin Grunt #2 ends
-[T 5.56] Goblin Grunt #2 → Move
+[T 5.00] Elementalist → Fire Bolt → Goblin Grunt #2
+         hit (70%) · 28 dmg (Arcane, Fire) · Shield absorbs 9 · Goblin Grunt #2 HP 70 → 51
+[T 5.12] Guard on Goblin Grunt #2 ends
+[T 5.12] Goblin Grunt #2 → Move
          Goblin Grunt #2 moves r1c2 → r0c2
 [T 5.59] Rogue → Dagger Attack → Goblin Chief
-         hit (100%) · 15 dmg (Physical, crit) · Goblin Chief HP 206 → 191
+         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 234 → 223
+[T 5.67] Goblin Grunt #2 → Slash → Warrior
+         miss (81%)
+[T 5.89] Goblin Chief → War Cry
+         applies War Cry (+10 power, 3 turns) on Goblin Chief
 [T 6.00] Warrior → Defend
          applies Guard (+0.3 avoid, Shield 14, until next turn) on Warrior
-[T 6.00] Elementalist → Frost Shard → Goblin Chief
-         hit (100%) · 15 dmg (Arcane, Ice) · Goblin Chief HP 191 → 176
-         applies Chill (-30 speed, 2 turns) on Goblin Chief
-[T 6.12] Goblin Grunt #2 → Slash → Warrior
-         hit (57%) · 16 dmg (Physical) · Shield absorbs 14 · Warrior HP 38 → 36
+[T 6.00] Elementalist → Frost Shard → Goblin Grunt #2
+         hit (100%) · 15 dmg (Arcane, Ice) · Goblin Grunt #2 HP 51 → 36
+         applies Chill (-30 speed, 2 turns) on Goblin Grunt #2
 [T 6.21] Rogue → Dagger Attack → Goblin Chief
-         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 176 → 165
+         hit (100%) · 15 dmg (Physical, crit) · Goblin Chief HP 223 → 208
 [T 6.84] Rogue → Dagger Attack → Goblin Chief
-         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 165 → 154
-[T 6.91] Goblin Chief → Cleave → Warrior
-         hit (57%) · 28 dmg (Physical) · Warrior HP 36 → 8
+         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 208 → 197
 [T 7.00] Guard on Warrior ends
-[T 7.00] Warrior → Power Attack → Goblin Chief
-         hit (100%) · 33 dmg (Physical) · Goblin Chief HP 154 → 121
+[T 7.00] Warrior → Power Attack → Goblin Grunt #2
+         hit (100%) · 37 dmg (Physical) · Goblin Grunt #2 HP 36 → 0
+         Goblin Grunt #2 falls
 [T 7.00] Elementalist begins casting Fire Bolt at Goblin Chief (ready at T 7.50)
-[T 7.23] Goblin Grunt #2 → Slash → Warrior
-         hit (81%) · 16 dmg (Physical) · Warrior HP 8 → 0
-         Warrior falls
-         Goblin Chief now plans Cleave → Rogue (its target fell)
+[T 7.06] Goblin Chief → Cleave → Warrior
+         miss (81%)
 [T 7.46] Rogue → Dagger Attack → Goblin Chief
-         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 121 → 110
+         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 197 → 186
 [T 7.50] Elementalist → Fire Bolt → Goblin Chief
-         hit (100%) · 28 dmg (Arcane, Fire) · Goblin Chief HP 110 → 82
+         hit (100%) · 28 dmg (Arcane, Fire) · Goblin Chief HP 186 → 158
 [T 8.00] War Cry on Goblin Chief ends
-[T 8.00] Chill on Goblin Chief ends
 [T 8.09] Rogue → Dagger Attack → Goblin Chief
-         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 82 → 71
-[T 8.34] Goblin Grunt #2 → Defend
-         applies Guard (+0.3 avoid, Shield 9, until next turn) on Goblin Grunt #2
-[T 8.48] Goblin Chief → Cleave → Rogue
+         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 158 → 147
+[T 8.24] Goblin Chief → Cleave → Rogue
          hit (83%) · 26 dmg (Physical) · Rogue HP 100 → 74
 [T 8.50] Elementalist → Frost Shard → Goblin Chief
-         hit (100%) · 15 dmg (Arcane, Ice) · Goblin Chief HP 71 → 56
+         hit (100%) · 15 dmg (Arcane, Ice) · Goblin Chief HP 147 → 132
          applies Chill (-30 speed, 2 turns) on Goblin Chief
 [T 8.71] Rogue → Dagger Attack → Goblin Chief
-         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 56 → 45
+         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 132 → 121
+[T 9.00] Warrior → Defend
+         applies Guard (+0.3 avoid, Shield 14, until next turn) on Warrior
 [T 9.34] Rogue → Dagger Attack → Goblin Chief
-         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 45 → 34
-[T 9.45] Guard on Goblin Grunt #2 ends
-[T 9.45] Goblin Grunt #2 → Defend
-         applies Guard (+0.3 avoid, Shield 9, until next turn) on Goblin Grunt #2
+         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 121 → 110
 [T 9.50] Elementalist begins casting Fire Bolt at Goblin Chief (ready at T 10.00)
+[T 9.91] Goblin Chief → War Cry
+         applies War Cry (+10 power, 3 turns) on Goblin Chief
 [T 9.96] Rogue → Dagger Attack → Goblin Chief
-         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 34 → 23
+         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 110 → 99
 [T 10.00] Chill on Goblin Chief ends
 [T 10.00] Elementalist → Fire Bolt → Goblin Chief
-         hit (100%) · 28 dmg (Arcane, Fire) · Goblin Chief HP 23 → 0
+         hit (100%) · 28 dmg (Arcane, Fire) · Goblin Chief HP 99 → 71
+[T 10.00] Guard on Warrior ends
+[T 10.00] Warrior → Power Attack → Goblin Chief
+         hit (100%) · 33 dmg (Physical) · Goblin Chief HP 71 → 38
+[T 10.59] Rogue → Dagger Attack → Goblin Chief
+         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 38 → 27
+[T 11.00] Elementalist → Frost Shard → Goblin Chief
+         hit (100%) · 15 dmg (Arcane, Ice) · Goblin Chief HP 27 → 12
+         applies Chill (-30 speed, 2 turns) on Goblin Chief
+[T 11.19] Goblin Chief → Cleave → Rogue
+         hit (83%) · 28 dmg (Physical) · Rogue HP 74 → 46
+[T 11.21] Rogue → Dagger Attack → Goblin Chief
+         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 12 → 1
+[T 11.84] Rogue → Dagger Attack → Goblin Chief
+         hit (100%) · 11 dmg (Physical) · Goblin Chief HP 1 → 0
          Goblin Chief falls
-[T 10.56] Guard on Goblin Grunt #2 ends
-[T 10.56] Goblin Grunt #2 → Defend
-         applies Guard (+0.3 avoid, Shield 9, until next turn) on Goblin Grunt #2
-[T 10.59] Rogue → Move
-         Rogue moves r0c0 → r0c0 (opposing area)
-         applies Stealth (+0.5 avoid, -1 threatening, 1 turns) on Rogue
-         Elementalist steps forward (r1c1 → r0c1)
-         Goblin Grunt #2 now plans Slash → Elementalist (its plan was blocked)
-[T 11.00] Stealth on Rogue ends
-[T 11.00] Rogue → Move
-         Rogue moves r0c0 (opposing area) → r0c1 (opposing area)
-         applies Stealth (+0.5 avoid, -1 threatening, 1 turns) on Rogue
-[T 11.00] Elementalist → Frost Shard → Goblin Grunt #2
-         hit (70%) · 15 dmg (Arcane, Ice) · Shield absorbs 9 · Goblin Grunt #2 HP 85 → 79
-         applies Chill (-30 speed, 2 turns) on Goblin Grunt #2
-[T 11.42] Rogue → Dagger Attack → Goblin Grunt #2
-         hit (70%) · 12 dmg (Physical) · Goblin Grunt #2 HP 79 → 67
-         Stealth on Rogue ends
-[T 12.00] Elementalist begins casting Fire Bolt at Goblin Grunt #2 (ready at T 12.50)
-[T 12.00] Guard on Goblin Grunt #2 ends
-[T 12.00] Goblin Grunt #2 → Slash → Elementalist
-         hit (90%) · 16 dmg (Physical) · Elementalist HP 80 → 64
-[T 12.05] Rogue → Dagger Attack → Goblin Grunt #2
-         hit (100%) · 12 dmg (Physical) · Goblin Grunt #2 HP 67 → 55
-[T 12.50] Elementalist → Fire Bolt → Goblin Grunt #2
-         hit (100%) · 28 dmg (Arcane, Fire) · Goblin Grunt #2 HP 55 → 27
-[T 12.67] Rogue → Dagger Attack → Goblin Grunt #2
-         hit (100%) · 12 dmg (Physical) · Goblin Grunt #2 HP 27 → 15
-[T 13.00] Chill on Goblin Grunt #2 ends
-[T 13.30] Rogue → Dagger Attack → Goblin Grunt #2
-         hit (100%) · 12 dmg (Physical) · Goblin Grunt #2 HP 15 → 3
-[T 13.45] Goblin Grunt #2 → Slash → Rogue
-         miss (83%)
-[T 13.50] Elementalist → Frost Shard → Goblin Grunt #2
-         hit (100%) · 15 dmg (Arcane, Ice) · Goblin Grunt #2 HP 3 → 0
-         Goblin Grunt #2 falls
-[T 13.50] Victory: the party wins.
+[T 11.84] Victory: the party wins.

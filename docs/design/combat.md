@@ -102,22 +102,23 @@ Redesigned 2026-10-08 (Jeremy).
 - **Healing done:** the full heal, overheal included (a placeholder, to match overkill).
 - **Threat effects:** a proc result that adds a set amount to its target's Threat score. A taunt is a threat proc that targets its owner.
 
-**Threatening** (Add, base 100%, never below 0) multiplies the Threat score whenever targets are scored. It applies at scoring time, not when threat is earned, so it's reversible: Stealth is Threatening −100% (×0) while it lasts, and the unit's whole history counts again afterwards. **Vulnerability** is hidden and rises as Health drops.
+**Threatening** (Add, base 100%, never below 0) multiplies the Threat score whenever targets are scored. It applies at scoring time, not when threat is earned, so it's reversible: Stealth is Threatening −100% (×0) while it lasts, and the unit's whole history counts again afterwards. **Vulnerability** is hidden: how close a target is to dying compared with the others (below).
 
 **Scoring.** For each target the enemy can reach with the action it's choosing:
 
 - effective threat = Threat score × Threatening;
 - scaled threat = effective threat ÷ the highest effective threat among those targets (0 for all when that highest is 0: no threat yet, or everyone in Stealth);
+- Vulnerability = the lowest current Health among those targets ÷ this target's current Health, plus the Vulnerability stat ÷ 100. The unit closest to dying scores 1. It looks at current Health, not the share missing, so a tank that is being hit doesn't become a bigger target until it really is the easiest kill (decided 2026-10-08: the share-missing version fed on itself, and enemies hit only the Warrior);
 - score = w × scaled threat + (1 − w) × Vulnerability, w from the AI profile (0.25–0.75).
 
-The highest score wins. Ties are broken by a pick from the battle's seeded random generator, never a global one. Percent of the highest is kept on purpose: unlike percent of the total, it doesn't change with party size (a fifth unit or a pet doesn't dilute everyone). The UI can still show each hero's share of the total.
+The pick is weighted (decided 2026-10-08): each target's chance is its score² over the total, rolled on the battle's seeded random generator (never a global one). The favourite is likely, not certain, and the intent shows the result before it happens. Percent of the highest is kept on purpose: unlike percent of the total, it doesn't change with party size (a fifth unit or a pet doesn't dilute everyone). The UI can still show each hero's share of the total.
 
 **Committed intents.** Enemies decide their next action and target ahead of time, and the player sees it on the turn order.
 
 - An enemy plans at the start of the battle (after fight-start procs) and at the end of each of its own turns. Planning uses the battle's seeded random generator when it's made, so replays stay exact. Its AI rules ("heal self below 40%") are checked when it plans, not when it acts.
 - On its turn it does what it planned. The plan changes, straight away, only when a unit does something:
   1. **Its target lowers its own Threatening** (enters Stealth): it plans again.
-  2. **Another unit has its Threatening raised, or a threat effect lands on it** (a taunt): the enemy compares only its current target and that unit, on the usual scores, and switches if that unit now scores higher.
+  2. **Another unit has its Threatening raised, or a threat effect lands on it** (a taunt): the enemy weighs only its current target and that unit, on the usual scores, and re-picks between the two with the same weighted roll: the higher the taunter now scores, the likelier the switch.
   3. **Its target falls:** it plans again.
   4. **The plan becomes impossible:** the target or the planned tile is out of reach after a Move, push, pull or collapse, the tile was taken, or the enemy was Silenced, Rooted or is out of Mana. It plans again. Gaining **Fear** also re-plans (step back, or Defend); losing Fear doesn't.
 - Gaining **Confusion** turns the plan into "?": on its turn the enemy acts at random.

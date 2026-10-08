@@ -16,28 +16,45 @@ public class TargetingTests
     {
         var loud = U("warrior", "loud", Side.Party);
         var hurt = U("rogue", "hurt", Side.Party);
-        loud.ThreatScore = 100;                                           // threat 1.0 (the most), vulnerability 0
-        hurt.TakeDamage(50);                                              // threat 0, vulnerability 0.5
+        loud.ThreatScore = 100;                                           // threat 1.0 (the most)
+        hurt.TakeDamage(50);                                              // 50 HP: the lowest, so vulnerability 1
+        double Score(Unit u, double w) => UnitAi.Scores([loud, hurt], w).Single(s => s.Unit == u).Score;
 
-        Assert.Equal(loud, UnitAi.PickTarget([loud, hurt], 0.75, new Rng(1)));        // 0.75 vs 0.125
-        Assert.Equal(hurt, UnitAi.PickTarget([loud, hurt], 0.25, new Rng(1)));        // 0.25 vs 0.375
-        Assert.Equal(loud, UnitAi.PickTarget([loud, hurt], 0.5, new Rng(1)));         // 0.5 vs 0.25
+        Assert.Equal(0.75 + 0.25 * 50 / 140.0, Score(loud, 0.75), 9);     // loud: 140 HP, vulnerability 50/140
+        Assert.Equal(0.25, Score(hurt, 0.75), 9);
+        Assert.Equal(0.25 + 0.75 * 50 / 140.0, Score(loud, 0.25), 9);
+        Assert.Equal(0.75, Score(hurt, 0.25), 9);
     }
 
     [Fact]
-    public void Ties_are_broken_by_the_seeded_rng()
+    public void A_tank_being_hit_isnt_more_vulnerable_until_it_is_the_easiest_kill()
     {
-        var a = U("warrior", "a", Side.Party);
-        var b = U("warrior", "b", Side.Party);
-        var picks = Enumerable.Range(1, 40).Select(seed => UnitAi.PickTarget([a, b], 0.5, new Rng((ulong)seed))).ToList();
-        Assert.Contains(a, picks);
-        Assert.Contains(b, picks);                                                     // not always the first listed
-        Assert.Equal(picks, Enumerable.Range(1, 40).Select(seed => UnitAi.PickTarget([a, b], 0.5, new Rng((ulong)seed))));
+        var tank = U("warrior", "tank", Side.Party);                     // 140 HP
+        var mage = U("elementalist", "mage", Side.Party);                // 80 HP
+        double Vulnerability(Unit u) => UnitAi.Scores([tank, mage], 0).Single(s => s.Unit == u).Score;
+        Assert.Equal(1, Vulnerability(mage), 9);
+        tank.TakeDamage(50);                                              // 90 HP: still more than the mage
+        Assert.True(Vulnerability(tank) < Vulnerability(mage));
+        tank.TakeDamage(30);                                              // 60 HP: now the easiest kill
+        Assert.Equal(1, Vulnerability(tank), 9);
+        tank.Stats.Add("curse", "vulnerability", 20);                    // the stat adds on top, in percent
+        Assert.Equal(1.2, Vulnerability(tank), 9);
+    }
+
+    [Fact]
+    public void The_pick_is_weighted_by_score_on_the_seeded_rng()
+    {
+        var loud = U("warrior", "loud", Side.Party);
+        var quiet = U("warrior", "quiet", Side.Party);
+        loud.ThreatScore = 100;
+        var picks = Enumerable.Range(1, 200).Select(seed => UnitAi.PickTarget([loud, quiet], 0.5, new Rng((ulong)seed))).ToList();
+        Assert.Equal(picks, Enumerable.Range(1, 200).Select(seed => UnitAi.PickTarget([loud, quiet], 0.5, new Rng((ulong)seed))));
+        var share = picks.Count(p => p == loud) / 200.0;                  // scores 1 and 0.5: weights 1 and 0.25, so 80%
+        Assert.InRange(share, 0.7, 0.9);
 
         var rng = new Rng(9);
         var probe = new Rng(9);
-        b.TakeDamage(10);                                                              // no tie: no roll
-        Assert.Equal(b, UnitAi.PickTarget([a, b], 0.5, rng));
+        Assert.Equal(loud, UnitAi.PickTarget([loud], 0.5, rng));          // one candidate: no roll
         Assert.Equal(probe.NextULong(), rng.NextULong());
     }
 
@@ -60,13 +77,9 @@ public class TargetingTests
     }
 
     [Fact]
-    public void Vulnerability_rises_as_health_drops_and_stealth_hides_threat()
+    public void Stealth_hides_threat()
     {
         var rogue = U("rogue", "rogue", Side.Party);
-        Assert.Equal(0, rogue.Vulnerability);
-        rogue.TakeDamage(25);
-        Assert.Equal(0.25, rogue.Vulnerability, 12);
-
         rogue.ThreatScore = 80;
         rogue.Stats.Add("stealth", "threatening", -1);
         Assert.Equal(0, rogue.EffectiveThreat);

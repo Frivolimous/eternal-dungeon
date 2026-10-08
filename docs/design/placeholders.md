@@ -40,7 +40,8 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 | Taunt | A Warrior action (50 AP): +60 Threat score and Taunting (Threatening +50%, 2 turns). Its AI uses it while an ally is below 50% Health and it isn't already Taunting. Added so the systems showcase shows threat effects and plans changing; replace when the Defender kit is designed |
 | Damage over time and delayed damage | Count toward the buff caster's Threat score |
 | Ally Health on a self action | An AI rule's ally_health_below on a self action means "while some other ally is below that share" (used by the Taunt rule) |
-| Vulnerability | The share of Health missing, plus the Vulnerability stat ÷ 100 |
+| Vulnerability | The lowest current Health among the reachable targets ÷ this one's current Health, plus the Vulnerability stat ÷ 100 |
+| Weighted pick | A target's chance is its score squared over the total (the square keeps the favourite the favourite) |
 
 ## Presentation
 

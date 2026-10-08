@@ -16,7 +16,7 @@ public enum IntentReason { BattleStart, TurnEnd, TargetFell, TargetHid, Drawn, B
 /// <summary>
 /// Picks actions and targets from a unit's AI profile (Anchor: Combat › Enemy targeting). Rules are tried in
 /// order; the first whose action is usable, whose conditions hold and that has a valid target wins. Enemy
-/// targets score w × scaled threat + (1 − w) × Vulnerability. Heroes use the same rules in the simulator, since there
+/// targets score w × scaled threat + (1 − w) × Vulnerability, and the pick is weighted by score. Heroes use the same rules in the simulator, since there
 /// is no player input yet. With no rule usable, a unit uses its default actions: it Attacks if it has a valid
 /// target, otherwise it Moves toward the front if it can, otherwise it Defends. A feared unit only Moves away from the front, or Defends.
 /// </summary>
@@ -154,28 +154,42 @@ public static class UnitAi
     public static List<Unit> ValidTargets(Battle battle, Unit unit, ActionDef action) =>
         battle.Units.Where(u => battle.Grid.CantTarget(unit, action, u) is null).ToList();
 
-    internal const double Tolerance = 1e-12;
-
     /// <summary>
-    /// Each candidate's score, w × scaled threat + (1 − w) × Vulnerability (Anchor: Combat › Enemy targeting).
-    /// Effective threat (Threat score × Threatening) is divided by the highest among the candidates, so it's 0–1 like
-    /// Vulnerability and doesn't change with party size. When the highest is 0 (no threat yet, or everyone in
-    /// Stealth), scaled threat is 0 for all.
+    /// Each candidate's score, w × scaled threat + (1 − w) × Vulnerability (Anchor: Combat › Enemy targeting). Both
+    /// parts are relative to the candidates, 0–1, so neither changes with party size:
+    /// <list type="bullet">
+    /// <item>scaled threat: effective threat (Threat score × Threatening) ÷ the highest among them, 0 for all when that
+    /// highest is 0 (no threat yet, or everyone in Stealth);</item>
+    /// <item>Vulnerability: the lowest current Health among them ÷ this one's current Health, plus the Vulnerability
+    /// stat ÷ 100. The unit closest to dying scores 1, so hitting a tank doesn't make it a bigger target until it
+    /// really is the easiest kill (decided 2026-10-08).</item>
+    /// </list>
     /// </summary>
     public static List<(Unit Unit, double Score)> Scores(IReadOnlyList<Unit> candidates, double w)
     {
         var max = candidates.Max(c => c.EffectiveThreat);
-        return [.. candidates.Select(c => (c, w * (max > 0 ? c.EffectiveThreat / max : 0) + (1 - w) * c.Vulnerability))];
+        var lowest = candidates.Min(c => Math.Max(1, c.Health));
+        return [.. candidates.Select(c => (c, w * (max > 0 ? c.EffectiveThreat / max : 0)
+            + (1 - w) * ((double)lowest / Math.Max(1, c.Health) + c.Stats.Get("vulnerability") / 100)))];
     }
 
-    /// <summary>The highest <see cref="Scores"/>. Ties are broken by a pick from the battle's seeded RNG (never a
-    /// global one); it's only rolled when there is a tie.</summary>
+    /// <summary>How strongly a score pulls: its square, so the favourite stays the favourite (placeholder).</summary>
+    public static double Weight(double score) => Math.Pow(Math.Max(1e-6, score), 2);
+
+    /// <summary>
+    /// A weighted pick (decided 2026-10-08): each candidate's chance is its <see cref="Weight"/> over the total, rolled on
+    /// the battle's seeded RNG (never a global one), so the favourite is likely but not certain. The intent shows the
+    /// result before it happens. A single candidate needs no roll.
+    /// </summary>
     public static Unit PickTarget(IReadOnlyList<Unit> candidates, double w, Rng rng)
     {
         var scored = Scores(candidates, w);
-        var best = scored.Max(s => s.Score);
-        var tied = scored.Where(s => s.Score >= best - Tolerance).Select(s => s.Unit).ToList();
-        return tied.Count == 1 ? tied[0] : tied[rng.NextInt(tied.Count)];
+        if (scored.Count == 1) return scored[0].Unit;
+        var weights = scored.Select(s => Weight(s.Score)).ToList();
+        var roll = rng.NextDouble() * weights.Sum();
+        for (var i = 0; i < scored.Count; i++)
+            if ((roll -= weights[i]) < 0) return scored[i].Unit;
+        return scored[^1].Unit;
     }
 
     /// <summary>One of the unit's default actions (defaults.json, or its own replacement), if it can use it: a Move to

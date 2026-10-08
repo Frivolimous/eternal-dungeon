@@ -7,8 +7,8 @@ namespace EternalDungeon.Core.Combat;
 // unit does something to it, never because a buff wore off or ordinary damage and healing moved the scores:
 //   - its target falls, or something makes the plan impossible (a move, push or collapse, Silence, Root): re-plan;
 //   - its target has its Threatening lowered (enters Stealth): re-plan;
-//   - another unit has its Threatening raised, or a threat effect (taunt) lands on it: switch to that unit if it now
-//     scores higher than the current target;
+//   - another unit has its Threatening raised, or a threat effect (taunt) lands on it: re-pick between it and the
+//     current target, weighted by their scores;
 //   - Fear is applied: re-plan (losing it doesn't); Confusion is applied: the plan becomes "?".
 public sealed partial class Battle
 {
@@ -141,9 +141,10 @@ public sealed partial class Battle
         b.Refreshed && !b.Buff.Def.Stacking ? 0 : b.Buff.Def.Stats.Where(s => s.Stat == "threatening" && s.Tag is null).Sum(s => s.Value);
 
     /// <summary>
-    /// Trigger 2: <paramref name="unit"/> just became more threatening. <paramref name="enemy"/> compares it only with
-    /// its current target, on the usual scores among everyone its planned action can reach, and switches if it now
-    /// scores higher (a tie keeps the plan).
+    /// Trigger 2: <paramref name="unit"/> just became more threatening. <paramref name="enemy"/> weighs it only against
+    /// its current target, on the usual scores among everyone its planned action can reach, and re-picks between the
+    /// two with the same weighted roll as any target pick (decided 2026-10-08): the higher the taunter now scores, the
+    /// likelier the switch.
     /// </summary>
     void Draw(Unit enemy, Unit unit, ActionResult r)
     {
@@ -152,7 +153,8 @@ public sealed partial class Battle
         var candidates = UnitAi.ValidTargets(this, enemy, d.Action);
         if (!candidates.Contains(unit) || !candidates.Contains(current)) return;
         var scores = UnitAi.Scores(candidates, Data.AiProfiles[enemy.Def.Ai].ThreatWeight).ToDictionary(s => s.Unit, s => s.Score);
-        if (scores[unit] <= scores[current] + UnitAi.Tolerance) return;
+        var (stay, go) = (UnitAi.Weight(scores[current]), UnitAi.Weight(scores[unit]));
+        if (Rng.NextDouble() * (stay + go) >= go) return;
         enemy.Intent = new Intent(d with { Target = unit });
         r.Add(new IntentSet(enemy, enemy.Intent, IntentReason.Drawn));
     }

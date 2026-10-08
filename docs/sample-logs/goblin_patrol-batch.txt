@@ -1,49 +1,56 @@
 Goblin Patrol · 1000 battles · seeds 1–1000
-Win rate         100.0%  (1000 won, 0 lost, 0 stalemates)
-Battle length    7.4 turns on average
-Party HP left    50.3% on average, 10.3% at worst
-Hit rate         92.3% of 32369 attacks
+Win rate         99.6%  (996 won, 4 lost, 0 stalemates)
+Battle length    7.8 turns on average
+Party HP left    36.0% on average, 0.0% at worst
+Hit rate         91.7% of 36113 attacks
 
 Damage dealt per battle
-  Rogue                     115.8
-  Elementalist               97.2
-  Warrior                    78.9
-  Goblin Shaman              67.8
-  Goblin Grunt               62.6
-  Goblin Archer              41.3
+  Rogue                     125.6
+  Elementalist               95.5
+  Goblin Grunt               89.6
+  Warrior                    86.3
+  Goblin Shaman              68.8
+  Goblin Archer              56.5
 
 Hero deaths per battle
-  Warrior                     0.8
+  Warrior                     0.5
+  Elementalist                0.1
   Rogue                       0.0
 
 Actions used per battle
   Elementalist: Fire Bolt               2.9
-  Elementalist: Frost Shard             3.0
-  Goblin Archer: Shot                   3.3
-  Goblin Grunt: Slash                   5.1
-  Goblin Shaman: Attack                 1.1
-  Goblin Shaman: Mend                   0.1
-  Goblin Shaman: Move                   0.1
-  Goblin Shaman: Rotting Hex            4.8
-  Rogue: Dagger Attack                 10.1
-  Rogue: Defend                         0.0
-  Rogue: Move                           1.9
-  Warrior: Attack                       0.3
+  Elementalist: Frost Shard             3.1
+  Goblin Archer: Shot                   4.7
+  Goblin Grunt: Defend                  0.0
+  Goblin Grunt: Move                    0.0
+  Goblin Grunt: Slash                   7.0
+  Goblin Shaman: Attack                 1.4
+  Goblin Shaman: Mend                   0.8
+  Goblin Shaman: Move                   0.4
+  Goblin Shaman: Rotting Hex            3.5
+  Rogue: Dagger Attack                 10.9
+  Rogue: Defend                         0.2
+  Rogue: Move                           1.5
+  Warrior: Attack                       0.9
   Warrior: Defend                       1.1
-  Warrior: Power Attack                 2.0
+  Warrior: Power Attack                 2.1
+  Warrior: Taunt                        0.6
 
 Effects and CC applied per battle
-  Chill                                 2.1
-  Guard                                 1.1
-  Rot                                   3.8
-  Stealth                               1.9
+  Chill                                 2.6
+  Guard                                 1.3
+  Rot                                   3.0
+  Stealth                               1.5
+  Taunting                              0.6
   Act knocked back (stagger)            0.0
   Casts interrupted                     0.0
 
 Procs fired per battle
-  Elementalist: Chill                   2.1
-  Goblin Shaman: Mend                   0.1
-  Goblin Shaman: Rot                    3.8
-  Rogue: Guard                          0.0
-  Rogue: Stealth                        1.9
+  Elementalist: Chill                   2.6
+  Goblin Grunt: Guard                   0.0
+  Goblin Shaman: Mend                   0.8
+  Goblin Shaman: Rot                    3.0
+  Rogue: Guard                          0.2
+  Rogue: Stealth                        1.5
   Warrior: Guard                        1.1
+  Warrior: Taunt                        0.6
