@@ -59,8 +59,6 @@ public sealed class Unit
     /// <summary>An enemy's committed next action, shown on its next turn-order chip (null for heroes).</summary>
     public Intent? Intent { get; set; }
 
-    /// <summary>Hidden. Rises as Health drops: the share of Health missing, plus the Vulnerability stat in percent.</summary>
-    public double Vulnerability => 1 - (double)Health / Math.Max(1, MaxHealth) + Stats.Get("vulnerability") / 100;
     public bool Alive => Health > 0;
     public double Act => ActTicks / 100.0;
     public int MaxHealth => (int)Math.Round(Stats.Get("health"));
