@@ -76,7 +76,7 @@ CC can target a character or a tile: Slow, Stun, Stagger, Pull/Push/Move, Root, 
 
 Confusion: the unit loses all choice, heroes included. On its turn it uses a random usable action at a random target it can reach, allies included (or a random tile, or itself), decided 2026-10-08.
 
-Fear: a feared unit can only Defend, or Move to a tile further from the front. If it is its side's only unit in the front row, it can't step back (the forward collapse would only pull it straight back), so it Defends (decided 2026-10-08). It can't attack or use skills. Unlike Stun (and Sleep), Fear doesn't skip the turn.
+Fear: the unit loses all choice, heroes included (decided 2026-10-08): on its turn it Moves to a tile further from the front if it can, otherwise it Defends. It never attacks or uses skills. If it is its side's only unit in the front row, it can't step back (the forward collapse would only pull it straight back), so it Defends (decided 2026-10-08). It can't attack or use skills. Unlike Stun (and Sleep), Fear doesn't skip the turn.
 
 Damage over time scales with the caster: when it's applied, the caster's Power and Multiplier factors for the tags of the action (or proc) that applied it are locked in, and every tick uses them. Shield still absorbs ticks.
 

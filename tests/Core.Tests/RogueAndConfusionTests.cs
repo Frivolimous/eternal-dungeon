@@ -117,6 +117,32 @@ public class RogueAndConfusionTests
         Assert.Equal(CombatLog.Write(s.Battle, LogLevel.Full), CombatLog.Write(replayed.Battle, LogLevel.Full));
     }
 
+    [Fact]
+    public void A_feared_hero_is_played_by_its_ai_and_the_battle_still_replays()
+    {
+        // The Warrior is feared from the start of the fight (a fight-start proc applying Dread, Fear for 2 turns).
+        var c = Repo;
+        var data = new GameData(c.TagList, c.StatList, c.CompoundList,
+            [.. c.UnitList.Select(u => u.Id == "warrior" ? u with { Procs = ["test_feared_start"] } : u)],
+            c.ActionList, c.EffectList, c.AiProfileList, c.EncounterList, c.UnitDefaults,
+            [.. c.ProcList, Proc("test_feared_start", ProcTrigger.FightStart, ProcTarget.Self) with { Effect = "dread" }],
+            c.DefaultActions, c.Text);
+        var s = new BattleSession(data, data.Encounters["goblin_patrol"], 2);
+        s.Advance();
+        var warrior = s.Battle.Units.First(u => u.Def.Id == "warrior");
+        while (!s.Over)
+        {
+            Assert.False(s.Awaiting == warrior && warrior.Afraid);       // never asked while feared
+            var h = s.Awaiting!;
+            s.Choose(new Choice(h.Id, "defend"));
+            s.Advance();
+        }
+        var feared = s.Battle.Results.Where(r => r.Actor == warrior && r.Action is not null).Take(1).Single();
+        Assert.Contains(feared.Action!.Id, new[] { "defend", "move" });   // its first turn, still feared: back or Defend
+        var replayed = Replay.Parse(s.ToReplay().ToJson()).Play(data);
+        Assert.Equal(CombatLog.Write(s.Battle, LogLevel.Full), CombatLog.Write(replayed.Battle, LogLevel.Full));
+    }
+
     // ---- The forward collapse with a Rogue in the enemy area ----
 
     static (BattleGrid Grid, Battle Battle, Unit Rogue, Unit Grunt) RogueInFront(Tile rogueAt, Tile gruntAt)

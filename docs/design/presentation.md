@@ -40,8 +40,9 @@ Designed at **1280×800** (Steam Deck's native 16:10) and scaled up for larger s
    chance, damage on a normal hit, a crit and a Brutal crit with their chances, effects it would apply, and procs that
    could trigger with their chances. Damage is static (no damage roll), so the numbers are exact; procs aren't in them.
 4. Click to confirm; right-click or Escape steps back. Enemy turns play automatically.
-5. **Heroes the player can't fully control:** Stunned or Sleeping heroes lose the turn (shown briefly). Feared heroes
-   can only Defend or Move away from the front. A Confused hero's player picks the action, and the target is random.
+5. **Heroes the player can't fully control:** Stunned or Sleeping heroes lose the turn (shown briefly). Feared and Confused heroes
+   are played for you: a feared hero steps back if it can and otherwise Defends; a confused one uses a random action at a
+   random target, allies included.
 
 The combat log uses the same text as the simulator's brief log, with every damage tag. Previews never roll anything,
 so looking can't change a battle.

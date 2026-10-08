@@ -101,9 +101,11 @@ public sealed class BattleSession
             Battle.SkipTurn(unit);
             return;
         }
-        if (unit.Has(CcKind.Confusion))
+        // Confusion and Fear take the turn out of the player's hands (Jeremy, 2026-10-08): Confusion acts at random,
+        // Fear steps back if it can and Defends if not. Neither is a recorded choice: replays decide them the same way.
+        if (unit.Has(CcKind.Confusion) || unit.Afraid)
         {
-            Play(unit, UnitAi.Confused(Battle, unit));
+            Play(unit, UnitAi.Decide(Battle, unit));
             return;
         }
         var auto = AutoBattle;
