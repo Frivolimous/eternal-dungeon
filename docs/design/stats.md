@@ -66,7 +66,7 @@ Which stats use each mode:
 | --- | --- |
 | Add | Health, Mana, Speed, Initiative, Threat, Vulnerability, All Damage, Base Dmg, Power, Multiplier, Rate and Deval (chance stats, Add), C.Rate (hard cap 200%), C.Mult |
 | Mult | None for now. Reserved for rare, build-defining effects. |
-| Dim | All Resist, Penetrate, Hit, Resist, Avoid (chance stats: they stay below 1, and only curses push them below 0) |
+| Dim | All Resist, Penetrate, Hit, Resist, Avoid (chance stats: they generally stay between 0 and 1; curses are the exception and can push them below 0) |
 
 Negative Dim modifiers (debuffs such as a curse giving −0.2 Avoid) stack separately from positive ones, each by the Dim formula, and the negative total is subtracted: Avoid +0.5 and +0.2 give 0.6, two −0.2 curses give 0.36, so Avoid is 0.24. The result can go below 0. Every Dim modifier stays strictly between −1 and 1, and a single source counts for at most ±0.95 (placeholder value): many sources still stack toward 1, but no one source gets there alone. Add stats have no cap.
 
