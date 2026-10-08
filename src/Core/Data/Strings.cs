@@ -47,7 +47,7 @@ public sealed class Strings
     /// quotes (doubled) or line breaks.</summary>
     public static Strings Parse(string csv, string language = DefaultLanguage)
     {
-        var rows = Rows(csv).ToList();
+        var rows = ReadCsv(csv).ToList();
         if (rows.Count == 0 || rows[0].Count == 0 || rows[0][0] != "keys")
             throw new DataException(FileName, "line 1", "the first column must be \"keys\"");
         var col = rows[0].IndexOf(language);
@@ -65,7 +65,26 @@ public sealed class Strings
         return new Strings(texts, language);
     }
 
-    static IEnumerable<List<string>> Rows(string csv)
+    /// <summary>Writes rows in the file's canonical form: the header row and the keys plain (quoted only when they
+    /// must be), every text quoted, quotes doubled, one row per line.</summary>
+    public static string WriteCsv(IEnumerable<IReadOnlyList<string>> rows)
+    {
+        var sb = new StringBuilder();
+        var header = true;
+        foreach (var row in rows)
+        {
+            sb.Append(string.Join(',', row.Select((field, i) => header || i == 0 ? Plain(field) : Quoted(field)))).Append('\n');
+            header = false;
+        }
+        return sb.ToString();
+    }
+
+    static string Quoted(string field) => "\"" + field.Replace("\"", "\"\"") + "\"";
+
+    static string Plain(string field) => field.IndexOfAny([',', '"', '\n', '\r']) >= 0 ? Quoted(field) : field;
+
+    /// <summary>The rows of a CSV file, as Godot reads it.</summary>
+    public static IEnumerable<List<string>> ReadCsv(string csv)
     {
         var row = new List<string>();
         var field = new StringBuilder();

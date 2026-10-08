@@ -45,6 +45,8 @@ dotnet run --project src/Sim -- encounters           # list encounter ids
 dotnet run --project src/Sim -- data                 # load and validate data/*.json
 dotnet run --project src/Sim -- export-tsv sheets    # every data table as a TSV in sheets/ (for spreadsheets)
 dotnet run --project src/Sim -- import-tsv sheets    # validate the TSVs, print changes, write data/*.json
+dotnet run --project src/Sim -- pull-sheets [--force]  # the content Google Sheet → data/ (validates, prints changes)
+dotnet run --project src/Sim -- push-sheets [--force]  # data/ → the Google Sheet (tools/pull-sheets.bat, push-sheets.bat)
 dotnet run --project src/Sim -- format-data          # rewrite data/*.json in canonical form (after hand edits)
 dotnet run --project src/Sim -- replay fight.replay.json   # play a replay saved by the game, print its log
 dotnet run --project src/Sim -- assets               # check the asset manifest and art styles, list AI placeholders
@@ -105,7 +107,10 @@ it, and another that the files are canonical: run `sim format-data` after hand e
 notes go in a `note` column or data/README.md. `DataLoader.Build` validates the tables and builds the
 definitions; errors name file, row and column (`stats.json [4].combine: …`, or `units.tsv row 6, health: …`).
 `DataExchange` does TSV export/import (validates everything first, prints a change summary, writes nothing on
-invalid data). When you add a table or column: its schema in `Schemas.cs` (a new table also goes in
+invalid data). `SheetSync` syncs the same tables (plus strings.csv) with the content Google Sheet through an Apps
+Script web app (`tools/sheets-sync.gs`, URL in `tools/google-sheet.json`); a pull is a TSV import, a push edits only
+what differs. Both stop (exit 3) rather than overwrite edits made on the other side since the last sync
+(`sheets/last-sync/`); `--force` overrides. Jeremy often edits in the sheet: pull before changing data/, push after. When you add a table or column: its schema in `Schemas.cs` (a new table also goes in
 `Schemas.BeforeUnits` or `AfterUnits`), the reading in `DataLoader`, data/README.md, and tests for its errors.
 
 **No hard-coded text.** Every word shown to a player, including the combat log, comes from `data/strings.csv`

@@ -26,6 +26,15 @@ The battle simulator runs thousands of automated fights to check class power, Di
 | Final in-game art | M4 onward, replacing placeholders |
 | Audio | M4 onward |
 
+## Content editing
+
+Content lives in data/ as flat JSON tables, the source of truth (it diffs well in git). Jeremy edits it in the
+content Google Sheet, one tab per table plus the game's text. `sim pull-sheets` and `sim push-sheets` sync the two,
+with validation and a change summary on every pull. Columns starting with `_` hold calculations and are never
+synced. The sync never silently overwrites edits made on the other side. The sheet is reached through an Apps
+Script web app rather than a service account: simpler, and its URL is the only key (fine for now; revisit if the
+repo or URL ever becomes public).
+
 ## Art pipeline
 
 - AI-generated art is used for placeholders only. All final art is made by humans.

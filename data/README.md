@@ -16,6 +16,27 @@ Rules for every table:
 - Files are always written in one canonical form. After editing JSON by hand, run `sim format-data`.
 - All numbers are placeholders until tuning (combat balance after M2).
 
+## The Google Sheet
+
+The content sheet (address in `tools/google-sheet.json`) has one tab per table, named like the table, plus a
+`strings` tab for `strings.csv`. `sim pull-sheets` (or `tools/pull-sheets.bat`) reads it and imports it exactly like
+`import-tsv`: everything is validated, the changes are printed, and nothing is written if anything is invalid.
+`sim push-sheets` (or `tools/push-sheets.bat`) writes data/ to the sheet, creating missing tabs.
+
+- **What a push keeps.** Rows are matched by their key, so they keep their place: sort the tabs however you like.
+  New rows go after the row before them in the data. Cells that already hold the right value aren't touched, so a
+  formula that produces the right value survives. Columns starting with `_` (or with no header), and other tabs, are
+  never touched. A formula in a data column whose value changes is overwritten, so keep longer calculations on
+  separate workshop tabs.
+- **Safety.** Each sync records what both sides held (`sheets/last-sync/`, not in git). A push stops if the sheet
+  has edits that haven't been pulled, and a pull stops if data/ has changes that haven't been pushed. Both list what
+  they found; `--force` (or answering Y in the .bat) goes ahead anyway.
+- **Values, not display.** The sync reads cell values, so number formats (%, decimals) don't matter. Numbers are
+  read to 15 significant digits.
+- **The sheet's side** is a small Apps Script web app, `tools/sheets-sync.gs`. Its setup steps are at the top of
+  that file. It runs as the sheet's owner, so the sheet itself doesn't need to be shared, but anyone with the web app
+  URL can read and edit the sheet.
+
 ## Text
 
 `strings.csv` holds every piece of text the game shows, by key, in Godot's CSV translation format (a `keys`

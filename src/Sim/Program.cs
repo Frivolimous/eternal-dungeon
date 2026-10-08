@@ -15,6 +15,8 @@ var command = args.Length > 0 ? args[0] : "help";
 var positional = args.Length > 1 && !args[1].StartsWith("--") ? args[1] : null;
 var options = Options.Parse(args.Skip(positional is null ? 1 : 2).ToArray());
 var root = RepoRoot.Find();
+// Exit code when a sheet sync stops to protect edits that exist on one side only; --force goes ahead.
+const int Refused = 3;
 
 try
 {
@@ -30,6 +32,8 @@ try
         "format-data" => FormatData(),
         "replay" => PlayReplay(),
         "art-requests" => ArtRequests(),
+        "pull-sheets" => PullSheets(),
+        "push-sheets" => PushSheets(),
         _ => Help(),
     };
 }
@@ -42,6 +46,11 @@ catch (OptionException e)
 {
     Console.Error.WriteLine(e.Message);
     return 2;
+}
+catch (SheetException e)
+{
+    Console.Error.WriteLine(e.Message);
+    return 1;
 }
 
 string DataDir() => Path.Combine(root, "data");
@@ -71,6 +80,117 @@ int ImportTsv()
     var current = DataTables.FromJson(DataSource.FromDirectory(DataDir()));
     var update = DataExchange.ImportTsv(DataSource.FromDirectory(dir), current);   // throws before writing anything
     return Write(update, "Imported");
+}
+
+// ---- Google Sheets sync (Core SheetSync; the sheet's side is tools/sheets-sync.gs) ----
+
+// What data/ and the sheet held after the last push or pull, to tell whose edits are whose. Not in git.
+string LastSyncDir() => Path.Combine(root, "sheets", "last-sync");
+
+string StringsPath() => Path.Combine(DataDir(), Strings.FileName);
+
+(DataTables Tables, string Strings)? LastSync()
+{
+    var dir = LastSyncDir();
+    if (!File.Exists(Path.Combine(dir, Strings.FileName))) return null;
+    try { return (DataTables.FromJson(DataSource.FromDirectory(dir)), File.ReadAllText(Path.Combine(dir, Strings.FileName))); }
+    catch (DataException) { return null; }   // saved before the tables changed shape: compare with data/ instead
+}
+
+void SaveLastSync()
+{
+    var dir = LastSyncDir();
+    Directory.CreateDirectory(dir);
+    foreach (var file in Directory.GetFiles(DataDir(), "*.json").Append(StringsPath()))
+        File.Copy(file, Path.Combine(dir, Path.GetFileName(file)), overwrite: true);
+}
+
+static void Print(string title, IEnumerable<string> lines)
+{
+    Console.WriteLine(title);
+    foreach (var line in lines)
+        Console.WriteLine("  " + line);
+}
+
+int PullSheets()
+{
+    var current = DataTables.FromJson(DataSource.FromDirectory(DataDir()));
+    var currentStrings = File.ReadAllText(StringsPath());
+    var sheet = GoogleSheet.FromConfig(root);
+    Console.WriteLine("Reading the sheet...");
+    var tabs = sheet.Read();
+    var update = SheetSync.Pull(tabs, current);   // throws before anything is written
+    var strings = SheetSync.StringsCsv(tabs)
+        ?? throw new DataException("the sheet", "", $"has no \"{SheetSync.StringsTab}\" tab (push-sheets creates the tabs)");
+
+    if (!options.Flag("force") && LastSync() is { } last)
+    {
+        var local = DataExchange.Changes(last.Tables, current).Concat(SheetSync.StringChanges(last.Strings, currentStrings)).ToList();
+        if (local.Count > 0)
+        {
+            Print("data/ has changes that aren't on the sheet yet, and a pull would undo them:", local);
+            Console.WriteLine("Push them first (push-sheets), or pull with --force to drop them.");
+            return Refused;
+        }
+    }
+    var result = Write(new DataUpdate(
+        new Dictionary<string, string>(update.JsonFiles) { [Strings.FileName] = strings },
+        [.. update.Changes, .. SheetSync.StringChanges(currentStrings, strings)]), "Pulled");
+    SaveLastSync();
+    return result;
+}
+
+int PushSheets()
+{
+    var force = options.Flag("force");
+    var tables = DataTables.FromJson(DataSource.FromDirectory(DataDir()));
+    var strings = File.ReadAllText(StringsPath());
+    DataLoader.Build(tables, Strings.Parse(strings));
+    var sheet = GoogleSheet.FromConfig(root);
+    Console.WriteLine("Reading the sheet...");
+    var tabs = sheet.Read();
+
+    var changes = new List<string>();
+    if (!SheetSync.IsBlank(tabs))
+    {
+        try
+        {
+            if (!force)
+            {
+                // Edits made on the sheet since the last sync (with no record of one: anything that differs from data/).
+                var (baseTables, baseStrings) = LastSync() ?? (tables, strings);
+                var edits = SheetSync.Edits(tabs, baseTables, baseStrings);
+                if (edits.Count > 0)
+                {
+                    Print("The sheet has edits that aren't in data/ yet, and a push would overwrite them:", edits);
+                    Console.WriteLine("Pull them first (pull-sheets), or push with --force to overwrite them.");
+                    return Refused;
+                }
+            }
+            changes = SheetSync.PushChanges(tabs, tables, strings);
+        }
+        catch (DataException e) when (!force)
+        {
+            Console.WriteLine($"The sheet has invalid data, so a push can't tell what it would overwrite: {e.Message}");
+            Console.WriteLine("Fix it in the sheet, or push with --force to overwrite it.");
+            return Refused;
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine($"Overwriting the sheet's invalid data ({e.Message}).");
+        }
+    }
+
+    var ops = SheetSync.Plan(tabs, tables, strings);
+    if (ops.Count > 0)
+    {
+        Console.WriteLine($"Writing {ops.Count} edit(s) to the sheet...");
+        sheet.Apply(ops);
+    }
+    if (changes.Count > 0) Print("Changed on the sheet:", changes);
+    Console.WriteLine(ops.Count == 0 ? "The sheet was already up to date." : "Pushed.");
+    SaveLastSync();
+    return 0;
 }
 
 int PlayReplay()
@@ -227,6 +347,8 @@ int Help()
           format-data                                                rewrite data/*.json in canonical form
           assets                                                     check the asset manifest and art styles, list AI placeholders
           art-requests                                               write docs/art-requests.md (every image a style needs)
+          pull-sheets [--force]                                      read the Google Sheet, validate, print the changes, write data/
+          push-sheets [--force]                                      write data/ to the Google Sheet (keeps _ columns and row order)
         """);
     return command == "help" ? 0 : 1;
 }
@@ -245,13 +367,15 @@ sealed class Options(Dictionary<string, string> values)
         for (var i = 0; i < args.Length; i++)
         {
             if (!args[i].StartsWith("--")) throw new OptionException($"Unexpected argument \"{args[i]}\"");
-            if (i + 1 >= args.Length) throw new OptionException($"{args[i]} needs a value");
-            values[args[i][2..]] = args[++i];
+            // A flag (--force) has no value.
+            values[args[i][2..]] = i + 1 < args.Length && !args[i + 1].StartsWith("--") ? args[++i] : "";
         }
         return new Options(values);
     }
 
     public string? Get(string name) => values.GetValueOrDefault(name);
+
+    public bool Flag(string name) => values.ContainsKey(name);
 
     public int GetInt(string name, int fallback) =>
         Get(name) is not { } v ? fallback

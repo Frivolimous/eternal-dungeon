@@ -141,6 +141,16 @@ public static class TableFormat
         return Checked(new Table(schema, file, rows));
     }
 
+    /// <summary>A TSV cell in canonical form, as <see cref="WriteTsv"/> would write it ("" for empty or the default),
+    /// or null when the cell isn't valid for the column. So "1" and "" match in a column whose default is 1.</summary>
+    public static string? Canonical(Column c, string cell)
+    {
+        cell = cell.Trim();
+        if (cell.Length == 0) return "";
+        try { return Cell(c, Normalize(c, ParseCell(c, cell, m => new DataException("", "", m)))); }
+        catch (DataException) { return null; }
+    }
+
     static object ParseCell(Column c, string cell, Func<string, DataException> fail)
     {
         switch (c.Kind)
