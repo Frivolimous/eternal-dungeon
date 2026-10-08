@@ -4,7 +4,7 @@
   { "id": "defend", "name": "Defend", "tags": ["buff"], "target": "self", "ap_cost": 100, "procs": ["guard"] },
   { "id": "move", "name": "Move", "target": "tile", "ap_cost": 50, "move_to": "own" },
   { "id": "stealth_move", "name": "Move", "target": "tile", "ap_cost": 50, "procs": ["stealth"], "move_to": "own_or_enemy", "replaces": "move", "note": "The Rogue's Move with the Stealth mastery: can also enter the enemy area, and grants Stealth" },
-  { "id": "dagger_attack", "name": "Dagger Attack", "tags": ["weapon", "physical", "melee", "light", "finesse"], "target": "enemy", "range": "melee", "ap_cost": 50, "base_damage": 10 },
+  { "id": "dagger_attack", "name": "Dagger Attack", "tags": ["weapon", "physical", "melee", "light", "finesse"], "target": "enemy", "range": "melee", "ap_cost": 75, "base_damage": 10 },
   { "id": "fire_bolt", "name": "Fire Bolt", "tags": ["arcane", "spell", "ranged", "fire"], "target": "enemy", "range": "any", "ap_cost": 100, "mana_cost": 10, "base_damage": 22, "cast_time": 50 },
   { "id": "frost_shard", "name": "Frost Shard", "tags": ["arcane", "spell", "ranged", "ice", "control"], "target": "enemy", "range": "any", "ap_cost": 100, "mana_cost": 8, "base_damage": 12, "procs": ["chill"] },
   { "id": "shield_bash", "name": "Shield Bash", "tags": ["weapon", "physical", "melee", "force", "control"], "target": "enemy", "range": "melee", "ap_cost": 100, "base_damage": 6, "procs": ["daze", "push"] },
