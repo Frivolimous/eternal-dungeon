@@ -240,22 +240,53 @@ public static class DataLoader
             r.Str("name"),
             duration,
             r.Int("length"),
-            r.Bool("stacking"),
-            r.OptInt("max_stacks") ?? int.MaxValue,
+            r.OptInt("max_stacks") ?? 1,
             [.. ChildrenOf(t, "buff_stats", r.Str("id")).Select(x => ReadStatEntry(x, tags, stats, t))],
-            r.Num("shield_max_health"),
-            r.Int("periodic_damage"),
-            r.Int("periodic_heal"),
-            r.List("procs"),
-            r.Enum<CcKind>("cc"),
-            r.Int("delayed_damage"),
-            r.Bool("break_on_attack"));
+            0, 0, 0,
+            r.List("procs"));
+        if (def.MaxStacks < 1) throw r.Error("max_stacks", "must be at least 1 (above 1, the buff stacks)");
 
-        if (def.DelayedDamage < 0) throw r.Error("delayed_damage", "can't be negative");
-        if (def.MaxStacks < 1) throw r.Error("max_stacks", "must be at least 1");
-        if (r.Has("max_stacks") && !def.Stacking) throw r.Error("max_stacks", "only stacking buffs have a stack limit");
-        if (def.ShieldMaxHealth < 0 || def.PeriodicDamage < 0 || def.PeriodicHeal < 0)
-            throw r.Error("shield and periodic amounts can't be negative");
+        // What it does: key_N names an effect, value_N gives its amount or kind (a flag takes nothing, or true).
+        var seen = new HashSet<BuffEffect>();
+        for (var i = 1; i <= Schemas.BuffEffects; i++)
+        {
+            string keyColumn = $"key_{i}", valueColumn = $"value_{i}";
+            if (r.OptEnum<BuffEffect>(keyColumn) is not { } key)
+            {
+                if (r.Has(valueColumn)) throw r.Error(keyColumn, $"{valueColumn} has a value but {keyColumn} is empty");
+                continue;
+            }
+            var name = JsonField.SnakeCase(key.ToString());
+            if (!seen.Add(key)) throw r.Error(keyColumn, $"{name} is already one of this buff's effects");
+            if (key == BuffEffect.BreakOnAttack)
+            {
+                if (r.OptStr(valueColumn) is string flag && flag != "true")
+                    throw r.Error(valueColumn, $"{name} takes true or nothing, got \"{flag}\"");
+                def = def with { BreakOnAttack = true };
+                continue;
+            }
+            var value = r.OptStr(valueColumn) ?? throw r.Error(valueColumn, $"{name} needs a value");
+            double Amount()
+            {
+                if (!double.TryParse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var n))
+                    throw r.Error(valueColumn, $"{name} needs a number, got \"{value}\"");
+                return n >= 0 ? n : throw r.Error(valueColumn, $"{name} can't be negative");
+            }
+            int Whole() => Amount() is var n && n == Math.Floor(n) ? (int)n : throw r.Error(valueColumn, $"{name} needs a whole number, got \"{value}\"");
+            def = key switch
+            {
+                BuffEffect.Shield => def with { ShieldMaxHealth = Amount() },
+                BuffEffect.PeriodicDamage => def with { PeriodicDamage = Whole() },
+                BuffEffect.PeriodicHeal => def with { PeriodicHeal = Whole() },
+                BuffEffect.DelayedDamage => def with { DelayedDamage = Whole() },
+                _ => def with
+                {
+                    Cc = System.Enum.GetValues<CcKind>().Where(c => c != CcKind.None).FirstOrDefault(c => JsonField.SnakeCase(c.ToString()) == value) is var cc && cc != CcKind.None
+                        ? cc
+                        : throw r.Error(valueColumn, $"expected one of {string.Join(", ", System.Enum.GetValues<CcKind>().Where(c => c != CcKind.None).Select(c => JsonField.SnakeCase(c.ToString())))}, got \"{value}\""),
+                },
+            };
+        }
         return def;
     }
 
@@ -293,7 +324,8 @@ public static class DataLoader
             if (!seen.Add(key)) throw r.Error(keyColumn, $"{name} is already one of this proc's results");
             if (key == ProcResult.Interrupt)
             {
-                if (r.Has(valueColumn)) throw r.Error(valueColumn, "interrupt takes no value: leave it empty");
+                if (r.OptStr(valueColumn) is string flag && flag != "true")
+                    throw r.Error(valueColumn, $"interrupt takes true or nothing, got \"{flag}\"");
                 proc = proc with { Interrupt = true };
                 continue;
             }

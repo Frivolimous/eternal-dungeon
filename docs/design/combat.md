@@ -131,7 +131,7 @@ A buff is a timed bundle on a unit: stat changes, crowd control, damage or heali
 
 - A buff lasts until the holder's next turn, a number of buff-clock turns, or a number of the holder's own actions. Exploration buffs and curses (timed in steps or battles, see Exploration) will share the buffs table with their own durations.
 - A buff lasting actions counts each action its holder finishes. One applied before damage with 1 action lasts just that hit (Armor Break: extra Penetrate for this hit only). One given by an action counts from the holder's next action.
-- Each source can apply a buff only once, unless the buff is explicitly stacking. Source = the action (or the proc, for procs a unit or buff carries) plus the caster, so 3 different poison spells give 3 poisons, and the same buff from 3 casters stacks 3 times.
+- Each source can apply a buff only once, unless the buff stacks (its max stacks is above 1). Source = the action (or the proc, for procs a unit or buff carries) plus the caster, so 3 different poison spells give 3 poisons, and the same buff from 3 casters stacks 3 times.
 - Re-stacking a stacking buff resets its timer.
 - An action's buffs are applied only after the whole action resolves (its damage and every proc it sets off). Buffs from before-damage procs are the exception: they apply at once, to change the hit.
 - The same buff from several sources stacks its stats (Critical from many sources). Merely similar buffs stay separate (two different poison procs).
@@ -152,7 +152,7 @@ A proc is something that fires on an event, with a chance. Units have procs of t
 | Chance | Base × (1 + Rate) ÷ (1 + Deval), Rate and Deval both summed (Add), using every tag on the proc; the target's Deval applies only when the proc lands on someone else, and not at all on a proc marked ignore_deval (decided 2026-10-08, for stagger procs, which Force Deval resists through their amount). No base chance means 100% |
 | Above 100% | The chance stops at 100% and the excess is lost: Rate never scales a proc's amounts. Amounts grow only when several copies of the same proc merge (see below) |
 | Target | The owner, or the other unit in the event (the target of the owner's action, or the attacker) |
-| Results | Up to 3 per proc, as key and value pairs in data: damage, heal, Shield, heal a share of the hit's damage (lifesteal), stagger (Act knocked back), interrupt (no value), displace (push or pull), and apply buff (stat changes, CC, damage over time…). More pairs can be added if procs need them |
+| Results | Up to 3 per proc, as key and value pairs in data: damage, heal, Shield, heal a share of the hit's damage (lifesteal), stagger (Act knocked back), threat (adds to the Threat score), interrupt (a flag), displace (push or pull), and apply buff (stat changes, CC, damage over time…). More pairs can be added if procs need them |
 | Proc damage | Goes through the full damage formula with the proc's own tags; heals scale with the owner's Power for the proc's tags. It is not an action: no hit roll, no crit, and it never triggers procs. Nothing a proc causes triggers further procs |
 | Area attacks | Procs roll once per target hit |
 | Limits | None on procs themselves. A once-per-fight proc is granted by a buff applied at fight start |
@@ -163,4 +163,4 @@ When a unit has the same proc more than once (two Flaming weapons), each proc's 
 - Separate: each copy rolls on its own and can fire on the same hit (extra-arrow style procs).
 - Unique: only the strongest copy counts (signature effects).
 
-A stacking buff applied by a proc gains one stack per firing. A buff's stacking flag (stacks on the target) is separate from a proc's duplicates rule (copies on the owner).
+A stacking buff applied by a proc gains one stack per firing. Whether a buff stacks (on the target) is separate from a proc's duplicates rule (copies on the owner).

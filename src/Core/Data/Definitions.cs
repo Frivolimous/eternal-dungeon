@@ -260,14 +260,15 @@ public enum Displace { None, Push, Pull }
 /// A buff (Anchor: Combat › Buffs): a timed bundle on a unit. It adds stat modifiers while it lasts, can carry a
 /// Shield that goes when it ends, can deal damage or heal on every buff-clock turn, can put crowd control on its
 /// holder, and can grant procs while it lasts. Procs apply buffs. A buff is unique per source (action or proc +
-/// caster) unless <see cref="Stacking"/>. <see cref="Length"/> counts turns or actions, by <see cref="Duration"/>.
+/// caster) unless it stacks (<see cref="MaxStacks"/> above 1). <see cref="Length"/> counts turns or actions, by
+/// <see cref="Duration"/>. In data, what it does is key/value pairs (<see cref="BuffEffect"/>); stat changes are rows
+/// of buff_stats.
 /// </summary>
 public sealed record BuffDef(
     string Id,
     string Name,
     DurationKind Duration,
     int Length,
-    bool Stacking,
     int MaxStacks,
     IReadOnlyList<StatValue> Stats,
     double ShieldMaxHealth,
@@ -279,4 +280,12 @@ public sealed record BuffDef(
     bool BreakOnAttack = false)
 {
     // BreakOnAttack: the buff ends when its holder uses an enemy-targeted action, hit or miss (Stealth).
+
+    /// <summary>Applied again by the same source, it gains a stack (up to <see cref="MaxStacks"/>).</summary>
+    public bool Stacking => MaxStacks > 1;
 }
+
+/// <summary>What a buff does, one per key/value pair in data: a Shield worth a share of max Health (gone when the
+/// buff ends), damage or healing every buff-clock turn, damage when it runs its course, crowd control, and ending
+/// when its holder attacks (a flag: no value, or true).</summary>
+public enum BuffEffect { Shield, PeriodicDamage, PeriodicHeal, DelayedDamage, Cc, BreakOnAttack }

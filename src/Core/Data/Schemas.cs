@@ -32,18 +32,15 @@ public static class Schemas
     public static readonly TableSchema CompoundStatRows = Child("compound_stat_rows", "compound_stats", "compound", ["tag", "stat"],
         Id("tag"), Id("stat"), Number("coef", required: true));
 
+    /// <summary>How many effect pairs (key_N, value_N) a buff has.</summary>
+    public const int BuffEffects = 3;
+
     public static readonly TableSchema Buffs = Top("buffs",
-        Enum<DurationKind>("duration", required: true),
-        Int("length"),
-        Bool("stacking"),
-        Int("max_stacks"),
-        Number("shield_max_health", @default: 0),
-        Int("periodic_damage", @default: 0),
-        Int("periodic_heal", @default: 0),
-        Enum<CcKind>("cc", @default: CcKind.None),
-        Int("delayed_damage", @default: 0),
-        Bool("break_on_attack"),
-        List("procs"));
+        [Enum<DurationKind>("duration", required: true),
+         Int("length"),
+         Int("max_stacks", @default: 1),
+         List("procs"),
+         .. Enumerable.Range(1, BuffEffects).SelectMany(i => new[] { Enum<BuffEffect>($"key_{i}"), Text($"value_{i}") })]);
 
     public static readonly TableSchema BuffStats = Child("buff_stats", "buffs", "buff", ["stat", "tag"], StatEntry);
 

@@ -42,9 +42,9 @@ static class TestData
             action.Target is ActionTarget.Enemy or ActionTarget.Ally ? ProcTarget.Other : ProcTarget.Self, tags: [.. action.Tags])
         with { Buff = id.Split(':')[2] };
 
-    public static BuffDef Buff(string id, int turns = 3, bool stacking = false, int maxStacks = int.MaxValue,
+    public static BuffDef Buff(string id, int turns = 3, int maxStacks = 1,
         StatValue[]? stats = null, int periodicDamage = 0, string[]? procs = null) =>
-        new(id, id, DurationKind.Turns, turns, stacking, maxStacks, stats ?? [], 0, periodicDamage, 0, procs ?? []);
+        new(id, id, DurationKind.Turns, turns, maxStacks, stats ?? [], 0, periodicDamage, 0, procs ?? []);
 
     /// <summary>A proc that does nothing until given results with <c>with</c>.</summary>
     public static ProcDef Proc(string id, ProcTrigger trigger, ProcTarget target, double chance = 1, string[]? tags = null) =>
