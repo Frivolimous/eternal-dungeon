@@ -34,7 +34,31 @@ public static class UnitAi
         }
         if (DefaultAttack(battle, unit, profile.ThreatWeight) is { } attack) return attack;
         var forward = battle.Grid.ForwardOptions(unit);
-        return Default(battle, unit, DefaultRole.Move, forward) ?? Default(battle, unit, DefaultRole.Defend);
+        return Default(battle, unit, DefaultRole.Move, forward)
+            ?? Default(battle, unit, DefaultRole.Move, SidestepOptions(battle, unit))
+            ?? Default(battle, unit, DefaultRole.Defend);
+    }
+
+    /// <summary>
+    /// Neighbouring tiles in the unit's row from which one of its melee actions would have a valid target: melee only
+    /// reaches straight ahead or diagonally, so a unit with nobody in reach steps sideways toward someone. Each tile is
+    /// tried by moving the unit there and back (no rolls, nothing else changes).
+    /// </summary>
+    static List<Tile> SidestepOptions(Battle battle, Unit unit)
+    {
+        var grid = battle.Grid;
+        if (grid.AnchorOf(unit) is not { } from) return [];
+        var melee = battle.Data.ActionsOf(unit.Def).Select(id => battle.Data.Actions[id])
+            .Where(a => a.Target == ActionTarget.Enemy && a.Range is ActionRange.Melee or ActionRange.Reach && unit.CantUse(a) is null)
+            .ToList();
+        var tiles = new List<Tile>();
+        foreach (var tile in grid.MoveOptions(unit).Where(t => grid.Depth(t) == grid.Depth(from)))
+        {
+            grid.MoveTo(unit, tile);
+            if (melee.Any(a => ValidTargets(battle, unit, a).Count > 0)) tiles.Add(tile);
+            grid.MoveTo(unit, from);
+        }
+        return tiles;
     }
 
     /// <summary>The default Attack at the best-scoring valid target, if the unit can use it and has one.</summary>

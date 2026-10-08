@@ -91,6 +91,21 @@ public class DefaultActionTests
     }
 
     [Fact]
+    public void A_melee_unit_with_nobody_in_reach_sidesteps_toward_a_target()
+    {
+        var grunt = U(Repo, "goblin_grunt", "g", Side.Enemy);
+        var w = U(Repo, "warrior", "w", Side.Party);
+        var grid = new BattleGrid();
+        grid.Place(w, P(0, 0));
+        grid.Place(grunt, E(0, 2));                                     // two lanes away: out of reach
+        var b = new Battle(Repo, [w, grunt], seed: 1, grid);
+
+        var d = UnitAi.Decide(b, grunt)!;
+        Assert.Equal(("move", E(0, 1)), (d.Action.Id, d.Tile));         // one step over brings the Warrior diagonal
+        Assert.Equal(E(0, 2), grid.AnchorOf(grunt));                    // trying tiles left the grid as it was
+    }
+
+    [Fact]
     public void A_caster_out_of_mana_falls_back_on_the_default_attack()
     {
         var shaman = U(Repo, "goblin_shaman", "s", Side.Enemy);

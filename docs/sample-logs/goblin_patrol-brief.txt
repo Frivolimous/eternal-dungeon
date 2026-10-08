@@ -5,116 +5,113 @@ Enemies: Goblin Grunt #1 85 HP, Goblin Grunt #2 85 HP, Goblin Archer 60 HP, Gobl
 [T 0.42] Rogue → Dagger Attack → Goblin Grunt #1
          hit (90%) · 14 dmg (Physical) · Goblin Grunt #1 HP 85 → 71
 [T 0.70] Warrior → Power Attack → Goblin Grunt #1
-         miss (90%)
-[T 0.70] Goblin Archer → Shot → Rogue
-         miss (73%)
-[T 0.79] Goblin Shaman → Rotting Hex → Rogue
-         hit (86%) · 9 dmg (Spirit, Toxic) · Rogue HP 100 → 91
-         applies Rot (DoT 4/turn, 3 turns) on Rogue
-[T 0.80] Elementalist → Frost Shard → Goblin Shaman
+         hit (90%) · 37 dmg (Physical) · Goblin Grunt #1 HP 71 → 34
+[T 0.70] Goblin Archer → Shot → Warrior
+         miss (86%)
+[T 0.79] Goblin Shaman → Mend → Goblin Grunt #1
+         Mend heals Goblin Grunt #1 for 22 (HP 34 → 56)
+[T 0.80] Elementalist → Frost Shard → Goblin Grunt #1
+         hit (90%) · 15 dmg (Arcane, Ice) · Goblin Grunt #1 HP 56 → 41
+         applies Chill (-30 speed, 2 turns) on Goblin Grunt #1
+[T 0.89] Goblin Grunt #2 → Slash → Warrior
+         hit (77%) · 16 dmg (Physical) · Warrior HP 140 → 124
+[T 0.94] Goblin Grunt #1 → Slash → Warrior
+         hit (77%) · 16 dmg (Physical) · Warrior HP 124 → 108
+[T 1.25] Rogue → Dagger Attack → Goblin Grunt #1
+         hit (90%) · 14 dmg (Physical) · Goblin Grunt #1 HP 41 → 27
+[T 1.70] Goblin Archer → Shot → Warrior
+         hit (86%) · 14 dmg (Physical) · Warrior HP 108 → 94
+[T 1.80] Elementalist begins casting Fire Bolt at Goblin Grunt #1 (ready at T 2.30)
+[T 1.85] Goblin Shaman → Mend → Goblin Grunt #1
+         Mend heals Goblin Grunt #1 for 22 (HP 27 → 49)
+[T 2.00] Chill on Goblin Grunt #1 ends
+[T 2.00] Goblin Grunt #2 → Slash → Warrior
+         hit (77%) · 16 dmg (Physical) · Warrior HP 94 → 78
+[T 2.09] Rogue → Dagger Attack → Goblin Grunt #1
+         hit (90%) · 14 dmg (Physical) · Goblin Grunt #1 HP 49 → 35
+[T 2.30] Elementalist → Fire Bolt → Goblin Grunt #1
+         hit (90%) · 28 dmg (Arcane, Fire) · Goblin Grunt #1 HP 35 → 7
+[T 2.40] Goblin Grunt #1 → Slash → Warrior
+         hit (77%) · 16 dmg (Physical) · Warrior HP 78 → 62
+[T 2.70] Warrior → Attack → Goblin Grunt #1
+         hit (90%) · 17 dmg (Physical) · Goblin Grunt #1 HP 7 → 0
+         Goblin Grunt #1 falls
+[T 2.70] Goblin Archer → Shot → Warrior
+         hit (86%) · 14 dmg (Physical) · Warrior HP 62 → 48
+[T 2.90] Goblin Shaman → Rotting Hex → Warrior
+         hit (86%) · 9 dmg (Spirit, Toxic) · Warrior HP 48 → 39
+         applies Rot (DoT 4/turn, 3 turns) on Warrior
+[T 2.92] Rogue → Move
+         Rogue moves r0c0 → r0c0 (opposing area)
+         applies Stealth (+0.5 avoid, -50 threat, until next turn) on Rogue
+[T 3.00] Rot deals 4 to Warrior (HP 39 → 35)
+[T 3.12] Goblin Grunt #2 → Slash → Warrior
+         hit (77%) · 16 dmg (Physical) · Warrior HP 35 → 19
+[T 3.30] Elementalist → Frost Shard → Goblin Shaman
          hit (90%) · 15 dmg (Arcane, Ice) · Goblin Shaman HP 60 → 45
          applies Chill (-30 speed, 2 turns) on Goblin Shaman
-[T 0.89] Goblin Grunt #1 → Slash → Rogue
-         miss (79%)
-[T 0.89] Goblin Grunt #2 → Slash → Rogue
-         hit (79%) · 16 dmg (Physical) · Rogue HP 91 → 75
-[T 1.00] Rot deals 4 to Rogue (HP 75 → 71)
-[T 1.25] Rogue → Dagger Attack → Goblin Grunt #2
-         hit (90%) · 14 dmg (Physical) · Goblin Grunt #2 HP 85 → 71
-[T 1.70] Goblin Archer → Shot → Rogue
-         miss (73%)
-[T 1.80] Elementalist begins casting Fire Bolt at Goblin Shaman (ready at T 2.30)
-[T 2.00] Rot deals 4 to Rogue (HP 71 → 67)
-[T 2.00] Chill on Goblin Shaman ends
-[T 2.00] Goblin Grunt #1 → Slash → Rogue
-         hit (79%) · 16 dmg (Physical) · Rogue HP 67 → 51
-[T 2.00] Goblin Grunt #2 → Slash → Rogue
-         miss (79%)
-[T 2.09] Rogue → Dagger Attack → Goblin Grunt #2
-         hit (90%) · 14 dmg (Physical) · Goblin Grunt #2 HP 71 → 57
-[T 2.23] Goblin Shaman → Rotting Hex → Rogue
-         hit (86%) · 9 dmg (Spirit, Toxic) · Rogue HP 51 → 42
-         refreshes Rot (DoT 4/turn, 3 turns) on Rogue
-[T 2.30] Elementalist → Fire Bolt → Goblin Shaman
-         hit (90%) · 28 dmg (Arcane, Fire) · Goblin Shaman HP 45 → 17
-[T 2.70] Warrior → Attack → Goblin Grunt #2
-         hit (90%) · 17 dmg (Physical) · Goblin Grunt #2 HP 57 → 40
-[T 2.70] Goblin Archer → Shot → Rogue
-         hit (73%) · 14 dmg (Physical) · Rogue HP 42 → 28
-[T 2.92] Rogue → Dagger Attack → Goblin Grunt #2
-         hit (90%) · 14 dmg (Physical) · Goblin Grunt #2 HP 40 → 26
-[T 3.00] Rot deals 4 to Rogue (HP 28 → 24)
-[T 3.12] Goblin Grunt #1 → Slash → Rogue
-         hit (79%) · 16 dmg (Physical) · Rogue HP 24 → 8
-[T 3.12] Goblin Grunt #2 → Slash → Rogue
-         hit (79%) · 16 dmg (Physical) · Rogue HP 8 → 0
-         Rogue falls
-[T 3.28] Goblin Shaman → Mend → Goblin Shaman
-         Mend heals Goblin Shaman for 22 (HP 17 → 39)
-[T 3.30] Elementalist → Frost Shard → Goblin Grunt #2
-         hit (90%) · 15 dmg (Arcane, Ice) · Goblin Grunt #2 HP 26 → 11
-         applies Chill (-30 speed, 2 turns) on Goblin Grunt #2
-[T 3.70] Warrior → Power Attack → Goblin Grunt #2
-         hit (90%) · 37 dmg (Physical) · Goblin Grunt #2 HP 11 → 0
-         Goblin Grunt #2 falls
-[T 3.70] Goblin Archer → Shot → Elementalist
-         hit (86%) · 14 dmg (Physical) · Elementalist HP 80 → 66
-[T 4.23] Goblin Grunt #1 → Slash → Warrior
-         miss (77%)
-[T 4.30] Elementalist begins casting Fire Bolt at Goblin Shaman (ready at T 4.80)
-[T 4.33] Goblin Shaman → Rotting Hex → Elementalist
-         hit (77%) · 9 dmg (Spirit, Toxic) · Elementalist HP 66 → 57
-         applies Rot (DoT 4/turn, 3 turns) on Elementalist
-[T 4.70] Goblin Archer → Shot → Elementalist
-         hit (86%) · 14 dmg (Physical) · Elementalist HP 57 → 43
-[T 4.80] Elementalist → Fire Bolt → Goblin Shaman
-         hit (90%) · 28 dmg (Arcane, Fire) · Goblin Shaman HP 39 → 11
-[T 5.00] Rot deals 4 to Elementalist (HP 43 → 39)
-[T 5.34] Goblin Grunt #1 → Slash → Warrior
-         hit (77%) · 16 dmg (Physical) · Warrior HP 140 → 124
-[T 5.38] Goblin Shaman → Move
-         Goblin Shaman moves r1c2 → r0c2
-[T 5.70] Warrior → Attack → Goblin Shaman
-         hit (90%) · 17 dmg (Physical) · Goblin Shaman HP 11 → 0
-         Goblin Shaman falls
-[T 5.70] Goblin Archer → Shot → Elementalist
-         hit (86%) · 14 dmg (Physical) · Elementalist HP 39 → 25
-[T 5.80] Elementalist → Frost Shard → Goblin Grunt #1
-         hit (90%) · 15 dmg (Arcane, Ice) · Goblin Grunt #1 HP 71 → 56
-         applies Chill (-30 speed, 2 turns) on Goblin Grunt #1
-[T 6.00] Rot deals 4 to Elementalist (HP 25 → 21)
-[T 6.70] Warrior → Power Attack → Goblin Grunt #1
-         hit (90%) · 37 dmg (Physical) · Goblin Grunt #1 HP 56 → 19
-[T 6.70] Goblin Archer → Shot → Elementalist
-         hit (86%) · 14 dmg (Physical) · Elementalist HP 21 → 7
-[T 6.77] Goblin Grunt #1 → Slash → Warrior
-         hit (77%) · 16 dmg (Physical) · Warrior HP 124 → 108
-[T 6.80] Elementalist begins casting Fire Bolt at Goblin Grunt #1 (ready at T 7.30)
-[T 7.00] Rot deals 4 to Elementalist (HP 7 → 3)
-[T 7.00] Rot on Elementalist ends
-[T 7.00] Chill on Goblin Grunt #1 ends
-[T 7.30] Elementalist → Fire Bolt → Goblin Grunt #1
-         hit (90%) · 28 dmg (Arcane, Fire) · Goblin Grunt #1 HP 19 → 0
-         Goblin Grunt #1 falls
-         Goblin Archer steps forward (r1c0 → r0c0)
-[T 7.70] Goblin Archer → Shot → Elementalist
-         hit (86%) · 14 dmg (Physical) · Elementalist HP 3 → 0
-         Elementalist falls
-[T 8.70] Warrior → Attack → Goblin Archer
-         hit (90%) · 17 dmg (Physical) · Goblin Archer HP 60 → 43
-[T 8.70] Goblin Archer → Shot → Warrior
-         hit (86%) · 14 dmg (Physical) · Warrior HP 108 → 94
-[T 9.70] Warrior → Power Attack → Goblin Archer
-         miss (90%)
-[T 9.70] Goblin Archer → Shot → Warrior
-         hit (86%) · 14 dmg (Physical) · Warrior HP 94 → 80
-[T 10.70] Goblin Archer → Shot → Warrior
-         hit (86%) · 14 dmg (Physical) · Warrior HP 80 → 66
-[T 11.70] Warrior → Attack → Goblin Archer
-         hit (90%) · 17 dmg (Physical) · Goblin Archer HP 43 → 26
-[T 11.70] Goblin Archer → Shot → Warrior
-         hit (86%) · 14 dmg (Physical) · Warrior HP 66 → 52
-[T 12.70] Warrior → Power Attack → Goblin Archer
-         hit (90%) · 37 dmg (Physical) · Goblin Archer HP 26 → 0
+[T 3.34] Stealth on Rogue ends
+[T 3.34] Rogue → Dagger Attack → Goblin Archer
+         hit (90%) · 14 dmg (Physical) · Goblin Archer HP 60 → 46
+[T 3.70] Warrior → Defend
+         applies Guard (+0.3 avoid, Shield 14, until next turn) on Warrior
+[T 3.70] Goblin Archer → Shot → Warrior
+         miss (60%)
+[T 4.00] Rot deals 4 to Warrior (HP 19 → 19)
+[T 4.17] Rogue → Dagger Attack → Goblin Archer
+         hit (90%) · 14 dmg (Physical) · Goblin Archer HP 46 → 32
+[T 4.23] Goblin Grunt #2 → Slash → Warrior
+         miss (54%)
+[T 4.25] Goblin Shaman → Rotting Hex → Rogue
+         hit (86%) · 9 dmg (Spirit, Toxic) · Rogue HP 100 → 91
+         applies Rot (DoT 4/turn, 3 turns) on Rogue
+[T 4.30] Elementalist begins casting Fire Bolt at Goblin Archer (ready at T 4.80)
+[T 4.70] Guard on Warrior ends
+[T 4.70] Warrior → Power Attack → Goblin Grunt #2
+         hit (90%) · 55 dmg (Physical, crit) · Goblin Grunt #2 HP 85 → 30
+[T 4.70] Goblin Archer → Shot → Warrior
+         miss (86%)
+[T 4.80] Elementalist → Fire Bolt → Goblin Archer
+         hit (90%) · 28 dmg (Arcane, Fire) · Goblin Archer HP 32 → 4
+[T 5.00] Rot deals 4 to Rogue (HP 91 → 87)
+[T 5.00] Rot deals 4 to Warrior (HP 19 → 15)
+[T 5.00] Rot on Warrior ends
+[T 5.00] Chill on Goblin Shaman ends
+[T 5.00] Rogue → Dagger Attack → Goblin Archer
+         hit (90%) · 14 dmg (Physical) · Goblin Archer HP 4 → 0
          Goblin Archer falls
-[T 12.70] Victory: the party wins.
+[T 5.34] Goblin Grunt #2 → Slash → Warrior
+         miss (77%)
+[T 5.54] Goblin Shaman → Move
+         Goblin Shaman moves r1c2 → r1c1
+[T 5.80] Elementalist → Frost Shard → Goblin Grunt #2
+         hit (90%) · 15 dmg (Arcane, Ice) · Goblin Grunt #2 HP 30 → 15
+         applies Chill (-30 speed, 2 turns) on Goblin Grunt #2
+[T 5.84] Rogue → Dagger Attack → Goblin Shaman
+         hit (90%) · 14 dmg (Physical) · Goblin Shaman HP 45 → 31
+[T 6.00] Rot deals 4 to Rogue (HP 87 → 83)
+[T 6.07] Goblin Shaman → Attack → Rogue
+         hit (79%) · 15 dmg (Physical) · Rogue HP 83 → 68
+[T 6.67] Rogue → Dagger Attack → Goblin Shaman
+         hit (90%) · 14 dmg (Physical) · Goblin Shaman HP 31 → 17
+[T 6.70] Warrior → Defend
+         applies Guard (+0.3 avoid, Shield 14, until next turn) on Warrior
+[T 6.77] Goblin Grunt #2 → Slash → Warrior
+         hit (54%) · 16 dmg (Physical) · Shield absorbs 14 · Warrior HP 15 → 13
+[T 6.80] Elementalist begins casting Fire Bolt at Goblin Shaman (ready at T 7.30)
+[T 7.00] Rot deals 4 to Rogue (HP 68 → 64)
+[T 7.00] Rot on Rogue ends
+[T 7.00] Chill on Goblin Grunt #2 ends
+[T 7.12] Goblin Shaman → Attack → Rogue
+         hit (79%) · 23 dmg (Physical, crit) · Rogue HP 64 → 41
+[T 7.30] Elementalist → Fire Bolt → Goblin Shaman
+         hit (90%) · 28 dmg (Arcane, Fire) · Goblin Shaman HP 17 → 0
+         Goblin Shaman falls
+[T 7.50] Rogue → Move
+         Rogue moves r0c0 (opposing area) → r0c1 (opposing area)
+         applies Stealth (+0.5 avoid, -50 threat, until next turn) on Rogue
+[T 7.70] Guard on Warrior ends
+[T 7.70] Warrior → Power Attack → Goblin Grunt #2
+         hit (90%) · 37 dmg (Physical) · Goblin Grunt #2 HP 15 → 0
+         Goblin Grunt #2 falls
+[T 7.70] Victory: the party wins.

@@ -51,6 +51,7 @@ Every character starts with Weapon C.Rate 5% and untagged C.Mult 0.5, so every w
 - Each side has its own area, 3×2 or 2×3 by default. Abilities can grow it to 4×2 or 3×3.
 - At most 6 units are on the map: the 4 party heroes plus overflow from mercenaries and pets.
 - Heroes move freely within their area, and enemies generally stay put. Every action has a Range.
+- **Melee reach:** from the front row, a melee action reaches the enemy's front row in the same lane or the next lane over: straight ahead or diagonal, never further along the line (decided 2026-10-08). Reach weapons also hit the second row, with the same lanes. A unit covering several lanes (size 2) reaches from, and can be reached in, each of them. Inside one area (a Rogue among the enemies), melee reaches adjacent and diagonal tiles only. Ranged attacks and spells reach any tile.
 - Rogues on either side can enter the opposing area: with the Stealth mastery (the Rogue's first), Move can also go to any empty tile in the enemy area, and every Move grants Stealth for 1 turn (less Threat). This replaces the old Sneak action. While a unit stands in the enemy area, its Move can also go to any empty tile in its own area, so it can come back (decided 2026-10-08).
 - Enemies usually appear in front. In an Ambushed battle they appear on all sides, and in a Surrounding battle the party flanks them.
 - When an area's front row empties, the area collapses forward. Some actions reposition enemies.
@@ -67,7 +68,7 @@ Every unit, heroes and enemies, has three default actions on top of its own skil
 | Defend | 100 | +0.3 Avoid and a Shield of 10% max Health until the unit's next turn |
 | Move | 50 | One tile within the unit's own area |
 
-A unit with no usable skill (no valid target, or not enough Mana) uses these: it Attacks if it has a valid target, otherwise it Moves to step into an empty front tile if it can, otherwise it Defends. This keeps "enemies generally stay put" true while stopping melee enemies from waiting behind their own front line.
+A unit with no usable skill (no valid target, or not enough Mana) uses these: it Attacks if it has a valid target, otherwise it Moves to step into an empty front tile if it can, otherwise it sidesteps along its row to a tile from which its melee reaches someone, otherwise it Defends. This keeps "enemies generally stay put" true while stopping melee enemies from waiting behind their own front line.
 
 ## Crowd control
 

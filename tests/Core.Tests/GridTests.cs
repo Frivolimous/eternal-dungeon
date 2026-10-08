@@ -69,6 +69,53 @@ public class GridTests
     }
 
     [Fact]
+    public void Melee_reaches_straight_ahead_or_diagonally_only()
+    {
+        var grid = new BattleGrid();
+        var warrior = U("warrior", "warrior", Side.Party);
+        var left = U("goblin_grunt", "left", Side.Enemy);
+        var right = U("goblin_grunt", "right", Side.Enemy);
+        var backRight = U("goblin_archer", "back", Side.Enemy);
+        grid.Place(warrior, P(0, 0));
+        grid.Place(left, E(0, 1));                                       // diagonal: next lane over
+        grid.Place(right, E(0, 2));                                      // two lanes over
+        grid.Place(backRight, E(1, 1));
+        var attack = Repo.Actions["attack"];
+        var spear = attack with { Range = ActionRange.Reach };
+
+        Assert.Null(grid.CantTarget(warrior, attack, left));
+        Assert.Equal("out_of_reach", grid.CantTarget(warrior, attack, right));
+        Assert.Null(grid.CantTarget(warrior, spear, backRight));          // Reach: the second row, same lanes
+        grid.MoveTo(warrior, P(0, 2));
+        Assert.Null(grid.CantTarget(warrior, attack, right));             // straight ahead
+        Assert.Null(grid.CantTarget(warrior, attack, left));
+
+        // A Large unit counts every lane it covers.
+        var chiefGrid = new BattleGrid();
+        var chief = U("goblin_chief", "chief", Side.Enemy);
+        chiefGrid.Place(chief, E(0, 1));                                 // lanes 1 and 2
+        chiefGrid.Place(warrior, P(0, 0));
+        Assert.Null(chiefGrid.CantTarget(warrior, attack, chief));
+        Assert.Null(chiefGrid.CantTarget(chief, Repo.Actions["chief_cleave"], warrior));
+    }
+
+    [Fact]
+    public void Close_combat_inside_one_area_reaches_adjacent_and_diagonal_tiles()
+    {
+        var grid = new BattleGrid();
+        var rogue = U("rogue", "rogue", Side.Party);
+        var near = U("goblin_grunt", "near", Side.Enemy);
+        var far = U("goblin_archer", "far", Side.Enemy);
+        grid.Place(rogue, E(1, 0));                                      // standing in the enemy area
+        grid.Place(near, E(0, 1));
+        grid.Place(far, E(1, 2));
+        var dagger = Repo.Actions["dagger_attack"];
+        Assert.Null(grid.CantTarget(rogue, dagger, near));
+        Assert.Null(grid.CantTarget(near, Repo.Actions["goblin_slash"], rogue));
+        Assert.Equal("out_of_reach", grid.CantTarget(rogue, dagger, far));
+    }
+
+    [Fact]
     public void A_tall_unit_counts_as_front_row()
     {
         var grid = new BattleGrid();

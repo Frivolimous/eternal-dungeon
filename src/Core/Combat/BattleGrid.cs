@@ -34,9 +34,10 @@ public sealed record Front(int AreaA, Edge EdgeA, int AreaB, Edge EdgeB)
 /// follows its size: Small 1 tile, Tall 2 tiles (front and back), Large a 2×2 block, anchored at the tile nearest the
 /// front with the lowest lane. Dead units leave their tiles. When an area's front row has no living unit, the area
 /// collapses forward.</para>
-/// <para>Range (placeholders): Melee from depth 0 across a front to the other area's depth 0; Reach also its depth 1;
-/// Any reaches every tile. A unit standing in the other side's area (the Rogue's Move) can melee anyone there and be meleed by
-/// anyone there.</para>
+/// <para>Range: Melee from depth 0 across a front to the other area's depth 0, in the same lane or the next one over
+/// (straight ahead or diagonal, Jeremy 2026-10-08); Reach also its depth 1, with the same lanes; Any reaches every
+/// tile. A unit standing in the other side's area (the Rogue's Move) melees and is meleed by units on adjacent or
+/// diagonal tiles there.</para>
 /// <para>M2 supports one front per area. With several (M3: Ambushed, Surrounding) range already checks every front
 /// between the two areas; footprints, Push/Pull and collapse use an area's first front, and collapse is skipped for
 /// areas with more than one.</para>
@@ -229,15 +230,36 @@ public sealed class BattleGrid
             return null;
         if (AnchorOf(actor) is not { } a || AnchorOf(target) is not { } b) return "out_of_reach";
 
-        // Close combat inside one area: an intruder and the side it stands among.
-        if (a.Area == b.Area) return null;
+        var reach = action.Range == ActionRange.Reach ? 2 : 1;
+
+        // Close combat inside one area (an intruder and the side it stands among): adjacent or diagonal tiles only
+        // (within 2 for Reach).
+        if (a.Area == b.Area)
+            return Footprint(actor).Any(x => Footprint(target).Any(y => Math.Max(Math.Abs(x.Row - y.Row), Math.Abs(x.Col - y.Col)) <= reach))
+                ? null
+                : "out_of_reach";
         if (Intruding(target)) return "out_of_reach";
         if (!InFrontRow(actor)) return "not_in_front_row";
-        var reach = action.Range == ActionRange.Reach ? 2 : 1;
+
+        // Across a front: from the front row, the target's first row (two for Reach), in the same lane or the next
+        // one over: straight ahead or diagonal.
         var across = Fronts.Where(f => f.Touches(a.Area) && f.Other(a.Area) == b.Area);
-        return across.Any(f => DepthOf(actor, f.EdgeOf(a.Area)) == 0 && DepthOf(target, f.EdgeOf(b.Area)) < reach)
+        return across.Any(f => ReachesAcross(actor, target, f.EdgeOf(a.Area), f.EdgeOf(b.Area), reach))
             ? null
             : "out_of_reach";
+    }
+
+    /// <summary>A tile's lane along <paramref name="edge"/>: its column for a row edge, its row for a column edge.</summary>
+    static int Lane(Tile t, Edge edge) => edge is Edge.RowStart or Edge.RowEnd ? t.Col : t.Row;
+
+    /// <summary>Whether one of <paramref name="actor"/>'s front-row tiles is at most one lane from one of
+    /// <paramref name="target"/>'s tiles within <paramref name="reach"/> rows of its front. Lanes face each other across
+    /// a front: lane 0 faces lane 0.</summary>
+    bool ReachesAcross(Unit actor, Unit target, Edge mine, Edge theirs, int reach)
+    {
+        var from = Footprint(actor).Where(t => Depth(t, mine) == 0).Select(t => Lane(t, mine)).ToList();
+        return Footprint(target).Where(t => Depth(t, theirs) < reach)
+            .Any(t => from.Any(lane => Math.Abs(lane - Lane(t, theirs)) <= 1));
     }
 
     /// <summary>Where <paramref name="unit"/> could step with Move: an empty tile next to it in the area it

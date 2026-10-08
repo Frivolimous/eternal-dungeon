@@ -1,16 +1,16 @@
 Brute Squad · 1000 battles · seeds 1–1000
 Win rate         73.9%  (739 won, 261 lost, 0 stalemates)
-Battle length    12.7 turns on average
-Party HP left    24.0% on average, 0.0% at worst
-Hit rate         84.8% of 41063 attacks
+Battle length    12.9 turns on average
+Party HP left    23.9% on average, 0.0% at worst
+Hit rate         84.6% of 41128 attacks
 
 Damage dealt per battle
-  Elementalist              157.4
-  Rogue                     117.7
-  Goblin Archer             105.7
+  Elementalist              159.7
+  Rogue                     115.3
+  Goblin Archer             106.2
   Goblin Brute               87.9
   Goblin Grunt               53.2
-  Warrior                    51.7
+  Warrior                    51.8
 
 Hero deaths per battle
   Warrior                     0.9
@@ -23,11 +23,12 @@ Actions used per battle
   Elementalist: Fire Bolt               4.8
   Elementalist: Frost Shard             5.2
   Elementalist: Move                    0.0
-  Goblin Archer: Shot                   9.6
+  Goblin Archer: Shot                   9.8
   Goblin Brute: Smash                   5.7
   Goblin Grunt: Slash                   4.4
-  Rogue: Dagger Attack                  9.8
-  Rogue: Defend                         0.3
+  Rogue: Dagger Attack                  9.6
+  Rogue: Defend                         0.4
+  Rogue: Move                           0.5
   Warrior: Attack                       0.5
   Warrior: Defend                       0.2
   Warrior: Power Attack                 1.4
@@ -35,6 +36,7 @@ Actions used per battle
 Effects and CC applied per battle
   Chill                                 4.2
   Guard                                 0.5
+  Stealth                               0.5
   Stagger breaks                        1.1
   Casts interrupted                     0.0
 
