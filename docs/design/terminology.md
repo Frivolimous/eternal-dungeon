@@ -5,6 +5,7 @@
 | Town | Reached at the end of each dungeon. Heroes rest and prepare here, and are picked for the next dungeon. Skill points are spent and respecced here, and the Secondary and Dabble picks are made here. Has the Tavern, shop and shared stash. |
 | Dungeon 0 | The first-time tutorial dungeon, a shortened Goblin Woods. Played once per save, never by later heroes. |
 | Map | One explorable area of a dungeon, Outdoor (forests, ruins) or Indoor (caves, castles; an indoor floor is a Map): a fog-of-war network of Nodes. A dungeon is one or more Maps. Replaces "Floor". |
+| Danger | How dangerous a place is, deciding which Events can appear there: Dungeon Danger, modified per Map and per Node (effective Node Danger), and raised by alarms. Not a level: "level" means only hero level (XP) and item level, and "Dungeon level" is a hero's progress. |
 | Node | One piece of explorable content on a Map. It can hold an Event and Interactables, and connects to other Nodes. Drawn as a Region (Outdoor) or a Room or Hallway (Indoor). |
 | Region | How an Outdoor Map draws a Node; its Node type shows as a Feature (Forest Clearing, Goblin Village). |
 | Room | How an Indoor Map draws a Node; it shows its Node type (Prison, Library, Boss Room). |

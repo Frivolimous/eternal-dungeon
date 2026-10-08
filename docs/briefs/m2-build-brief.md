@@ -18,7 +18,7 @@ The class and exploration decisions changed some of what M2 shows. All of this i
   is gone: the Elementalist has Elemental Power 10 directly (2026-10-08). The log's damage kinds are unchanged ("Arcane, Fire").
 - **The Rogue's Stealth mastery replaces Sneak:** the Rogue's Move (50 AP) reaches a neighbouring tile or any empty
   enemy tile, and every Move grants **Stealth** (the renamed Cloak). There is no separate Sneak action; the Rogue's
-  action bar shows Attack, Dagger Attack, Defend and Move. Masteries, skill trees and traits are otherwise M3–M4 work.
+  action bar shows Attack, Dagger Attack, Defend and Move. Masteries, skill trees and traits are otherwise M3 work.
 - **Floors are now Maps** (exploration.md), which only affects the out-of-scope list here.
 
 ## Goal
@@ -41,7 +41,7 @@ styles. The checkpoint is about **feel**: is a battle readable and satisfying, a
 - The Google Sheets sync itself: a small separate task right after M2, built on section 2.
 - Multi-front layouts (Ambushed, Surrounding) and encounter modifiers: M3.
 - Dungeons, Maps and exploration, XP, loot and saving: M3.
-- Skill trees, masteries (beyond the Rogue's built-in Stealth) and traits: M3–M4.
+- Skill trees, masteries (beyond the Rogue's built-in Stealth) and traits: M3 for the three starting classes.
 - Audio: a separate pass once the art style is chosen.
 - Full controller polish: M6. M2 must not rule it out (section 8).
 - Damage variance: damage stays static (no damage roll). Only hit, crit and Brutal are random.

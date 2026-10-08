@@ -22,7 +22,7 @@ Map sizes (small, medium, big) are set when Maps are built (M3).
 
 ## Battles
 
-A battle is a fixed enemy layout on the enemies' own 2×3 grid, started by an Event's Combat block (see Exploration). Battles can roll encounter modifiers. Initiative: Surprised (party −Initiative) or First Strike (party +Initiative). Position: Ambushed (enemies on all sides of the party) or Surrounding (the party flanks the enemy). Candidate additions: Terrain, Elite, Reinforcements, Fatigued.
+A battle is started by an Event's Combat block (see Exploration). Enemies are placed on their own area (3×2 or 2×3 by default, growing with abilities), in a layout that is either fixed by the encounter or generated (see Combat › Battlefield and the Combat block in Exploration). Battles can roll encounter modifiers. Initiative: Surprised (party −Initiative) or First Strike (party +Initiative). Position: Ambushed (enemies on all sides of the party) or Surrounding (the party flanks the enemy). Candidate additions: Terrain, Elite, Reinforcements, Fatigued.
 
 ## Run outcomes
 

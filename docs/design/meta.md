@@ -5,7 +5,7 @@ Progression has three layers: what lasts one run (Boons, Trinkets), what a hero 
 ## Progress
 
 - Advance to harder dungeons. Difficulty is simply how deep you get.
-- Every run grants Gold. Gold unlocks starting skill trees, harder dungeons and better dungeon loot.
+- Every run grants Gold. Gold unlocks starting skill trees and better dungeon loot. Completing a dungeon is what unlocks the next one (see [Dungeons](dungeons.md) › Run outcomes).
 - Collect heroes and gear.
 - **? Economy:** not designed yet.
 

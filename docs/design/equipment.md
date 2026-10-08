@@ -16,7 +16,7 @@ Equipment provides the largest share of a hero's power (37%), followed by class 
 - **Primary equipment:** Weapon, Off-hand, Armor, Helmet. A two-handed weapon fills the Off-hand slot. Any weapon can go in the Off-hand, with its own weight penalty plus the dual-wield penalties.
 - **Accessory:** 1 slot for an enchanted ring, book or similar.
 - **Spells:** 0–3 slots (1 per Spell+ class).
-- **Belt slots:** 1–4 (1 base, plus 1 per Belt+ class). Belt items are consumables with limited uses per encounter, except Talismans, which give a small passive stat bonus and are never used up.
+- **Belt slots:** 1–4 (1 base, plus 1 per Belt+ class). Belt items are consumables with limited uses per dungeon: they're used up across the whole expedition and don't refill between fights. Camps, Sanctuaries, Events and exploration skills (such as the Tinkerer's) can restore charges. Talismans are the exception: they give a small passive stat bonus and are never used up.
 - **Artifacts:** up to 3, equipped on Reincarnation.
 
 Each class a hero takes (Primary, Secondary and Dabble alike) adds one point to its family:
@@ -90,7 +90,9 @@ Each class a hero takes (Primary, Secondary and Dabble alike) adds one point to 
 | Helmet | Heavy | Health, −dodge, −speed | 2 |
 | Accessory | Various | Enchanted | 0 |
 
-| Belt item | Uses per encounter |
+Uses below are placeholders: they were sized for a single fight and need resizing for a whole dungeon.
+
+| Belt item | Uses per dungeon |
 | --- | --- |
 | Grenade | 1–3 |
 | Throwing weapon | 2–5 |

@@ -122,13 +122,14 @@ A combat ends in one of three ways:
 Events don't know which dungeon they're in: they're picked from the Map's and Node's context, and whatever the dungeon
 adds flows down into its Maps and Nodes during generation.
 
-- **Level:** the dungeon sets a base Level, and Maps and Nodes modify it: Dungeon Level → Map level modifier → Node
-  level modifier = **effective Node Level**, which decides which Events are eligible. Events or alarms can raise the
-  Map level modifier (+1) for a garrison-wide alert, making the rest of that Map's fights and checks harder.
-- **Tags:** each level adds **Faction[]** and **Environment[]** tags, inherited Dungeon → Map → Node, each level adding,
+- **Danger:** the dungeon sets a base Danger, and Maps and Nodes modify it: Dungeon Danger → Map danger modifier →
+  Node danger modifier = **effective Node Danger**, which decides which Events are eligible. Events or alarms can
+  raise the Map danger modifier (+1) for a garrison-wide alert, making the rest of that Map's fights and checks
+  harder. (Danger is not a level: "level" means only hero level and item level.)
+- **Tags:** each layer adds **Faction[]** and **Environment[]** tags, inherited Dungeon → Map → Node, each layer adding,
   removing or replacing values (`+`, `-`, `=`). Events check the resulting tags, not where they came from.
 - **Event pools:** Events are drawn from pools by the Map's and Node's configuration and context. An Event or Event
-  Group can set a selection weight, a level range, required Node types and Faction/Environment requirements.
+  Group can set a selection weight, a Danger range, required Node types and Faction/Environment requirements.
 - **Event Groups** exist only for generation: they make sure Events that depend on each other are generated together in
   compatible Nodes (`Goblin Prison` and `Refugee Camp`). Flags and conditions decide at runtime whether each is
   available.
@@ -137,6 +138,10 @@ adds flows down into its Maps and Nodes during generation.
 
 A dungeon uses four resources: **Health, Mana, Stamina and consumables**. There is no passive Health or Mana
 regeneration. Health and Mana carry between fights.
+
+- **Consumables** (belt items) have limited uses per dungeon, not per fight: they don't refill between fights. Camps,
+  Sanctuaries, Events and exploration skills (such as the Tinkerer's) can restore charges. Talismans are passive and
+  never used up (see [Equipment](equipment.md)).
 
 - **Mana** never goes below 0. **Health** never goes below 0, and a hero at 0 Health at any time (from an Event, a
   resource change or combat) is immediately **Dead**.
@@ -195,7 +200,7 @@ Event outcomes affect the expedition only through these:
 - Losing Health, Mana, Gold or 1 Stamina.
 - Lasting curses, timed in steps (Limping, Poison) or battles (Demoralized, Bleed, +50% Mana costs). They can lower a
   trait (−Trait), which lowers Event odds without removing any choice.
-- Raising the Map level modifier (+1) for an alarm.
+- Raising the Map danger modifier (+1) for an alarm.
 
 **Never**, to protect player agency:
 
@@ -229,7 +234,7 @@ Every block has an `id`, a `type` and a `config`, and blocks link to each other 
 | Branch | Routing on conditions, not shown to the player |
 | Combat | Starts a fight (Skirmish, Major or Boss) |
 | Resource Change | Changes Health, Mana or Stamina for eligible heroes |
-| Action | Sets Event or dungeon flags, spawns Interactables, reveals the map, applies buffs or curses (steps or battles, trait changes included), changes the Map level modifier, changes resources (including +1 Camp), recruits a temporary ally, or defers the Event (resuming at a given block, or this one) |
+| Action | Sets Event or dungeon flags, spawns Interactables, reveals the map, applies buffs or curses (steps or battles, trait changes included), changes the Map danger modifier, changes resources (including +1 Camp), recruits a temporary ally, or defers the Event (resuming at a given block, or this one) |
 | Reward | Hands rewards to the reward system for display and assignment |
 
 - **Story:** every choice whose conditions hold is shown. Hovering one shows its decision preview: for a fight, its
@@ -268,7 +273,7 @@ Hero.
     { "success": "nothing" } ] } }
 
 { "id": "goblin_patrol", "type": "combat", "config": {
-    "encounter": { "type": "generated", "encounterType": "skirmish", "levelModifier": 1, "rarity": "common" },
+    "encounter": { "type": "generated", "encounterType": "skirmish", "dangerModifier": 1, "rarity": "common" },
     "success": "victory_block", "flee": "closed_event" } }
 
 { "id": "injury", "type": "resourceChange", "config": { "resource": "health", "amount": -10, "target": "active", "success": "next_block_id" } }

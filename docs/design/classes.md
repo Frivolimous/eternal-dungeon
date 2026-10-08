@@ -71,7 +71,7 @@ Design space for masteries: new active abilities, and powerful one-off passives.
 
 ## The starting classes
 
-Tier labels (T1–T3) are the skill's depth in the tree. Numbers are designed at M4.
+Tier labels (T1–T3) are the skill's depth in the tree. Numbers are designed in M3, when these three trees, their masteries and traits are built.
 
 ### Warrior
 
@@ -146,7 +146,7 @@ A generic magic user. Its spells come from equipped spells, not skills. It speci
 | Mastery | Points | Effect |
 | --- | --- | --- |
 | Elemental Focus | 1 | Passive: Elemental damage+ |
-| Elemental Expertise | 6 | Passive: Elemental Rate+ |
+| Elemental Expertise | 6 | Passive: Elemental Rate+ (procs on Elemental actions fire more often) |
 | Elemental Mastery | 11 | Passive: Elemental Pen+ |
 
 ## Class traits
