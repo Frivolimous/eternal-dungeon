@@ -289,9 +289,17 @@ public sealed class BattleGrid
     public IEnumerable<Tile> ForwardOptions(Unit unit) =>
         AnchorOf(unit) is { } at ? MoveOptions(unit).Where(t => Depth(t) < Depth(at)) : [];
 
-    /// <summary>Where a feared unit may Move: an empty tile further from the front.</summary>
-    public IEnumerable<Tile> RetreatOptions(Unit unit) =>
-        AnchorOf(unit) is { } at ? MoveOptions(unit).Where(t => Depth(t) > Depth(at)) : [];
+    /// <summary>Where a feared unit may Move: an empty tile further from the front. None when it's its side's only unit
+    /// in its area's front row: stepping back would only set off the forward collapse and pull it straight back, so it
+    /// Defends instead (Jeremy, 2026-10-08).</summary>
+    public IEnumerable<Tile> RetreatOptions(Unit unit)
+    {
+        if (AnchorOf(unit) is not { } at) return [];
+        if (InFrontRow(unit) && SideOf(at) == unit.Side &&
+            !anchors.Any(kv => kv.Key != unit && kv.Key.Alive && kv.Key.Side == unit.Side && kv.Value.Area == at.Area && InFrontRow(kv.Key)))
+            return [];
+        return MoveOptions(unit).Where(t => Depth(t) > Depth(at));
+    }
 
     /// <summary>Any empty tile in an area of the other side (Small units only): where the Rogue's Move can go.</summary>
     public IEnumerable<Tile> EnemyAreaOptions(Unit unit)

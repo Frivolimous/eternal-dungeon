@@ -152,6 +152,24 @@ public class DefaultActionTests
     }
 
     [Fact]
+    public void A_feared_unit_alone_in_its_front_row_defends_instead_of_stepping_back()
+    {
+        var data = With(actions: [Action("scare", ActionTarget.Ally, new EffectRef("dread", EffectAim.Target))]);
+        var w = U(data, "warrior", "w", Side.Party);
+        var mage = U(data, "elementalist", "e", Side.Party);
+        var grid = new BattleGrid();
+        grid.Place(w, P(0, 1));                                         // the only one in the front row
+        grid.Place(mage, P(1, 0));
+        var b = new Battle(data, [w, mage], seed: 1, grid);
+        mage.ActTicks = TurnClock.TurnThreshold;
+        b.Act(mage, data.Actions["scare"], w);
+
+        Assert.Empty(grid.RetreatOptions(w));                           // stepping back would just collapse it forward again
+        Assert.Equal("nowhere_to_move", Options.Unusable(b, w, data.Actions["move"]));
+        Assert.Equal("defend", UnitAi.Decide(b, w)!.Action.Id);
+    }
+
+    [Fact]
     public void Not_twice_in_a_row_alternates_power_attack_and_attack()
     {
         var w = U(Repo, "warrior", "w", Side.Party);
