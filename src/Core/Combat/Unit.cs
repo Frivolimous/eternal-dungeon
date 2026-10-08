@@ -55,52 +55,16 @@ public sealed class Unit
     public int MaxHealth => (int)Math.Round(Stats.Get("health"));
     public int MaxMana => (int)Math.Round(Stats.Get("mana"));
 
-    /// <summary>Speed as the turn clock uses it: whole, never below 0. Stunned (by CC or a full stagger bar)
-    /// it's 0; with stagger on the bar it's halved (Anchor: Combat › Crowd control).</summary>
-    public int Speed
-    {
-        get
-        {
-            if (Stunned) return 0;
-            var speed = Math.Max(0, (int)Stats.Get("speed"));
-            return Stagger > 0 ? speed / 2 : speed;
-        }
-    }
-
-    // ---- Stagger bar ----
-
-    public const int StaggerMax = 100;
-
-    /// <summary>0–100. Stagger damage fills it and it drains each buff-clock turn.</summary>
-    public int Stagger { get; private set; }
-
-    /// <summary>The bar hit 100: the unit is stunned and takes no stagger until the bar drains to 0
-    /// (the bar shows white meanwhile).</summary>
-    public bool StaggerBroken { get; private set; }
-
-    /// <summary>Adds stagger damage; returns true when this fills the bar.</summary>
-    public bool TakeStagger(int amount)
-    {
-        if (!Alive || StaggerBroken || amount <= 0) return false;
-        Stagger = Math.Min(StaggerMax, Stagger + amount);
-        if (Stagger < StaggerMax) return false;
-        StaggerBroken = true;
-        return true;
-    }
-
-    public void DrainStagger(int amount)
-    {
-        Stagger = Math.Max(0, Stagger - amount);
-        if (Stagger == 0) StaggerBroken = false;
-    }
+    /// <summary>Speed as the turn clock uses it: whole, never below 0; 0 while Stunned (Anchor: Combat › Crowd
+    /// control).</summary>
+    public int Speed => Stunned ? 0 : Math.Max(0, (int)Stats.Get("speed"));
 
     // ---- Crowd control ----
 
     public bool Has(CcKind cc) => Buffs.Any(b => b.Def.Cc == cc);
 
-    public bool Stunned => StaggerBroken || Has(CcKind.Stun);
+    public bool Stunned => Has(CcKind.Stun);
 
-    /// <summary>Sleep and Fear take the whole turn away.</summary>
     /// <summary>Sleep takes the whole turn away. (Fear doesn't: it only limits the unit to Defend or Move back.)</summary>
     public bool LosesTurn => Has(CcKind.Sleep);
 

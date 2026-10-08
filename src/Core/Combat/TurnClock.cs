@@ -15,7 +15,7 @@ public sealed record TurnReady(long Tick, Unit Unit) : ClockEvent(Tick);
 /// <summary>A unit's cast timer finished: the spell takes effect now.</summary>
 public sealed record CastComplete(long Tick, Unit Unit, Cast Cast) : ClockEvent(Tick);
 
-/// <summary>One turn of the buff clock, which runs at base Speed 100: buffs and the stagger bar count these.</summary>
+/// <summary>One turn of the buff clock, which runs at base Speed 100: buffs count these.</summary>
 public sealed record BuffTick(long Tick, int Turn) : ClockEvent(Tick);
 
 /// <summary>

@@ -25,7 +25,7 @@ Every class has:
 | Energist | Belt+ | Meditate: recovers HP and MP | Mana-fueled balanced melee | Balanced | Brawler | Mana | Melee |
 | Tinkerer | Belt+ | Doubles consumable charges | Belt items and support | Utility | Support | Consumables | Ranged |
 | Elementalist | Spell+ | Elemental Focus: +Elemental damage | Offensive caster | Offensive | Carry | Mana | Ranged |
-| Arcanist | Spell+ | Meddle: staggers an enemy while it casts | Utility caster | Utility | Carry | Mana | Ranged |
+| Arcanist | Spell+ | Meddle: staggers and interrupts an enemy while it casts | Utility caster | Utility | Carry | Mana | Ranged |
 | Cleric | Spell+ | Healing Burst: heals everyone, once per combat | Unblockable damage and healing | Defensive | Support | Buffs | Flexible |
 | Acolyte | Spell+ | Blood Magic: damages self to buff self | Curses and self-infliction | Offensive | Carry | Curses | Flexible |
 | Bard | Spell+ | Inspire Haste: +speed and dodge | Offensive support | Utility | Support | Allies | Ranged |
@@ -109,7 +109,7 @@ Tactical and versatile: move into position, set up attacks and execute, or wait 
 | 2 | Deadly Shadows | T2 | Dexterity+, C.Rate+, more C.Rate in Stealth; crits don't break Stealth |
 | 3 | Dancing Shadows | T2 | Dexterity+, Dodge+; dodging grants Stealth |
 | 4 | Executioner | T1 | Damage+ against enemies below 50% HP |
-| 5 | Opportunist | T1 | Initiative+; refunds up to 50% of the AP cost, by the target's Stagger or Stun |
+| 5 | Opportunist | T1 | Initiative+; refunds up to 50% of the AP cost, by the target's Stagger or Stun (under review: stagger is no longer a state, see Open questions) |
 
 ```text
  4   1   5

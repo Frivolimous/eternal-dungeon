@@ -326,6 +326,7 @@ public class ProcTests
         Assert.Contains("needs a number", ProcFails($$"""{ {{HitProc}}, "key_1": "damage", "value_1": "lots" }""").Message);
         Assert.Contains("above 0", ProcFails($$"""{ {{HitProc}}, "key_1": "heal", "value_1": "-5" }""").Message);
         Assert.Contains("whole number", ProcFails($$"""{ {{HitProc}}, "key_1": "stagger", "value_1": "2.5" }""").Message);
+        Assert.Contains("takes no value", ProcFails($$"""{ {{HitProc}}, "key_1": "interrupt", "value_1": "yes" }""").Message);
         Assert.Contains("push or pull", ProcFails($$"""{ {{HitProc}}, "key_1": "displace", "value_1": "shove" }""").Message);
         Assert.Contains("needs a value", ProcFails($$"""{ {{HitProc}}, "key_2": "damage" }""").Message);
         Assert.Equal("[0].key_1", ProcFails($$"""{ {{HitProc}}, "value_1": "5", "key_2": "damage", "value_2": "5" }""").Field);

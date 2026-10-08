@@ -12,7 +12,7 @@ public enum CardMark { None, Active, Valid, Hovered }
 /// <summary>
 /// The front of a unit's card, drawn into its own viewport (twice its size, for sharpness) and shown on the 3D card
 /// (M2 brief §3): portrait (or a generated placeholder), name, HP bar with numbers and Shield, the Act meter along
-/// the left edge (a cast's progress while casting), the stagger bar (white while broken) and status icons. All text
+/// the left edge (a cast's progress while casting), the Mana gauge and status icons. All text
 /// comes from the engine; images hold none.
 /// </summary>
 public partial class CardFace : Control
@@ -101,23 +101,18 @@ public partial class CardFace : Control
         fill = Mathf.Clamp(fill, 0, 1);
         DrawRect(new Rect2(meter.Position.X, meter.End.Y - meter.Size.Y * fill, meter.Size.X, meter.Size.Y * fill), color);
 
-        // Stagger bar, the Mana gauge (units with Mana only), then the HP bar with numbers and Shield. With Mana the two
-        // thin bars share the stagger bar's space, so every card keeps its size.
+        // The Mana gauge (units with Mana only; the slot stays empty otherwise, so HP bars line up), then the HP bar
+        // with numbers and Shield.
         var barX = p.Position.X;
         var barW = p.Size.X;
         var y = p.End.Y + 2;
-        var hasMana = Unit.MaxMana > 0;
-        var thin = hasMana ? 3 : 4;
-        DrawRect(new Rect2(barX, y, barW, thin), new Color(0, 0, 0, 0.5f));
-        if (Unit.Stagger > 0)
-            DrawRect(new Rect2(barX, y, barW * Unit.Stagger / Unit.StaggerMax, thin), Unit.StaggerBroken ? Colors.White : Ui.Stagger);
-        y += thin + (hasMana ? 1 : 2);
-        if (hasMana)
+        const int thin = 4;
+        if (Unit.MaxMana > 0)
         {
             DrawRect(new Rect2(barX, y, barW, thin), new Color(0, 0, 0, 0.5f));
             DrawRect(new Rect2(barX, y, barW * Unit.Mana / Unit.MaxMana, thin), Ui.Mana);
-            y += thin + 1;
         }
+        y += thin + 2;
         var hp = new Rect2(barX, y, barW, 14);
         DrawRect(hp, new Color(0, 0, 0, 0.6f));
         var share = (float)Unit.Health / Math.Max(1, Unit.MaxHealth);
@@ -156,7 +151,6 @@ public partial class CardFace : Control
     public static List<string> Statuses(Unit unit, Battle battle)
     {
         var list = new List<string>();
-        if (unit.StaggerBroken) list.Add("stun");
         foreach (var b in unit.Buffs)
         {
             string status;

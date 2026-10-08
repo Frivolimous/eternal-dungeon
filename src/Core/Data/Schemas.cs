@@ -59,6 +59,7 @@ public static class Schemas
          Enum<ProcPhase>("phase", @default: ProcPhase.AfterHit),
          Enum<Duplicates>("duplicates", @default: Duplicates.Merge),
          Number("owner_health_below"),
+         Bool("ignore_deval"),
          .. Enumerable.Range(1, ProcResults).SelectMany(i => new[] { Enum<ProcResult>($"key_{i}"), Text($"value_{i}") })]);
 
     public static readonly TableSchema Actions = Top("actions",

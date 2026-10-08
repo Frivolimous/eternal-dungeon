@@ -156,8 +156,9 @@ public static class CombatLog
             ("before", p.HealthBefore), ("after", p.HealthBefore - p.Taken.ToHealth)),
         DelayedDamaged p => s.Format("log.delayed", ("buff", p.Buff.Def.Name), ("amount", p.Taken.Absorbed + p.Taken.ToHealth), ("target", p.Target.Name),
             ("before", p.HealthBefore), ("after", p.HealthBefore - p.Taken.ToHealth)),
-        StaggerIgnored x => s.Format("log.stagger_ignored", ("target", x.Target.Name)),
-        Staggered x => s.Format(x.Broke ? "log.staggered_broke" : "log.staggered", ("target", x.Target.Name), ("amount", x.Amount), ("bar", x.Bar)),
+        Staggered x => x.Resisted > 0
+            ? s.Format("log.staggered_resisted", ("target", x.Target.Name), ("amount", x.Amount), ("resisted", x.Resisted))
+            : s.Format("log.staggered", ("target", x.Target.Name), ("amount", x.Amount)),
         Interrupted i => s.Format("log.interrupted", ("unit", i.Unit.Name)),
         Fizzled { Reason: FizzleReason.TargetFell } f => s.Format("log.fizzle_target_fell", ("target", f.Target?.Name)),
         Fizzled f => s.Format("log.fizzle_caster_fell", ("caster", f.Caster.Name), ("action", f.Action.Name)),

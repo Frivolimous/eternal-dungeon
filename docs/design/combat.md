@@ -38,13 +38,13 @@ Every character starts with Weapon C.Rate 5% and untagged C.Mult 0.5, so every w
 - At 100 Act, it's that unit's turn. Act can go above 100, giving extra turns, or below 0, delaying the turn.
 - Actions cost AP out of the 100-point meter, any whole number above 0: 50 is half a turn, 100 a full turn, and 200 works like a cooldown (any cost allowed, Jeremy, 2026-10-08).
 - There are no cooldowns: an action’s AP cost is the only limit on how often it can be used (a 200-AP action delays the unit’s next turn).
-- Spells have a casting timer. The Arcanist's Meddle staggers an enemy while it's casting.
+- Spells have a casting timer. The Arcanist's Meddle staggers and interrupts an enemy while it's casting.
 - A unit's Act meter stops filling while it casts, and resumes when the cast completes, fizzles or is interrupted.
 - A cast fizzles if its target dies, the caster dies, or it's interrupted. There is no retargeting.
 - Buffs run on their own clock at base Speed 100, so a 3-turn buff lasts 3 base-speed turns whatever the buffed hero's own Speed. Speed, Act and AP are integers on the 100 scale. Chance stats are fractions shown as percentages: Hit, Avoid, Resist and Pen use Dim and generally stay between 0 and 1 (curses are the exception: they can push them below 0), while Rate and Deval use Add, so they can exceed 1, and only adjust proc chance through (1 + Rate) ÷ (1 + Deval).
 - Events at the same moment resolve in a fixed order: the buff clock first, then completed casts, then turns.
 - If both sides fall at the same moment, it counts as a party wipe.
-- **No real-time clock.** Ticks are simulated instantly until the next unit reaches 100 Act, and the game waits for the player on each hero turn. A quick animation shows the meters filling. Every "over time" effect (stagger drain, buffs, damage or healing over time) counts ticks, not seconds. There is no passive Health or Mana regeneration: healing or Mana over time exists only as effects, like damage over time.
+- **No real-time clock.** Ticks are simulated instantly until the next unit reaches 100 Act, and the game waits for the player on each hero turn. A quick animation shows the meters filling. Every "over time" effect (buffs, damage or healing over time) counts ticks, not seconds. There is no passive Health or Mana regeneration: healing or Mana over time exists only as effects, like damage over time.
 
 ## Battlefield
 
@@ -74,7 +74,7 @@ A unit with no usable skill (no valid target, or not enough Mana) uses these: it
 
 ## Crowd control
 
-CC can target a character or a tile: Slow, Stun, Stagger, Pull/Push/Move, Root, damage over time, delayed damage, stat reduction, action override (Confusion, Fear, Sleep), action restriction (Root, Silence) and conditional effects.
+CC can target a character or a tile: Slow, Stun, Stagger, Interrupt, Pull/Push/Move, Root, damage over time, delayed damage, stat reduction, action override (Confusion, Fear, Sleep), action restriction (Root, Silence) and conditional effects.
 
 Confusion: the unit loses all choice, heroes included. On its turn it uses a random usable action at a random target it can reach, allies included (or a random tile, or itself), decided 2026-10-08.
 
@@ -82,12 +82,15 @@ Fear: the unit loses all choice, heroes included (decided 2026-10-08): on its tu
 
 Damage over time scales with the caster: when it's applied, the caster's Power and Multiplier factors for the tags of the proc that applied it are locked in, and every tick uses them. Shield still absorbs ticks.
 
-**Stagger uses a stagger bar** (the default, to be confirmed in playtesting):
+**Stagger is Act damage** (decided 2026-10-08; it replaced the stagger bar):
 
-- Each unit has a stagger bar that starts at 0. Stagger damage fills it, and it drains over time.
-- While the bar is above 0, the unit's Speed is halved.
-- At 100% the unit is stunned (Speed × 0) and can't take stagger damage. The bar turns white while it drains back down.
-- Fallback if playtesting doesn't support it: stagger damage reduces the target's AP directly.
+- A stagger knocks the target's Act meter back by its amount, so its next turn comes later. Act can go below 0. Nothing lingers: no bar, no slow, no stun.
+- Stagger procs carry the Force tag, and the target resists with its Force Deval (untagged Deval counts too): **stagger taken = amount × (1 − Force Deval)**, kept between 0 and the full amount and rounded to a whole Act. So 50% Force Deval halves it and 100% resists it fully. For stagger, Deval is a straight resist; for proc chances it stays a divisor, ÷ (1 + Deval). Both are intended.
+- A stagger proc is marked ignore_deval, so Force Deval reduces only its amount, not also its chance (it would count twice otherwise).
+- No guardrails for now: stunlocking by stagger is allowed.
+- Bosses (the Goblin Chief, and every boss-scale unit) have Force Deval 50%.
+
+**Interrupt** is a separate effect: it cancels the target's cast in progress, and the spell fizzles. It does nothing to a unit that isn't casting, and Deval doesn't resist it for now. Stun interrupts too. Most stagger sources also interrupt (the Brute's Smash does), and so will the Arcanist's Meddle.
 
 ## Enemy targeting
 
@@ -97,7 +100,7 @@ Ties between equally scored targets are broken by a pick from the battle's seede
 
 ## Buffs
 
-A buff is a timed bundle on a unit: stat changes, crowd control, damage or healing every buff-clock turn, a Shield that goes when it ends, and procs it grants while it lasts. Procs apply buffs; everything that happens once (damage, heals, stagger, pushes) is a proc result, not a buff (decided 2026-10-08).
+A buff is a timed bundle on a unit: stat changes, crowd control, damage or healing every buff-clock turn, a Shield that goes when it ends, and procs it grants while it lasts. Procs apply buffs; everything that happens once (damage, heals, stagger, interrupts, pushes) is a proc result, not a buff (decided 2026-10-08).
 
 - A buff lasts until the holder's next turn, a number of buff-clock turns, or a number of the holder's own actions. Exploration buffs and curses (timed in steps or battles, see Exploration) will share the buffs table with their own durations.
 - A buff lasting actions counts each action its holder finishes. One applied before damage with 1 action lasts just that hit (Armor Break: extra Penetrate for this hit only). One given by an action counts from the holder's next action.
@@ -119,17 +122,17 @@ A proc is something that fires on an event, with a chance. Units have procs of t
 | Trigger | hit, miss, crit, Brutal, action complete (the owner's actions); struck, avoided, damaged (actions against the owner; damaged counts only damage from actions, to be checked in playtests); turn start, fight start |
 | Trigger tags | Optional filter: the event's action must carry at least one of them (Spikey: struck by Melee) |
 | Phase | After the hit by default. A hit proc can be marked before damage, to change that hit: it applies a buff lasting 1 action (e.g. extra Penetrate for this hit only) |
-| Chance | Base × (1 + Rate) ÷ (1 + Deval), Rate and Deval both summed (Add), using every tag on the proc; the target's Deval applies only when the proc lands on someone else. No base chance means 100% |
+| Chance | Base × (1 + Rate) ÷ (1 + Deval), Rate and Deval both summed (Add), using every tag on the proc; the target's Deval applies only when the proc lands on someone else, and not at all on a proc marked ignore_deval (decided 2026-10-08, for stagger procs, which Force Deval resists through their amount). No base chance means 100% |
 | Above 100% | The chance stops at 100% and the excess is lost: Rate never scales a proc's amounts. Amounts grow only when several copies of the same proc merge (see below) |
 | Target | The owner, or the other unit in the event (the target of the owner's action, or the attacker) |
-| Results | Up to 3 per proc, as key and value pairs in data: damage, heal, Shield, heal a share of the hit's damage (lifesteal), stagger, displace (push or pull), and apply buff (stat changes, CC, damage over time…). More pairs can be added if procs need them |
+| Results | Up to 3 per proc, as key and value pairs in data: damage, heal, Shield, heal a share of the hit's damage (lifesteal), stagger (Act knocked back), interrupt (no value), displace (push or pull), and apply buff (stat changes, CC, damage over time…). More pairs can be added if procs need them |
 | Proc damage | Goes through the full damage formula with the proc's own tags; heals scale with the owner's Power for the proc's tags. It is not an action: no hit roll, no crit, and it never triggers procs. Nothing a proc causes triggers further procs |
 | Area attacks | Procs roll once per target hit |
 | Limits | None on procs themselves. A once-per-fight proc is granted by a buff applied at fight start |
 
 When a unit has the same proc more than once (two Flaming weapons), each proc's duplicates rule decides how the copies combine:
 
-- Merge (the default): one roll. Merged chance = 1 − Π(1 − each copy's chance), the chance that at least one copy fires. Amounts (damage, heal, Shield, lifesteal share, stagger) = Σ(chance × amount) ÷ merged chance, so the expected amount is unchanged. States (stun or other CC, push, any buff it applies) come from the strongest copy and never add up. Flaming 100% × 15 + 100% × 20 = 100% × 35; two 20% stuns = 36% to stun.
+- Merge (the default): one roll. Merged chance = 1 − Π(1 − each copy's chance), the chance that at least one copy fires. Amounts (damage, heal, Shield, lifesteal share, stagger) = Σ(chance × amount) ÷ merged chance, so the expected amount is unchanged. States (stun or other CC, interrupt, push, any buff it applies) come from the strongest copy and never add up. Flaming 100% × 15 + 100% × 20 = 100% × 35; two 20% stuns = 36% to stun.
 - Separate: each copy rolls on its own and can fire on the same hit (extra-arrow style procs).
 - Unique: only the strongest copy counts (signature effects).
 

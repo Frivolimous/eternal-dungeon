@@ -1,4 +1,5 @@
 [
   { "unit": "elementalist", "stat": "power", "tag": "elemental", "value": 10 },
-  { "unit": "goblin_brute", "stat": "resist", "tag": "physical", "value": 0.1 }
+  { "unit": "goblin_brute", "stat": "resist", "tag": "physical", "value": 0.1 },
+  { "unit": "goblin_chief", "stat": "deval", "tag": "force", "value": 0.5 }
 ]

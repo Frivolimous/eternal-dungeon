@@ -54,11 +54,8 @@ public sealed partial class Battle
         return Record(r);
     }
 
-    /// <summary>Stagger drained from every bar each buff-clock turn (placeholder).</summary>
-    public const int StaggerDrain = 10;
-
     /// <summary>
-    /// <paramref name="unit"/> loses its turn to Sleep or Fear: it spends a full turn's AP and does nothing.
+    /// <paramref name="unit"/> loses its turn to Sleep: it spends a full turn's AP and does nothing.
     /// </summary>
     public ActionResult SkipTurn(Unit unit)
     {
@@ -77,14 +74,13 @@ public sealed partial class Battle
         return Record(r);
     }
 
-    /// <summary>One buff-clock turn: stagger bars drain, periodic damage and healing land, then buffs count down and
+    /// <summary>One buff-clock turn: periodic damage and healing land, then buffs count down and
     /// expire. There is no passive Health or Mana regeneration.</summary>
     public ActionResult BuffTick()
     {
         var r = new ActionResult(Clock.Tick, Units[0], null, null);
         foreach (var unit in Units.Where(u => u.Alive))
         {
-            unit.DrainStagger(StaggerDrain);
             foreach (var buff in unit.Buffs.ToList())
             {
                 if (buff.Def.PeriodicDamage > 0 && unit.Alive)
@@ -315,6 +311,7 @@ public sealed partial class Battle
         }
     }
 
+    /// <summary>Cancels <paramref name="unit"/>'s cast, if it's casting: the spell fizzles.</summary>
     void Interrupt(Unit unit, ActionResult r)
     {
         if (TurnClock.Interrupt(unit) is { } cast)

@@ -276,7 +276,8 @@ public static class DataLoader
             r.Enum<ProcTarget>("target"),
             phase,
             r.Enum<Duplicates>("duplicates"),
-            r.OptNum("owner_health_below"));
+            r.OptNum("owner_health_below"),
+            IgnoreDeval: r.Bool("ignore_deval"));
 
         // The results: key_N names one, value_N gives its amount, direction or buff.
         var seen = new HashSet<ProcResult>();
@@ -290,6 +291,12 @@ public static class DataLoader
             }
             var name = JsonField.SnakeCase(key.ToString());
             if (!seen.Add(key)) throw r.Error(keyColumn, $"{name} is already one of this proc's results");
+            if (key == ProcResult.Interrupt)
+            {
+                if (r.Has(valueColumn)) throw r.Error(valueColumn, "interrupt takes no value: leave it empty");
+                proc = proc with { Interrupt = true };
+                continue;
+            }
             var value = r.OptStr(valueColumn) ?? throw r.Error(valueColumn, $"{name} needs a value");
             double Amount()
             {
@@ -325,7 +332,7 @@ public static class DataLoader
 
         if (proc.Chance <= 0) throw r.Error("chance", "must be above 0");
         if (!proc.DoesSomething)
-            throw r.Error("key_1", "the proc does nothing: give it a result (damage, heal, shield, lifesteal, stagger, displace or apply_buff)");
+            throw r.Error("key_1", "the proc does nothing: give it a result (damage, heal, shield, lifesteal, stagger, interrupt, displace or apply_buff)");
         if (phase == ProcPhase.BeforeDamage && trigger != ProcTrigger.Hit)
             throw r.Error("phase", "only hit procs can resolve before damage");
         if (proc.Lifesteal > 0 && Array.IndexOf(HitTriggers, trigger) < 0)

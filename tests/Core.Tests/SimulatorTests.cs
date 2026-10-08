@@ -93,7 +93,7 @@ public class SimulatorTests
             ["Stealth move"] = o => o is Moved { Why: "Move" } m && InEnemyArea(m.Unit, m.To),
             ["Move"] = o => o is Moved { Why: "Move" } m && !InEnemyArea(m.Unit, m.To),
             ["Defend"] = o => o is BuffApplied { Buff.Def.Id: "guard" },
-            ["Stagger break"] = o => o is Staggered { Broke: true },
+            ["Stagger"] = o => o is Staggered { Amount: > 0 },
             ["Cast interrupt"] = o => o is Interrupted,
             ["Proc"] = o => o is ProcRolled { Roll.Success: true, FromAction: false },
             ["Fear"] = o => o is BuffApplied { Buff.Def.Cc: CcKind.Fear },
@@ -139,7 +139,7 @@ public class SimulatorTests
         for (ulong seed = 1; seed <= 20; seed++) summary.Add(Play("brute_squad", seed));
         var report = summary.Report();
         foreach (var heading in new[] { "Win rate", "Battle length", "Party HP left", "Damage dealt per battle",
-                     "Actions used per battle", "Effects and CC applied per battle", "Stagger breaks" })
+                     "Actions used per battle", "Effects and CC applied per battle", "Act knocked back" })
             Assert.Contains(heading, report);
         Assert.Equal(20, summary.Battles);
     }

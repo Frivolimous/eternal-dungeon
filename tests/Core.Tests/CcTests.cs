@@ -4,7 +4,7 @@ using static EternalDungeon.Core.Tests.TestData;
 
 namespace EternalDungeon.Core.Tests;
 
-// M1 system 9: crowd control and the stagger bar.
+// M1 system 9: crowd control, stagger (Act knocked back) and interrupts.
 public class CcTests
 {
     static Unit U(GameData data, string def, string id, Side side) => new(id, data.Units[def], side, data);
@@ -115,57 +115,89 @@ public class CcTests
         Assert.Equal(115, w.Health);
     }
 
-    // ---- Stagger bar ----
+    // ---- Stagger and Interrupt (reworked 2026-10-08) ----
 
-    [Fact]
-    public void Stagger_halves_speed_while_the_bar_is_above_zero()
+    /// <summary>A unit at the very start of its meter, so the knock-back is easy to read.</summary>
+    static Unit AtZero(Unit u)
     {
-        var data = Repo;
-        var smash = data.Procs["smash_stagger"].Stagger;                 // read from data: tuning changes it
-        Assert.InRange(smash, 11, 99);
-        var brute = U(data, "goblin_brute", "brute", Side.Enemy);
-        var w = Exposed(U(data, "warrior", "w", Side.Party));
-        var b = new Battle(data, [w, brute], seed: 1);
-
-        var r = Apply(b, brute, w, "brute_smash");
-        Assert.Equal(new Staggered(w, smash, smash, false), r.Of<Staggered>().Single());
-        Assert.Equal(50, w.Speed);
-
-        b.BuffTick();
-        Assert.Equal(smash - Battle.StaggerDrain, w.Stagger);             // drains each buff-clock turn
-        Assert.Equal(50, w.Speed);
-        for (var i = 0; i < 10; i++) b.BuffTick();
-        Assert.Equal(0, w.Stagger);
-        Assert.Equal(100, w.Speed);
+        u.ActTicks = 0;
+        return u;
     }
 
     [Fact]
-    public void A_full_bar_stuns_ignores_stagger_and_drains_back()
+    public void Stagger_knocks_the_act_meter_back_and_can_push_it_negative()
     {
         var data = Repo;
+        var smash = data.Procs["smash_stagger"].Stagger;                 // read from data: tuning changes it
+        Assert.True(smash > 0);
         var brute = U(data, "goblin_brute", "brute", Side.Enemy);
-        var tank = Exposed(U(data, "warrior", "tank", Side.Party));      // any unit can cast; 140 Health survives the Smashes
-        var b = new Battle(data, [tank, brute], seed: 1);
-        b.Clock.BeginCast(tank, "fire_bolt", null, 50);
+        var w = AtZero(Exposed(U(data, "warrior", "w", Side.Party)));
+        var b = new Battle(data, [w, brute], seed: 1);
 
-        ActionResult last;
-        do last = Apply(b, brute, tank, "brute_smash");                  // Smash until the bar fills
-        while (!last.Of<Staggered>().Single().Broke);
-        Assert.Single(last.Of<Interrupted>());
-        Assert.True(tank.StaggerBroken);
-        Assert.Equal(Unit.StaggerMax, tank.Stagger);
-        Assert.Equal(0, tank.Speed);
-
-        var white = Apply(b, brute, tank, "brute_smash");                 // white bar: no more stagger
-        Assert.Equal(Unit.StaggerMax, tank.Stagger);
-        Assert.Empty(white.Of<Staggered>());
-        Assert.Equal(new StaggerIgnored(tank), white.Of<StaggerIgnored>().Single());
-
-        for (var i = 0; i < 9; i++) b.BuffTick();
-        Assert.Equal(10, tank.Stagger);
-        Assert.Equal(0, tank.Speed);                                      // still stunned until empty
+        var r = Apply(b, brute, w, "brute_smash");
+        Assert.Equal(new Staggered(w, smash, 0), r.Of<Staggered>().Single());
+        Assert.Equal(-smash * TurnClock.TicksPerTurn, w.ActTicks);       // below 0: the next turn comes later
+        Assert.Equal(100, w.Speed);                                       // no slow, no bar, nothing lingers
         b.BuffTick();
-        Assert.False(tank.StaggerBroken);
-        Assert.Equal(100, tank.Speed);
+        Assert.Equal(-smash * TurnClock.TicksPerTurn, w.ActTicks);
+    }
+
+    static GameData Knocking => With(
+        actions: [Action("knock_hit", ActionTarget.Enemy) with { Procs = ["knock"] }],
+        procs: [Proc("knock", ProcTrigger.Hit, ProcTarget.Other, tags: ["force"]) with { Stagger = 20, IgnoreDeval = true }]);
+
+    [Theory]
+    [InlineData(0.5, 10)]                                                 // halved
+    [InlineData(1.0, 0)]                                                  // fully resisted
+    [InlineData(1.5, 0)]                                                  // never below 0
+    [InlineData(-0.5, 20)]                                                // never above the full amount
+    [InlineData(0.26, 15)]                                                // 14.8 rounds to a whole Act
+    public void Force_deval_resists_stagger_as_a_share(double deval, int taken)
+    {
+        var data = Knocking;
+        var brute = U(data, "goblin_brute", "brute", Side.Enemy);
+        var w = AtZero(Exposed(U(data, "warrior", "w", Side.Party)));
+        w.Stats.Add("test", "deval", deval, "force");
+        var b = new Battle(data, [w, brute], seed: 1);
+
+        var r = Apply(b, brute, w, "knock_hit");
+        Assert.Equal(new Staggered(w, taken, 20 - taken), r.Of<Staggered>().Single());
+        Assert.Equal(-taken * TurnClock.TicksPerTurn, w.ActTicks);
+    }
+
+    [Fact]
+    public void An_ignore_deval_proc_keeps_its_chance_against_deval()
+    {
+        var plain = Proc("plain", ProcTrigger.Hit, ProcTarget.Other, chance: 0.5, tags: ["force"]) with { Stagger = 20 };
+        var target = U(Repo, "goblin_grunt", "grunt", Side.Enemy);
+        var owner = U(Repo, "warrior", "w", Side.Party);
+        target.Stats.Add("test", "deval", 0.5, "force");
+        Assert.Equal(0.5 / 1.5, Battle.CopyChance(plain, owner, target), 9);
+        Assert.Equal(0.5, Battle.CopyChance(plain with { IgnoreDeval = true }, owner, target), 9);
+    }
+
+    [Fact]
+    public void Smash_interrupts_a_cast_and_does_nothing_more_to_a_unit_not_casting()
+    {
+        var data = Repo;
+        Assert.True(data.Procs["smash_stagger"].Interrupt);
+        var brute = U(data, "goblin_brute", "brute", Side.Enemy);
+        var tank = Exposed(U(data, "warrior", "tank", Side.Party));      // any unit can cast
+        var b = new Battle(data, [tank, brute], seed: 1);
+
+        var idle = Apply(b, brute, tank, "brute_smash");
+        Assert.Empty(idle.Of<Interrupted>());
+
+        b.Clock.BeginCast(tank, "fire_bolt", null, 50);
+        var r = Apply(b, brute, tank, "brute_smash");
+        Assert.Single(r.Of<Interrupted>());
+        Assert.Null(tank.Casting);
+    }
+
+    [Fact]
+    public void Bosses_resist_half_of_any_stagger()
+    {
+        var chief = U(Repo, "goblin_chief", "chief", Side.Enemy);
+        Assert.Equal(0.5, chief.Stats.Get("deval", ["force"]), 9);
     }
 }

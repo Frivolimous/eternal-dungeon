@@ -18,7 +18,7 @@ public sealed class BatchSummary
     readonly Dictionary<string, int> effectsApplied = [];
     readonly Dictionary<string, int> heroDeaths = [];
     readonly Dictionary<string, int> procsFired = [];
-    int staggerBreaks, interrupts, misses, attempts;
+    int actKnockedBack, interrupts, misses, attempts;
 
     public int Battles => battles;
     public double WinRate => battles == 0 ? 0 : (double)wins / battles;
@@ -60,8 +60,8 @@ public sealed class BatchSummary
                     case BuffApplied b:
                         Bump(effectsApplied, b.Buff.Def.Cc == CcKind.None ? b.Buff.Def.Name : $"{b.Buff.Def.Name} ({b.Buff.Def.Cc})");
                         break;
-                    case Staggered { Broke: true }:
-                        staggerBreaks++;
+                    case Staggered st:
+                        actKnockedBack += st.Amount;
                         break;
                     case Interrupted:
                         interrupts++;
@@ -110,7 +110,7 @@ public sealed class BatchSummary
         sb.AppendLine("Effects and CC applied per battle");
         foreach (var (effect, n) in effectsApplied.OrderBy(kv => kv.Key))
             sb.AppendLine($"  {effect,-32} {Per(n),8}");
-        sb.AppendLine($"  {"Stagger breaks",-32} {Per(staggerBreaks),8}");
+        sb.AppendLine($"  {"Act knocked back (stagger)",-32} {Per(actKnockedBack),8}");
         sb.AppendLine($"  {"Casts interrupted",-32} {Per(interrupts),8}");
         sb.AppendLine();
         sb.AppendLine("Procs fired per battle");

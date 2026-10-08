@@ -16,12 +16,12 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 | Rule | Placeholder |
 | --- | --- |
 | Battle time limit | 300 base-speed turns, then a stalemate (no winner). If this ever happens in practice, the encounter is badly designed: investigate rather than tune the limit |
-| Stagger drain | 10 per buff-clock turn. Kept until tuning |
-| Stagger break length | A break stuns until the bar drains, about 10 turns (showcase seed 42: the Warrior is out from T 4.15 to T 14.27). Revisit in the combat balance pass after M2: for example a faster drain while white, or a fixed 1–2 turn stun |
+| Stagger amounts | Every stagger source knocks back 20 Act (the Brute's Smash, the showcase). Decided 2026-10-08, to tune |
+| Boss stagger resist | Bosses have Force Deval 50% (the Goblin Chief), so they take half of any stagger |
 | A buff's length | One `length` column counts turns or actions, by the buff's duration (rather than a column per kind) |
 | Counting actions | A buff lasting actions counts each action its holder finishes. One applied by the action itself counts from the next action; one applied before damage counts the current one, so 1 action = just that hit |
 | Certain procs | A proc at 100% doesn't draw from the battle RNG, and an action's certain procs don't get their own log line (their results do) |
-| Stagger as a proc result | An amount: copies that merge add up their stagger, like damage |
+| Stagger as a proc result | An amount: copies that merge add up their stagger, like damage. Interrupt is a state |
 | Move and action complete | A tile action (Move) sets off action-complete procs, the unit's own included |
 
 ## Battlefield
@@ -50,6 +50,7 @@ Threat, its scale and Vulnerability: kept until after M2, then reviewed from pla
 | Enemy lanes | Enemy column 0 is on the left in the vertical layout, as for the party (not mirrored) |
 | Timeline | The next 10 turns, assuming each unit keeps its Speed and spends 100 AP a turn |
 | Ghost marker | Replaces the hero's next predicted turn on the timeline |
+| Stagger and interrupt feedback | Stagger: "−N Act" floats on the card and rides on the unit's timeline chip as it slides back. Interrupt: the card shakes and "Interrupted" floats (the brief's "cast ring breaking" waits for a cast ring; the cast shows on the card's side meter today) |
 | Statuses on cards | One icon per kind: each crowd-control kind, damage over time, and generic buff and debuff (a buff from an ally is a buff, from an enemy a debuff) |
 | Pacing | 0.5 s per action at 1×, 0.25 s at 2×, none at Instant; floating numbers stay at least 0.6 s |
 | Keys | S cycles speed, A toggles auto-battle, Space or a click skips an animation |

@@ -82,6 +82,26 @@ public partial class Timeline : Control
         }
     }
 
+    /// <summary>
+    /// A small tag on <paramref name="unit"/>'s next chip (a stagger's "−20 Act"). It's the chip's child, so it rides
+    /// along as the chip slides back to its later place on the next refresh, then fades.
+    /// </summary>
+    public void Flash(Unit unit, string text)
+    {
+        if (!chips.TryGetValue(unit.Id + "#1", out var chip)) return;
+        var label = Ui.Label(text, 11, Ui.Stagger);
+        label.AddThemeConstantOverride("outline_size", 4);
+        label.AddThemeColorOverride("font_outline_color", Colors.Black);
+        label.Position = new Vector2(chip.Size.X - 44, chip.Size.Y - 18);
+        label.MouseFilter = MouseFilterEnum.Ignore;
+        chip.AddChild(label);
+        var seconds = Math.Max(0.8f, screen.Main.Settings.ActionSeconds * 3f);
+        var t = label.CreateTween();
+        t.TweenInterval(seconds * 0.6f);
+        t.TweenProperty(label, "modulate:a", 0f, seconds * 0.4f);
+        t.TweenCallback(Callable.From(label.QueueFree));
+    }
+
     /// <summary>One upcoming turn: a small portrait, the unit's name and when.</summary>
     partial class Chip(BattleScreen screen) : Control
     {

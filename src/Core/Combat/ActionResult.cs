@@ -52,12 +52,11 @@ public sealed record Moved(Unit Unit, Tile From, Tile To, string Why) : Outcome;
 /// <summary>An area gained a back row (a unit forced out of the other side's area had nowhere else to go).</summary>
 public sealed record AreaGrew(Side Side, int Area) : Outcome;
 
-/// <summary>Stagger damage. <see cref="Broke"/>: the bar filled and the unit is stunned until it drains.</summary>
-public sealed record Staggered(Unit Target, int Amount, int Bar, bool Broke) : Outcome;
+/// <summary>Stagger: the target lost <see cref="Amount"/> Act (its next turn comes that much later); Force Deval
+/// resisted <see cref="Resisted"/> of it.</summary>
+public sealed record Staggered(Unit Target, int Amount, int Resisted) : Outcome;
 
-/// <summary>Stagger that landed on a unit whose bar is already broken (white): it takes none.</summary>
-public sealed record StaggerIgnored(Unit Target) : Outcome;
-
+/// <summary>A cast cancelled by an interrupt or a stun: the spell fizzles.</summary>
 public sealed record Interrupted(Unit Unit, Cast Cast) : Outcome;
 
 /// <summary>Damage a buff dealt as it ended (delayed damage).</summary>

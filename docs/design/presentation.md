@@ -11,7 +11,7 @@ only how they're shown. Choices Claude made beyond these are under Presentation 
   the same in any layout. **Vertical** (default): party at the bottom, enemies at the top, front rows facing.
   **Side-on**: party left, enemies right. Each encounter names its layout.
 - **Cards:** the face shows the portrait, name, HP bar with numbers, Shield, the Act meter along one edge (a cast's
-  progress while casting), the stagger bar (white while broken), a Mana gauge for units that have Mana, and status
+  progress while casting), a Mana gauge for units that have Mana, and status
   icons. Images hold no text: everything
   written on a card comes from the engine.
 - **Card size follows footprint:** a single card for size 1, a double card over 2 tiles for size 1.5, a large card
@@ -52,7 +52,8 @@ so looking can't change a battle.
 - Attacks lunge and snap back; ranged attacks and spells send a projectile. The target shakes and tilts.
 - Damage numbers float up: bigger for crits, a distinct style for Brutal. A miss shows "Miss" and the target sidesteps.
 - Casting shows on the card's meter, then the effect travels to the target. Statuses are icons on the card; Stun
-  tilts the card, and a stagger break flashes the bar white.
+  tilts the card. A stagger floats "−20 Act" on the card, and the unit's timeline portrait slides back to its later turn
+  carrying the same number. An interrupt empties the cast meter, shakes the card and floats "Interrupted".
 - **Pacing:** about 0.5 s per enemy action at 1×. Speeds 1×, 2× and near-instant; a click skips the current animation.
 
 ## Input, text and accessibility

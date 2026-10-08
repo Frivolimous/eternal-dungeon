@@ -70,11 +70,12 @@ Which stats use each mode:
 
 Negative Dim modifiers (debuffs such as a curse giving −0.2 Avoid) stack separately from positive ones, each by the Dim formula, and the negative total is subtracted: Avoid +0.5 and +0.2 give 0.6, two −0.2 curses give 0.36, so Avoid is 0.24. The result can go below 0. Every Dim modifier stays strictly between −1 and 1, and a single source counts for at most ±0.95 (placeholder value): many sources still stack toward 1, but no one source gets there alone. Add stats have no cap.
 
-Rate and Deval are chance stats (Add), written as fractions: unlike the Dim chance stats they can exceed 1. Rate 0.5 means "50% more often", and two such sources make +100%. They meet in Proc = Base × (1 + Rate) ÷ (1 + Deval) (see Combat › Procs), so equal Rate and Deval cancel and Deval never makes a unit immune. Sources of Rate and Deval must be given carefully. Current sources:
+Rate and Deval are chance stats (Add), written as fractions: unlike the Dim chance stats they can exceed 1. Rate 0.5 means "50% more often", and two such sources make +100%. They meet in Proc = Base × (1 + Rate) ÷ (1 + Deval) (see Combat › Procs), so equal Rate and Deval cancel and Deval never makes a unit immune. Stagger is the exception: Force Deval resists its amount as a straight share, amount × (1 − Force Deval), so 100% Force Deval resists it fully (see Combat › Crowd control; decided 2026-10-08). Sources of Rate and Deval must be given carefully. Current sources:
 
 | Stat | Source | Amount |
 | --- | --- | --- |
 | Rate | Intellect | Gadget 0.001 a point, Cryptic 0.0005 a point (Intellect 10 = +1% Gadget procs) |
 | Deval | Tenacity | Control 0.01 a point (Tenacity 10 = Control procs ÷ 1.1) |
+| Deval | Bosses (data) | Force 0.5 (the Goblin Chief: stagger halved) |
 
 Two untagged stats feed the damage formula: All Damage (Add; factor 1 + All Damage, like Multiplier) and All Resist (Dim).

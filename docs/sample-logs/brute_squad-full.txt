@@ -2,201 +2,185 @@ Brute Squad · seed 42
 Party: Rogue 100 HP, Warrior 140 HP, Elementalist 80 HP
 Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Archer 60 HP
 
-[T 0.42] Rogue → Dagger Attack → Goblin Brute
-         hit (93%) · 13 dmg (Physical) · Goblin Brute HP 200 → 187
-         roll 0.379 vs 0.931 → hit
+[T 0.59] Rogue → Dagger Attack → Goblin Brute
+         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 200 → 189
+         roll 0.379 vs 1 → hit
          C.Rate 0.05 → 5%: roll 0.68 → no crit
-         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
-[T 0.70] Warrior → Power Attack → Goblin Brute
-         hit (93%) · 33 dmg (Physical) · Goblin Brute HP 187 → 154
-         roll 0.925 vs 0.931 → hit
-         C.Rate 0.05 → 5%: roll 0.992 → no crit
-         dmg = base 15 × power 1.225 (22.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 2 (1) × all res 1 (0) = 33.075 → 33
-[T 0.70] Goblin Archer → Shot → Warrior
-         hit (86%) · 14 dmg (Physical) · Warrior HP 140 → 126
-         roll 0.77 vs 0.855 → hit
-         C.Rate 0.05 → 5%: roll 0.719 → no crit
-         dmg = base 13 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.3 → 14
-[T 0.80] Elementalist → Frost Shard → Goblin Archer
-         hit (90%) · 15 dmg (Arcane, Ice) · Goblin Archer HP 60 → 45
-         roll 0.85 vs 0.903 → hit
-         dmg = base 12 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15 → 15
-         applies Chill (-30 speed, 2 turns) on Goblin Archer
-[T 0.89] Goblin Grunt → Slash → Warrior
-         hit (77%) · 16 dmg (Physical) · Warrior HP 126 → 110
-         roll 0.761 vs 0.77 → hit
-         C.Rate 0.05 → 5%: roll 0.583 → no crit
-         dmg = base 15 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15.75 → 16
-[T 1.25] Rogue → Dagger Attack → Goblin Grunt
-         hit (90%) · 14 dmg (Physical) · Goblin Grunt HP 85 → 71
-         roll 0.682 vs 0.903 → hit
-         C.Rate 0.05 → 5%: roll 0.291 → no crit
-         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
-[T 1.29] Goblin Brute → Smash → Warrior
-         miss (73%)
-         roll 0.801 vs 0.727 → miss
-[T 1.80] Elementalist begins casting Fire Bolt at Goblin Archer (ready at T 2.30)
-[T 2.00] Chill on Goblin Archer ends
-[T 2.00] Goblin Grunt → Slash → Warrior
-         hit (77%) · 16 dmg (Physical) · Warrior HP 110 → 94
-         roll 0.321 vs 0.77 → hit
-         C.Rate 0.05 → 5%: roll 0.711 → no crit
-         dmg = base 15 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15.75 → 16
-[T 2.06] Goblin Archer → Shot → Warrior
-         miss (86%)
-         roll 0.878 vs 0.855 → miss
-[T 2.09] Rogue → Dagger Attack → Goblin Grunt
-         hit (90%) · 14 dmg (Physical) · Goblin Grunt HP 71 → 57
-         roll 0.617 vs 0.903 → hit
-         C.Rate 0.05 → 5%: roll 0.851 → no crit
-         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
-[T 2.30] Elementalist → Fire Bolt → Goblin Archer
-         hit (90%) · 28 dmg (Arcane, Fire) · Goblin Archer HP 45 → 17
-         roll 0.708 vs 0.903 → hit
-         dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
-[T 2.70] Warrior → Attack → Goblin Grunt
-         hit (90%) · 17 dmg (Physical) · Goblin Grunt HP 57 → 40
-         roll 0.708 vs 0.903 → hit
-         C.Rate 0.05 → 5%: roll 0.093 → no crit
-         dmg = base 15 × power 1.15 (15) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 17.25 → 17
-[T 2.72] Goblin Brute → Smash → Warrior
-         hit (73%) · 22 dmg (Physical) · Warrior HP 94 → 72
-         roll 0.179 vs 0.727 → hit
-         C.Rate 0.05 → 5%: roll 0.436 → no crit
-         dmg = base 17 × power 1.3 (30) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 22.1 → 22
-         staggers Warrior +60 (bar 60)
-[T 2.92] Rogue → Dagger Attack → Goblin Grunt
-         hit (90%) · 14 dmg (Physical) · Goblin Grunt HP 40 → 26
-         roll 0.602 vs 0.903 → hit
-         C.Rate 0.05 → 5%: roll 0.314 → no crit
-         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
-[T 3.06] Goblin Archer → Shot → Warrior
-         hit (86%) · 14 dmg (Physical) · Warrior HP 72 → 58
-         roll 0.489 vs 0.855 → hit
-         C.Rate 0.05 → 5%: roll 0.399 → no crit
-         dmg = base 13 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.3 → 14
-[T 3.12] Goblin Grunt → Slash → Warrior
+         dmg = base 10 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 10.575 → 11
+[T 0.90] Goblin Archer → Shot → Rogue
          miss (77%)
-         roll 0.789 vs 0.77 → miss
-[T 3.30] Elementalist → Frost Shard → Goblin Grunt
-         hit (90%) · 15 dmg (Arcane, Ice) · Goblin Grunt HP 26 → 11
-         roll 0.635 vs 0.903 → hit
+         roll 0.925 vs 0.765 → miss
+[T 1.00] Warrior → Power Attack → Goblin Brute
+         hit (100%) · 33 dmg (Physical) · Goblin Brute HP 189 → 156
+         roll 0.992 vs 1 → hit
+         C.Rate 0.05 → 5%: roll 0.77 → no crit
+         dmg = base 15 × power 1.225 (22.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 2 (1) × all res 1 (0) = 33.075 → 33
+[T 1.00] Elementalist → Frost Shard → Goblin Brute
+         hit (100%) · 15 dmg (Arcane, Ice) · Goblin Brute HP 156 → 141
+         roll 0.719 vs 1 → hit
          dmg = base 12 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15 → 15
-         applies Chill (-30 speed, 2 turns) on Goblin Grunt
-[T 3.75] Rogue → Dagger Attack → Goblin Grunt
-         hit (90%) · 14 dmg (Physical) · Goblin Grunt HP 11 → 0
-         roll 0.231 vs 0.903 → hit
-         C.Rate 0.05 → 5%: roll 0.414 → no crit
-         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
-         Goblin Grunt falls
-[T 4.06] Goblin Archer → Shot → Warrior
-         hit (86%) · 14 dmg (Physical) · Warrior HP 58 → 44
-         roll 0.623 vs 0.855 → hit
-         C.Rate 0.05 → 5%: roll 0.863 → no crit
+         Elementalist's Chill procs (100%)
+         applies Chill (-30 speed, 2 turns) on Goblin Brute
+[T 1.12] Goblin Grunt → Slash → Warrior
+         miss (81%)
+         roll 0.85 vs 0.81 → miss
+[T 1.21] Rogue → Dagger Attack → Goblin Brute
+         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 141 → 130
+         roll 0.761 vs 1 → hit
+         C.Rate 0.05 → 5%: roll 0.583 → no crit
+         dmg = base 10 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 10.575 → 11
+[T 1.75] Goblin Brute → Smash → Warrior
+         hit (77%) · 22 dmg (Physical) · Warrior HP 140 → 118
+         roll 0.682 vs 0.765 → hit
+         C.Rate 0.05 → 5%: roll 0.291 → no crit
+         dmg = base 17 × power 1.3 (30) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 22.1 → 22
+         Goblin Brute's Stagger procs (100%)
+         staggers Warrior: −20 Act
+[T 1.84] Rogue → Dagger Attack → Goblin Brute
+         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 130 → 119
+         roll 0.801 vs 1 → hit
+         C.Rate 0.05 → 5%: roll 0.321 → no crit
+         dmg = base 10 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 10.575 → 11
+[T 1.90] Goblin Archer → Shot → Warrior
+         hit (90%) · 14 dmg (Physical) · Warrior HP 118 → 104
+         roll 0.711 vs 0.9 → hit
+         C.Rate 0.05 → 5%: roll 0.878 → no crit
          dmg = base 13 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.3 → 14
-[T 4.15] Goblin Brute → Smash → Warrior
-         miss (73%)
-         roll 0.945 vs 0.727 → miss
-[T 4.30] Elementalist begins casting Fire Bolt at Goblin Archer (ready at T 4.80)
-[T 4.59] Rogue → Dagger Attack → Goblin Brute
-         hit (93%) · 13 dmg (Physical) · Goblin Brute HP 154 → 141
-         roll 0.814 vs 0.931 → hit
-         C.Rate 0.05 → 5%: roll 0.747 → no crit
-         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
-[T 4.68] Warrior → Power Attack → Goblin Brute
-         hit (93%) · 50 dmg (Physical, crit) · Goblin Brute HP 141 → 91
-         roll 0.785 vs 0.931 → hit
-         C.Rate 0.05 → 5%: roll 0.045 → crit; Brutal roll 0.469 → no Brutal
-         dmg = base 15 × power 1.225 (22.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 2 (1) × all res 1 (0) × crit 1.5 (1 × C.Mult 0.5, crit res 0, crit pen 0) = 49.613 → 50
-[T 4.80] Elementalist → Fire Bolt → Goblin Archer
+[T 2.00] Elementalist begins casting Fire Bolt at Goblin Brute (ready at T 2.50)
+[T 2.23] Goblin Grunt → Slash → Warrior
+         hit (81%) · 16 dmg (Physical) · Warrior HP 104 → 88
+         roll 0.617 vs 0.81 → hit
+         C.Rate 0.05 → 5%: roll 0.851 → no crit
+         dmg = base 15 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15.75 → 16
+[T 2.46] Rogue → Dagger Attack → Goblin Brute
+         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 119 → 108
+         roll 0.708 vs 1 → hit
+         C.Rate 0.05 → 5%: roll 0.708 → no crit
+         dmg = base 10 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 10.575 → 11
+[T 2.50] Elementalist → Fire Bolt → Goblin Brute
+         hit (100%) · 28 dmg (Arcane, Fire) · Goblin Brute HP 108 → 80
+         roll 0.093 vs 1 → hit
+         dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
+[T 2.90] Goblin Archer → Shot → Warrior
+         hit (90%) · 14 dmg (Physical) · Warrior HP 88 → 74
+         roll 0.179 vs 0.9 → hit
+         C.Rate 0.05 → 5%: roll 0.436 → no crit
+         dmg = base 13 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.3 → 14
+[T 3.00] Chill on Goblin Brute ends
+[T 3.09] Rogue → Dagger Attack → Goblin Brute
+         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 80 → 69
+         roll 0.602 vs 1 → hit
+         C.Rate 0.05 → 5%: roll 0.314 → no crit
+         dmg = base 10 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 10.575 → 11
+[T 3.20] Warrior → Attack → Goblin Brute
+         hit (100%) · 16 dmg (Physical) · Goblin Brute HP 69 → 53
+         roll 0.489 vs 1 → hit
+         C.Rate 0.05 → 5%: roll 0.399 → no crit
+         dmg = base 15 × power 1.15 (15) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 15.525 → 16
+[T 3.34] Goblin Grunt → Slash → Warrior
+         hit (81%) · 16 dmg (Physical) · Warrior HP 74 → 58
+         roll 0.789 vs 0.81 → hit
+         C.Rate 0.05 → 5%: roll 0.635 → no crit
+         dmg = base 15 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15.75 → 16
+[T 3.50] Elementalist → Frost Shard → Goblin Brute
+         hit (100%) · 15 dmg (Arcane, Ice) · Goblin Brute HP 53 → 38
+         roll 0.231 vs 1 → hit
+         dmg = base 12 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15 → 15
+         Elementalist's Chill procs (100%)
+         applies Chill (-30 speed, 2 turns) on Goblin Brute
+[T 3.71] Rogue → Dagger Attack → Goblin Brute
+         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 38 → 27
+         roll 0.414 vs 1 → hit
+         C.Rate 0.05 → 5%: roll 0.623 → no crit
+         dmg = base 10 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 10.575 → 11
+[T 3.88] Goblin Brute → Smash → Warrior
+         miss (77%)
+         roll 0.863 vs 0.765 → miss
+[T 3.90] Goblin Archer → Shot → Warrior
          miss (90%)
-         roll 0.972 vs 0.903 → miss
-[T 5.06] Goblin Archer → Shot → Warrior
-         hit (86%) · 14 dmg (Physical) · Warrior HP 44 → 30
-         roll 0.537 vs 0.855 → hit
+         roll 0.945 vs 0.9 → miss
+[T 4.20] Warrior → Power Attack → Goblin Brute
+         hit (100%) · 33 dmg (Physical) · Goblin Brute HP 27 → 0
+         roll 0.814 vs 1 → hit
+         C.Rate 0.05 → 5%: roll 0.747 → no crit
+         dmg = base 15 × power 1.225 (22.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 2 (1) × all res 1 (0) = 33.075 → 33
+         Goblin Brute falls
+[T 4.34] Rogue → Dagger Attack → Goblin Grunt
+         hit (100%) · 18 dmg (Physical, crit) · Goblin Grunt HP 85 → 67
+         roll 0.785 vs 1 → hit
+         C.Rate 0.05 → 5%: roll 0.045 → crit; Brutal roll 0.469 → no Brutal
+         dmg = base 10 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) × crit 1.5 (1 × C.Mult 0.5, crit res 0, crit pen 0) = 17.625 → 18
+[T 4.45] Goblin Grunt → Slash → Warrior
+         miss (81%)
+         roll 0.972 vs 0.81 → miss
+[T 4.50] Elementalist begins casting Fire Bolt at Goblin Grunt (ready at T 5.00)
+[T 4.90] Goblin Archer → Shot → Warrior
+         hit (90%) · 14 dmg (Physical) · Warrior HP 58 → 44
+         roll 0.537 vs 0.9 → hit
          C.Rate 0.05 → 5%: roll 0.701 → no crit
          dmg = base 13 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.3 → 14
-[T 5.42] Rogue → Dagger Attack → Goblin Brute
-         hit (93%) · 13 dmg (Physical) · Goblin Brute HP 91 → 78
-         roll 0.804 vs 0.931 → hit
+[T 4.96] Rogue → Dagger Attack → Goblin Grunt
+         hit (100%) · 12 dmg (Physical) · Goblin Grunt HP 67 → 55
+         roll 0.804 vs 1 → hit
          C.Rate 0.05 → 5%: roll 0.818 → no crit
-         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
-[T 5.58] Goblin Brute → Smash → Warrior
-         miss (73%)
-         roll 0.898 vs 0.727 → miss
-[T 5.80] Elementalist → Frost Shard → Goblin Archer
-         hit (90%) · 15 dmg (Arcane, Ice) · Goblin Archer HP 17 → 2
-         roll 0.126 vs 0.903 → hit
-         dmg = base 12 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15 → 15
-         applies Chill (-30 speed, 2 turns) on Goblin Archer
-[T 6.18] Goblin Archer → Shot → Warrior
-         hit (86%) · 14 dmg (Physical) · Warrior HP 30 → 16
-         roll 0.565 vs 0.855 → hit
-         C.Rate 0.05 → 5%: roll 0.554 → no crit
+         dmg = base 10 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 11.75 → 12
+[T 5.00] Elementalist → Fire Bolt → Goblin Grunt
+         hit (100%) · 28 dmg (Arcane, Fire) · Goblin Grunt HP 55 → 27
+         roll 0.898 vs 1 → hit
+         dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
+[T 5.56] Goblin Grunt → Slash → Warrior
+         hit (81%) · 16 dmg (Physical) · Warrior HP 44 → 28
+         roll 0.126 vs 0.81 → hit
+         C.Rate 0.05 → 5%: roll 0.565 → no crit
+         dmg = base 15 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15.75 → 16
+[T 5.59] Rogue → Dagger Attack → Goblin Grunt
+         hit (100%) · 12 dmg (Physical) · Goblin Grunt HP 27 → 15
+         roll 0.554 vs 1 → hit
+         C.Rate 0.05 → 5%: roll 0.857 → no crit
+         dmg = base 10 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 11.75 → 12
+[T 5.90] Goblin Archer → Shot → Warrior
+         hit (90%) · 14 dmg (Physical) · Warrior HP 28 → 14
+         roll 0.828 vs 0.9 → hit
+         C.Rate 0.05 → 5%: roll 0.52 → no crit
          dmg = base 13 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.3 → 14
-[T 6.25] Rogue → Dagger Attack → Goblin Brute
-         hit (93%) · 13 dmg (Physical) · Goblin Brute HP 78 → 65
-         roll 0.857 vs 0.931 → hit
-         C.Rate 0.05 → 5%: roll 0.828 → no crit
-         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
-[T 6.80] Elementalist begins casting Fire Bolt at Goblin Archer (ready at T 7.30)
-[T 7.00] Chill on Goblin Archer ends
-[T 7.00] Goblin Brute → Smash → Warrior
-         hit (73%) · 22 dmg (Physical) · Warrior HP 16 → 0
-         roll 0.52 vs 0.727 → hit
-         C.Rate 0.05 → 5%: roll 0.317 → no crit
-         dmg = base 17 × power 1.3 (30) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 22.1 → 22
-         Warrior falls
-[T 7.09] Rogue → Dagger Attack → Goblin Brute
-         hit (93%) · 13 dmg (Physical) · Goblin Brute HP 65 → 52
-         roll 0.192 vs 0.931 → hit
+[T 6.00] Elementalist → Frost Shard → Goblin Grunt
+         hit (100%) · 15 dmg (Arcane, Ice) · Goblin Grunt HP 15 → 0
+         roll 0.317 vs 1 → hit
+         dmg = base 12 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15 → 15
+         Goblin Grunt falls
+         Goblin Archer steps forward (r1c2 → r0c2)
+[T 6.20] Warrior → Defend
+         Warrior's Guard procs (100%)
+         applies Guard (+0.3 avoid, Shield 14, until next turn) on Warrior
+[T 6.21] Rogue → Move
+         Rogue moves r0c0 → r0c0 (opposing area)
+         Rogue's Stealth procs (100%)
+         applies Stealth (+0.5 avoid, -50 threat, 1 turns) on Rogue
+[T 6.63] Rogue → Move
+         Rogue moves r0c0 (opposing area) → r0c1 (opposing area)
+         Rogue's Stealth procs (100%)
+         refreshes Stealth (+0.5 avoid, -50 threat, 1 turns) on Rogue
+[T 6.90] Goblin Archer → Shot → Warrior
+         hit (63%) · 14 dmg (Physical) · Shield absorbs 14 · Warrior HP 14 → 14
+         roll 0.192 vs 0.63 → hit
          C.Rate 0.05 → 5%: roll 0.644 → no crit
-         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
-[T 7.30] Elementalist → Fire Bolt → Goblin Archer
-         hit (90%) · 28 dmg (Arcane, Fire) · Goblin Archer HP 2 → 0
-         roll 0.029 vs 0.903 → hit
+         dmg = base 13 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.3 → 14
+[T 7.00] Stealth on Rogue ends
+[T 7.00] Elementalist begins casting Fire Bolt at Goblin Archer (ready at T 7.50)
+[T 7.05] Rogue → Dagger Attack → Goblin Archer
+         hit (100%) · 12 dmg (Physical) · Goblin Archer HP 60 → 48
+         roll 0.029 vs 1 → hit
+         C.Rate 0.05 → 5%: roll 0.358 → no crit
+         dmg = base 10 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 11.75 → 12
+[T 7.20] Guard on Warrior ends
+[T 7.20] Warrior → Power Attack → Goblin Archer
+         hit (100%) · 37 dmg (Physical) · Goblin Archer HP 48 → 11
+         roll 0.569 vs 1 → hit
+         C.Rate 0.05 → 5%: roll 0.776 → no crit
+         dmg = base 15 × power 1.225 (22.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 2 (1) × all res 1 (0) = 36.75 → 37
+[T 7.50] Elementalist → Fire Bolt → Goblin Archer
+         hit (100%) · 28 dmg (Arcane, Fire) · Goblin Archer HP 11 → 0
+         roll 0.507 vs 1 → hit
          dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
          Goblin Archer falls
-[T 7.92] Rogue → Dagger Attack → Goblin Brute
-         hit (93%) · 13 dmg (Physical) · Goblin Brute HP 52 → 39
-         roll 0.358 vs 0.931 → hit
-         C.Rate 0.05 → 5%: roll 0.569 → no crit
-         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 12.69 → 13
-[T 8.30] Elementalist → Frost Shard → Goblin Brute
-         hit (93%) · 15 dmg (Arcane, Ice) · Goblin Brute HP 39 → 24
-         roll 0.776 vs 0.931 → hit
-         dmg = base 12 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15 → 15
-         applies Chill (-30 speed, 2 turns) on Goblin Brute
-[T 8.53] Goblin Brute → Smash → Rogue
-         hit (75%) · 22 dmg (Physical) · Rogue HP 100 → 78
-         roll 0.507 vs 0.747 → hit
-         C.Rate 0.05 → 5%: roll 0.62 → no crit
-         dmg = base 17 × power 1.3 (30) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 22.1 → 22
-         staggers Rogue +60 (bar 60)
-[T 8.97] Rogue → Dagger Attack → Goblin Brute
-         miss (93%)
-         roll 0.951 vs 0.931 → miss
-[T 9.30] Elementalist begins casting Fire Bolt at Goblin Brute (ready at T 9.80)
-[T 9.80] Elementalist → Fire Bolt → Goblin Brute
-         miss (93%)
-         roll 0.944 vs 0.931 → miss
-[T 10.00] Chill on Goblin Brute ends
-[T 10.59] Goblin Brute → Smash → Rogue
-         hit (75%) · 22 dmg (Physical) · Rogue HP 78 → 56
-         roll 0.219 vs 0.747 → hit
-         C.Rate 0.05 → 5%: roll 0.787 → no crit
-         dmg = base 17 × power 1.3 (30) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 22.1 → 22
-         staggers Rogue +60 (bar 100, broken: stunned)
-[T 10.80] Elementalist → Frost Shard → Goblin Brute
-         hit (93%) · 15 dmg (Arcane, Ice) · Goblin Brute HP 24 → 9
-         roll 0.072 vs 0.931 → hit
-         dmg = base 12 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15 → 15
-         applies Chill (-30 speed, 2 turns) on Goblin Brute
-[T 11.80] Elementalist begins casting Fire Bolt at Goblin Brute (ready at T 12.30)
-[T 12.00] Chill on Goblin Brute ends
-[T 12.30] Elementalist → Fire Bolt → Goblin Brute
-         hit (93%) · 28 dmg (Arcane, Fire) · Goblin Brute HP 9 → 0
-         roll 0.172 vs 0.931 → hit
-         dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
-         Goblin Brute falls
-[T 12.30] Victory: the party wins.
+[T 7.50] Victory: the party wins.

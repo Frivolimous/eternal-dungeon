@@ -333,11 +333,15 @@ public partial class BattleScreen : Control
             case BuffApplied b:
                 Float(b.Target, b.Buff.Def.Name, Ui.Ink, 13);
                 break;
-            case Staggered { Broke: true } st:
-                Float(st.Target, T("ui.broken"), Colors.White, 18);
+            case Staggered { Amount: > 0 } st:
+                // The card shows the Act lost; its timeline chip slides back when the order refreshes, carrying the number.
+                var lost = F("ui.act_lost", ("amount", st.Amount));
+                Float(st.Target, lost, Ui.Stagger, 16, T("ui.stagger"));
+                timeline.Flash(st.Target, lost);
                 break;
             case Interrupted i:
                 Float(i.Unit, T("ui.interrupted"), Ui.Enemy, 14);
+                board.Cards[i.Unit].Shake(s * 0.3f);
                 break;
             case TurnLost l:
                 Float(l.Unit, T("ui.turn_lost"), Ui.Dim, 14);

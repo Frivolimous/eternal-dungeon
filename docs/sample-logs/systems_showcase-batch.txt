@@ -1,50 +1,58 @@
 Systems Showcase · 1000 battles · seeds 1–1000
-Win rate         34.9%  (349 won, 651 lost, 0 stalemates)
-Battle length    18.3 turns on average
-Party HP left    11.0% on average, 0.0% at worst
-Hit rate         81.5% of 45024 attacks
+Win rate         99.9%  (999 won, 1 lost, 0 stalemates)
+Battle length    13.6 turns on average
+Party HP left    50.8% on average, 0.0% at worst
+Hit rate         93.0% of 37489 attacks
 
 Damage dealt per battle
-  Elementalist              204.0
-  Goblin Grunt              122.2
-  Warrior                   112.7
-  Goblin Hexer               94.0
-  Goblin Brute               90.0
-  Rogue                      39.2
+  Elementalist              199.7
+  Warrior                   173.0
+  Rogue                      72.3
+  Goblin Grunt               67.6
+  Goblin Brute               63.9
+  Goblin Hexer               36.3
 
 Hero deaths per battle
-  Rogue                       1.0
-  Warrior                     0.7
-  Elementalist                0.7
+  Rogue                       0.9
+  Warrior                     0.0
+  Elementalist                0.0
 
 Actions used per battle
-  Elementalist: Attack                  0.8
-  Elementalist: Defend                  3.4
-  Elementalist: Fire Bolt               5.0
-  Elementalist: Frost Shard             6.2
-  Elementalist: Move                    0.2
-  Goblin Brute: Defend                  0.7
-  Goblin Brute: Smash                   5.8
-  Goblin Grunt: Move                    0.7
-  Goblin Grunt: Slash                  10.5
-  Goblin Hexer: Hex Bolt                9.9
-  Rogue: Dagger Attack                  3.1
-  Rogue: Defend                         0.5
-  Rogue: Move                           1.1
-  Warrior: Attack                       1.4
-  Warrior: Defend                       1.5
+  Elementalist: Attack                  0.0
+  Elementalist: Defend                  0.6
+  Elementalist: Fire Bolt               4.7
+  Elementalist: Frost Shard             5.5
+  Elementalist: Move                    0.0
+  Goblin Brute: Smash                   4.0
+  Goblin Grunt: Move                    0.5
+  Goblin Grunt: Slash                   5.4
+  Goblin Hexer: Hex Bolt                6.0
+  Rogue: Dagger Attack                  6.3
+  Rogue: Defend                         1.9
+  Rogue: Move                           1.4
+  Warrior: Attack                       1.9
+  Warrior: Defend                       1.0
   Warrior: Move                         0.0
-  Warrior: Power Attack                 2.7
-  Warrior: Shield Bash                  1.3
+  Warrior: Power Attack                 3.8
+  Warrior: Shield Bash                  3.0
 
 Effects and CC applied per battle
-  Chill                                 5.1
-  Dazed (Stun)                          1.2
-  Dread (Fear)                          5.3
-  Guard                                 6.1
-  Stealth                               1.1
-  Stagger breaks                        1.2
-  Casts interrupted                     1.2
+  Chill                                 4.7
+  Dazed (Stun)                          3.0
+  Dread (Fear)                          2.2
+  Guard                                 3.6
+  Stealth                               1.4
+  Act knocked back (stagger)           50.4
+  Casts interrupted                     3.0
 
 Procs fired per battle
-  Goblin Hexer: Flaming                 5.7
+  Elementalist: Chill                   4.7
+  Elementalist: Guard                   0.6
+  Goblin Brute: Stagger                 2.5
+  Goblin Hexer: Dread                   2.2
+  Goblin Hexer: Flaming                 2.3
+  Rogue: Guard                          1.9
+  Rogue: Stealth                        1.4
+  Warrior: Daze                         3.0
+  Warrior: Guard                        1.0
+  Warrior: Push                         3.0

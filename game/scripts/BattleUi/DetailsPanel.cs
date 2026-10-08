@@ -7,7 +7,7 @@ using static EternalDungeon.Game.Text;
 namespace EternalDungeon.Game.BattleUi;
 
 /// <summary>
-/// The selected or hovered unit, in detail (M2 brief §4): health, Shield, Mana, Act, Speed and stagger, its main
+/// The selected or hovered unit, in detail (M2 brief §4): health, Shield, Mana, Act and Speed, its main
 /// stats, resistances by damage type, its cast, and its buffs with what they do.
 /// </summary>
 public partial class DetailsPanel : PanelContainer
@@ -57,7 +57,6 @@ public partial class DetailsPanel : PanelContainer
         if (u.MaxMana > 0) sb.Append("   ").Append(Escape(F("ui.detail_mana", ("mana", u.Mana), ("max", u.MaxMana))));
         sb.Append('\n');
         sb.Append(Escape(F("ui.detail_act", ("act", Math.Round(u.Act)), ("speed", u.Speed))));
-        if (u.Stagger > 0) sb.Append("   ").Append(Escape(F(u.StaggerBroken ? "ui.detail_stagger_broken" : "ui.detail_stagger", ("stagger", u.Stagger))));
         sb.Append('\n');
         if (u.Casting is { } cast)
             sb.Append(Escape(F("ui.detail_casting", ("action", data.Actions[cast.ActionId].Name), ("time", CombatLog.T(cast.CompletesAt))))).Append('\n');

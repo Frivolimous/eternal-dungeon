@@ -47,15 +47,24 @@ public sealed partial class Battle
 
     /// <summary>
     /// One copy's chance: Base × (1 + owner's Rate) ÷ (1 + target's Deval), all over the proc's tags; Deval only
-    /// when the proc lands on someone else. It stops at 100%: excess Rate is lost and never scales amounts. Amounts
-    /// grow only when several copies of the same proc merge.
+    /// when the proc lands on someone else and isn't marked ignore_deval. It stops at 100%: excess Rate is lost and
+    /// never scales amounts. Amounts grow only when several copies of the same proc merge.
     /// </summary>
     public static double CopyChance(ProcDef def, Unit owner, Unit target)
     {
         var rate = owner.Stats.Get("rate", def.Tags);
-        var deval = target == owner ? 0 : target.Stats.Get("deval", def.Tags);
+        var deval = target == owner || def.IgnoreDeval ? 0 : target.Stats.Get("deval", def.Tags);
         return Math.Min(1, Resolution.ProcChance(def.Chance, rate, deval));
     }
+
+    static readonly string[] Force = ["force"];
+
+    /// <summary>
+    /// The share of a stagger <paramref name="target"/> takes: 1 − its Force Deval (untagged Deval counts too),
+    /// between 0 and 1. For stagger, Deval is a straight resist, unlike the divisor it is for proc chances (Anchor:
+    /// Combat › Crowd control).
+    /// </summary>
+    public static double StaggerTaken(Unit target) => Math.Clamp(1 - target.Stats.Get("deval", Force), 0, 1);
 
     /// <summary>What a proc reacts to: who owns it, the other unit in the event, the action involved, and how much
     /// damage the hit dealt (for lifesteal).</summary>
@@ -110,7 +119,7 @@ public sealed partial class Battle
     }
 
     /// <summary>
-    /// The results, amounts scaled by <paramref name="scale"/>. Damage, heals, Shield, stagger and pushes land at
+    /// The results, amounts scaled by <paramref name="scale"/>. Damage, heals, Shield, stagger, interrupts and pushes land at
     /// once; a buff joins the queue and applies once the action or event is done. A buff from an action's own
     /// proc has that action as its source (action + caster), any other proc's buff the proc.
     /// </summary>
@@ -138,16 +147,13 @@ public sealed partial class Battle
         }
         if (def.Stagger > 0 && target.Alive)
         {
-            var amount = (int)Math.Round(def.Stagger * scale, MidpointRounding.AwayFromZero);
-            if (target.StaggerBroken)
-                r.Add(new StaggerIgnored(target));
-            else
-            {
-                var broke = target.TakeStagger(amount);
-                r.Add(new Staggered(target, amount, target.Stagger, broke));
-                if (broke) Interrupt(target, r);
-            }
+            var full = (int)Math.Round(def.Stagger * scale, MidpointRounding.AwayFromZero);
+            var amount = (int)Math.Round(full * StaggerTaken(target), MidpointRounding.AwayFromZero);
+            target.ActTicks -= amount * TurnClock.TicksPerTurn;
+            r.Add(new Staggered(target, amount, full - amount));
         }
+        if (def.Interrupt && target.Alive)
+            Interrupt(target, r);
         if (def.Displace != Displace.None && target.Alive && Grid.AnchorOf(target) is { } from && Grid.Shove(target, def.Displace) is { } to)
             r.Add(new Moved(target, from, to, def.Name));
         if (def.Buff is string buff)
