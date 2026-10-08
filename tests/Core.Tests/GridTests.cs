@@ -235,9 +235,10 @@ public class GridTests
     public void Push_and_pull_move_a_unit_a_row_if_there_is_room()
     {
         var data = With(
-            actions: [Action("shove", ActionTarget.Enemy, "test_push"),
-                      Action("hook", ActionTarget.Enemy, "test_pull")],
-            effects: [Instant("test_push") with { Displace = Displace.Push }, Instant("test_pull") with { Displace = Displace.Pull }]);
+            actions: [Action("shove", ActionTarget.Enemy) with { Procs = ["test_push"] },
+                      Action("hook", ActionTarget.Enemy) with { Procs = ["test_pull"] }],
+            procs: [Proc("test_push", ProcTrigger.Hit, ProcTarget.Other) with { Displace = Displace.Push },
+                    Proc("test_pull", ProcTrigger.Hit, ProcTarget.Other) with { Displace = Displace.Pull }]);
         var warrior = U("warrior", "warrior", Side.Party, data);
         var g1 = U("goblin_grunt", "g1", Side.Enemy, data);
         var g2 = U("goblin_grunt", "g2", Side.Enemy, data);

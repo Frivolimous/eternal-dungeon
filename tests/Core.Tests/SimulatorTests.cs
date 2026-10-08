@@ -95,7 +95,7 @@ public class SimulatorTests
             ["Defend"] = o => o is BuffApplied { Buff.Def.Id: "guard" },
             ["Stagger break"] = o => o is Staggered { Broke: true },
             ["Cast interrupt"] = o => o is Interrupted,
-            ["Proc"] = o => o is ProcRolled { Roll.Success: true },
+            ["Proc"] = o => o is ProcRolled { Roll.Success: true, FromAction: false },
             ["Fear"] = o => o is BuffApplied { Buff.Def.Cc: CcKind.Fear },
             ["Push"] = o => o is Moved { Why: "Push" },
         };

@@ -123,7 +123,7 @@ public class DataLoaderTests
                 [{ "id": "fire", "name": "Fire", "group": "element", "implies": ["elemental"] },
                  { "id": "elemental", "name": "Elemental", "group": "family" }]
                 """),
-            ("procs", """[{ "id": "p", "name": "P", "trigger": "struck", "trigger_tags": ["fire"], "tags": ["fire"], "target": "other", "damage": 1 }]""")));
+            ("procs", """[{ "id": "p", "name": "P", "trigger": "struck", "trigger_tags": ["fire"], "tags": ["fire"], "target": "other", "key_1": "damage", "value_1": "1" }]""")));
         Assert.Equal(["fire", "elemental"], data.Actions["poke"].Tags);
         Assert.Equal(["fire", "elemental"], data.Procs["p"].Tags);
         Assert.Equal(["fire"], data.Procs["p"].TriggerTags);

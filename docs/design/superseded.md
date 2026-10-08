@@ -47,3 +47,6 @@
 | Confusion | A random valid target for the unit's chosen action; heroes still chose the action | No choice at all: a random action at a random target in reach, allies included (2026-10-08) |
 | AP costs | Every action cost exactly 50, 100 or 200 AP | Any whole number above 0 (2026-10-08) |
 | Base Hit | Hit started from a placeholder 0.95 per unit (a Dim stat can't hold 1) | Hit is offset by 1: 100% by default, modifiers combine from 0, and Hit above 100% only cancels Avoid (2026-10-08) |
+| Effects and procs | An effects table held both instant results (heal, stagger, push) and buffs; actions listed effects to apply; procs had their own amount columns plus an effect | Two tables: buffs (timed bundles) and procs (trigger, chance, up to 3 key/value results, apply buff among them). Actions list procs; instant results are proc results (2026-10-08) |
+| This-hit stats | A before-damage proc added stat changes for this hit only (proc_hit_stats) | It applies a buff lasting 1 action (2026-10-08) |
+| What scales action results | An action's heals and damage over time scaled with the action's tags, and always landed | Its procs carry their own tags, and roll against Rate and Deval like any proc (2026-10-08) |

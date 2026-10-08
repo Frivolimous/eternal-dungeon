@@ -66,12 +66,14 @@ public class EffectTests
     }
 
     [Fact]
-    public void Buffs_apply_only_after_every_effect_resolves()
+    public void Buffs_apply_only_after_every_proc_resolves()
     {
-        // Listed first: a +50 Power buff on the caster. Listed second: a heal that scales with the caster's Power.
+        // Listed first: a proc applying a +50 Power buff on the caster. Second: a heal that scales with its Power.
+        var rally = Action("rally", ActionTarget.Self, "pump");
         var data = With(
-            actions: [Action("rally", ActionTarget.Self, "pump", "patch")],
-            effects: [Buff("pump", stats: [new("power", null, 50)]), Instant("patch", heal: 20)]);
+            actions: [rally with { Procs = [.. rally.Procs, "patch"] }],
+            buffs: [Buff("pump", stats: [new("power", null, 50)])],
+            procs: [Proc("patch", ProcTrigger.ActionComplete, ProcTarget.Self, tags: ["buff"]) with { Heal = 20 }]);
         var w = Ready(U(data, "warrior", "w", Side.Party));
         w.TakeDamage(100);
         var battle = new Battle(data, [w], seed: 1);
@@ -79,8 +81,7 @@ public class EffectTests
         var r = battle.Act(w, data.Actions["rally"], null);
 
         Assert.Equal(20, r.Of<Healed>().Single().Amount);               // not 30: the buff wasn't on yet
-        Assert.IsType<Healed>(r.Outcomes[0]);
-        Assert.IsType<BuffApplied>(r.Outcomes[1]);
+        Assert.True(r.Outcomes.ToList().FindIndex(o => o is Healed) < r.Outcomes.ToList().FindIndex(o => o is BuffApplied));
         Assert.Equal(50, w.Stats.Get("power"));
     }
 
@@ -89,7 +90,7 @@ public class EffectTests
     {
         var data = With(
             actions: [Action("shout", ActionTarget.Ally, "brave")],
-            effects: [Buff("brave", turns: 3, stats: [new("power", null, 10)])]);
+            buffs: [Buff("brave", turns: 3, stats: [new("power", null, 10)])]);
         var a = Ready(U(data, "warrior", "a", Side.Party));
         var b = Ready(U(data, "warrior", "b", Side.Party));
         var battle = new Battle(data, [a, b], seed: 1);
@@ -140,7 +141,7 @@ public class EffectTests
         var data = With(
             actions: [Action("hex_a", ActionTarget.Enemy, "rot"),
                       Action("hex_b", ActionTarget.Enemy, "blight")],
-            effects: [Buff("blight", turns: 3, periodicDamage: 4)]);    // same numbers as Rot, a different effect
+            buffs: [Buff("blight", turns: 3, periodicDamage: 4)]);    // same numbers as Rot, a different effect
         var s1 = U(data, "goblin_shaman", "s1", Side.Enemy);
         var s2 = U(data, "goblin_shaman", "s2", Side.Enemy);
         var w = Exposed(U(data, "warrior", "w", Side.Party));
@@ -164,9 +165,9 @@ public class EffectTests
         // Thorns grants two procs: when struck, put Rot on the attacker; when struck below half Health, shield yourself.
         var data = With(
             actions: [Action("bless", ActionTarget.Self, "thorns")],
-            effects: [Buff("thorns", procs: ["thorn_rot", "second_wind"])],
+            buffs: [Buff("thorns", procs: ["thorn_rot", "second_wind"])],
             procs: [
-                Proc("thorn_rot", ProcTrigger.Struck, ProcTarget.Other) with { Effect = "rot" },
+                Proc("thorn_rot", ProcTrigger.Struck, ProcTarget.Other) with { Buff = "rot" },
                 Proc("second_wind", ProcTrigger.Struck, ProcTarget.Self) with { Shield = 14, OwnerHealthBelow = 0.5 }]);
         var w = Exposed(Ready(U(data, "warrior", "w", Side.Party)));
         var g = Ready(U(data, "goblin_grunt", "g", Side.Enemy));

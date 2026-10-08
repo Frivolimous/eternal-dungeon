@@ -49,7 +49,7 @@ public class ProcTests
         var flaming = Repo.Procs["flaming"] with { Id = "flame_test", Duplicates = rule };
         var data = With(
             actions: [Action("oil", ActionTarget.Self, "fire_oil")],
-            effects: [Buff("fire_oil", turns: 9, procs: ["flame_test"])],
+            buffs: [Buff("fire_oil", turns: 9, procs: ["flame_test"])],
             procs: [flaming]);
         var w = U(data, "warrior", "w", Side.Party, "flame_test");          // one copy of its own...
         var g = Sure(U(data, "goblin_grunt", "g", Side.Enemy));
@@ -230,7 +230,7 @@ public class ProcTests
     [Fact]
     public void Fight_start_procs_fire_once()
     {
-        var data = With(procs: [Proc("rally", ProcTrigger.FightStart, ProcTarget.Self) with { Effect = "berserk" }]);
+        var data = With(procs: [Proc("rally", ProcTrigger.FightStart, ProcTarget.Self) with { Buff = "berserk" }]);
         var w = U(data, "warrior", "w", Side.Party, "rally");
         var b = new Battle(data, [w], seed: 1);
 
@@ -241,22 +241,115 @@ public class ProcTests
 
     // ---- Data ----
 
-    static DataException ProcFails(string proc, string hitStats = "[]") => TestData.TablesFail(
+    // ---- An action's own procs ----
+
+    [Fact]
+    public void An_actions_procs_roll_against_the_targets_deval()
+    {
+        // Shield Bash's Daze is 100%, but it's a proc like any other: Control Deval (Tenacity) resists it.
+        var w = U(Repo, "warrior", "w", Side.Party);
+        var g = Sure(U(Repo, "goblin_grunt", "g", Side.Enemy));
+        g.Stats.Add("test", "deval", 1, "control");
+        var b = new Battle(Repo, [w, g], seed: 1);
+
+        var daze = Hit(b, w, "shield_bash", g).Of<ProcRolled>().Single(p => p.Proc.Id == "daze");
+        Assert.True(daze.FromAction);
+        Assert.Equal(0.5, daze.Chance, Precision);                            // 1 ÷ (1 + 1)
+    }
+
+    [Fact]
+    public void An_actions_procs_fire_only_for_that_action_and_a_miss_skips_hit_procs()
+    {
+        var w = U(Repo, "warrior", "w", Side.Party);
+        var g = U(Repo, "goblin_grunt", "g", Side.Enemy);
+        var b = new Battle(Repo, [w, g], seed: 1);
+
+        Assert.DoesNotContain(Hit(b, w, "attack", Sure(g)).Of<ProcRolled>(), p => p.FromAction);
+        g.Stats.RemoveSource("test");
+        g.Stats.Add("test", "avoid", 0.99);
+        var miss = Hit(b, w, "shield_bash", g);
+        Assert.False(miss.Of<Attempt>().Single().Roll.Success);
+        Assert.Empty(miss.Of<BuffApplied>());                                 // Daze triggers on hit
+    }
+
+    [Fact]
+    public void A_certain_proc_never_draws_from_the_battle_rng()
+    {
+        var w = U(Repo, "warrior", "w", Side.Party);
+        var b = new Battle(Repo, [w], seed: 7);
+        var next = new Rng(7).NextDouble();
+
+        b.Act(w, Repo.Actions["defend"], null);                              // Guard: 100%, no roll
+        Assert.Equal(next, b.Rng.NextDouble());
+    }
+
+    [Fact]
+    public void A_buff_lasting_actions_counts_its_holders_actions_from_the_next_one()
+    {
+        var data = With(
+            actions: [Action("focus", ActionTarget.Self, "focused")],
+            buffs: [Buff("focused", stats: [new("power", null, 10)]) with { Duration = DurationKind.Actions, Length = 2 }]);
+        var w = U(data, "warrior", "w", Side.Party);
+        var b = new Battle(data, [w], seed: 1);
+
+        b.Act(w, data.Actions["focus"], null);                               // given by this action: starts with the next
+        Assert.Equal(2, w.Buffs.Single().Remaining);
+        b.Act(w, data.Actions["defend"], null);
+        Assert.Equal(1, w.Buffs.Single(x => x.Def.Id == "focused").Remaining);
+        b.Act(w, data.Actions["defend"], null);
+        Assert.DoesNotContain(w.Buffs, x => x.Def.Id == "focused");
+    }
+
+    static DataException ProcFails(string proc, string? action = null) => TestData.TablesFail(
         ("tags", """[{ "id": "fire", "name": "Fire", "group": "element" }]"""),
-        ("stats", """[{ "id": "health", "name": "Health", "group": "character", "combine": "add" }, { "id": "penetrate", "name": "Penetrate", "group": "attack", "combine": "dim" }]"""),
-        ("effects", """[{ "id": "burn", "name": "Burn", "duration": "turns", "turns": 2, "periodic_damage": 3 }]"""),
+        ("stats", """[{ "id": "health", "name": "Health", "group": "character", "combine": "add" }]"""),
+        ("buffs", """[{ "id": "burn", "name": "Burn", "duration": "turns", "length": 2, "periodic_damage": 3 }]"""),
         ("procs", $"[{proc}]"),
-        ("proc_hit_stats", hitStats));
+        ("actions", action is null ? "[]" : $"[{action}]"));
+
+    const string HitProc = "\"id\": \"p\", \"name\": \"P\", \"trigger\": \"hit\", \"target\": \"other\"";
 
     [Fact]
     public void Proc_data_is_checked()
     {
-        Assert.Contains("only hit procs", ProcFails("""{ "id": "p", "name": "P", "trigger": "struck", "target": "other", "phase": "before_damage", "damage": 1 }""").Message);
-        Assert.Contains("phase before_damage", ProcFails("""{ "id": "p", "name": "P", "trigger": "hit", "target": "other" }""", """[{ "proc": "p", "stat": "penetrate", "value": 0.1 }]""").Message);
-        Assert.Contains("lifesteal needs", ProcFails("""{ "id": "p", "name": "P", "trigger": "miss", "target": "self", "lifesteal": 0.1 }""").Message);
-        Assert.Contains("use self", ProcFails("""{ "id": "p", "name": "P", "trigger": "fight_start", "target": "other", "effect": "burn" }""").Message);
-        Assert.Contains("its own owner", ProcFails("""{ "id": "p", "name": "P", "trigger": "hit", "target": "self", "damage": 3 }""").Message);
-        Assert.Contains("does nothing", ProcFails("""{ "id": "p", "name": "P", "trigger": "hit", "target": "other" }""").Message);
-        Assert.Equal("[0].effect", ProcFails("""{ "id": "p", "name": "P", "trigger": "hit", "target": "other", "effect": "freeze" }""").Field);
+        Assert.Contains("only hit procs", ProcFails("""{ "id": "p", "name": "P", "trigger": "struck", "target": "other", "phase": "before_damage", "key_1": "damage", "value_1": "1" }""").Message);
+        Assert.Contains("lifesteal needs", ProcFails("""{ "id": "p", "name": "P", "trigger": "miss", "target": "self", "key_1": "lifesteal", "value_1": "0.1" }""").Message);
+        Assert.Contains("use self", ProcFails("""{ "id": "p", "name": "P", "trigger": "fight_start", "target": "other", "key_1": "apply_buff", "value_1": "burn" }""").Message);
+        Assert.Contains("its own owner", ProcFails("""{ "id": "p", "name": "P", "trigger": "hit", "target": "self", "key_1": "damage", "value_1": "3" }""").Message);
+        Assert.Contains("does nothing", ProcFails($$"""{ {{HitProc}} }""").Message);
+    }
+
+    [Fact]
+    public void Proc_results_are_checked_by_key()
+    {
+        Assert.Equal("[0].value_1", ProcFails($$"""{ {{HitProc}}, "key_1": "apply_buff", "value_1": "freeze" }""").Field);
+        Assert.Contains("needs a number", ProcFails($$"""{ {{HitProc}}, "key_1": "damage", "value_1": "lots" }""").Message);
+        Assert.Contains("above 0", ProcFails($$"""{ {{HitProc}}, "key_1": "heal", "value_1": "-5" }""").Message);
+        Assert.Contains("whole number", ProcFails($$"""{ {{HitProc}}, "key_1": "stagger", "value_1": "2.5" }""").Message);
+        Assert.Contains("push or pull", ProcFails($$"""{ {{HitProc}}, "key_1": "displace", "value_1": "shove" }""").Message);
+        Assert.Contains("needs a value", ProcFails($$"""{ {{HitProc}}, "key_2": "damage" }""").Message);
+        Assert.Equal("[0].key_1", ProcFails($$"""{ {{HitProc}}, "value_1": "5", "key_2": "damage", "value_2": "5" }""").Field);
+        Assert.Contains("already one of", ProcFails($$"""{ {{HitProc}}, "key_1": "damage", "value_1": "5", "key_3": "damage", "value_3": "6" }""").Message);
+        Assert.Contains("expected one of", ProcFails($$"""{ {{HitProc}}, "key_1": "explode", "value_1": "5" }""").Message);
+    }
+
+    [Fact]
+    public void An_action_only_uses_procs_its_events_set_off()
+    {
+        const string selfAction = """{ "id": "a", "name": "A", "target": "self", "ap_cost": 100, "procs": ["p"] }""";
+        Assert.Contains("use action_complete", ProcFails($$"""{ {{HitProc}}, "key_1": "apply_buff", "value_1": "burn" }""", selfAction).Message);
+        const string strike = """{ "id": "a", "name": "A", "target": "enemy", "range": "any", "ap_cost": 100, "base_damage": 5, "procs": ["p"] }""";
+        Assert.Contains("never sets off", ProcFails("""{ "id": "p", "name": "P", "trigger": "struck", "target": "other", "key_1": "damage", "value_1": "1" }""", strike).Message);
+        const string move = """{ "id": "a", "name": "A", "target": "tile", "ap_cost": 50, "move_to": "own", "procs": ["p"] }""";
+        Assert.Contains("use self", ProcFails("""{ "id": "p", "name": "P", "trigger": "action_complete", "target": "other", "key_1": "apply_buff", "value_1": "burn" }""", move).Message);
+    }
+
+    [Fact]
+    public void A_buff_lasting_actions_or_turns_needs_a_length()
+    {
+        var e = TestData.TablesFail(("buffs", """[{ "id": "b", "name": "B", "duration": "actions" }]"""));
+        Assert.Equal("[0].length", e.Field);
+        Assert.Contains("until the next turn has no length",
+            TestData.TablesFail(("buffs", """[{ "id": "b", "name": "B", "duration": "until_next_turn", "length": 2 }]""")).Message);
     }
 }

@@ -49,7 +49,7 @@ public class RogueAndConfusionTests
 
     static GameData Confusing => With(
         actions: [Action("confuse", ActionTarget.Ally, "test_confusion")],
-        effects: [Buff("test_confusion", turns: 50) with { Cc = CcKind.Confusion }]);
+        buffs: [Buff("test_confusion", turns: 50) with { Cc = CcKind.Confusion }]);
 
     [Fact]
     public void A_confused_unit_picks_a_random_action_and_any_target_in_reach_allies_included()
@@ -91,8 +91,8 @@ public class RogueAndConfusionTests
         var c = Confusing;
         var data = new GameData(c.TagList, c.StatList, c.CompoundList,
             [.. c.UnitList.Select(u => u.Id == "warrior" ? u with { Procs = ["test_confused_start"] } : u)],
-            c.ActionList, c.EffectList, c.AiProfileList, c.EncounterList, c.UnitDefaults,
-            [.. c.ProcList, Proc("test_confused_start", ProcTrigger.FightStart, ProcTarget.Self) with { Effect = "test_confusion" }],
+            c.ActionList, c.BuffList, c.AiProfileList, c.EncounterList, c.UnitDefaults,
+            [.. c.ProcList, Proc("test_confused_start", ProcTrigger.FightStart, ProcTarget.Self) with { Buff = "test_confusion" }],
             c.DefaultActions, c.Text);
         var s = new BattleSession(data, data.Encounters["goblin_patrol"], 5);
         s.Advance();
@@ -124,8 +124,8 @@ public class RogueAndConfusionTests
         var c = Repo;
         var data = new GameData(c.TagList, c.StatList, c.CompoundList,
             [.. c.UnitList.Select(u => u.Id == "warrior" ? u with { Procs = ["test_feared_start"] } : u)],
-            c.ActionList, c.EffectList, c.AiProfileList, c.EncounterList, c.UnitDefaults,
-            [.. c.ProcList, Proc("test_feared_start", ProcTrigger.FightStart, ProcTarget.Self) with { Effect = "dread" }],
+            c.ActionList, c.BuffList, c.AiProfileList, c.EncounterList, c.UnitDefaults,
+            [.. c.ProcList, Proc("test_feared_start", ProcTrigger.FightStart, ProcTarget.Self) with { Buff = "dread" }],
             c.DefaultActions, c.Text);
         var s = new BattleSession(data, data.Encounters["goblin_patrol"], 2);
         s.Advance();

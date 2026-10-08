@@ -121,6 +121,11 @@ public class SheetSyncTests
         Assert.IsType<double>(grunt[Col(units, "health")]);
         Assert.IsType<string>(grunt[Col(units, "name")]);
         Assert.Contains(Pushed()["stats"].Skip(1), r => r.Contains(true));
+
+        var procs = Pushed()["procs"];                                        // free text that is a number: a number
+        var flaming = RowOf(procs, "flaming");
+        Assert.Equal("damage", flaming[Col(procs, "key_1")]);
+        Assert.IsType<double>(flaming[Col(procs, "value_1")]);
     }
 
     [Fact]

@@ -113,11 +113,14 @@ public static class CombatLog
                                  : ""));
                     break;
                 case ProcRolled p:
+                    // An action's own proc that can't fail is just what the action does: its results say enough.
+                    if (p.FromAction && p.Chance >= 1 && level != LogLevel.Full)
+                        break;
                     if (p.Roll.Success)
                         rest.Add((p.Scale > 1.0001
                                      ? s.Format("log.proc_scaled", ("owner", p.Owner.Name), ("proc", p.Proc.Name), ("chance", Pct(p.Chance)), ("scale", F(p.Scale, 2)))
                                      : s.Format("log.proc", ("owner", p.Owner.Name), ("proc", p.Proc.Name), ("chance", Pct(p.Chance))))
-                                 + (level == LogLevel.Full ? s.Format("log.proc_roll", ("roll", F(p.Roll.Value, 3))) : ""));
+                                 + (level == LogLevel.Full && p.Chance < 1 ? s.Format("log.proc_roll", ("roll", F(p.Roll.Value, 3))) : ""));
                     else if (level == LogLevel.Full)
                         rest.Add(s.Format("log.proc_fails", ("owner", p.Owner.Name), ("proc", p.Proc.Name), ("chance", Pct(p.Chance)), ("roll", F(p.Roll.Value, 3))));
                     break;
@@ -188,6 +191,7 @@ public static class CombatLog
         if (b.Shield > 0) bits.Add(s.Format("log.buff_shield", ("amount", b.Shield)));
         if (d.Duration == DurationKind.Turns) bits.Add(s.Format("log.buff_turns", ("turns", b.Remaining)));
         if (d.Duration == DurationKind.UntilNextTurn) bits.Add(s["log.buff_until_next_turn"]);
+        if (d.Duration == DurationKind.Actions) bits.Add(s.Format(b.Remaining == 1 ? "log.buff_action" : "log.buff_actions", ("actions", b.Remaining)));
         if (b.Stacks > 1) bits.Add(s.Format("log.buff_stacks", ("stacks", b.Stacks)));
         return s.Format("log.buff", ("name", d.Name), ("details", string.Join(s["log.list_separator"], bits)));
     }

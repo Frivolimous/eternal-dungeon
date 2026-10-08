@@ -68,18 +68,19 @@ public static class DataLoader
         var compounds = t["compound_stats"].Rows.Select(r => ReadCompound(r, t, tags, stats)).ToList();
         var compoundIds = compounds.Select(c => c.Id).ToHashSet();
 
-        // Effects (buffs) grant procs and procs apply effects, so effects' proc references are checked once both are read.
-        var effects = t["effects"].Rows.Select(r => ReadEffect(r, t, tags, stats)).ToList();
-        var effectIds = effects.Select(e => e.Id).ToHashSet();
-        var procs = t["procs"].Rows.Select(r => ReadProc(r, t, tags, stats, effectIds)).ToList();
+        // Buffs grant procs and procs apply buffs, so buffs' proc references are checked once both are read.
+        var buffs = t["buffs"].Rows.Select(r => ReadBuff(r, t, tags, stats)).ToList();
+        var buffIds = buffs.Select(e => e.Id).ToHashSet();
+        var procs = t["procs"].Rows.Select(r => ReadProc(r, t, tags, buffIds)).ToList();
         var procIds = procs.Select(p => p.Id).ToHashSet();
-        foreach (var r in t["effects"].Rows)
+        foreach (var r in t["buffs"].Rows)
             foreach (var p in r.List("procs"))
                 if (!procIds.Contains(p))
                     throw r.Error("procs", $"unknown proc \"{p}\" (not in {t["procs"].File})");
 
-        var actions = t["actions"].Rows.Select(r => ReadAction(r, t, tags, effectIds)).ToDictionary(a => a.Id);
-        var ais = t["ai_profiles"].Rows.Select(r => ReadAiProfile(r, t, actions, effectIds)).ToDictionary(a => a.Id);
+        var procsById = procs.ToDictionary(p => p.Id);
+        var actions = t["actions"].Rows.Select(r => ReadAction(r, t, tags, procsById)).ToDictionary(a => a.Id);
+        var ais = t["ai_profiles"].Rows.Select(r => ReadAiProfile(r, t, actions, buffIds)).ToDictionary(a => a.Id);
         var defaultActions = ReadDefaultActions(t, actions);
         var unitDefaults = t["default_stats"].Rows.Select(r => ReadStatEntry(r, tags, stats, t)).ToList();
 
@@ -105,7 +106,7 @@ public static class DataLoader
         }
         var unitsById = units.ToDictionary(u => u.Id);
         var encounters = t["encounters"].Rows.Select(r => ReadEncounter(r, t, unitsById)).ToList();
-        return new GameData([.. tags.Values], [.. stats.Values], compounds, units, [.. actions.Values], effects, [.. ais.Values],
+        return new GameData([.. tags.Values], [.. stats.Values], compounds, units, [.. actions.Values], buffs, [.. ais.Values],
             encounters, unitDefaults, procs, defaultActions, text);
     }
 
@@ -226,67 +227,45 @@ public static class DataLoader
         return list;
     }
 
-    static EffectDef ReadEffect(Row r, DataTables t, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats)
+    static BuffDef ReadBuff(Row r, DataTables t, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats)
     {
         var duration = r.Enum<DurationKind>("duration");
-        if (duration == DurationKind.Turns && r.Int("turns") < 1)
-            throw r.Error("turns", "a buff lasting turns needs at least 1 turn");
-        if (duration != DurationKind.Turns && r.Has("turns"))
-            throw r.Error("turns", "only a duration of turns has a number of turns");
+        if (duration is DurationKind.Turns or DurationKind.Actions && r.Int("length") < 1)
+            throw r.Error("length", $"a buff lasting {JsonField.SnakeCase(duration.ToString())} needs a length of at least 1");
+        if (duration == DurationKind.UntilNextTurn && r.Has("length"))
+            throw r.Error("length", "a buff lasting until the next turn has no length");
 
-        var statRows = ChildrenOf(t, "effect_stats", r.Str("id")).ToList();
-        var def = new EffectDef(
+        var def = new BuffDef(
             r.Str("id"),
             r.Str("name"),
             duration,
-            r.Int("turns"),
+            r.Int("length"),
             r.Bool("stacking"),
             r.OptInt("max_stacks") ?? int.MaxValue,
-            [.. statRows.Select(x => ReadStatEntry(x, tags, stats, t))],
-            r.Num("heal"),
+            [.. ChildrenOf(t, "buff_stats", r.Str("id")).Select(x => ReadStatEntry(x, tags, stats, t))],
             r.Num("shield_max_health"),
             r.Int("periodic_damage"),
             r.Int("periodic_heal"),
             r.List("procs"),
             r.Enum<CcKind>("cc"),
-            r.Int("stagger"),
             r.Int("delayed_damage"),
-            r.Enum<Displace>("displace"),
             r.Bool("break_on_attack"));
 
-        if (!def.IsBuff)
-        {
-            if (statRows.Count > 0)
-                throw statRows[0].Error("effect", "only buffs (effects with a duration) can have stats");
-            foreach (var buffOnly in new[] { "stacking", "max_stacks", "periodic_damage", "periodic_heal", "procs", "cc", "delayed_damage", "break_on_attack" })
-                if (r.Has(buffOnly))
-                    throw r.Error(buffOnly, "only buffs (effects with a duration) can have this");
-        }
-        else
-        {
-            foreach (var instantOnly in new[] { "heal", "stagger", "displace" })
-                if (r.Has(instantOnly))
-                    throw r.Error(instantOnly, "only instant effects (no duration) can have this");
-        }
-        if (def.Stagger < 0 || def.DelayedDamage < 0) throw r.Error("stagger and delayed damage can't be negative");
+        if (def.DelayedDamage < 0) throw r.Error("delayed_damage", "can't be negative");
         if (def.MaxStacks < 1) throw r.Error("max_stacks", "must be at least 1");
         if (r.Has("max_stacks") && !def.Stacking) throw r.Error("max_stacks", "only stacking buffs have a stack limit");
-        if (def.Heal < 0 || def.ShieldMaxHealth < 0 || def.PeriodicDamage < 0 || def.PeriodicHeal < 0)
-            throw r.Error("heal, shield and periodic amounts can't be negative");
+        if (def.ShieldMaxHealth < 0 || def.PeriodicDamage < 0 || def.PeriodicHeal < 0)
+            throw r.Error("shield and periodic amounts can't be negative");
         return def;
     }
 
     static readonly ProcTrigger[] HitTriggers =
         [ProcTrigger.Hit, ProcTrigger.Crit, ProcTrigger.Brutal, ProcTrigger.Struck, ProcTrigger.Damaged];
 
-    static ProcDef ReadProc(Row r, DataTables t, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats, HashSet<string> effects)
+    static ProcDef ReadProc(Row r, DataTables t, Dictionary<string, TagDef> tags, HashSet<string> buffs)
     {
         var trigger = r.Enum<ProcTrigger>("trigger");
         var phase = r.Enum<ProcPhase>("phase");
-        var effect = r.OptStr("effect");
-        if (effect is not null && !effects.Contains(effect))
-            throw r.Error("effect", $"unknown effect \"{effect}\" (not in {t["effects"].File})");
-
         var proc = new ProcDef(
             r.Str("id"),
             r.Str("name"),
@@ -297,33 +276,73 @@ public static class DataLoader
             r.Enum<ProcTarget>("target"),
             phase,
             r.Enum<Duplicates>("duplicates"),
-            r.Num("damage"),
-            r.Num("heal"),
-            r.Num("shield"),
-            r.Num("lifesteal"),
-            [.. ChildrenOf(t, "proc_hit_stats", r.Str("id")).Select(x => ReadStatEntry(x, tags, stats, t))],
-            effect,
             r.OptNum("owner_health_below"));
 
+        // The results: key_N names one, value_N gives its amount, direction or buff.
+        var seen = new HashSet<ProcResult>();
+        for (var i = 1; i <= Schemas.ProcResults; i++)
+        {
+            string keyColumn = $"key_{i}", valueColumn = $"value_{i}";
+            if (r.OptEnum<ProcResult>(keyColumn) is not { } key)
+            {
+                if (r.Has(valueColumn)) throw r.Error(keyColumn, $"{valueColumn} has a value but {keyColumn} is empty");
+                continue;
+            }
+            var name = JsonField.SnakeCase(key.ToString());
+            if (!seen.Add(key)) throw r.Error(keyColumn, $"{name} is already one of this proc's results");
+            var value = r.OptStr(valueColumn) ?? throw r.Error(valueColumn, $"{name} needs a value");
+            double Amount()
+            {
+                if (!double.TryParse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var n))
+                    throw r.Error(valueColumn, $"{name} needs a number, got \"{value}\"");
+                return n > 0 ? n : throw r.Error(valueColumn, $"{name} must be above 0");
+            }
+            proc = key switch
+            {
+                ProcResult.Damage => proc with { Damage = Amount() },
+                ProcResult.Heal => proc with { Heal = Amount() },
+                ProcResult.Shield => proc with { Shield = Amount() },
+                ProcResult.Lifesteal => proc with { Lifesteal = Amount() },
+                ProcResult.Stagger => proc with
+                {
+                    Stagger = Amount() is var s && s == Math.Floor(s) ? (int)s : throw r.Error(valueColumn, $"stagger needs a whole number, got \"{value}\""),
+                },
+                ProcResult.Displace => proc with
+                {
+                    Displace = value switch
+                    {
+                        "push" => Displace.Push,
+                        "pull" => Displace.Pull,
+                        _ => throw r.Error(valueColumn, $"displace needs push or pull, got \"{value}\""),
+                    },
+                },
+                _ => proc with
+                {
+                    Buff = buffs.Contains(value) ? value : throw r.Error(valueColumn, $"unknown buff \"{value}\" (not in {t["buffs"].File})"),
+                },
+            };
+        }
+
         if (proc.Chance <= 0) throw r.Error("chance", "must be above 0");
-        if (proc.Damage < 0 || proc.Heal < 0 || proc.Shield < 0 || proc.Lifesteal < 0)
-            throw r.Error("damage, heal, shield and lifesteal can't be negative");
-        if (!proc.HasAmounts && effect is null)
-            throw r.Error("does nothing: give it damage, heal, shield, lifesteal, hit stats or an effect");
+        if (!proc.DoesSomething)
+            throw r.Error("key_1", "the proc does nothing: give it a result (damage, heal, shield, lifesteal, stagger, displace or apply_buff)");
         if (phase == ProcPhase.BeforeDamage && trigger != ProcTrigger.Hit)
             throw r.Error("phase", "only hit procs can resolve before damage");
-        if (proc.HitStats.Count > 0 && phase != ProcPhase.BeforeDamage)
-            throw r.Error("phase", "this-hit stats (proc_hit_stats) need phase before_damage");
         if (proc.Lifesteal > 0 && Array.IndexOf(HitTriggers, trigger) < 0)
-            throw r.Error("lifesteal", "lifesteal needs a trigger with a hit (hit, crit, brutal, struck, damaged)");
+            throw r.Error("trigger", "lifesteal needs a trigger with a hit (hit, crit, brutal, struck, damaged)");
         if (proc.Target == ProcTarget.Other && trigger is ProcTrigger.TurnStart or ProcTrigger.FightStart)
             throw r.Error("target", "turn start and fight start have no other unit: use self");
         if (proc.Damage > 0 && proc.Target == ProcTarget.Self)
-            throw r.Error("damage", "a proc can't damage its own owner");
+            throw r.Error("target", "a proc can't damage its own owner");
         return proc;
     }
 
-    static ActionDef ReadAction(Row r, DataTables t, Dictionary<string, TagDef> tags, HashSet<string> effects)
+    /// <summary>The triggers an action's own procs can use: its events for the actor. Only enemy-targeted actions roll
+    /// to hit, so the others have just action complete.</summary>
+    static readonly ProcTrigger[] ActionTriggers =
+        [ProcTrigger.Hit, ProcTrigger.Miss, ProcTrigger.Crit, ProcTrigger.Brutal, ProcTrigger.ActionComplete];
+
+    static ActionDef ReadAction(Row r, DataTables t, Dictionary<string, TagDef> tags, Dictionary<string, ProcDef> procs)
     {
         var actionTags = TagList(r, "tags", tags, t, withImplied: true);
 
@@ -341,10 +360,16 @@ public static class DataLoader
         if (ap <= 0)
             throw r.Error("ap_cost", $"must be above 0, got {ap}");
 
-        // In order; each lands on the action's target, or on the actor for self and tile actions.
-        foreach (var e in r.List("effects"))
-            if (!effects.Contains(e))
-                throw r.Error("effects", $"unknown effect \"{e}\" (not in {t["effects"].File})");
+        foreach (var id in r.List("procs"))
+        {
+            if (!procs.TryGetValue(id, out var p))
+                throw r.Error("procs", $"unknown proc \"{id}\" (not in {t["procs"].File})");
+            if (target == ActionTarget.Enemy ? Array.IndexOf(ActionTriggers, p.Trigger) < 0 : p.Trigger != ProcTrigger.ActionComplete)
+                throw r.Error("procs", $"proc \"{id}\" triggers on {JsonField.SnakeCase(p.Trigger.ToString())}, which this action never sets off "
+                    + (target == ActionTarget.Enemy ? "(use hit, miss, crit, brutal or action_complete)" : "(only enemy actions roll to hit: use action_complete)"));
+            if (target == ActionTarget.Tile && p.Target == ProcTarget.Other)
+                throw r.Error("procs", $"proc \"{id}\" targets the other unit, but a tile action has none: use self");
+        }
 
         var action = new ActionDef(
             r.Str("id"),
@@ -357,7 +382,7 @@ public static class DataLoader
             r.Num("base_damage"),
             r.Num("all_damage"),
             r.Int("cast_time"),
-            r.List("effects"),
+            r.List("procs"),
             r.Enum<MoveTo>("move_to"),
             r.Enum<DefaultRole>("replaces"));
         if ((action.Target == ActionTarget.Tile) != (action.MoveTo != MoveTo.None))
@@ -372,7 +397,7 @@ public static class DataLoader
         return action;
     }
 
-    static AiProfileDef ReadAiProfile(Row r, DataTables t, Dictionary<string, ActionDef> actions, HashSet<string> effects)
+    static AiProfileDef ReadAiProfile(Row r, DataTables t, Dictionary<string, ActionDef> actions, HashSet<string> buffs)
     {
         var w = r.Num("threat_weight");
         if (w < 1 - MaxAiLean || w > MaxAiLean)
@@ -383,13 +408,13 @@ public static class DataLoader
             if (!actions.TryGetValue(x.Str("action"), out var def))
                 throw x.Error("action", $"unknown action \"{x.Str("action")}\" (not in {t["actions"].File})");
             var buff = x.OptStr("missing_buff");
-            if (buff is not null && !effects.Contains(buff))
-                throw x.Error("missing_buff", $"unknown effect \"{buff}\" (not in {t["effects"].File})");
+            if (buff is not null && !buffs.Contains(buff))
+                throw x.Error("missing_buff", $"unknown buff \"{buff}\" (not in {t["buffs"].File})");
             if (x.Has("ally_health_below") && def.Target != ActionTarget.Ally)
                 throw x.Error("ally_health_below", "only ally-targeted actions can pick an ally by Health");
             var targetBuff = x.OptStr("target_missing_buff");
-            if (targetBuff is not null && !effects.Contains(targetBuff))
-                throw x.Error("target_missing_buff", $"unknown effect \"{targetBuff}\" (not in {t["effects"].File})");
+            if (targetBuff is not null && !buffs.Contains(targetBuff))
+                throw x.Error("target_missing_buff", $"unknown buff \"{targetBuff}\" (not in {t["buffs"].File})");
             var casting = x.Bool("target_casting");
             if ((targetBuff is not null || casting) && def.Target != ActionTarget.Enemy)
                 throw x.Error("action", "target conditions need an enemy-targeted action");

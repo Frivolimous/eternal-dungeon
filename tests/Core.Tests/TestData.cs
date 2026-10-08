@@ -19,32 +19,41 @@ static class TestData
     public static DataException TablesFail(params (string Table, string Json)[] tables) =>
         Assert.Throws<DataException>(() => LoadTables(tables));
 
-    /// <summary>The repo data plus extra actions and effects (test-only content).</summary>
-    public static GameData With(IEnumerable<ActionDef>? actions = null, IEnumerable<EffectDef>? effects = null,
-        IEnumerable<ProcDef>? procs = null) =>
-        new(Repo.TagList, Repo.StatList, Repo.CompoundList, Repo.UnitList,
-            [.. Repo.ActionList, .. actions ?? []],
-            [.. Repo.EffectList, .. effects ?? []],
+    /// <summary>The repo data plus extra actions, buffs and procs (test-only content). A test action's "apply:" procs
+    /// (from <see cref="Action"/>) become 100% procs that apply the buff, with the action's tags.</summary>
+    public static GameData With(IEnumerable<ActionDef>? actions = null, IEnumerable<BuffDef>? buffs = null,
+        IEnumerable<ProcDef>? procs = null)
+    {
+        var extra = (actions ?? []).ToList();
+        var applies = extra.SelectMany(a => a.Procs.Where(p => p.StartsWith("apply:")).Select(p => Applies(a, p))).ToList();
+        return new(Repo.TagList, Repo.StatList, Repo.CompoundList, Repo.UnitList,
+            [.. Repo.ActionList, .. extra],
+            [.. Repo.BuffList, .. buffs ?? []],
             Repo.AiProfileList,
             Repo.EncounterList,
             Repo.UnitDefaults,
-            [.. Repo.ProcList, .. procs ?? []],
+            [.. Repo.ProcList, .. applies, .. procs ?? []],
             Repo.DefaultActions,
             Repo.Text);
+    }
 
-    public static EffectDef Buff(string id, int turns = 3, bool stacking = false, int maxStacks = int.MaxValue,
+    static ProcDef Applies(ActionDef action, string id) =>
+        Proc(id, action.Target == ActionTarget.Enemy ? ProcTrigger.Hit : ProcTrigger.ActionComplete,
+            action.Target is ActionTarget.Enemy or ActionTarget.Ally ? ProcTarget.Other : ProcTarget.Self, tags: [.. action.Tags])
+        with { Buff = id.Split(':')[2] };
+
+    public static BuffDef Buff(string id, int turns = 3, bool stacking = false, int maxStacks = int.MaxValue,
         StatValue[]? stats = null, int periodicDamage = 0, string[]? procs = null) =>
-        new(id, id, DurationKind.Turns, turns, stacking, maxStacks, stats ?? [], 0, 0, periodicDamage, 0, procs ?? []);
+        new(id, id, DurationKind.Turns, turns, stacking, maxStacks, stats ?? [], 0, periodicDamage, 0, procs ?? []);
 
-    public static EffectDef Instant(string id, double heal = 0, double shieldMaxHealth = 0) =>
-        new(id, id, DurationKind.Instant, 0, false, 1, [], heal, shieldMaxHealth, 0, 0, []);
-
-    /// <summary>A proc that does nothing until given building blocks with <c>with</c>.</summary>
+    /// <summary>A proc that does nothing until given results with <c>with</c>.</summary>
     public static ProcDef Proc(string id, ProcTrigger trigger, ProcTarget target, double chance = 1, string[]? tags = null) =>
-        new(id, id, trigger, [], tags ?? [], chance, target, ProcPhase.AfterHit, Duplicates.Merge, 0, 0, 0, 0, [], null, null);
+        new(id, id, trigger, [], tags ?? [], chance, target, ProcPhase.AfterHit, Duplicates.Merge, null);
 
-    public static ActionDef Action(string id, ActionTarget target, params string[] effects) =>
+    /// <summary>A test action that applies <paramref name="buffs"/> to its target (or its user, for self actions);
+    /// give it other procs with <c>with { Procs = … }</c>.</summary>
+    public static ActionDef Action(string id, ActionTarget target, params string[] buffs) =>
         new(id, id, target == ActionTarget.Enemy ? ["physical", "melee"] : ["buff"], target,
             target is ActionTarget.Enemy or ActionTarget.Ally ? ActionRange.Any : null,
-            100, 0, target == ActionTarget.Enemy ? 10 : 0, 0, 0, effects);
+            100, 0, target == ActionTarget.Enemy ? 10 : 0, 0, 0, [.. buffs.Select(b => $"apply:{id}:{b}")]);
 }

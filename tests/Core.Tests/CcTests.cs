@@ -15,7 +15,7 @@ public class CcTests
         return u;
     }
 
-    static EffectDef Cc(string id, CcKind cc, int turns = 2) =>
+    static BuffDef Cc(string id, CcKind cc, int turns = 2) =>
         Buff(id, turns) with { Cc = cc };
 
     /// <summary>Puts <paramref name="effect"/> on <paramref name="target"/> through a test action.</summary>
@@ -25,9 +25,9 @@ public class CcTests
         return b.Act(caster, b.Data.Actions[actionId], target);
     }
 
-    static GameData WithCc(params EffectDef[] effects) => With(
+    static GameData WithCc(params BuffDef[] effects) => With(
         actions: [.. effects.Select(e => Action("apply_" + e.Id, ActionTarget.Ally, e.Id))],
-        effects: effects);
+        buffs: effects);
 
     [Fact]
     public void Slow_lowers_speed_while_it_lasts()
@@ -121,7 +121,7 @@ public class CcTests
     public void Stagger_halves_speed_while_the_bar_is_above_zero()
     {
         var data = Repo;
-        var smash = data.Effects["smash_stagger"].Stagger;                // read from data: tuning changes it
+        var smash = data.Procs["smash_stagger"].Stagger;                 // read from data: tuning changes it
         Assert.InRange(smash, 11, 99);
         var brute = U(data, "goblin_brute", "brute", Side.Enemy);
         var w = Exposed(U(data, "warrior", "w", Side.Party));

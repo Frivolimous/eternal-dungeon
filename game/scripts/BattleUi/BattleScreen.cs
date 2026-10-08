@@ -565,10 +565,13 @@ public partial class BattleScreen : Control
                 parts.Add(F("ui.preview_brutal", ("amount", p.BrutalDamage), ("chance", CombatLog.Pct(p.BrutalChance))));
             }
         }
-        foreach (var e in p.Effects)
-            parts.Add(F("ui.preview_applies", ("effect", Battle.Data.Effects[e].Name)));
-        if (p.Procs.Count > 0)
-            parts.Add(F("ui.preview_procs", ("procs", string.Join(T("log.list_separator"), p.Procs.Select(x => $"{x.Proc.Name} {CombatLog.Pct(x.Chance)}")))));
+        // The action's own procs that always fire read as what it does; everything else as what it may trigger.
+        var sure = p.Procs.Where(x => x.FromAction && x.Chance >= 1).ToList();
+        foreach (var x in sure)
+            parts.Add(F("ui.preview_applies", ("effect", x.Proc.Name)));
+        var maybe = p.Procs.Except(sure).ToList();
+        if (maybe.Count > 0)
+            parts.Add(F("ui.preview_procs", ("procs", string.Join(T("log.list_separator"), maybe.Select(x => $"{x.Proc.Name} {CombatLog.Pct(x.Chance)}")))));
         return string.Join(T("log.separator"), parts);
     }
 

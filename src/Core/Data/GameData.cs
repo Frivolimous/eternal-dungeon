@@ -7,7 +7,7 @@ public sealed class GameData(
     IReadOnlyList<CompoundStatDef>? compoundList = null,
     IReadOnlyList<UnitDef>? unitList = null,
     IReadOnlyList<ActionDef>? actionList = null,
-    IReadOnlyList<EffectDef>? effectList = null,
+    IReadOnlyList<BuffDef>? buffList = null,
     IReadOnlyList<AiProfileDef>? aiProfileList = null,
     IReadOnlyList<EncounterDef>? encounterList = null,
     IReadOnlyList<StatValue>? unitDefaults = null,
@@ -47,8 +47,8 @@ public sealed class GameData(
     public IReadOnlyList<AiProfileDef> AiProfileList { get; } = aiProfileList ?? [];
     public IReadOnlyDictionary<string, AiProfileDef> AiProfiles { get; } = (aiProfileList ?? []).ToDictionary(a => a.Id);
 
-    public IReadOnlyList<EffectDef> EffectList { get; } = effectList ?? [];
-    public IReadOnlyDictionary<string, EffectDef> Effects { get; } = (effectList ?? []).ToDictionary(e => e.Id);
+    public IReadOnlyList<BuffDef> BuffList { get; } = buffList ?? [];
+    public IReadOnlyDictionary<string, BuffDef> Buffs { get; } = (buffList ?? []).ToDictionary(e => e.Id);
 
     public IReadOnlyList<ActionDef> ActionList { get; } = actionList ?? [];
     public IReadOnlyDictionary<string, ActionDef> Actions { get; } = (actionList ?? []).ToDictionary(a => a.Id);

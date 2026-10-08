@@ -157,16 +157,23 @@ public sealed record ActionDef(
     double BaseDamage,
     double AllDamage,
     int CastTime,
-    IReadOnlyList<string> Effects,
+    IReadOnlyList<string> Procs,
     MoveTo MoveTo = MoveTo.None,
     DefaultRole Replaces = DefaultRole.None)
 {
     public bool DealsDamage => BaseDamage > 0;
+
+    // Procs: what the action does besides its own damage. They fire for the actor on this action's events only
+    // (hit, miss, crit, Brutal, action complete) and roll like any proc.
 }
 
-/// <summary>How long an effect lasts: no time at all (instant), a number of buff-clock turns, or until the
-/// affected unit's next turn starts.</summary>
-public enum DurationKind { Instant, Turns, UntilNextTurn }
+/// <summary>How long a buff lasts: until the holder's next turn starts, a number of buff-clock turns, or a number
+/// of the holder's own actions (a buff applied before damage with 1 action lasts just that hit).</summary>
+public enum DurationKind { UntilNextTurn, Turns, Actions }
+
+/// <summary>What a proc does, one result per key/value pair (Anchor: Combat › Procs). Damage, heal, Shield,
+/// lifesteal and stagger are amounts, which add up when copies merge; displace and apply buff are states.</summary>
+public enum ProcResult { Damage, Heal, Shield, Lifesteal, Stagger, Displace, ApplyBuff }
 
 /// <summary>The event a proc fires on (Anchor: Combat › Procs). Hit, Miss, Crit, Brutal and ActionComplete are the
 /// owner's own actions; Struck, Avoided and Damaged are actions against the owner (Damaged: only damage from
@@ -193,8 +200,9 @@ public enum Duplicates
 /// <summary>
 /// A proc: when <see cref="Trigger"/> happens (and the event's action carries one of <see cref="TriggerTags"/>, if
 /// any), roll <see cref="Chance"/> × (1 + Rate) ÷ (1 + Deval) over <see cref="Tags"/> (at most 100%), then apply its
-/// building blocks. Amounts (damage, heal, Shield, lifesteal share, this-hit stats) add only across merged copies; <see cref="Effect"/> (any instant effect or buff, CC included) is a state that
-/// never adds up. Proc damage goes through the damage formula with the proc's tags, and is not an action.
+/// results. Amounts (damage, heal, Shield, lifesteal share, stagger) add only across merged copies; states
+/// (<see cref="Displace"/>, <see cref="Buff"/>, CC included) never add up. Proc damage and heals go through the
+/// formulas with the proc's own tags, and are not actions. Units, buffs and actions all carry procs.
 /// </summary>
 public sealed record ProcDef(
     string Id,
@@ -206,15 +214,16 @@ public sealed record ProcDef(
     ProcTarget Target,
     ProcPhase Phase,
     Duplicates Duplicates,
-    double Damage,
-    double Heal,
-    double Shield,
-    double Lifesteal,
-    IReadOnlyList<StatValue> HitStats,
-    string? Effect,
-    double? OwnerHealthBelow)
+    double? OwnerHealthBelow,
+    double Damage = 0,
+    double Heal = 0,
+    double Shield = 0,
+    double Lifesteal = 0,
+    int Stagger = 0,
+    Displace Displace = Displace.None,
+    string? Buff = null)
 {
-    public bool HasAmounts => Damage > 0 || Heal > 0 || Shield > 0 || Lifesteal > 0 || HitStats.Count > 0;
+    public bool DoesSomething => Damage > 0 || Heal > 0 || Shield > 0 || Lifesteal > 0 || Stagger > 0 || Displace != Displace.None || Buff is not null;
 }
 
 /// <summary>
@@ -242,31 +251,26 @@ public enum CcKind
 public enum Displace { None, Push, Pull }
 
 /// <summary>
-/// An effect or buff (Anchor: Combat › Buffs and effects). An instant effect heals or shields once. A buff
-/// (any other duration) adds stat modifiers while it lasts, can carry a Shield that goes when it ends, can
-/// deal damage or heal on every buff-clock turn, and can grant procs while it lasts. A buff is unique per source (action +
-/// caster) unless <see cref="Stacking"/>.
+/// A buff (Anchor: Combat › Buffs): a timed bundle on a unit. It adds stat modifiers while it lasts, can carry a
+/// Shield that goes when it ends, can deal damage or heal on every buff-clock turn, can put crowd control on its
+/// holder, and can grant procs while it lasts. Procs apply buffs. A buff is unique per source (action or proc +
+/// caster) unless <see cref="Stacking"/>. <see cref="Length"/> counts turns or actions, by <see cref="Duration"/>.
 /// </summary>
-public sealed record EffectDef(
+public sealed record BuffDef(
     string Id,
     string Name,
     DurationKind Duration,
-    int Turns,
+    int Length,
     bool Stacking,
     int MaxStacks,
     IReadOnlyList<StatValue> Stats,
-    double Heal,
     double ShieldMaxHealth,
     int PeriodicDamage,
     int PeriodicHeal,
     IReadOnlyList<string> Procs,
     CcKind Cc = CcKind.None,
-    int Stagger = 0,
     int DelayedDamage = 0,
-    Displace Displace = Displace.None,
     bool BreakOnAttack = false)
 {
-    public bool IsBuff => Duration != DurationKind.Instant;
-
     // BreakOnAttack: the buff ends when its holder uses an enemy-targeted action, hit or miss (Stealth).
 }

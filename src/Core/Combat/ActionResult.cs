@@ -30,7 +30,8 @@ public sealed record BuffApplied(Unit Target, Buff Buff, bool Refreshed, int Sta
 public sealed record BuffExpired(Unit Target, Buff Buff) : Outcome;
 
 /// <summary>A proc's roll. <see cref="Scale"/> multiplies its amounts (only merged copies raise it).</summary>
-public sealed record ProcRolled(Unit Owner, ProcDef Proc, Unit Target, double Chance, Roll Roll, double Scale) : Outcome;
+/// <summary>A proc rolled. <see cref="FromAction"/>: it's one of the action's own procs (Shield Bash's Daze).</summary>
+public sealed record ProcRolled(Unit Owner, ProcDef Proc, Unit Target, double Chance, Roll Roll, double Scale, bool FromAction = false) : Outcome;
 
 /// <summary>Damage from a proc: through the damage formula with the proc's tags, but not an action.</summary>
 public sealed record ProcDamaged(Unit Owner, Unit Target, ProcDef Proc, DamageBreakdown Breakdown, DamageTaken Taken, int HealthBefore) : Outcome;

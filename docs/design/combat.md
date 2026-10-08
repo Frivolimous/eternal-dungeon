@@ -80,7 +80,7 @@ Confusion: the unit loses all choice, heroes included. On its turn it uses a ran
 
 Fear: the unit loses all choice, heroes included (decided 2026-10-08): on its turn it Moves to a tile further from the front if it can, otherwise it Defends. It never attacks or uses skills. If it is its side's only unit in the front row, it can't step back (the forward collapse would only pull it straight back), so it Defends (decided 2026-10-08). It can't attack or use skills. Unlike Stun (and Sleep), Fear doesn't skip the turn.
 
-Damage over time scales with the caster: when it's applied, the caster's Power and Multiplier factors for the tags of the action (or proc) that applied it are locked in, and every tick uses them. Shield still absorbs ticks.
+Damage over time scales with the caster: when it's applied, the caster's Power and Multiplier factors for the tags of the proc that applied it are locked in, and every tick uses them. Shield still absorbs ticks.
 
 **Stagger uses a stagger bar** (the default, to be confirmed in playtesting):
 
@@ -95,35 +95,41 @@ Enemies pick targets by weighing Threat against Vulnerability, and each AI type 
 
 Ties between equally scored targets are broken by a pick from the battle's seeded random generator, never a global one.
 
-## Buffs and effects
+## Buffs
 
-- Each source can apply a buff only once, unless the buff is explicitly stacking. Source = action plus caster, so 3 different poison spells give 3 poisons, and the same buff from 3 casters stacks 3 times.
+A buff is a timed bundle on a unit: stat changes, crowd control, damage or healing every buff-clock turn, a Shield that goes when it ends, and procs it grants while it lasts. Procs apply buffs; everything that happens once (damage, heals, stagger, pushes) is a proc result, not a buff (decided 2026-10-08).
+
+- A buff lasts until the holder's next turn, a number of buff-clock turns, or a number of the holder's own actions. Exploration buffs and curses (timed in steps or battles, see Exploration) will share the buffs table with their own durations.
+- A buff lasting actions counts each action its holder finishes. One applied before damage with 1 action lasts just that hit (Armor Break: extra Penetrate for this hit only). One given by an action counts from the holder's next action.
+- Each source can apply a buff only once, unless the buff is explicitly stacking. Source = the action (or the proc, for procs a unit or buff carries) plus the caster, so 3 different poison spells give 3 poisons, and the same buff from 3 casters stacks 3 times.
 - Re-stacking a stacking buff resets its timer.
-- Buffs can deal damage or heal on every buff-clock turn, and can grant procs while they last (see Procs).
-- Instant heals scale with the caster's Power for the action's tags, like damage.
-- All effects queue into one IActionResult. Buffs created by effects are applied only after every effect resolves.
-- The same effect from several sources stacks its stats (Critical from many sources). Merely similar effects stay separate (two different poison procs).
+- An action's buffs are applied only after the whole action resolves (its damage and every proc it sets off). Buffs from before-damage procs are the exception: they apply at once, to change the hit.
+- The same buff from several sources stacks its stats (Critical from many sources). Merely similar buffs stay separate (two different poison procs).
 
 ## Procs
 
-A proc is an effect that fires on an event, with a chance. Units have procs of their own, and buffs, items and skills grant more. Crit is not a proc: it is a core stat (see Formulas).
+A proc is something that fires on an event, with a chance. Units have procs of their own, buffs grant procs while they last, items and skills will grant more, and **an action's own results are procs too**: Shield Bash's Daze is "on hit: apply Dazed", Defend's Guard is "on action complete, self: apply Guard" (decided 2026-10-08). Crit is not a proc: it is a core stat (see Formulas).
+
+- An action's procs fire only for its user, only on that action's own events: hit, miss, crit, Brutal and action complete. Only enemy-targeted actions roll to hit, so the others use action complete. They roll like any proc, so the target's Deval can resist even a 100% one (Tenacity resists Shield Bash's Daze).
+- Every proc carries its own tags, which decide its Rate and Deval and scale its damage, heals and the damage over time of the buffs it applies (Mend's heal uses the Mend proc's tags, not the action's).
+- A proc at 100% needs no roll.
 
 | Part | Rule |
 | --- | --- |
 | Trigger | hit, miss, crit, Brutal, action complete (the owner's actions); struck, avoided, damaged (actions against the owner; damaged counts only damage from actions, to be checked in playtests); turn start, fight start |
 | Trigger tags | Optional filter: the event's action must carry at least one of them (Spikey: struck by Melee) |
-| Phase | After the hit by default. A hit proc can be marked before damage, to change that hit (e.g. extra Penetrate for this hit only) |
+| Phase | After the hit by default. A hit proc can be marked before damage, to change that hit: it applies a buff lasting 1 action (e.g. extra Penetrate for this hit only) |
 | Chance | Base × (1 + Rate) ÷ (1 + Deval), Rate and Deval both summed (Add), using every tag on the proc; the target's Deval applies only when the proc lands on someone else. No base chance means 100% |
 | Above 100% | The chance stops at 100% and the excess is lost: Rate never scales a proc's amounts. Amounts grow only when several copies of the same proc merge (see below) |
 | Target | The owner, or the other unit in the event (the target of the owner's action, or the attacker) |
-| Results | Building blocks in data: damage, heal, Shield, heal a share of the hit's damage (lifesteal), stat changes for this hit (before damage), and applying any effect or buff (CC, push, buffs) |
-| Proc damage | Goes through the full damage formula with the proc's own tags. It is not an action: no hit roll, no crit, and it never triggers procs. Nothing a proc causes triggers further procs |
+| Results | Up to 3 per proc, as key and value pairs in data: damage, heal, Shield, heal a share of the hit's damage (lifesteal), stagger, displace (push or pull), and apply buff (stat changes, CC, damage over time…). More pairs can be added if procs need them |
+| Proc damage | Goes through the full damage formula with the proc's own tags; heals scale with the owner's Power for the proc's tags. It is not an action: no hit roll, no crit, and it never triggers procs. Nothing a proc causes triggers further procs |
 | Area attacks | Procs roll once per target hit |
 | Limits | None on procs themselves. A once-per-fight proc is granted by a buff applied at fight start |
 
 When a unit has the same proc more than once (two Flaming weapons), each proc's duplicates rule decides how the copies combine:
 
-- Merge (the default): one roll. Merged chance = 1 − Π(1 − each copy's chance), the chance that at least one copy fires. Amounts (damage, heal, Shield, lifesteal share, this-hit stat changes) = Σ(chance × amount) ÷ merged chance, so the expected amount is unchanged. States (stun or other CC, push, any buff it applies) come from the strongest copy and never add up. Flaming 100% × 15 + 100% × 20 = 100% × 35; two 20% stuns = 36% to stun.
+- Merge (the default): one roll. Merged chance = 1 − Π(1 − each copy's chance), the chance that at least one copy fires. Amounts (damage, heal, Shield, lifesteal share, stagger) = Σ(chance × amount) ÷ merged chance, so the expected amount is unchanged. States (stun or other CC, push, any buff it applies) come from the strongest copy and never add up. Flaming 100% × 15 + 100% × 20 = 100% × 35; two 20% stuns = 36% to stun.
 - Separate: each copy rolls on its own and can fire on the same hit (extra-arrow style procs).
 - Unique: only the strongest copy counts (signature effects).
 

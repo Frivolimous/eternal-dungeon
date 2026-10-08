@@ -178,6 +178,8 @@ public static class SheetSync
         null => null,
         int n => (double)n,
         double or bool => value,
+        // Free text that is a number (a proc's value_1 "5") goes as a number, so formulas can use it.
+        string s when c.Kind == ColumnKind.Text && double.TryParse(s, NumberStyles.Float, Inv, out var d) && Text(d) == s => d,
         _ => TableFormat.Cell(c, value),
     };
 

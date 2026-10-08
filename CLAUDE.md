@@ -156,9 +156,11 @@ The rules themselves are in the Anchor; this is the map from rule to code.
   logs), proc damage, crit chance and rating.
 - **Turn order** (`Combat/TurnClock.cs`): jumps straight to the next event (turn, cast completion, buff tick).
 - **Battle** (`Combat/Battle.cs` + `BattleProcs.cs`): applies decisions and returns `ActionResult`s. Resolve
-  order: hit roll → miss/avoided or before-damage procs → crit → damage → hit/crit/brutal procs →
-  struck/damaged procs → action effects → action-complete procs → buffs. Effects queue in order and buffs
-  apply last. `FireProcs` is called only from action and clock events, so nothing a proc causes fires procs.
+  order: hit roll → miss/avoided or before-damage procs (their buffs apply at once) → crit → damage →
+  hit/crit/brutal procs → struck/damaged procs → action-complete procs → actions counted → buffs. An action's own
+  results are procs (`ActionDef.Procs`, fired for the actor on its own events); everything once-off (damage, heal,
+  stagger, push) lands as a proc fires, and buffs (`BuffDef`) queue and apply last. `FireProcs` is called only from
+  action and clock events, so nothing a proc causes fires procs.
 - **Grid** (`BattleGrid.cs`), **AI** (`UnitAi.cs`, profiles in ai_profiles.json; the heroes' profiles are the
   simulator's scripted AI), **runner** (`BattleRunner.cs`), **logs** (`CombatLog.cs`), **batch**
   (`BatchSummary.cs`), **encounters** (`EncounterSetup.cs`).
@@ -182,6 +184,9 @@ The rules themselves are in the Anchor; this is the map from rule to code.
   M4 equipment shows whether anything needs "all weapons" that Melee + Ranged can't express.
 - **"Damaged" trigger** fires only when damaged by an action (not by procs or damage over time), for now.
   Check in playtests whether it should fire on all damage.
+- **Every proc carries its own tags**, including an action's own procs (Mend's heal, Rot's damage over time
+  scale with the proc's tags, not the action's), so a proc's tags often repeat its action's. Check whether
+  that duplication causes mistakes; the alternative is that an action's procs use the action's tags.
 
 ## Open (don't build without Jeremy)
 

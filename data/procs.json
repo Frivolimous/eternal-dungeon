@@ -1,10 +1,20 @@
 [
-  { "id": "flaming", "name": "Flaming", "trigger": "hit", "tags": ["arcane", "fire"], "target": "other", "damage": 5 },
-  { "id": "venomous", "name": "Venomous", "trigger": "hit", "tags": ["chemical", "toxic"], "target": "other", "damage": 5 },
-  { "id": "vampiric", "name": "Vampiric", "trigger": "hit", "tags": ["dark"], "target": "self", "lifesteal": 0.05 },
-  { "id": "dazzling", "name": "Dazzling", "trigger": "hit", "tags": ["holy", "control"], "chance": 0.05, "target": "other", "effect": "daze" },
-  { "id": "explosive", "name": "Explosive", "trigger": "crit", "tags": ["arcane", "force", "critical"], "target": "other", "damage": 15 },
-  { "id": "spikey", "name": "Spikey", "trigger": "struck", "trigger_tags": ["melee"], "tags": ["physical"], "target": "other", "damage": 10 },
-  { "id": "berserk", "name": "Berserk", "trigger": "struck", "chance": 0.15, "target": "self", "effect": "berserk" },
-  { "id": "armor_break", "name": "Armor Break", "trigger": "hit", "trigger_tags": ["heavy"], "chance": 0.2, "target": "other", "phase": "before_damage" }
+  { "id": "flaming", "name": "Flaming", "trigger": "hit", "tags": ["arcane", "fire"], "target": "other", "key_1": "damage", "value_1": "5" },
+  { "id": "venomous", "name": "Venomous", "trigger": "hit", "tags": ["chemical", "toxic"], "target": "other", "key_1": "damage", "value_1": "5" },
+  { "id": "vampiric", "name": "Vampiric", "trigger": "hit", "tags": ["dark"], "target": "self", "key_1": "lifesteal", "value_1": "0.05" },
+  { "id": "dazzling", "name": "Dazzling", "trigger": "hit", "tags": ["holy", "control"], "chance": 0.05, "target": "other", "key_1": "apply_buff", "value_1": "daze" },
+  { "id": "explosive", "name": "Explosive", "trigger": "crit", "tags": ["arcane", "force", "critical"], "target": "other", "key_1": "damage", "value_1": "15" },
+  { "id": "spikey", "name": "Spikey", "trigger": "struck", "trigger_tags": ["melee"], "tags": ["physical"], "target": "other", "key_1": "damage", "value_1": "10" },
+  { "id": "berserk", "name": "Berserk", "trigger": "struck", "chance": 0.15, "target": "self", "key_1": "apply_buff", "value_1": "berserk" },
+  { "id": "armor_break", "name": "Armor Break", "trigger": "hit", "trigger_tags": ["heavy"], "chance": 0.2, "target": "self", "phase": "before_damage", "key_1": "apply_buff", "value_1": "armor_break" },
+  { "id": "guard", "name": "Guard", "trigger": "action_complete", "tags": ["buff"], "target": "self", "key_1": "apply_buff", "value_1": "guard" },
+  { "id": "stealth", "name": "Stealth", "trigger": "action_complete", "target": "self", "key_1": "apply_buff", "value_1": "stealth" },
+  { "id": "chill", "name": "Chill", "trigger": "hit", "tags": ["arcane", "spell", "ranged", "ice", "control"], "target": "other", "key_1": "apply_buff", "value_1": "chill" },
+  { "id": "daze", "name": "Daze", "trigger": "hit", "tags": ["weapon", "physical", "melee", "force", "control"], "target": "other", "key_1": "apply_buff", "value_1": "daze" },
+  { "id": "push", "name": "Push", "trigger": "hit", "tags": ["weapon", "physical", "melee", "force", "control"], "target": "other", "key_1": "displace", "value_1": "push" },
+  { "id": "dread", "name": "Dread", "trigger": "hit", "tags": ["spirit", "spell", "ranged", "dark", "curse"], "target": "other", "key_1": "apply_buff", "value_1": "dread" },
+  { "id": "rot", "name": "Rot", "trigger": "hit", "tags": ["spirit", "spell", "ranged", "toxic", "curse"], "target": "other", "key_1": "apply_buff", "value_1": "rot" },
+  { "id": "mend", "name": "Mend", "trigger": "action_complete", "tags": ["spirit", "spell", "buff"], "target": "other", "key_1": "heal", "value_1": "20" },
+  { "id": "smash_stagger", "name": "Stagger", "trigger": "hit", "tags": ["weapon", "physical", "melee", "heavy", "force"], "target": "other", "key_1": "stagger", "value_1": "60" },
+  { "id": "war_cry", "name": "War Cry", "trigger": "action_complete", "tags": ["buff"], "target": "self", "key_1": "apply_buff", "value_1": "war_cry" }
 ]

@@ -1,8 +1,0 @@
-[
-  { "effect": "guard", "stat": "avoid", "value": 0.3 },
-  { "effect": "stealth", "stat": "avoid", "value": 0.5 },
-  { "effect": "stealth", "stat": "threat", "value": -50 },
-  { "effect": "war_cry", "stat": "power", "value": 10 },
-  { "effect": "chill", "stat": "speed", "value": -30 },
-  { "effect": "berserk", "stat": "power", "value": 25 }
-]

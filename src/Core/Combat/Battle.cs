@@ -144,7 +144,8 @@ public sealed partial class Battle
     }
 
     /// <summary>A tile-targeted action: Move steps to an empty tile next to the unit in the area it stands in; the
-    /// Rogue's Move can also go to any empty tile in the other side's area. Then the action's effects apply.</summary>
+    /// Rogue's Move can also go to any empty tile in the other side's area. Then action-complete procs fire (the
+    /// action's own, such as Stealth, and the unit's).</summary>
     public ActionResult ActAt(Unit actor, ActionDef action, Tile tile)
     {
         if (!actor.Alive) throw new InvalidOperationException($"{actor.Name} is dead");
@@ -165,8 +166,8 @@ public sealed partial class Battle
         r.Add(new Moved(actor, from, tile, action.Name));
 
         var queue = new Queue<Pending>();
-        foreach (var e in action.Effects)
-            queue.Enqueue(new Pending(Data.Effects[e], actor, action.Id, actor, action.Tags));
+        FireProcs(ProcTrigger.ActionComplete, new ProcEvent(actor, null, action, 0, queue, r));
+        CountAction(actor, r);
         Process(queue, r);
         CollapseAreas(r);
         return Record(r);
@@ -186,8 +187,9 @@ public sealed partial class Battle
     }
 
     /// <summary>
-    /// The effect queue: the action's own hit and damage, then each queued effect in order (instant ones apply
-    /// as they come; triggers they set off join the queue), then every buff created along the way.
+    /// The action's own hit and damage, its procs and every other proc it sets off (their damage, heals, stagger
+    /// and pushes land as they fire), then every buff they apply. Before-damage procs' buffs apply at once, so they
+    /// change this hit.
     /// </summary>
     ActionResult Resolve(Unit actor, ActionDef action, Unit? target)
     {
@@ -208,22 +210,23 @@ public sealed partial class Battle
             }
             else
             {
-                // Before-damage procs can change this hit; their this-hit stats go once the damage is dealt.
-                FireProcs(ProcTrigger.Hit, new ProcEvent(actor, target, action, 0, queue, r), ProcPhase.BeforeDamage);
+                // Before-damage procs can change this hit: their buffs apply now (Armor Break: +Penetrate for 1 action).
+                var before = new Queue<Pending>();
+                FireProcs(ProcTrigger.Hit, new ProcEvent(actor, target, action, 0, before, r), ProcPhase.BeforeDamage);
+                Process(before, r);
                 var tiers = 0;
                 var dealt = 0;
                 if (action.DealsDamage && target.Alive)
                 {
                     tiers = RollCrit(actor, action, target, r);
                     var breakdown = Resolution.Damage(actor, action, target, tiers);
-                    var before = target.Health;
+                    var health = target.Health;
                     var taken = target.TakeDamage(breakdown.Final);
                     dealt = taken.Absorbed + taken.ToHealth;
                     actor.ThreatEarned += dealt;
-                    r.Add(new Damaged(target, breakdown, taken, before));
+                    r.Add(new Damaged(target, breakdown, taken, health));
                     if (taken.Killed) AddDeath(target, r);
                 }
-                actor.Stats.RemoveSource(ThisHitSource);
 
                 // Any hit wakes a sleeper.
                 foreach (var sleep in target.Buffs.Where(b => b.Def.Cc == CcKind.Sleep).ToList())
@@ -239,15 +242,8 @@ public sealed partial class Battle
             }
         }
 
-        if (landed)
-            foreach (var e in action.Effects)
-            {
-                // On the target; on the actor for self and tile actions, which have no other unit.
-                var on = target ?? actor;
-                queue.Enqueue(new Pending(Data.Effects[e], actor, action.Id, on, action.Tags));
-            }
-
         FireProcs(ProcTrigger.ActionComplete, new ProcEvent(actor, target, action, 0, queue, r));
+        CountAction(actor, r);
         Process(queue, r);
 
         // Attacking breaks buffs like Stealth, hit or miss (Jeremy, 2026-10-08). The Rogue tree's Deadly Shadows will
@@ -272,59 +268,33 @@ public sealed partial class Battle
         return outcome.Tiers;
     }
 
-    /// <summary>An effect waiting in the queue: what, from whom (caster + action = the buff source), onto whom.</summary>
-    sealed record Pending(EffectDef Def, Unit Caster, string ActionId, Unit Target, IReadOnlyList<string> Tags);
+    /// <summary>A buff waiting to apply: what, from whom (caster + action or proc = the buff source), onto whom, and
+    /// the tags its damage over time scales with (the proc's).</summary>
+    sealed record Pending(BuffDef Def, Unit Caster, string SourceId, Unit Target, IReadOnlyList<string> Tags);
 
+    /// <summary>Applies the buffs queued while an action or clock event resolved, in order, once it's done.</summary>
     void Process(Queue<Pending> queue, ActionResult r)
     {
-        var buffs = new List<Pending>();
         var processed = 0;
         while (queue.TryDequeue(out var p))
         {
             if (++processed > MaxQueuedEffects)
-                throw new InvalidOperationException($"More than {MaxQueuedEffects} effects queued: a trigger loop?");
-            if (!p.Target.Alive) continue;
-            if (p.Def.IsBuff)
-                buffs.Add(p);
-            else
-                ApplyInstant(p, r);
-        }
-        foreach (var p in buffs)
+                throw new InvalidOperationException($"More than {MaxQueuedEffects} buffs queued: a trigger loop?");
             if (p.Target.Alive)
                 ApplyBuff(p, r);
+        }
     }
 
-    /// <summary>Placeholder: an instant heal scales with the caster's Power for the action's tags, like damage.</summary>
-    void ApplyInstant(Pending p, ActionResult r)
+    /// <summary>
+    /// <paramref name="unit"/> finished an action: buffs it held while the action resolved, that last a number of
+    /// actions, count it, and end at 0. Called before the action's own buffs land, so a buff applied before damage
+    /// with 1 action lasts just that hit, and a buff the action gives lasts from the next one.
+    /// </summary>
+    void CountAction(Unit unit, ActionResult r)
     {
-        if (p.Def.Heal > 0)
-        {
-            var power = p.Caster.Stats.Get("power", p.Tags);
-            var amount = (int)Math.Round(p.Def.Heal * (1 + power / 100), MidpointRounding.AwayFromZero);
-            var before = p.Target.Health;
-            var healed = p.Target.Heal(Math.Max(0, amount));
-            p.Caster.ThreatEarned += healed;
-            r.Add(new Healed(p.Target, p.Def.Name, healed, before));
-        }
-        if (p.Def.ShieldMaxHealth > 0)
-        {
-            var amount = ShieldAmount(p.Def, p.Target);
-            p.Target.AddShield(amount);
-            r.Add(new Shielded(p.Target, p.Def.Name, amount));
-        }
-        if (p.Def.Stagger > 0)
-        {
-            if (p.Target.StaggerBroken)
-                r.Add(new StaggerIgnored(p.Target));
-            else
-            {
-                var broke = p.Target.TakeStagger(p.Def.Stagger);
-                r.Add(new Staggered(p.Target, p.Def.Stagger, p.Target.Stagger, broke));
-                if (broke) Interrupt(p.Target, r);
-            }
-        }
-        if (p.Def.Displace != Displace.None && Grid.AnchorOf(p.Target) is { } from && Grid.Shove(p.Target, p.Def.Displace) is { } to)
-            r.Add(new Moved(p.Target, from, to, p.Def.Name));
+        foreach (var buff in unit.Buffs.Where(b => b.Def.Duration == DurationKind.Actions).ToList())
+            if (--buff.Remaining <= 0)
+                Expire(unit, buff, r);
     }
 
     void AddThreat(string unitId, double amount)
@@ -354,13 +324,13 @@ public sealed partial class Battle
     void ApplyBuff(Pending p, ActionResult r)
     {
         var unit = p.Target;
-        var key = Buff.Key(p.Def.Id, p.ActionId, p.Caster.Id);
+        var key = Buff.Key(p.Def.Id, p.SourceId, p.Caster.Id);
         var buff = unit.Buffs.FirstOrDefault(b => b.SourceKey == key);
         var refreshed = buff is not null;
 
         if (buff is null)
         {
-            buff = new Buff(p.Def, p.Caster.Id, p.ActionId);
+            buff = new Buff(p.Def, p.Caster.Id, p.SourceId);
             unit.Buffs.Add(buff);
             AddStacks(unit, buff, 1);
         }
@@ -372,7 +342,7 @@ public sealed partial class Battle
                 buff.Stacks++;
                 AddStacks(unit, buff, 1);
             }
-            buff.Remaining = p.Def.Turns;
+            buff.Remaining = p.Def.Length;
             unit.RemoveShield(buff.ShieldGranted);
             buff.ShieldGranted = 0;
         }
@@ -423,7 +393,7 @@ public sealed partial class Battle
         return raw <= 0 ? 0 : Math.Max(1, (int)Math.Round(raw, MidpointRounding.AwayFromZero));
     }
 
-    static int ShieldAmount(EffectDef def, Unit unit) =>
+    static int ShieldAmount(BuffDef def, Unit unit) =>
         (int)Math.Round(def.ShieldMaxHealth * unit.MaxHealth, MidpointRounding.AwayFromZero);
 
     /// <summary>Reports a death; a cast the unit was in the middle of fizzles (Anchor: Combat › Turn order).</summary>

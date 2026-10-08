@@ -3,7 +3,8 @@ using EternalDungeon.Core.Data;
 namespace EternalDungeon.Core.Combat;
 
 /// <summary>A proc that could trigger from an action, with its chance.</summary>
-public sealed record ProcChance(ProcDef Proc, Unit Owner, double Chance);
+/// <summary>A proc an action could set off, with its chance. <see cref="FromAction"/>: one of the action's own procs.</summary>
+public sealed record ProcChance(ProcDef Proc, Unit Owner, double Chance, bool FromAction = false);
 
 /// <summary>
 /// What an action would do to one target, for the hover preview (M2 brief §6). Damage is static, so the three
@@ -19,7 +20,6 @@ public sealed record TargetPreview(
     int? BrutalDamage,
     double CritChance,
     double BrutalChance,
-    IReadOnlyList<string> Effects,
     IReadOnlyList<ProcChance> Procs);
 
 /// <summary>When a unit's turns would come: when its cast completes (if the action has a cast time) and when its
@@ -47,7 +47,7 @@ public static class Preview
             brutal = Resolution.Damage(actor, action, target, 2).Final;
             c = Resolution.CritChance(Resolution.CRate(actor, action, target));
         }
-        return new TargetPreview(target, hit, normal, crit, brutal, c, c, action.Effects, Procs(battle, actor, action, target));
+        return new TargetPreview(target, hit, normal, crit, brutal, c, c, Procs(battle, actor, action, target));
     }
 
     static readonly ProcTrigger[] ActorTriggers = [ProcTrigger.Hit, ProcTrigger.Crit, ProcTrigger.Brutal, ProcTrigger.Miss, ProcTrigger.ActionComplete];
@@ -58,9 +58,9 @@ public static class Preview
     public static List<ProcChance> Procs(Battle battle, Unit actor, ActionDef action, Unit target)
     {
         var list = new List<ProcChance>();
-        void From(Unit owner, Unit other, ProcTrigger[] triggers)
+        void From(Unit owner, Unit other, ProcTrigger[] triggers, ActionDef? own)
         {
-            foreach (var group in battle.ProcsOf(owner)
+            foreach (var group in battle.ProcsOf(owner, own)
                          .Where(p => triggers.Contains(p.Def.Trigger))
                          .Where(p => p.Def.TriggerTags.Count == 0 || action.Tags.Any(p.Def.TriggerTags.Contains))
                          .GroupBy(p => p.Def.Id))
@@ -74,11 +74,11 @@ public static class Preview
                     Duplicates.Unique => chances.Max(),
                     _ => 1 - chances.Aggregate(1.0, (miss, x) => miss * (1 - x)),
                 };
-                list.Add(new ProcChance(def, owner, chance));
+                list.Add(new ProcChance(def, owner, chance, group.Any(p => p.FromAction)));
             }
         }
-        From(actor, target, ActorTriggers);
-        if (action.Target == ActionTarget.Enemy) From(target, actor, TargetTriggers);
+        From(actor, target, ActorTriggers, action);
+        if (action.Target == ActionTarget.Enemy) From(target, actor, TargetTriggers, null);
         return list;
     }
 

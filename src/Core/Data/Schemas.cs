@@ -32,40 +32,34 @@ public static class Schemas
     public static readonly TableSchema CompoundStatRows = Child("compound_stat_rows", "compound_stats", "compound", ["tag", "stat"],
         Id("tag"), Id("stat"), Number("coef", required: true));
 
-    public static readonly TableSchema Effects = Top("effects",
-        Enum<DurationKind>("duration", @default: DurationKind.Instant),
-        Int("turns"),
+    public static readonly TableSchema Buffs = Top("buffs",
+        Enum<DurationKind>("duration", required: true),
+        Int("length"),
         Bool("stacking"),
         Int("max_stacks"),
-        Number("heal", @default: 0),
         Number("shield_max_health", @default: 0),
         Int("periodic_damage", @default: 0),
         Int("periodic_heal", @default: 0),
-        List("procs"),
         Enum<CcKind>("cc", @default: CcKind.None),
-        Int("stagger", @default: 0),
         Int("delayed_damage", @default: 0),
-        Enum<Displace>("displace", @default: Displace.None),
-        Bool("break_on_attack"));
+        Bool("break_on_attack"),
+        List("procs"));
 
-    public static readonly TableSchema EffectStats = Child("effect_stats", "effects", "effect", ["stat", "tag"], StatEntry);
+    public static readonly TableSchema BuffStats = Child("buff_stats", "buffs", "buff", ["stat", "tag"], StatEntry);
+
+    /// <summary>How many result pairs (key_N, value_N) a proc has.</summary>
+    public const int ProcResults = 3;
 
     public static readonly TableSchema Procs = Top("procs",
-        Enum<ProcTrigger>("trigger", required: true),
-        List("trigger_tags"),
-        List("tags"),
-        Number("chance", @default: 1),
-        Enum<ProcTarget>("target", required: true),
-        Enum<ProcPhase>("phase", @default: ProcPhase.AfterHit),
-        Enum<Duplicates>("duplicates", @default: Duplicates.Merge),
-        Number("damage", @default: 0),
-        Number("heal", @default: 0),
-        Number("shield", @default: 0),
-        Number("lifesteal", @default: 0),
-        Id("effect", required: false),
-        Number("owner_health_below"));
-
-    public static readonly TableSchema ProcHitStats = Child("proc_hit_stats", "procs", "proc", ["stat", "tag"], StatEntry);
+        [Enum<ProcTrigger>("trigger", required: true),
+         List("trigger_tags"),
+         List("tags"),
+         Number("chance", @default: 1),
+         Enum<ProcTarget>("target", required: true),
+         Enum<ProcPhase>("phase", @default: ProcPhase.AfterHit),
+         Enum<Duplicates>("duplicates", @default: Duplicates.Merge),
+         Number("owner_health_below"),
+         .. Enumerable.Range(1, ProcResults).SelectMany(i => new[] { Enum<ProcResult>($"key_{i}"), Text($"value_{i}") })]);
 
     public static readonly TableSchema Actions = Top("actions",
         List("tags"),
@@ -76,7 +70,7 @@ public static class Schemas
         Number("base_damage", @default: 0),
         Number("all_damage", @default: 0),
         Int("cast_time", @default: 0),
-        List("effects"),
+        List("procs"),
         Enum<MoveTo>("move_to", @default: MoveTo.None),
         Enum<DefaultRole>("replaces", @default: DefaultRole.None));
 
@@ -122,7 +116,7 @@ public static class Schemas
 
     /// <summary>The tables loaded before units, whose columns depend on the stats and compound stats.</summary>
     public static readonly TableSchema[] BeforeUnits =
-        [Tags, Stats, CompoundStats, CompoundStatRows, Effects, EffectStats, Procs, ProcHitStats, Actions, AiProfiles, AiRules];
+        [Tags, Stats, CompoundStats, CompoundStatRows, Buffs, BuffStats, Procs, Actions, AiProfiles, AiRules];
 
     /// <summary>The tables loaded after units.</summary>
     public static readonly TableSchema[] AfterUnits = [UnitTagStats, Encounters, EncounterUnits, Defaults, DefaultStats];

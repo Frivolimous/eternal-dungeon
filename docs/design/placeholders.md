@@ -18,6 +18,11 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 | Battle time limit | 300 base-speed turns, then a stalemate (no winner). If this ever happens in practice, the encounter is badly designed: investigate rather than tune the limit |
 | Stagger drain | 10 per buff-clock turn. Kept until tuning |
 | Stagger break length | A break stuns until the bar drains, about 10 turns (showcase seed 42: the Warrior is out from T 4.15 to T 14.27). Revisit in the combat balance pass after M2: for example a faster drain while white, or a fixed 1–2 turn stun |
+| A buff's length | One `length` column counts turns or actions, by the buff's duration (rather than a column per kind) |
+| Counting actions | A buff lasting actions counts each action its holder finishes. One applied by the action itself counts from the next action; one applied before damage counts the current one, so 1 action = just that hit |
+| Certain procs | A proc at 100% doesn't draw from the battle RNG, and an action's certain procs don't get their own log line (their results do) |
+| Stagger as a proc result | An amount: copies that merge add up their stagger, like damage |
+| Move and action complete | A tile action (Move) sets off action-complete procs, the unit's own included |
 
 ## Battlefield
 

@@ -2,24 +2,29 @@ using EternalDungeon.Core.Data;
 
 namespace EternalDungeon.Core.Combat;
 
-/// <summary>One copy of a proc on a unit and where it comes from (the unit itself, or a buff).</summary>
-public readonly record struct ProcCopy(ProcDef Def, string Source);
+/// <summary>One copy of a proc on a unit and where it comes from (the unit itself, a buff, or the action being
+/// used: <see cref="FromAction"/>).</summary>
+public readonly record struct ProcCopy(ProcDef Def, string Source, bool FromAction = false);
 
 // Procs (Anchor: Combat › Procs). Nothing a proc causes triggers further procs: procs fire only from the
 // action and clock events in Battle.cs, never from Process or from another proc.
 public sealed partial class Battle
 {
-    /// <summary>Source key for this-hit stats from before-damage procs; removed once the hit's damage is dealt.</summary>
-    public const string ThisHitSource = "this_hit";
+    /// <summary>The triggers that are the owner's own action: an action's procs fire only on these, for its user.</summary>
+    public static readonly ProcTrigger[] OwnActionTriggers =
+        [ProcTrigger.Hit, ProcTrigger.Miss, ProcTrigger.Crit, ProcTrigger.Brutal, ProcTrigger.ActionComplete];
 
-    /// <summary>Every proc copy <paramref name="unit"/> has: its own, then those its buffs grant.</summary>
-    public IEnumerable<ProcCopy> ProcsOf(Unit unit)
+    /// <summary>Every proc copy <paramref name="unit"/> has: its own, those its buffs grant, then (when it's using
+    /// <paramref name="action"/>) the action's procs.</summary>
+    public IEnumerable<ProcCopy> ProcsOf(Unit unit, ActionDef? action = null)
     {
         foreach (var id in unit.Def.Procs ?? [])
             yield return new ProcCopy(Data.Procs[id], "unit");
         foreach (var buff in unit.Buffs)
             foreach (var id in buff.Def.Procs)
                 yield return new ProcCopy(Data.Procs[id], buff.SourceKey);
+        foreach (var id in action?.Procs ?? [])
+            yield return new ProcCopy(Data.Procs[id], action!.Id, FromAction: true);
     }
 
     /// <summary>
@@ -61,7 +66,8 @@ public sealed partial class Battle
     {
         var owner = e.Owner;
         if (!owner.Alive) return;
-        var groups = ProcsOf(owner)
+        var action = Array.IndexOf(OwnActionTriggers, trigger) >= 0 ? e.Action : null;
+        var groups = ProcsOf(owner, action)
             .Where(c => c.Def.Trigger == trigger && c.Def.Phase == phase)
             .Where(c => c.Def.TriggerTags.Count == 0 || (e.Action?.Tags.Any(c.Def.TriggerTags.Contains) ?? false))
             .Where(c => c.Def.OwnerHealthBelow is not double share || owner.Health < share * owner.MaxHealth)
@@ -71,6 +77,7 @@ public sealed partial class Battle
         foreach (var group in groups)
         {
             var def = group.First().Def;
+            var fromAction = group.Any(c => c.FromAction);
             var target = def.Target == ProcTarget.Self ? owner : e.Other;
             if (target is null || !target.Alive) continue;
             var copies = group.Select(_ => CopyChance(def, owner, target)).ToList();
@@ -80,37 +87,36 @@ public sealed partial class Battle
                     // Every copy of one proc has the same amounts, so each weighs 1 and the merged scale is the
                     // expected number of copies firing ÷ the merged chance.
                     var (chance, scale) = MergeCopies(copies.Select(c => (c, 1.0)));
-                    RollProc(def, owner, target, chance, scale, e);
+                    RollProc(def, owner, target, chance, scale, fromAction, e);
                     break;
                 case Duplicates.Separate:
                     foreach (var c in copies)
-                        RollProc(def, owner, target, c, 1, e);
+                        RollProc(def, owner, target, c, 1, fromAction, e);
                     break;
                 case Duplicates.Unique:
-                    RollProc(def, owner, target, copies.Max(), 1, e);
+                    RollProc(def, owner, target, copies.Max(), 1, fromAction, e);
                     break;
             }
         }
     }
 
-    void RollProc(ProcDef def, Unit owner, Unit target, double chance, double scale, ProcEvent e)
+    void RollProc(ProcDef def, Unit owner, Unit target, double chance, double scale, bool fromAction, ProcEvent e)
     {
-        var roll = Rng.Roll(chance);
-        e.Result.Add(new ProcRolled(owner, def, target, chance, roll, scale));
+        // A certain proc (100%) needs no roll, so it never draws from the battle RNG.
+        var roll = chance >= 1 ? new Roll(chance, 0, true) : Rng.Roll(chance);
+        e.Result.Add(new ProcRolled(owner, def, target, chance, roll, scale, fromAction));
         if (roll.Success)
-            ApplyProc(def, owner, target, scale, e);
+            ApplyProc(def, owner, target, scale, fromAction, e);
     }
 
     /// <summary>
-    /// The building blocks, amounts scaled by <paramref name="scale"/>. Damage, heals and Shield land at once;
-    /// an effect joins the action's queue (so a buff applies after every effect, like any other).
+    /// The results, amounts scaled by <paramref name="scale"/>. Damage, heals, Shield, stagger and pushes land at
+    /// once; a buff joins the queue and applies once the action or event is done. A buff from an action's own
+    /// proc has that action as its source (action + caster), any other proc's buff the proc.
     /// </summary>
-    void ApplyProc(ProcDef def, Unit owner, Unit target, double scale, ProcEvent e)
+    void ApplyProc(ProcDef def, Unit owner, Unit target, double scale, bool fromAction, ProcEvent e)
     {
         var r = e.Result;
-        foreach (var s in def.HitStats)
-            owner.Stats.Add(ThisHitSource, s.Stat, s.Value * scale, s.Tag);
-
         if (def.Damage > 0)
         {
             var breakdown = Resolution.ProcDamage(owner, def, target, def.Damage * scale);
@@ -130,8 +136,22 @@ public sealed partial class Battle
             target.AddShield(amount);
             r.Add(new Shielded(target, def.Name, amount));
         }
-        if (def.Effect is string effect)
-            e.Queue.Enqueue(new Pending(Data.Effects[effect], owner, $"proc:{def.Id}", target, def.Tags));
+        if (def.Stagger > 0 && target.Alive)
+        {
+            var amount = (int)Math.Round(def.Stagger * scale, MidpointRounding.AwayFromZero);
+            if (target.StaggerBroken)
+                r.Add(new StaggerIgnored(target));
+            else
+            {
+                var broke = target.TakeStagger(amount);
+                r.Add(new Staggered(target, amount, target.Stagger, broke));
+                if (broke) Interrupt(target, r);
+            }
+        }
+        if (def.Displace != Displace.None && target.Alive && Grid.AnchorOf(target) is { } from && Grid.Shove(target, def.Displace) is { } to)
+            r.Add(new Moved(target, from, to, def.Name));
+        if (def.Buff is string buff)
+            e.Queue.Enqueue(new Pending(Data.Buffs[buff], owner, fromAction ? e.Action!.Id : $"proc:{def.Id}", target, def.Tags));
     }
 
     static void HealFromProc(ProcDef def, Unit owner, Unit target, double raw, ActionResult r)
