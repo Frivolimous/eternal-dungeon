@@ -1,7 +1,0 @@
-effect	stat	tag	value
-guard	avoid		0.3
-cloak	avoid		0.5
-cloak	threat		-50
-war_cry	power		10
-chill	speed		-30
-berserk	power		25

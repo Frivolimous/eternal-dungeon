@@ -1,9 +1,0 @@
-id	name	trigger	trigger_tags	tags	chance	target	phase	duplicates	damage	heal	shield	lifesteal	effect	owner_health_below	note
-flaming	Flaming	hit		arcane, fire		other			5						
-venomous	Venomous	hit		chemical, toxic		other			5						
-vampiric	Vampiric	hit		dark		self						0.05			
-dazzling	Dazzling	hit		holy, control	0.05	other							daze		
-explosive	Explosive	crit		arcane, force, critical		other			15						
-spikey	Spikey	struck	melee	physical		other			10						
-berserk	Berserk	struck			0.15	self							berserk		
-armor_break	Armor Break	hit	heavy		0.2	other	before_damage								

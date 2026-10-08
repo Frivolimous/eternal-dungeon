@@ -26,3 +26,6 @@ Thumbs.db
 
 # Art masters (full-size sources for --resize-art; kept outside git)
 art-source/
+
+# TSV exports for spreadsheets (sim export-tsv sheets); data/*.json is the source of truth
+sheets/
