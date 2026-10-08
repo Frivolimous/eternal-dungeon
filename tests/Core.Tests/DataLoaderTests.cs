@@ -75,7 +75,7 @@ public class DataLoaderTests
         Assert.True(data.Stats["vulnerability"].Hidden);
         Assert.False(data.Stats["health"].TagKeyed);
         Assert.True(data.Stats["avoid"].TagKeyed);
-        Assert.Equal(12, data.CompoundList.Count);
+        Assert.Equal(11, data.CompoundList.Count);
         Assert.Contains(new CompoundRow("heavy", "power", 0.5), data.Compounds["strength"].Rows);
     }
 

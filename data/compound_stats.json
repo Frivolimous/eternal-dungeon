@@ -3,7 +3,6 @@
   { "id": "dexterity", "name": "Dexterity" },
   { "id": "intellect", "name": "Intellect" },
   { "id": "magic", "name": "Magic" },
-  { "id": "elemental", "name": "Elemental" },
   { "id": "accuracy", "name": "Accuracy" },
   { "id": "parry", "name": "Parry" },
   { "id": "block", "name": "Block" },

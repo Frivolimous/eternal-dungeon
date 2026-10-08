@@ -130,7 +130,7 @@ A generic magic user. Its spells come from equipped spells, not skills. It speci
 | # | Skill | Tier | Effect |
 | --- | --- | --- | --- |
 | 1 | Magical Aptitude | T1 | Magic+, Mana+ |
-| 2 | Elemental Affinity | T2 | Magic+, Elemental+ |
+| 2 | Elemental Affinity | T2 | Magic+, Elemental Power+ |
 | 3 | Mana Conduit | T2 | Mana+; Elemental spells cost less Mana |
 | 4 | Elemental Attunement | T3 | Elemental Resist+, Elemental Deval+ |
 | 5 | Elemental Ward | T3 | Elemental Turn+; the hero's Elemental Turn is also added to adjacent heroes |

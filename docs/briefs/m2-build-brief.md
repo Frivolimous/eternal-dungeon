@@ -14,8 +14,8 @@ The class and exploration decisions changed some of what M2 shows. All of this i
   has 120 Mana (placeholder) and the Goblin Shaman stops casting once dry.
 - **AI fallback:** a unit with no usable skill (no target, or no Mana) Attacks if it can, else steps toward the front,
   else Defends.
-- **Elemental tag:** Fire, Electric and Ice actions and procs also carry Elemental; the Elemental compound is the
-  single row Elemental Power 1. The log's damage kinds are unchanged ("Arcane, Fire").
+- **Elemental tag:** Fire, Electric and Ice actions and procs also carry Elemental, and the Elemental compound stat
+  is gone: the Elementalist has Elemental Power 10 directly (2026-10-08). The log's damage kinds are unchanged ("Arcane, Fire").
 - **The Rogue's Stealth mastery replaces Sneak:** the Rogue's Move (50 AP) reaches a neighbouring tile or any empty
   enemy tile, and every Move grants **Stealth** (the renamed Cloak). There is no separate Sneak action; the Rogue's
   action bar shows Attack, Dagger Attack, Defend and Move. Masteries, skill trees and traits are otherwise M3–M4 work.

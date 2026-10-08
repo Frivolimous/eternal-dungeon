@@ -1,7 +1,7 @@
 [
   { "id": "warrior", "name": "Warrior", "size": 1, "health": 140, "speed": 100, "initiative": 30, "hit": 0.95, "avoid": 0.05, "strength": 15, "parry": 10, "actions": ["power_attack", "shield_bash"], "ai": "hero_warrior" },
   { "id": "rogue", "name": "Rogue", "size": 1, "health": 100, "speed": 120, "initiative": 50, "hit": 0.95, "avoid": 0.05, "strength": 5, "dexterity": 15, "dodge": 15, "actions": ["dagger_attack", "stealth_move"], "ai": "hero_rogue" },
-  { "id": "elementalist", "name": "Elementalist", "size": 1, "health": 80, "mana": 120, "speed": 100, "initiative": 20, "hit": 0.95, "avoid": 0.05, "magic": 15, "elemental": 10, "turn": 10, "actions": ["fire_bolt", "frost_shard"], "ai": "hero_elementalist" },
+  { "id": "elementalist", "name": "Elementalist", "size": 1, "health": 80, "mana": 120, "speed": 100, "initiative": 20, "hit": 0.95, "avoid": 0.05, "magic": 15, "turn": 10, "actions": ["fire_bolt", "frost_shard"], "ai": "hero_elementalist" },
   { "id": "goblin_grunt", "name": "Goblin Grunt", "size": 1, "health": 85, "speed": 90, "initiative": 20, "hit": 0.9, "avoid": 0.05, "strength": 5, "actions": ["goblin_slash"], "ai": "goblin_grunt" },
   { "id": "goblin_archer", "name": "Goblin Archer", "size": 1, "health": 60, "speed": 100, "initiative": 30, "hit": 0.9, "avoid": 0.05, "dexterity": 10, "actions": ["goblin_shot"], "ai": "goblin_archer" },
   { "id": "goblin_shaman", "name": "Goblin Shaman", "size": 1, "health": 60, "mana": 40, "speed": 95, "initiative": 25, "hit": 0.9, "avoid": 0.05, "magic": 10, "actions": ["rotting_hex", "mend"], "ai": "goblin_shaman" },
