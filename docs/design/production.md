@@ -9,8 +9,9 @@ Claude is the main developer and Jeremy owns design, playtesting, review and art
 | M0 Foundations | Godot .NET project, separate C# rules library with a test project, data-file format and loader, asset list for placeholder art, Windows and Linux builds, and a project instructions file for Claude | Install Godot and .NET, then confirm the project builds and runs |
 | M1 Rules core (no graphics) | Stats, tags, combine modes, effect queue, buffs, turn order, hit, damage and procs, CC and stagger, targeting AI and the battle grid, all covered by tests. Plus a command-line battle simulator that prints combat logs | Read sample combat logs and sanity-check the numbers |
 | M2 Playable battle | Godot battle screen with placeholder art: Warrior, Rogue and Elementalist vs. goblins, meter-fill animation, actions, victory and defeat | Play it and judge the feel. Pick the art style |
-| M3 Dungeon 0 slice | The full first-time experience: fog-of-war Maps of Nodes, events and interactables, Stamina, Camps and Sanctuaries, Map bosses, XP and skill points, skill trees, masteries and traits for the three starting classes (Warrior, Rogue, Elementalist; the trait system with its levels from class layers, and event conditions and rolls that read traits), basic loot, leave and wipe rules, save and load | **Go/no-go: is it fun?** |
-| M4 Town & build depth | Town, Tavern (talents and races), the other classes' trees, masteries and traits, Secondary and Dabble picks, exploration skills, the full equipment system, Blessings, Boons and Trinkets. Goblin Woods and Lich Tower complete | Playtest several full runs |
+| M3A Dungeon 0, hand-authored | Dungeon 0 as a hand-authored dungeon: 2 Outdoor Maps of Nodes under fog of war, 15 fixed Events and their Interactables, Stamina, Camps and Sanctuaries, Map bosses, potions and a belt, Flee, XP and skill points, skill trees, masteries and traits for the three starting classes (traits with levels from class layers; event conditions and rolls that read them), wipe rules, constant saving. Build brief: `docs/briefs/m3a-build-brief.md` | **Go/no-go: is the loop fun?** |
+| M3B Generated dungeon | A shortened Goblin Woods (1 Outdoor Map, then 2 Indoor Maps) built by the generator: event pools (twice what one run needs), Danger, tags and Event Groups, Indoor Maps and Hallways, the Map danger modifier (alarms), and the equipment system with basic loot | Play generated runs |
+| M4 Town & build depth | Town (and respec), Tavern (talents and races), the other classes' trees, masteries and traits, Secondary and Dabble picks, exploration skills, Shops and Forges, temporary allies, Blessings, Boons and Trinkets. Goblin Woods and Lich Tower complete | Playtest several full runs |
 | M5 Content & endgame | All 15 classes, dungeons 3–5, Shadow World, extended Maps, Reincarnation and Artifacts, the economy, simulator-driven balancing | Balance and pacing passes |
 | M6 Steam | Steamworks (achievements, cloud saves), controller and Steam Deck support, settings, demo build, launch or Early Access | Store page, demo, Steam Next Fest |
 
@@ -22,7 +23,7 @@ Claude is the main developer and Jeremy owns design, playtesting, review and art
   hero portrait state art; all non-portrait art.
 - **Balance:** single fights are not balanced on their own. From M3, fights are balanced for attrition between battles
   and for a dungeon's win rate (Jeremy, 2026-10-08).
-- **M3:** next; its build brief comes first.
+- **M3:** split into M3A (Dungeon 0, hand-authored, with the go/no-go checkpoint) and M3B (the generator, Indoor Maps and equipment, which moved here from M4), decided 2026-10-08. The M3A brief is written; building hasn't started.
 
 The battle simulator runs thousands of automated fights to check class power, Dim stacking and the power-share targets before anything is playtested.
 

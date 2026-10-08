@@ -56,6 +56,16 @@ and Old Ruins are all still eligible: they still touch the explored network.
 
 Region, Feature, Room and Hallway are only how a Node is drawn: underneath, everything is a Node.
 
+### Fog of war
+
+What the player sees of a Map (decided 2026-10-08, to try in M3A):
+
+- **Explored** Nodes show everything: their Feature, Interactables and any deferred Event.
+- **Eligible** Nodes show their position and Feature, but not their Event.
+- **Map reveals** show a Node's position and Feature even before it's eligible. An "enemies" or "boss" reveal adds an
+  icon. If this proves too little, reveals and eligible Nodes may also show the Event's type.
+- Everything else stays hidden.
+
 ### Moving between Maps
 
 **Transition Interactables** move the party on. They share one behaviour with three looks: **Stairs** (Indoor, between
@@ -113,9 +123,20 @@ A combat ends in one of three ways:
 
 1. **Victory:** follows `success` and costs the scale's Stamina.
 2. **Flee:** costs the same Stamina as victory. Fleeing a Skirmish or Major combat closes the Event (unless a `flee`
-   link is set). Fleeing a Boss **defers** the Event, so the boss stays to retry after resting. *How* fleeing works
-   (always succeeds, a chance, an AP cost, from which tiles) is open.
+   link is set). Fleeing a Boss **defers** the Event, so the boss stays to retry after resting: resuming starts that
+   Combat block again with the enemies at full strength, while earlier blocks stay done (a beaten outer patrol stays
+   beaten).
 3. **Death:** the whole party is dead, or all heroes are dead or unconscious with no rest left: a party wipe.
+
+**Fleeing** (decided 2026-10-08): Flee is a hero action (100 AP, from any tile) and always works: the hero leaves the
+battle at once, and enemies whose plan aimed at it plan again. When every hero has fled or died, the party has fled.
+If the enemies all die while some heroes have fled, it's a victory: the fled heroes rejoin but get no XP for that
+battle. Fled heroes pay the battle's Stamina cost like everyone else, and dead heroes stay dead. So a party can send one
+hero away to avoid a wipe, at the cost of that hero's XP, the fight and its Stamina; that's intended.
+
+**Battles start from the run's state:** current Health and Mana, Exhaustion penalties, and run-long buffs and curses.
+Dead and Unconscious heroes are absent. Each battle takes its random seed from the run's random generator when it
+starts, so a battle replays on its own.
 
 ## Map context and event selection
 
@@ -154,7 +175,12 @@ regeneration. Health and Mana carry between fights.
 | −2 to −3 | **Severe Exhaustion:** Speed lower still, Event rolls worse still |
 | −4 | **Unconscious** (it can't go lower) |
 
-The exact penalties are open (one idea: tie them to the gear weight penalty).
+- A fight's Stamina cost is paid **after** the fight, and Exhaustion penalties in a fight use the Stamina each hero has
+  when it starts (decided 2026-10-08). A full bar of 4 therefore covers 4 fights without penalty: the 4th starts at 1
+  and ends at 0 (Exhausted).
+
+The penalties are placeholders (see Placeholders): a Speed reduction in combat and a flat penalty to that hero's Event
+rolls.
 
 ### Dead and unconscious heroes
 
@@ -171,8 +197,8 @@ can't be the Active Hero, don't give traits, classes or eligibility to Event opt
 
 ### Rest, Camp and Sanctuary
 
-- **Rest** restores Stamina equal to the hero's max Stamina, so it always ends Unconscious; a hero still below 0 is
-  Exhausted or Severely Exhausted.
+- **Rest** restores Stamina equal to the hero's max Stamina, but **never above max** (decided 2026-10-08), so resting
+  early wastes Stamina. It always ends Unconscious; a hero still below 0 is Exhausted or Severely Exhausted.
 - **Camp charges** are shared by the party for the whole dungeon: 1 for a normal dungeon, 2 for a large one. Some Events
   grant +1. Camping works anywhere on any Map, uses 1 charge, Rests, restores part of Health and Mana (amount to tune),
   and clears Exhaustion if Stamina ends above 0.
@@ -189,7 +215,8 @@ Event outcomes affect the expedition only through these:
 - Dungeon state: setting flags, and **map reveals** (lifting fog or highlighting Node types: stairs, boss, sanctuary,
   enemies).
 - Lasting buffs, timed in **steps** (Nodes explored) or **battles**. They can change combat stats, or raise a trait
-  (+Trait) to improve Event odds.
+  (+Trait) to improve Event odds. A step is one Node explored. A battle-timed buff or curse joins every battle as a buff lasting
+  the whole fight, and counts down when the battle ends.
 - Health, Mana or Stamina, or +1 Camp charge.
 - Spawning an Interactable at the current Node (Sanctuary, Forge, Alchemist Station, Shop).
 - A **temporary ally** in a 5th party slot, for the rest of the Map, the rest of the dungeon, or N battles.
@@ -206,7 +233,9 @@ Event outcomes affect the expedition only through these:
 
 - No durability or item loss: traps and curses never break, rot or destroy items.
 - No locked Nodes or paths: the explored network stays fully open and readable.
-- No disabled choices: curses change odds through −Trait, never remove options.
+- No disabled choices: curses change odds through −Trait, never remove options. A choice gated by a trait reads the
+  hero's trait level **without** curses, so −Trait only lowers roll odds, while +Trait buffs can unlock gated choices
+  (decided 2026-10-08).
 - No changes to max Health, Mana or Stamina from exploration Events, temporary or lasting.
 - No item upgrades inside Event text: upgrades happen at a spawned Forge or Alchemist Station.
 
@@ -218,7 +247,8 @@ Event outcomes affect the expedition only through these:
 4. **Leave** the dungeon (see Dungeons › Run outcomes).
 5. **Resume** a deferred Event.
 6. **Go to the next Map:** a shortcut button shown when a transition Interactable is usable.
-7. **Hero panels:** equipment, stats, skills.
+7. **Hero Panel,** between Events (not in the middle of one): stats, skills (spending points), traits, the belt and
+   party pack, and using potions. Equipment joins it in M3B.
 8. **Use an exploration consumable** outside combat.
 9. **Cast an exploration spell.**
 10. **Use an exploration skill** (the Primary class's; see [Classes](classes.md)).
@@ -241,7 +271,8 @@ Every block has an `id`, a `type` and a `config`, and blocks link to each other 
   scale and Stamina cost; for a risk, the chance and what success and failure lead to ("70%: avoid the encounter
   (0 Stamina) / 30%: ambushed (Major combat, 1 Stamina)").
 - **Rolls:** a choice can carry a roll: a base chance plus modifiers (per trait point, a flat Exhaustion penalty…),
-  with `success` and `failure` links. A failed roll with no failure link closes the Event.
+  with `success` and `failure` links. A failed roll with no failure link closes the Event. The chance is kept between 0% and 100%,
+  and the Exhaustion penalty is the rolling hero's own. Rolls use the run's seeded random generator.
 - **Resource Change targets:** `active` (the Active Hero), `random` (a random eligible hero) or `all` (every eligible
   hero). A hero brought to 0 Health dies at once, and a new Active Hero is picked if needed.
 
@@ -283,4 +314,7 @@ Hero.
 { "id": "reward", "type": "reward", "config": { "rewards": [ { "type": "gold", "amount": 50 } ], "success": "after_reward" } }
 ```
 
-These shapes are a guide: the data will follow the flat-table rules in data/README.md when events are built (M3).
+Events are the one exception to flat tables (decided 2026-10-08): nested blocks don't fit them, so each Event is a JSON
+file in `data/events/`. Every piece of player-facing text in an Event is a string key in `data/strings.csv` (for example
+`event.goblin_prisoner.intro`), so the text stays editable in the Sheet. Shared balance constants may be pulled out of
+Events later.

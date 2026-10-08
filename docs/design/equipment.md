@@ -17,6 +17,7 @@ Equipment provides the largest share of a hero's power (37%), followed by class 
 - **Accessory:** 1 slot for an enchanted ring, book or similar.
 - **Spells:** 0–3 slots (1 per Spell+ class).
 - **Belt slots:** 1–4 (1 base, plus 1 per Belt+ class). Belt items are consumables with limited uses per dungeon: they're used up across the whole expedition and don't refill between fights. Camps, Sanctuaries, Events and exploration skills (such as the Tinkerer's) can restore charges. Talismans are the exception: they give a small passive stat bonus and are never used up.
+- **Party pack:** spare consumables the party carries in a dungeon, beyond what fits in belts. Moving them into a hero's belt happens through the Hero Panel, outside combat (decided 2026-10-08).
 - **Artifacts:** up to 3, equipped on Reincarnation.
 
 Each class a hero takes (Primary, Secondary and Dabble alike) adds one point to its family:
@@ -99,3 +100,6 @@ Uses below are placeholders: they were sized for a single fight and need resizin
 | Magic scroll | 1 |
 | Gadget | 1–3 |
 | Talisman (small passive stat bonus) | Unlimited |
+| Health Potion | 2 (restores 40% of max Health; 50 AP in battle; usable outside combat too) |
+| Mana Potion | 2 (restores 40% of max Mana; 50 AP in battle; usable outside combat too) |
+| Throwing Spikes (a Gadget) | 2 (a ranged hit, tagged Gadget, Ranged, Projectile and Physical; 50 AP) |

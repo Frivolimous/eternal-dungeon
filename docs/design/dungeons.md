@@ -19,6 +19,7 @@ Map sizes (small, medium, big) are set when Maps are built (M3).
 - The player goes straight into Dungeon 0, a short, easy version of Goblin Woods, to learn the game.
 - **Different death rule:** if all 3 heroes die, the player starts over. If at least 1 survives, all 3 move on to the first Town and the meta game begins.
 - Dungeon 0 is never repeated. Heroes recruited later always start after it.
+- There's no Leave in Dungeon 0 (there's no Town to leave to). Until Town exists (M4), completing it shows a "slice complete" screen, and a wipe restarts the game from the beginning of Dungeon 0.
 
 ## Battles
 
@@ -33,6 +34,14 @@ A battle is started by an Event's Combat block (see Exploration). Enemies are pl
 - **Leave:** the party leaves for Town. The dungeon instance and all its state (Maps, flags, deferred Events) are destroyed, and the dungeon isn't completed. Heroes keep all gear and XP gained in it, the death counter doesn't change, and the party keeps its current Blessings.
 - **Party wipe:** the dungeon instance and all its state are destroyed in the same way, and heroes keep all gear and XP gained in it. On top of that, all heroes are revived, each hero's death counter goes up by 1, current Blessings are removed, and future Blessings are weaker (−5% per death). The party isn't eligible for the next dungeon.
 - **Wipe on an extended Map:** counts as a normal wipe, but the heroes still gain the dungeon level, since the dungeon was already completed.
-- **XP:** every hero alive at the end of a battle gets an equal share, and heroes who are dead get none. Each hero levels up separately. All level-up decisions (skill points, class picks) are made manually.
+- **XP:** every hero alive at the end of a won battle gets an equal share; heroes who are dead or fled get none. Each hero levels up separately. All level-up decisions (skill points, class picks) are made manually.
 - **Temples** grant a Blessing.
 - **Boons** (lasting a set number of battles) and **Trinkets** (lasting the whole dungeon) are gained inside a dungeon and lost on leaving.
+
+## Saving
+
+Saving is constant (decided 2026-10-08): one save slot, written after every Node, every Event block, every Hero Panel
+change and at every battle start. A battle in progress saves as its seed plus the decisions made so far (the replay
+format), so quitting mid-fight and loading replays it to the same point. Loading restores the exact state: the same
+random generator position, the same enemy intents, the same Event block. While the game is in development, a save made
+with older data warns and offers a restart instead of loading wrongly.

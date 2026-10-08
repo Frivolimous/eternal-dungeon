@@ -43,6 +43,22 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 | Vulnerability | The lowest current Health among the reachable targets ÷ this one's current Health, plus the Vulnerability stat ÷ 100 |
 | Weighted pick | A target's chance is its score squared over the total (the square keeps the favourite the favourite) |
 
+## Exploration and progression (M3A)
+
+| Rule | Placeholder |
+| --- | --- |
+| Max Stamina | 4 for every hero |
+| Camp | 1 charge per dungeon; a Camp Rests and restores 50% Health and Mana |
+| Exhaustion | Exhausted: −10 Speed and −10% to that hero's Event rolls. Severe: −25 Speed and −25% |
+| Potions | Health and Mana Potions restore 40% of max, cost 50 AP in battle, 2 uses each |
+| Throwing Spikes | A Gadget belt item: a ranged physical hit (amount to set), 50 AP, 2 uses |
+| Initiative modifiers | Surprised: the party −30 Initiative. First Strike: +30 |
+| XP pacing | Heroes reach about Level 4 before Dungeon 0's final boss; later tuning brings the first dungeon down to about Level 3 |
+| Steps | One step = one Node explored (for buffs and curses timed in steps) |
+| Event damage in Dungeon 0 | Small, since a hero at 0 Health outside battle is Dead at once |
+| Shield Bash | Stays as the Warrior's starter-shield action until equipment arrives (M3B); it isn't in his tree |
+| Taunt | Removed in M3A (it was a placeholder for the M2 showcase); Imposing Presence gives Starting Threat |
+
 ## Presentation
 
 | Rule | Placeholder |

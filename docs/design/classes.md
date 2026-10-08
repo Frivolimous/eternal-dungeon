@@ -49,7 +49,7 @@ Only the Warrior, Rogue and Elementalist (the starting three) have full trees an
 
 - 1 point per level, Level 1 included. The max level is 20, so a hero gets 20 points. The cap may be revisited when XP pacing is tuned.
 - Each tree skill has 5 levels. 9 skills × 5 levels = 45 points to max everything, so a hero can max fewer than half.
-- Points can be banked. They're spent in Town, and skills can be respecced there.
+- Points can be banked, and spent anywhere outside combat, between Events, through the Hero Panel. Respec is Town-only (decided 2026-10-08).
 - Each class tree has its own structure. A prerequisite is met with 1 or more points in the required skill.
 
 ## Skill trees
@@ -109,7 +109,7 @@ Tactical and versatile: move into position, set up attacks and execute, or wait 
 | 2 | Deadly Shadows | T2 | Dexterity+, C.Rate+, more C.Rate in Stealth; crits don't break Stealth |
 | 3 | Dancing Shadows | T2 | Dexterity+, Dodge+; dodging grants Stealth |
 | 4 | Executioner | T1 | Damage+ against enemies below 50% HP |
-| 5 | Opportunist | T1 | Initiative+; refunds up to 50% of the AP cost, by the target's Stagger or Stun (under review: stagger is no longer a state, see Open questions) |
+| 5 | Opportunist | T1 | Initiative+; against a Stunned target, refunds 50% of the action's AP; otherwise refunds the target's Speed reduction from buffs and debuffs, capped at 50% (Chill −30 Speed on a base 100 → 30%). Stagger and Exhaustion don't count. Lower skill levels scale the cap down (decided 2026-10-08) |
 
 ```text
  4   1   5
