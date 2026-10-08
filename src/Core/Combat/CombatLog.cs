@@ -60,6 +60,8 @@ public static class CombatLog
                 yield return head + (r.Target is null
                     ? s.Format("log.begins_casting", ("actor", r.Actor.Name), ("action", action.Name), ("ready", T(cast.ReadyAt)))
                     : s.Format("log.begins_casting_at", ("actor", r.Actor.Name), ("action", action.Name), ("target", r.Target.Name), ("ready", T(cast.ReadyAt))));
+                foreach (var line in Details(battle, action, [.. r.Outcomes.Skip(1)], level))
+                    yield return Indent + line;
                 yield break;
             }
             var aimed = action.Target is not (ActionTarget.Self or ActionTarget.Tile) && r.Target is not null;
@@ -134,6 +136,14 @@ public static class CombatLog
                     rest.Add(s.Format(procKinds.Length > 0 ? "log.proc_damage_kinds" : "log.proc_damage", args));
                     if (level == LogLevel.Full) rest.Add(Breakdown(s, pd.Breakdown));
                     break;
+                case IntentSet i:
+                    // Routine plans only in the full log; a plan changed by a trigger shows in both.
+                    if (i.Triggered)
+                        rest.Add(s.Format("log.intent_changed", ("unit", i.Unit.Name), ("plan", PlanText(battle, i.Unit, i.Intent)),
+                            ("why", s["log.why_" + JsonField.SnakeCase(i.Why.ToString())])));
+                    else if (level == LogLevel.Full)
+                        rest.Add(s.Format("log.intent", ("unit", i.Unit.Name), ("plan", PlanText(battle, i.Unit, i.Intent))));
+                    break;
                 default:
                     if (Describe(battle.Grid, s, o) is string text) rest.Add(text);
                     break;
@@ -160,6 +170,7 @@ public static class CombatLog
             ? s.Format("log.staggered_resisted", ("target", x.Target.Name), ("amount", x.Amount), ("resisted", x.Resisted))
             : s.Format("log.staggered", ("target", x.Target.Name), ("amount", x.Amount)),
         Interrupted i => s.Format("log.interrupted", ("unit", i.Unit.Name)),
+        ThreatAdded t => s.Format("log.threat_added", ("proc", t.Proc.Name), ("target", t.Target.Name), ("amount", F(t.Amount, 1))),
         Fizzled { Reason: FizzleReason.TargetFell } f => s.Format("log.fizzle_target_fell", ("target", f.Target?.Name)),
         Fizzled f => s.Format("log.fizzle_caster_fell", ("caster", f.Caster.Name), ("action", f.Action.Name)),
         Died d => s.Format("log.died", ("unit", d.Unit.Name)),
@@ -172,6 +183,20 @@ public static class CombatLog
         TurnLost l => s.Format("log.turn_lost_" + l.Reason, ("unit", l.Unit.Name)),
         _ => null,
     };
+
+    /// <summary>An enemy's plan in words: "Slash → Rogue", "Move to row 0, col 1", "Defend", "to wait" or "?".</summary>
+    public static string PlanText(Battle battle, Unit unit, Intent intent)
+    {
+        var s = battle.Data.Text;
+        if (intent.Unknown) return s["log.plan_unknown"];
+        return intent.Decision switch
+        {
+            null => s["log.plan_wait"],
+            { Tile: { } tile } d => s.Format("log.plan_tile", ("action", d.Action.Name), ("tile", Pos(battle.Grid, s, unit, tile))),
+            { Target: { } target } d when target != unit => s.Format("log.plan_target", ("action", d.Action.Name), ("target", target.Name)),
+            var d => s.Format("log.plan_self", ("action", d.Action.Name)),
+        };
+    }
 
     /// <summary>A buff with what it does: "War Cry (+10 power, 3 turns, ×2)".</summary>
     public static string BuffText(Strings s, BuffApplied b)

@@ -98,6 +98,9 @@ public class SimulatorTests
             ["Proc"] = o => o is ProcRolled { Roll.Success: true, FromAction: false },
             ["Fear"] = o => o is BuffApplied { Buff.Def.Cc: CcKind.Fear },
             ["Push"] = o => o is Moved { Why: "Push" },
+            ["Taunt"] = o => o is ThreatAdded,
+            ["Plan drawn by a taunt"] = o => o is IntentSet { Why: IntentReason.Drawn },
+            ["Plan blocked"] = o => o is IntentSet { Why: IntentReason.Blocked },
         };
         var seen = checks.Keys.ToDictionary(k => k, _ => 0);
         for (ulong seed = 1; seed <= 20; seed++)
@@ -106,7 +109,8 @@ public class SimulatorTests
             foreach (var (name, check) in checks)
                 if (outcomes.Any(check)) seen[name]++;
         }
-        Assert.All(seen, kv => Assert.True(kv.Value >= 10, $"{kv.Key} fired in only {kv.Value} of 20 seeds"));
+        var counts = string.Join(", ", seen.Select(kv => $"{kv.Key} {kv.Value}"));
+        Assert.All(seen, kv => Assert.True(kv.Value >= 10, $"{kv.Key} fired in only {kv.Value} of 20 seeds ({counts})"));
     }
 
     /// <summary>On the default board (one party and one enemy area).</summary>

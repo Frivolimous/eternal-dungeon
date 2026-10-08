@@ -31,6 +31,8 @@ public sealed partial class Battle
         if (units.Any(u => Grid.AnchorOf(u) is null))
             throw new ArgumentException("Every unit needs a place on the grid");
         Rng = new Rng(seed);
+        foreach (var u in units)
+            u.ThreatScore = u.Stats.Get("starting_threat");
     }
 
     public Side? Winner => BattleRules.Winner(Units);
@@ -45,6 +47,7 @@ public sealed partial class Battle
     /// </summary>
     public ActionResult StartTurn(Unit unit)
     {
+        turnUnit = unit;
         var r = new ActionResult(Clock.Tick, unit, null, null);
         foreach (var buff in unit.Buffs.Where(b => b.Def.Duration == DurationKind.UntilNextTurn).ToList())
             Expire(unit, buff, r);
@@ -86,15 +89,18 @@ public sealed partial class Battle
                 if (buff.Def.PeriodicDamage > 0 && unit.Alive)
                 {
                     var before = unit.Health;
-                    var taken = unit.TakeDamage(DotTick(buff));
-                    AddThreat(buff.CasterId, taken.Absorbed + taken.ToHealth);
+                    var tick = DotTick(buff);
+                    var taken = unit.TakeDamage(tick);
+                    AddThreat(buff.CasterId, tick);
                     r.Add(new PeriodicDamaged(unit, buff, taken, before));
                     if (taken.Killed) AddDeath(unit, r);
                 }
                 if (buff.Def.PeriodicHeal > 0 && unit.Alive)
                 {
                     var before = unit.Health;
-                    r.Add(new Healed(unit, buff.Def.Name, unit.Heal(buff.Def.PeriodicHeal * buff.Stacks), before));
+                    var heal = buff.Def.PeriodicHeal * buff.Stacks;
+                    AddThreat(buff.CasterId, heal);
+                    r.Add(new Healed(unit, buff.Def.Name, unit.Heal(heal), before));
                 }
                 if (buff.Def.Duration == DurationKind.Turns && --buff.Remaining <= 0)
                     Expire(unit, buff, r);
@@ -219,7 +225,7 @@ public sealed partial class Battle
                     var health = target.Health;
                     var taken = target.TakeDamage(breakdown.Final);
                     dealt = taken.Absorbed + taken.ToHealth;
-                    actor.ThreatEarned += dealt;
+                    actor.ThreatScore += breakdown.Final;          // overkill and Shield count too
                     r.Add(new Damaged(target, breakdown, taken, health));
                     if (taken.Killed) AddDeath(target, r);
                 }
@@ -293,9 +299,10 @@ public sealed partial class Battle
                 Expire(unit, buff, r);
     }
 
+    /// <summary>Threat for damage or healing a buff's caster did (Anchor: Combat › Enemy targeting).</summary>
     void AddThreat(string unitId, double amount)
     {
-        if (Units.FirstOrDefault(u => u.Id == unitId) is { } u) u.ThreatEarned += amount;
+        if (Units.FirstOrDefault(u => u.Id == unitId) is { } u) u.ThreatScore += amount;
     }
 
     /// <summary>Collapses any area whose front row emptied (deaths, moves, pushes).</summary>
@@ -377,7 +384,9 @@ public sealed partial class Battle
         if (natural && buff.Def.DelayedDamage > 0 && unit.Alive)
         {
             var before = unit.Health;
-            var taken = unit.TakeDamage(buff.Def.DelayedDamage * buff.Stacks);
+            var amount = buff.Def.DelayedDamage * buff.Stacks;
+            var taken = unit.TakeDamage(amount);
+            AddThreat(buff.CasterId, amount);
             r.Add(new DelayedDamaged(unit, buff, taken, before));
             if (taken.Killed) AddDeath(unit, r);
         }
@@ -406,6 +415,7 @@ public sealed partial class Battle
 
     ActionResult Record(ActionResult r)
     {
+        ReviewIntents(r);
         Results.Add(r);
         return r;
     }

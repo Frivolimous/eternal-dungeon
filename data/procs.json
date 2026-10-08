@@ -16,5 +16,6 @@
   { "id": "rot", "name": "Rot", "trigger": "hit", "tags": ["spirit", "spell", "ranged", "toxic", "curse"], "target": "other", "key_1": "apply_buff", "value_1": "rot" },
   { "id": "mend", "name": "Mend", "trigger": "action_complete", "tags": ["spirit", "spell", "buff"], "target": "other", "key_1": "heal", "value_1": "20" },
   { "id": "smash_stagger", "name": "Stagger", "trigger": "hit", "tags": ["weapon", "physical", "melee", "heavy", "force"], "target": "other", "ignore_deval": true, "key_1": "stagger", "value_1": "20", "key_2": "interrupt" },
-  { "id": "war_cry", "name": "War Cry", "trigger": "action_complete", "tags": ["buff"], "target": "self", "key_1": "apply_buff", "value_1": "war_cry" }
+  { "id": "war_cry", "name": "War Cry", "trigger": "action_complete", "tags": ["buff"], "target": "self", "key_1": "apply_buff", "value_1": "war_cry" },
+  { "id": "taunt", "name": "Taunt", "trigger": "action_complete", "tags": ["buff"], "target": "self", "key_1": "threat", "value_1": "60", "key_2": "apply_buff", "value_2": "taunting" }
 ]

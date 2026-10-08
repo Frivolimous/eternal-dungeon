@@ -29,16 +29,17 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 | Rule | Placeholder |
 | --- | --- |
 | Stealth mastery | Until masteries exist as a system (M3), the Rogue unit has it built in: its Move (50 AP, like Move) reaches any empty tile in its area or in the enemy area, and applies Stealth until its next turn. A unit standing in the other side's area melees, and is meleed by, units on adjacent or diagonal tiles there. While in the enemy area, Move can also go to any empty tile in its own area (Jeremy, 2026-10-08) |
-| Stealth | +0.5 Avoid and −50 Threat until the unit's next turn (the old Cloak numbers). Using an enemy-targeted action breaks it, hit or miss (Jeremy, 2026-10-08), through the effect's break_on_attack flag. Exception still to build: with 1+ points in Deadly Shadows a crit doesn't break it (skill points arrive in M3) |
+| Stealth | +0.5 Avoid and Threatening −100% until the unit's next turn. Using an enemy-targeted action breaks it, hit or miss (Jeremy, 2026-10-08), through the effect's break_on_attack flag. Exception still to build: with 1+ points in Deadly Shadows a crit doesn't break it (skill points arrive in M3) |
 
 ## Enemy targeting
 
-Threat, its scale and Vulnerability: kept until after M2, then reviewed from playtests.
-
 | Rule | Placeholder |
 | --- | --- |
-| Threat | Damage dealt + healing done in this battle, plus the Threat stat (Stealth −50) |
-| Threat vs. Vulnerability scale | Threat is divided by the highest Threat among the possible targets, so both are 0–1 |
+| Overheal | Counts in full toward the healer's Threat score, to match overkill |
+| Starting Threat | The Warrior 20 (so the tank draws the first plans instead of a coin flip); everyone else 0. Gear and skill amounts to come |
+| Taunt | A Warrior action (50 AP): +60 Threat score and Taunting (Threatening +50%, 2 turns). Its AI uses it while an ally is below 50% Health and it isn't already Taunting. Added so the systems showcase shows threat effects and plans changing; replace when the Defender kit is designed |
+| Damage over time and delayed damage | Count toward the buff caster's Threat score |
+| Ally Health on a self action | An AI rule's ally_health_below on a self action means "while some other ally is below that share" (used by the Taunt rule) |
 | Vulnerability | The share of Health missing, plus the Vulnerability stat ÷ 100 |
 
 ## Presentation

@@ -91,6 +91,8 @@ public partial class CardFace : Control
             x += ArtCatalog.StatusIconDisplay + 2;
         }
 
+        if (Unit.Alive && Unit.Intent is { } intent) DrawIntent(font, p, intent);
+
         // Act meter (or cast progress) up the left edge.
         var meter = new Rect2(3, 4, 5, Size.Y - 8);
         DrawRect(meter, new Color(0, 0, 0, 0.5f));
@@ -137,6 +139,70 @@ public partial class CardFace : Control
         DrawRect(new Rect2(Vector2.One, Size - Vector2.One * 2), mark, false, Mark == CardMark.None ? 2 : 4);
         if (screen.Main.Art.Get($"card_frame_{ArtCatalog.SizeName(Unit.Def.Size)}") is { } frame && !rotatePortrait)
             DrawTextureRect(frame, new Rect2(Vector2.Zero, Size), false);
+    }
+
+    const int IntentIcon = 18;
+
+    /// <summary>0–1 while the intent flashes after a trigger changed the plan.</summary>
+    float intentFlash;
+
+    /// <summary>The plan changed because of something a unit did (a taunt, Stealth, a target falling): flash it.</summary>
+    public void FlashIntent(float seconds)
+    {
+        var t = CreateTween();
+        t.TweenMethod(Callable.From<float>(v =>
+        {
+            intentFlash = v;
+            QueueRedraw();
+        }), 1f, 0f, Math.Max(0.6f, seconds));
+    }
+
+    /// <summary>
+    /// An enemy's plan in the top-right corner of its portrait (Anchor: Combat › Enemy targeting): the planned
+    /// action's icon, then a small portrait of its target ("↑" for a Move, nothing for a self action). "?" while
+    /// Confused, "…" when it plans to wait.
+    /// </summary>
+    void DrawIntent(Font font, Rect2 p, Intent intent)
+    {
+        var d = intent.Decision;
+        var hasTarget = d is { Tile: not null } || (d?.Target is { } t0 && t0 != Unit);
+        var width = intent.Unknown || d is null || !hasTarget ? IntentIcon + 4 : IntentIcon * 2 + 6;
+        var box = new Rect2(p.End.X - width - 2, p.Position.Y + 2, width, IntentIcon + 4);
+        DrawRect(box, new Color(0, 0, 0, 0.75f));
+        DrawRect(box, intentFlash > 0 ? Ui.Gold.Lerp(Ui.Enemy, 1 - intentFlash) : new Color(Ui.Enemy, 0.8f), false, intentFlash > 0 ? 3 : 1);
+        var slot = new Rect2(box.Position + new Vector2(2, 2), new Vector2(IntentIcon, IntentIcon));
+        if (intent.Unknown || d is null)
+        {
+            DrawString(font, slot.Position + new Vector2(0, 14), intent.Unknown ? "?" : "…", HorizontalAlignment.Center, slot.Size.X, 14, Ui.Ink);
+            return;
+        }
+        if (screen.Main.Art.Get(ArtCatalog.ActionIconId(d.Action.Id)) is { } icon)
+            DrawTextureRect(icon, slot, false);
+        else
+        {
+            DrawRect(slot, Ui.Enemy.Darkened(0.4f));
+            DrawString(font, slot.Position + new Vector2(0, 14), d.Action.Name[..1], HorizontalAlignment.Center, slot.Size.X, 13, Ui.Ink);
+        }
+        if (!hasTarget) return;
+        var second = new Rect2(slot.Position + new Vector2(IntentIcon + 2, 0), slot.Size);
+        if (d.Tile is not null)
+        {
+            DrawString(font, second.Position + new Vector2(0, 14), "↑", HorizontalAlignment.Center, second.Size.X, 14, Ui.Ink);
+            return;
+        }
+        var target = d.Target!;
+        if (screen.Main.Art.Portrait(target.Def.Id) is { } tex)
+        {
+            var square = Math.Min(tex.GetWidth(), tex.GetHeight());         // a tall portrait shows its face
+            DrawTextureRectRegion(tex, second, new Rect2(0, 0, square, square));
+        }
+        else
+        {
+            DrawRect(second, Ui.Side(target.Side).Darkened(0.45f));
+            var initials = string.Concat(target.Def.Name.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(w => w[0]));
+            DrawString(font, second.Position + new Vector2(0, 13), initials, HorizontalAlignment.Center, second.Size.X, 10, Ui.Ink);
+        }
+        DrawRect(second, new Color(Ui.Side(target.Side), 0.9f), false, 1);
     }
 
     string PortraitState()

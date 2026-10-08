@@ -164,6 +164,11 @@ The rules themselves are in the Anchor; this is the map from rule to code.
 - **Grid** (`BattleGrid.cs`), **AI** (`UnitAi.cs`, profiles in ai_profiles.json; the heroes' profiles are the
   simulator's scripted AI), **runner** (`BattleRunner.cs`), **logs** (`CombatLog.cs`), **batch**
   (`BatchSummary.cs`), **encounters** (`EncounterSetup.cs`).
+- **Enemy intents** (`BattleIntents.cs`): enemies commit to their next turn (`Unit.Intent`) at battle start and at the end
+  of each turn; `Record` reviews every plan against the result's outcomes (deaths, moves, buffs applied, threat
+  effects) and re-plans only on those triggers, never on a buff wearing off. The session and the runner both play
+  enemies through `TakeIntent` and `EndTurn`, so a new turn path must call both. `StaleIntents` counts missed triggers
+  (tests keep it at 0).
 - **Game screen side** (`BattleSession.cs`, `Replay.cs`, `Preview.cs`): a session runs the battle turn by turn,
   pausing on each hero's turn (unless auto-battle), and records every hero decision; seed + decisions = a replay
   that reproduces the battle exactly. AI-made hero decisions are marked `auto` and re-asked on replay, because the

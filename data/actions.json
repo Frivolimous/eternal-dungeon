@@ -8,6 +8,7 @@
   { "id": "fire_bolt", "name": "Fire Bolt", "tags": ["arcane", "spell", "ranged", "fire"], "target": "enemy", "range": "any", "ap_cost": 100, "mana_cost": 10, "base_damage": 22, "cast_time": 50 },
   { "id": "frost_shard", "name": "Frost Shard", "tags": ["arcane", "spell", "ranged", "ice", "control"], "target": "enemy", "range": "any", "ap_cost": 100, "mana_cost": 8, "base_damage": 12, "procs": ["chill"] },
   { "id": "shield_bash", "name": "Shield Bash", "tags": ["weapon", "physical", "melee", "force", "control"], "target": "enemy", "range": "melee", "ap_cost": 100, "base_damage": 6, "procs": ["daze", "push"] },
+  { "id": "taunt", "name": "Taunt", "tags": ["buff"], "target": "self", "ap_cost": 50, "procs": ["taunt"], "note": "Placeholder (2026-10-08): a simple taunt so the showcase shows threat effects and intents changing" },
   { "id": "hex_bolt", "name": "Hex Bolt", "tags": ["spirit", "spell", "ranged", "dark", "curse"], "target": "enemy", "range": "any", "ap_cost": 100, "base_damage": 10, "cast_time": 60, "procs": ["dread"] },
   { "id": "goblin_slash", "name": "Slash", "tags": ["weapon", "physical", "melee"], "target": "enemy", "range": "melee", "ap_cost": 100, "base_damage": 15 },
   { "id": "goblin_shot", "name": "Shot", "tags": ["weapon", "physical", "ranged", "projectile"], "target": "enemy", "range": "any", "ap_cost": 100, "base_damage": 13 },

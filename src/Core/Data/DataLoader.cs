@@ -310,6 +310,7 @@ public static class DataLoader
                 ProcResult.Heal => proc with { Heal = Amount() },
                 ProcResult.Shield => proc with { Shield = Amount() },
                 ProcResult.Lifesteal => proc with { Lifesteal = Amount() },
+                ProcResult.Threat => proc with { Threat = Amount() },
                 ProcResult.Stagger => proc with
                 {
                     Stagger = Amount() is var s && s == Math.Floor(s) ? (int)s : throw r.Error(valueColumn, $"stagger needs a whole number, got \"{value}\""),
@@ -332,7 +333,7 @@ public static class DataLoader
 
         if (proc.Chance <= 0) throw r.Error("chance", "must be above 0");
         if (!proc.DoesSomething)
-            throw r.Error("key_1", "the proc does nothing: give it a result (damage, heal, shield, lifesteal, stagger, interrupt, displace or apply_buff)");
+            throw r.Error("key_1", "the proc does nothing: give it a result (damage, heal, shield, lifesteal, stagger, threat, interrupt, displace or apply_buff)");
         if (phase == ProcPhase.BeforeDamage && trigger != ProcTrigger.Hit)
             throw r.Error("phase", "only hit procs can resolve before damage");
         if (proc.Lifesteal > 0 && Array.IndexOf(HitTriggers, trigger) < 0)
@@ -417,8 +418,8 @@ public static class DataLoader
             var buff = x.OptStr("missing_buff");
             if (buff is not null && !buffs.Contains(buff))
                 throw x.Error("missing_buff", $"unknown buff \"{buff}\" (not in {t["buffs"].File})");
-            if (x.Has("ally_health_below") && def.Target != ActionTarget.Ally)
-                throw x.Error("ally_health_below", "only ally-targeted actions can pick an ally by Health");
+            if (x.Has("ally_health_below") && def.Target is not (ActionTarget.Ally or ActionTarget.Self))
+                throw x.Error("ally_health_below", "only ally-targeted actions (which pick that ally) and self actions (used while an ally is that hurt) can check an ally's Health");
             var targetBuff = x.OptStr("target_missing_buff");
             if (targetBuff is not null && !buffs.Contains(targetBuff))
                 throw x.Error("target_missing_buff", $"unknown buff \"{targetBuff}\" (not in {t["buffs"].File})");

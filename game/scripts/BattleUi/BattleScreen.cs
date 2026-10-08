@@ -343,6 +343,11 @@ public partial class BattleScreen : Control
                 Float(i.Unit, T("ui.interrupted"), Ui.Enemy, 14);
                 board.Cards[i.Unit].Shake(s * 0.3f);
                 break;
+            case IntentSet { Triggered: true } i when board.Cards.ContainsKey(i.Unit):
+                // A taunt, Stealth or a fall changed an enemy's plan: its intent flashes.
+                board.Cards[i.Unit].Redraw();
+                if (s > 0) board.Cards[i.Unit].Face.FlashIntent(s * 2.4f);
+                break;
             case TurnLost l:
                 Float(l.Unit, T("ui.turn_lost"), Ui.Dim, 14);
                 break;

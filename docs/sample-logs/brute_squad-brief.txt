@@ -4,8 +4,8 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Archer 60 HP
 
 [T 0.59] Rogue → Dagger Attack → Goblin Brute
          hit (100%) · 11 dmg (Physical) · Goblin Brute HP 200 → 189
-[T 0.90] Goblin Archer → Shot → Rogue
-         miss (77%)
+[T 0.90] Goblin Archer → Shot → Warrior
+         miss (90%)
 [T 1.00] Warrior → Power Attack → Goblin Brute
          hit (100%) · 33 dmg (Physical) · Goblin Brute HP 189 → 156
 [T 1.00] Elementalist → Frost Shard → Goblin Brute
@@ -75,10 +75,10 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Archer 60 HP
          applies Guard (+0.3 avoid, Shield 14, until next turn) on Warrior
 [T 6.21] Rogue → Move
          Rogue moves r0c0 → r0c0 (opposing area)
-         applies Stealth (+0.5 avoid, -50 threat, 1 turns) on Rogue
+         applies Stealth (+0.5 avoid, -1 threatening, 1 turns) on Rogue
 [T 6.63] Rogue → Move
          Rogue moves r0c0 (opposing area) → r0c1 (opposing area)
-         refreshes Stealth (+0.5 avoid, -50 threat, 1 turns) on Rogue
+         refreshes Stealth (+0.5 avoid, -1 threatening, 1 turns) on Rogue
 [T 6.90] Goblin Archer → Shot → Warrior
          hit (63%) · 14 dmg (Physical) · Shield absorbs 14 · Warrior HP 14 → 14
 [T 7.00] Stealth on Rogue ends

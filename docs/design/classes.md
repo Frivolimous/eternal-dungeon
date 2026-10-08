@@ -83,7 +83,7 @@ Bruiser: burst protection and up-front damage to start fights. Strong in short b
 | 2 | Battle Might | T2 | Strength+, C.Mult+; the first basic attack is an automatic crit |
 | 3 | Weapon Mastery | T2 | Hit+, Parry+; each hit applies stagger |
 | 4 | Fortitude | T2 | Health+, Fortification+ |
-| 5 | Imposing Presence | T3 | Threat+, Block+; Block is doubled until the first block |
+| 5 | Imposing Presence | T3 | Starting Threat+, Block+; Block is doubled until the first block |
 
 ```text
     1
@@ -119,7 +119,7 @@ Tactical and versatile: move into position, set up attacks and execute, or wait 
 
 | Mastery | Points | Effect |
 | --- | --- | --- |
-| Stealth | 1 | Move can also go into the enemy area. Every Move grants Stealth for 1 turn (Threat−) |
+| Stealth | 1 | Move can also go into the enemy area. Every Move grants Stealth for 1 turn (Threatening ×0) |
 | Quick Attack | 6 | Active: damage ×0.5, low AP cost |
 | Deadly Precision | 11 | Active: Accuracy+, Pen+ |
 

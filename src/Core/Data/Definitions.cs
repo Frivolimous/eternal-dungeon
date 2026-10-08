@@ -172,8 +172,9 @@ public sealed record ActionDef(
 public enum DurationKind { UntilNextTurn, Turns, Actions }
 
 /// <summary>What a proc does, one result per key/value pair (Anchor: Combat › Procs). Damage, heal, Shield,
-/// lifesteal and stagger are amounts, which add up when copies merge; displace, interrupt and apply buff are states.</summary>
-public enum ProcResult { Damage, Heal, Shield, Lifesteal, Stagger, Interrupt, Displace, ApplyBuff }
+/// lifesteal, stagger and threat are amounts, which add up when copies merge; displace, interrupt and apply buff are
+/// states.</summary>
+public enum ProcResult { Damage, Heal, Shield, Lifesteal, Stagger, Threat, Interrupt, Displace, ApplyBuff }
 
 /// <summary>The event a proc fires on (Anchor: Combat › Procs). Hit, Miss, Crit, Brutal and ActionComplete are the
 /// owner's own actions; Struck, Avoided and Damaged are actions against the owner (Damaged: only damage from
@@ -200,11 +201,11 @@ public enum Duplicates
 /// <summary>
 /// A proc: when <see cref="Trigger"/> happens (and the event's action carries one of <see cref="TriggerTags"/>, if
 /// any), roll <see cref="Chance"/> × (1 + Rate) ÷ (1 + Deval) over <see cref="Tags"/> (at most 100%; no Deval when
-/// <see cref="IgnoreDeval"/>), then apply its results. Amounts (damage, heal, Shield, lifesteal share, stagger) add
-/// only across merged copies; states (<see cref="Displace"/>, <see cref="Interrupt"/>, <see cref="Buff"/>, CC
+/// <see cref="IgnoreDeval"/>), then apply its results. Amounts (damage, heal, Shield, lifesteal share, stagger, threat)
+/// add only across merged copies; states (<see cref="Displace"/>, <see cref="Interrupt"/>, <see cref="Buff"/>, CC
 /// included) never add up. Stagger knocks the target's Act back by its amount × (1 − the target's Force Deval).
-/// Proc damage and heals go through the formulas with the proc's own tags, and are not actions. Units, buffs and
-/// actions all carry procs.
+/// Threat adds to the target's Threat score (a taunt targets its owner). Proc damage and heals go through the
+/// formulas with the proc's own tags, and are not actions. Units, buffs and actions all carry procs.
 /// </summary>
 public sealed record ProcDef(
     string Id,
@@ -225,9 +226,10 @@ public sealed record ProcDef(
     Displace Displace = Displace.None,
     string? Buff = null,
     bool Interrupt = false,
-    bool IgnoreDeval = false)
+    bool IgnoreDeval = false,
+    double Threat = 0)
 {
-    public bool DoesSomething => Damage > 0 || Heal > 0 || Shield > 0 || Lifesteal > 0 || Stagger > 0 || Interrupt || Displace != Displace.None || Buff is not null;
+    public bool DoesSomething => Damage > 0 || Heal > 0 || Shield > 0 || Lifesteal > 0 || Stagger > 0 || Threat > 0 || Interrupt || Displace != Displace.None || Buff is not null;
 }
 
 /// <summary>

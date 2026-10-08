@@ -16,7 +16,7 @@ public class TargetingTests
     {
         var loud = U("warrior", "loud", Side.Party);
         var hurt = U("rogue", "hurt", Side.Party);
-        loud.ThreatEarned = 100;                                          // threat 1.0 (the most), vulnerability 0
+        loud.ThreatScore = 100;                                           // threat 1.0 (the most), vulnerability 0
         hurt.TakeDamage(50);                                              // threat 0, vulnerability 0.5
 
         Assert.Equal(loud, UnitAi.PickTarget([loud, hurt], 0.75, new Rng(1)));        // 0.75 vs 0.125
@@ -52,24 +52,24 @@ public class TargetingTests
 
         warrior.ActTicks = TurnClock.TurnThreshold;
         var hit = b.Act(warrior, Repo.Actions["attack"], grunt);
-        Assert.Equal(hit.Of<Damaged>().Single().Taken.ToHealth, warrior.ThreatEarned);
+        Assert.Equal(20 + hit.Of<Damaged>().Single().Breakdown.Final, warrior.ThreatScore);   // Starting Threat 20
 
         shaman.ActTicks = TurnClock.TurnThreshold;
         var heal = b.Act(shaman, Repo.Actions["mend"], grunt);
-        Assert.Equal(heal.Of<Healed>().Single().Amount, shaman.ThreatEarned);
+        Assert.True(shaman.ThreatScore >= heal.Of<Healed>().Single().Amount);   // the full heal, overheal included
     }
 
     [Fact]
-    public void Vulnerability_rises_as_health_drops_and_stealth_lowers_threat()
+    public void Vulnerability_rises_as_health_drops_and_stealth_hides_threat()
     {
         var rogue = U("rogue", "rogue", Side.Party);
         Assert.Equal(0, rogue.Vulnerability);
         rogue.TakeDamage(25);
         Assert.Equal(0.25, rogue.Vulnerability, 12);
 
-        rogue.ThreatEarned = 80;
-        rogue.Stats.Add("stealth", "threat", -50);
-        Assert.Equal(30, rogue.Threat);
+        rogue.ThreatScore = 80;
+        rogue.Stats.Add("stealth", "threatening", -1);
+        Assert.Equal(0, rogue.EffectiveThreat);
     }
 
     [Fact]

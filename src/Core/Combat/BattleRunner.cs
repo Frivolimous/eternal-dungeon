@@ -1,8 +1,8 @@
 namespace EternalDungeon.Core.Combat;
 
 /// <summary>
-/// Runs a battle with every unit on its AI: takes clock events in order and plays each turn, until one side
-/// has no living units or the time limit passes (then neither side has won).
+/// Runs a battle with every unit on its AI (enemies on the plans they commit to): takes clock events in order and
+/// plays each turn, until one side has no living units or the time limit passes (then neither side has won).
 /// </summary>
 public static class BattleRunner
 {
@@ -40,9 +40,10 @@ public static class BattleRunner
         if (unit.LosesTurn)
         {
             battle.SkipTurn(unit);
+            battle.EndTurn(unit);
             return;
         }
-        switch (UnitAi.Decide(battle, unit))
+        switch (Battle.HasIntents(unit) ? battle.TakeIntent(unit) : UnitAi.Decide(battle, unit))
         {
             case null:
                 battle.Wait(unit);
@@ -54,5 +55,6 @@ public static class BattleRunner
                 battle.Act(unit, d.Action, d.Target);
                 break;
         }
+        battle.EndTurn(unit);
     }
 }

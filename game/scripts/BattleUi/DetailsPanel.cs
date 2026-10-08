@@ -7,7 +7,8 @@ using static EternalDungeon.Game.Text;
 namespace EternalDungeon.Game.BattleUi;
 
 /// <summary>
-/// The selected or hovered unit, in detail (M2 brief §4): health, Shield, Mana, Act and Speed, its main
+/// The selected or hovered unit, in detail (M2 brief §4): health, Shield, Mana, Act and Speed, an enemy's plan or a
+/// hero's share of the party's threat, its main
 /// stats, resistances by damage type, its cast, and its buffs with what they do.
 /// </summary>
 public partial class DetailsPanel : PanelContainer
@@ -60,6 +61,15 @@ public partial class DetailsPanel : PanelContainer
         sb.Append('\n');
         if (u.Casting is { } cast)
             sb.Append(Escape(F("ui.detail_casting", ("action", data.Actions[cast.ActionId].Name), ("time", CombatLog.T(cast.CompletesAt))))).Append('\n');
+        if (u.Alive && u.Intent is { } intent)
+            sb.Append(Escape(F("ui.detail_plan", ("plan", CombatLog.PlanText(battle, u, intent))))).Append('\n');
+        if (u.Alive && !Battle.HasIntents(u))
+        {
+            // The hero's share of the party's threat, as enemies score it right now.
+            var total = battle.Units.Where(x => x.Alive && x.Side == u.Side).Sum(x => x.EffectiveThreat);
+            var share = total > 0 ? u.EffectiveThreat / total : 0;
+            sb.Append(Escape(F("ui.detail_threat", ("share", CombatLog.Pct(share))))).Append('\n');
+        }
 
         // Main stats, untagged (each action's tags can add more; the target preview shows the exact numbers).
         sb.Append($"\n[color=#{Ui.Dim.ToHtml(false)}]{Escape(T("ui.detail_stats"))}[/color]\n");

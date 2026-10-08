@@ -5,10 +5,18 @@ namespace EternalDungeon.Core.Combat;
 /// <summary>What a unit will do with its turn: an action and its target unit or tile.</summary>
 public sealed record Decision(ActionDef Action, Unit? Target, Tile? Tile);
 
+/// <summary>An enemy's committed next turn, shown on its card (Anchor: Combat › Enemy targeting). A null
+/// <see cref="Decision"/> means it will wait. <see cref="Unknown"/>: it's Confused and will act at random ("?").</summary>
+public sealed record Intent(Decision? Decision, bool Unknown = false);
+
+/// <summary>Why an enemy made or changed its plan. The first two are routine; the rest are triggers the player
+/// caused (and the intent flashes).</summary>
+public enum IntentReason { BattleStart, TurnEnd, TargetFell, TargetHid, Drawn, Blocked, Feared, Confused }
+
 /// <summary>
 /// Picks actions and targets from a unit's AI profile (Anchor: Combat › Enemy targeting). Rules are tried in
 /// order; the first whose action is usable, whose conditions hold and that has a valid target wins. Enemy
-/// targets score w × Threat + (1 − w) × Vulnerability. Heroes use the same rules in the simulator, since there
+/// targets score w × scaled threat + (1 − w) × Vulnerability. Heroes use the same rules in the simulator, since there
 /// is no player input yet. With no rule usable, a unit uses its default actions: it Attacks if it has a valid
 /// target, otherwise it Moves toward the front if it can, otherwise it Defends. A feared unit only Moves away from the front, or Defends.
 /// </summary>
@@ -28,6 +36,9 @@ public static class UnitAi
             if (unit.CantUse(action) is not null) continue;
             if (rule.SelfHealthBelow is double self && unit.Health >= self * unit.MaxHealth) continue;
             if (rule.MissingBuff is string buff && unit.Buffs.Any(b => b.Def.Id == buff)) continue;
+            // On a self action, "ally below" means some other ally is (a taunt to protect them).
+            if (action.Target == ActionTarget.Self && rule.AllyHealthBelow is double share
+                && !battle.Units.Any(a => a != unit && a.Alive && a.Side == unit.Side && a.Health < share * a.MaxHealth)) continue;
             if (rule.NotIntruding && battle.Grid.Intruding(unit)) continue;
             if (rule.NotTwiceInARow && unit.LastActionId == rule.Action) continue;
 
@@ -143,21 +154,27 @@ public static class UnitAi
     public static List<Unit> ValidTargets(Battle battle, Unit unit, ActionDef action) =>
         battle.Units.Where(u => battle.Grid.CantTarget(unit, action, u) is null).ToList();
 
+    internal const double Tolerance = 1e-12;
+
     /// <summary>
-    /// The highest score w × Threat + (1 − w) × Vulnerability. Ties are broken by a pick from the battle's seeded
-    /// RNG (never a global one); it's only rolled when there is a tie. Threat is earned in damage and healing, so it's
-    /// scaled against the highest Threat among the candidates to put it on the same 0–1 footing as
-    /// Vulnerability (placeholder).
+    /// Each candidate's score, w × scaled threat + (1 − w) × Vulnerability (Anchor: Combat › Enemy targeting).
+    /// Effective threat (Threat score × Threatening) is divided by the highest among the candidates, so it's 0–1 like
+    /// Vulnerability and doesn't change with party size. When the highest is 0 (no threat yet, or everyone in
+    /// Stealth), scaled threat is 0 for all.
     /// </summary>
+    public static List<(Unit Unit, double Score)> Scores(IReadOnlyList<Unit> candidates, double w)
+    {
+        var max = candidates.Max(c => c.EffectiveThreat);
+        return [.. candidates.Select(c => (c, w * (max > 0 ? c.EffectiveThreat / max : 0) + (1 - w) * c.Vulnerability))];
+    }
+
+    /// <summary>The highest <see cref="Scores"/>. Ties are broken by a pick from the battle's seeded RNG (never a
+    /// global one); it's only rolled when there is a tie.</summary>
     public static Unit PickTarget(IReadOnlyList<Unit> candidates, double w, Rng rng)
     {
-        const double tolerance = 1e-12;
-        var maxThreat = candidates.Max(c => Math.Max(0, c.Threat));
-        var scored = candidates
-            .Select(c => (Unit: c, Score: w * (maxThreat > 0 ? Math.Max(0, c.Threat) / maxThreat : 0) + (1 - w) * c.Vulnerability))
-            .ToList();
+        var scored = Scores(candidates, w);
         var best = scored.Max(s => s.Score);
-        var tied = scored.Where(s => s.Score >= best - tolerance).Select(s => s.Unit).ToList();
+        var tied = scored.Where(s => s.Score >= best - Tolerance).Select(s => s.Unit).ToList();
         return tied.Count == 1 ? tied[0] : tied[rng.NextInt(tied.Count)];
     }
 

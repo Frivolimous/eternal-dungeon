@@ -4,6 +4,7 @@
   { "id": "rot", "name": "Rot", "duration": "turns", "length": 3, "periodic_damage": 4 },
   { "id": "war_cry", "name": "War Cry", "duration": "turns", "length": 3, "stacking": true, "max_stacks": 3 },
   { "id": "chill", "name": "Chill", "duration": "turns", "length": 2 },
+  { "id": "taunting", "name": "Taunting", "duration": "turns", "length": 2 },
   { "id": "daze", "name": "Dazed", "duration": "turns", "length": 1, "cc": "stun" },
   { "id": "dread", "name": "Dread", "duration": "turns", "length": 2, "cc": "fear" },
   { "id": "berserk", "name": "Berserk", "duration": "turns", "length": 3 },

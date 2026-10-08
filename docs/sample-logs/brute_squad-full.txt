@@ -2,14 +2,18 @@ Brute Squad · seed 42
 Party: Rogue 100 HP, Warrior 140 HP, Elementalist 80 HP
 Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Archer 60 HP
 
+[T 0.00] Goblin Brute plans Smash → Warrior
+[T 0.00] Goblin Grunt plans Slash → Warrior
+[T 0.00] Goblin Archer plans Shot → Warrior
 [T 0.59] Rogue → Dagger Attack → Goblin Brute
          hit (100%) · 11 dmg (Physical) · Goblin Brute HP 200 → 189
          roll 0.379 vs 1 → hit
          C.Rate 0.05 → 5%: roll 0.68 → no crit
          dmg = base 10 × power 1.175 (17.5) × mult 1 (0) × resist 0.9 (res 0.1, pen 0) × all dmg 1 (0) × all res 1 (0) = 10.575 → 11
-[T 0.90] Goblin Archer → Shot → Rogue
-         miss (77%)
-         roll 0.925 vs 0.765 → miss
+[T 0.90] Goblin Archer → Shot → Warrior
+         miss (90%)
+         roll 0.925 vs 0.9 → miss
+         Goblin Archer plans Shot → Warrior
 [T 1.00] Warrior → Power Attack → Goblin Brute
          hit (100%) · 33 dmg (Physical) · Goblin Brute HP 189 → 156
          roll 0.992 vs 1 → hit
@@ -24,6 +28,7 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Archer 60 HP
 [T 1.12] Goblin Grunt → Slash → Warrior
          miss (81%)
          roll 0.85 vs 0.81 → miss
+         Goblin Grunt plans Slash → Warrior
 [T 1.21] Rogue → Dagger Attack → Goblin Brute
          hit (100%) · 11 dmg (Physical) · Goblin Brute HP 141 → 130
          roll 0.761 vs 1 → hit
@@ -36,6 +41,7 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Archer 60 HP
          dmg = base 17 × power 1.3 (30) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 22.1 → 22
          Goblin Brute's Stagger procs (100%)
          staggers Warrior: −20 Act
+         Goblin Brute plans Smash → Warrior
 [T 1.84] Rogue → Dagger Attack → Goblin Brute
          hit (100%) · 11 dmg (Physical) · Goblin Brute HP 130 → 119
          roll 0.801 vs 1 → hit
@@ -46,12 +52,14 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Archer 60 HP
          roll 0.711 vs 0.9 → hit
          C.Rate 0.05 → 5%: roll 0.878 → no crit
          dmg = base 13 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.3 → 14
+         Goblin Archer plans Shot → Warrior
 [T 2.00] Elementalist begins casting Fire Bolt at Goblin Brute (ready at T 2.50)
 [T 2.23] Goblin Grunt → Slash → Warrior
          hit (81%) · 16 dmg (Physical) · Warrior HP 104 → 88
          roll 0.617 vs 0.81 → hit
          C.Rate 0.05 → 5%: roll 0.851 → no crit
          dmg = base 15 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15.75 → 16
+         Goblin Grunt plans Slash → Warrior
 [T 2.46] Rogue → Dagger Attack → Goblin Brute
          hit (100%) · 11 dmg (Physical) · Goblin Brute HP 119 → 108
          roll 0.708 vs 1 → hit
@@ -66,6 +74,7 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Archer 60 HP
          roll 0.179 vs 0.9 → hit
          C.Rate 0.05 → 5%: roll 0.436 → no crit
          dmg = base 13 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.3 → 14
+         Goblin Archer plans Shot → Warrior
 [T 3.00] Chill on Goblin Brute ends
 [T 3.09] Rogue → Dagger Attack → Goblin Brute
          hit (100%) · 11 dmg (Physical) · Goblin Brute HP 80 → 69
@@ -82,6 +91,7 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Archer 60 HP
          roll 0.789 vs 0.81 → hit
          C.Rate 0.05 → 5%: roll 0.635 → no crit
          dmg = base 15 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15.75 → 16
+         Goblin Grunt plans Slash → Warrior
 [T 3.50] Elementalist → Frost Shard → Goblin Brute
          hit (100%) · 15 dmg (Arcane, Ice) · Goblin Brute HP 53 → 38
          roll 0.231 vs 1 → hit
@@ -96,9 +106,11 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Archer 60 HP
 [T 3.88] Goblin Brute → Smash → Warrior
          miss (77%)
          roll 0.863 vs 0.765 → miss
+         Goblin Brute plans Smash → Warrior
 [T 3.90] Goblin Archer → Shot → Warrior
          miss (90%)
          roll 0.945 vs 0.9 → miss
+         Goblin Archer plans Shot → Warrior
 [T 4.20] Warrior → Power Attack → Goblin Brute
          hit (100%) · 33 dmg (Physical) · Goblin Brute HP 27 → 0
          roll 0.814 vs 1 → hit
@@ -113,12 +125,14 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Archer 60 HP
 [T 4.45] Goblin Grunt → Slash → Warrior
          miss (81%)
          roll 0.972 vs 0.81 → miss
+         Goblin Grunt plans Slash → Warrior
 [T 4.50] Elementalist begins casting Fire Bolt at Goblin Grunt (ready at T 5.00)
 [T 4.90] Goblin Archer → Shot → Warrior
          hit (90%) · 14 dmg (Physical) · Warrior HP 58 → 44
          roll 0.537 vs 0.9 → hit
          C.Rate 0.05 → 5%: roll 0.701 → no crit
          dmg = base 13 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.3 → 14
+         Goblin Archer plans Shot → Warrior
 [T 4.96] Rogue → Dagger Attack → Goblin Grunt
          hit (100%) · 12 dmg (Physical) · Goblin Grunt HP 67 → 55
          roll 0.804 vs 1 → hit
@@ -133,6 +147,7 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Archer 60 HP
          roll 0.126 vs 0.81 → hit
          C.Rate 0.05 → 5%: roll 0.565 → no crit
          dmg = base 15 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15.75 → 16
+         Goblin Grunt plans Slash → Warrior
 [T 5.59] Rogue → Dagger Attack → Goblin Grunt
          hit (100%) · 12 dmg (Physical) · Goblin Grunt HP 27 → 15
          roll 0.554 vs 1 → hit
@@ -143,6 +158,7 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Archer 60 HP
          roll 0.828 vs 0.9 → hit
          C.Rate 0.05 → 5%: roll 0.52 → no crit
          dmg = base 13 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.3 → 14
+         Goblin Archer plans Shot → Warrior
 [T 6.00] Elementalist → Frost Shard → Goblin Grunt
          hit (100%) · 15 dmg (Arcane, Ice) · Goblin Grunt HP 15 → 0
          roll 0.317 vs 1 → hit
@@ -155,16 +171,17 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Archer 60 HP
 [T 6.21] Rogue → Move
          Rogue moves r0c0 → r0c0 (opposing area)
          Rogue's Stealth procs (100%)
-         applies Stealth (+0.5 avoid, -50 threat, 1 turns) on Rogue
+         applies Stealth (+0.5 avoid, -1 threatening, 1 turns) on Rogue
 [T 6.63] Rogue → Move
          Rogue moves r0c0 (opposing area) → r0c1 (opposing area)
          Rogue's Stealth procs (100%)
-         refreshes Stealth (+0.5 avoid, -50 threat, 1 turns) on Rogue
+         refreshes Stealth (+0.5 avoid, -1 threatening, 1 turns) on Rogue
 [T 6.90] Goblin Archer → Shot → Warrior
          hit (63%) · 14 dmg (Physical) · Shield absorbs 14 · Warrior HP 14 → 14
          roll 0.192 vs 0.63 → hit
          C.Rate 0.05 → 5%: roll 0.644 → no crit
          dmg = base 13 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.3 → 14
+         Goblin Archer plans Shot → Warrior
 [T 7.00] Stealth on Rogue ends
 [T 7.00] Elementalist begins casting Fire Bolt at Goblin Archer (ready at T 7.50)
 [T 7.05] Rogue → Dagger Attack → Goblin Archer

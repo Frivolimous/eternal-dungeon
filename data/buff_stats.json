@@ -1,9 +1,10 @@
 [
   { "buff": "guard", "stat": "avoid", "value": 0.3 },
   { "buff": "stealth", "stat": "avoid", "value": 0.5 },
-  { "buff": "stealth", "stat": "threat", "value": -50 },
+  { "buff": "stealth", "stat": "threatening", "value": -1 },
   { "buff": "war_cry", "stat": "power", "value": 10 },
   { "buff": "chill", "stat": "speed", "value": -30 },
+  { "buff": "taunting", "stat": "threatening", "value": 0.5 },
   { "buff": "berserk", "stat": "power", "value": 25 },
   { "buff": "armor_break", "stat": "penetrate", "value": 0.5 }
 ]

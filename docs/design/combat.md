@@ -54,7 +54,7 @@ Every character starts with Weapon C.Rate 5% and untagged C.Mult 0.5, so every w
 - At most 6 units are on the map: the 4 party heroes plus overflow from mercenaries and pets.
 - Heroes move freely within their area, and enemies generally stay put. Every action has a Range.
 - **Melee reach:** from the front row, a melee action reaches the enemy's front row in the same lane or the next lane over: straight ahead or diagonal, never further along the line (decided 2026-10-08). Reach weapons also hit the second row, with the same lanes. A unit covering several lanes (size 2) reaches from, and can be reached in, each of them. Inside one area (a Rogue among the enemies), melee reaches adjacent and diagonal tiles only. Ranged attacks and spells reach any tile.
-- Rogues on either side can enter the opposing area: with the Stealth mastery (the Rogue's first), Move can also go to any empty tile in the enemy area, and every Move grants Stealth for 1 turn (less Threat). This replaces the old Sneak action. While a unit stands in the enemy area, its Move can also go to any empty tile in its own area, so it can come back (decided 2026-10-08).
+- Rogues on either side can enter the opposing area: with the Stealth mastery (the Rogue's first), Move can also go to any empty tile in the enemy area, and every Move grants Stealth for 1 turn (Threatening ×0). This replaces the old Sneak action. While a unit stands in the enemy area, its Move can also go to any empty tile in its own area, so it can come back (decided 2026-10-08).
 - Enemies usually appear in front. In an Ambushed battle they appear on all sides, and in a Surrounding battle the party flanks them.
 - When none of an area's own units is left in its front row, its own units step forward until one is (the forward collapse). Units of the other side standing in it (a Rogue that moved in) don't count and don't step with them: each keeps its tile if it's still free, otherwise it goes to the front-most free tile there (nearest its lane), otherwise to the front-most free tile of its own area, otherwise its own area gains a new back row for it (decided 2026-10-08). Some actions reposition enemies.
 - Push and Pull move a unit one row back or forward within its area, only if the tiles are free.
@@ -94,9 +94,36 @@ Damage over time scales with the caster: when it's applied, the caster's Power a
 
 ## Enemy targeting
 
-Enemies pick targets by weighing Threat against Vulnerability, and each AI type weights them differently (up to 75% toward one). Threat rises when a hero deals damage or heals. Vulnerability is hidden and rises as Health drops.
+Redesigned 2026-10-08 (Jeremy).
 
-Ties between equally scored targets are broken by a pick from the battle's seeded random generator, never a global one.
+**Threat score.** Every unit has a Threat score for the battle. It starts at the unit's Starting Threat stat and only goes up (no decay; to revisit after testing). It rises by:
+
+- **Damage dealt:** the full damage of every hit after Resist and Block, including overkill and the part a Shield absorbs, so a big finishing blow draws attention. A miss earns nothing. Damage over time and delayed damage count for the buff's caster.
+- **Healing done:** the full heal, overheal included (a placeholder, to match overkill).
+- **Threat effects:** a proc result that adds a set amount to its target's Threat score. A taunt is a threat proc that targets its owner.
+
+**Threatening** (Add, base 100%, never below 0) multiplies the Threat score whenever targets are scored. It applies at scoring time, not when threat is earned, so it's reversible: Stealth is Threatening −100% (×0) while it lasts, and the unit's whole history counts again afterwards. **Vulnerability** is hidden and rises as Health drops.
+
+**Scoring.** For each target the enemy can reach with the action it's choosing:
+
+- effective threat = Threat score × Threatening;
+- scaled threat = effective threat ÷ the highest effective threat among those targets (0 for all when that highest is 0: no threat yet, or everyone in Stealth);
+- score = w × scaled threat + (1 − w) × Vulnerability, w from the AI profile (0.25–0.75).
+
+The highest score wins. Ties are broken by a pick from the battle's seeded random generator, never a global one. Percent of the highest is kept on purpose: unlike percent of the total, it doesn't change with party size (a fifth unit or a pet doesn't dilute everyone). The UI can still show each hero's share of the total.
+
+**Committed intents.** Enemies decide their next action and target ahead of time, and the player sees it on their card.
+
+- An enemy plans at the start of the battle (after fight-start procs) and at the end of each of its own turns. Planning uses the battle's seeded random generator when it's made, so replays stay exact. Its AI rules ("heal self below 40%") are checked when it plans, not when it acts.
+- On its turn it does what it planned. The plan changes, straight away, only when a unit does something:
+  1. **Its target lowers its own Threatening** (enters Stealth): it plans again.
+  2. **Another unit has its Threatening raised, or a threat effect lands on it** (a taunt): the enemy compares only its current target and that unit, on the usual scores, and switches if that unit now scores higher.
+  3. **Its target falls:** it plans again.
+  4. **The plan becomes impossible:** the target or the planned tile is out of reach after a Move, push, pull or collapse, the tile was taken, or the enemy was Silenced, Rooted or is out of Mana. It plans again. Gaining **Fear** also re-plans (step back, or Defend); losing Fear doesn't.
+- Gaining **Confusion** turns the plan into "?": on its turn the enemy acts at random.
+- A plan never changes because a buff wore off, was removed or broke (Stealth ending included), or because ordinary damage and healing moved the scores. Otherwise intents would flicker and the player couldn't plan. Plans react to what units do, not to what wears off.
+- As a safety net the plan is checked again when the turn comes; if it has become impossible without a trigger catching it, the enemy decides afresh (a missed trigger, which the tests keep at zero).
+- Heroes don't commit: they choose on their turn, or by AI on auto-battle.
 
 ## Buffs
 

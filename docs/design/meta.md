@@ -27,3 +27,5 @@ Progression has three layers: what lasts one run (Boons, Trinkets), what a hero 
 - Do classes level up? (Their out-of-combat side is settled: class traits and exploration skills, see [Classes](classes.md).)
 - One town per dungeon level (5 towns)? Heroes between dungeons stay in the town for their tier, and each town has its own shop and stash. This would enforce the minimum-dungeon rule through geography, but gear could then move forward only if a hero carries it there. Undecided, and the single shared stash stays in place until then.
 - Optional cosmetic DLC (hero skins) after launch?
+- Defend lowers your Threat score? Only if testing shows a need (the score only goes up for now).
+- A small Starting Threat bonus for the front row? Only if testing shows a need.

@@ -16,7 +16,7 @@ public class DefaultActionTests
     {
         Assert.Equal(new DefaultActions("attack", "defend", "move"), Repo.DefaultActions);
         Assert.Equal(["goblin_slash", "attack", "defend", "move"], Repo.ActionsOf(Repo.Units["goblin_grunt"]));
-        Assert.Equal(["power_attack", "shield_bash", "attack", "defend", "move"], Repo.ActionsOf(Repo.Units["warrior"]));
+        Assert.Equal(["power_attack", "shield_bash", "taunt", "attack", "defend", "move"], Repo.ActionsOf(Repo.Units["warrior"]));
     }
 
     [Fact]

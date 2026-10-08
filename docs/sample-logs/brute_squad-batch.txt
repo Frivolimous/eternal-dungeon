@@ -1,45 +1,44 @@
 Brute Squad · 1000 battles · seeds 1–1000
-Win rate         99.8%  (998 won, 2 lost, 0 stalemates)
-Battle length    8.7 turns on average
-Party HP left    49.0% on average, 0.0% at worst
-Hit rate         91.7% of 34294 attacks
+Win rate         100.0%  (1000 won, 0 lost, 0 stalemates)
+Battle length    8.6 turns on average
+Party HP left    49.3% on average, 3.1% at worst
+Hit rate         92.1% of 35084 attacks
 
 Damage dealt per battle
-  Elementalist              120.5
-  Rogue                     118.1
-  Warrior                   106.3
-  Goblin Archer              70.1
-  Goblin Brute               57.7
-  Goblin Grunt               42.0
+  Rogue                     139.5
+  Elementalist              118.7
+  Warrior                    86.7
+  Goblin Archer              71.2
+  Goblin Brute               57.4
+  Goblin Grunt               41.5
 
 Hero deaths per battle
-  Warrior                     0.4
-  Rogue                       0.3
-  Elementalist                0.0
+  Warrior                     0.5
+  Rogue                       0.1
 
 Actions used per battle
   Elementalist: Fire Bolt               3.3
-  Elementalist: Frost Shard             3.6
+  Elementalist: Frost Shard             3.5
   Goblin Archer: Shot                   6.2
   Goblin Brute: Smash                   3.6
   Goblin Grunt: Slash                   3.3
-  Rogue: Dagger Attack                 10.6
-  Rogue: Defend                         0.5
-  Rogue: Move                           0.7
-  Warrior: Attack                       1.4
-  Warrior: Defend                       0.8
-  Warrior: Power Attack                 2.5
+  Rogue: Dagger Attack                 12.4
+  Rogue: Defend                         0.3
+  Rogue: Move                           0.8
+  Warrior: Attack                       0.6
+  Warrior: Defend                       1.1
+  Warrior: Power Attack                 2.3
 
 Effects and CC applied per battle
-  Chill                                 3.1
+  Chill                                 3.2
   Guard                                 1.3
-  Stealth                               0.7
+  Stealth                               0.8
   Act knocked back (stagger)           48.4
   Casts interrupted                     0.0
 
 Procs fired per battle
-  Elementalist: Chill                   3.1
+  Elementalist: Chill                   3.2
   Goblin Brute: Stagger                 2.4
-  Rogue: Guard                          0.5
-  Rogue: Stealth                        0.7
-  Warrior: Guard                        0.8
+  Rogue: Guard                          0.3
+  Rogue: Stealth                        0.8
+  Warrior: Guard                        1.1

@@ -131,7 +131,7 @@ public sealed partial class Battle
             var breakdown = Resolution.ProcDamage(owner, def, target, def.Damage * scale);
             var before = target.Health;
             var taken = target.TakeDamage(breakdown.Final);
-            owner.ThreatEarned += taken.Absorbed + taken.ToHealth;
+            owner.ThreatScore += breakdown.Final;
             r.Add(new ProcDamaged(owner, target, def, breakdown, taken, before));
             if (taken.Killed) AddDeath(target, r);
         }
@@ -152,6 +152,12 @@ public sealed partial class Battle
             target.ActTicks -= amount * TurnClock.TicksPerTurn;
             r.Add(new Staggered(target, amount, full - amount));
         }
+        if (def.Threat > 0 && target.Alive)
+        {
+            var amount = def.Threat * scale;
+            target.ThreatScore += amount;
+            r.Add(new ThreatAdded(target, def, amount));
+        }
         if (def.Interrupt && target.Alive)
             Interrupt(target, r);
         if (def.Displace != Displace.None && target.Alive && Grid.AnchorOf(target) is { } from && Grid.Shove(target, def.Displace) is { } to)
@@ -166,7 +172,7 @@ public sealed partial class Battle
         if (amount <= 0 || !target.Alive) return;
         var before = target.Health;
         var healed = target.Heal(amount);
-        owner.ThreatEarned += healed;
+        owner.ThreatScore += amount;                       // overheal counts too (placeholder)
         r.Add(new Healed(target, def.Name, healed, before));
     }
 
@@ -174,7 +180,8 @@ public sealed partial class Battle
 
     bool started;
 
-    /// <summary>The fight begins: every unit's fight-start procs fire (once per battle).</summary>
+    /// <summary>The fight begins: every unit's fight-start procs fire (once per battle), then every enemy plans its first
+    /// turn.</summary>
     public ActionResult Start()
     {
         if (started) throw new InvalidOperationException("The battle has already started");
@@ -184,6 +191,8 @@ public sealed partial class Battle
         foreach (var unit in Units)
             FireProcs(ProcTrigger.FightStart, new ProcEvent(unit, null, null, 0, queue, r));
         Process(queue, r);
-        return Record(r);
+        Record(r);
+        PlanEnemies(r);
+        return r;
     }
 }

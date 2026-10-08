@@ -56,6 +56,16 @@ public sealed record AreaGrew(Side Side, int Area) : Outcome;
 /// resisted <see cref="Resisted"/> of it.</summary>
 public sealed record Staggered(Unit Target, int Amount, int Resisted) : Outcome;
 
+/// <summary>An enemy planned its next turn, or changed its plan (<see cref="Triggered"/>: because of something a unit
+/// did, so the intent flashes).</summary>
+public sealed record IntentSet(Unit Unit, Intent Intent, IntentReason Why) : Outcome
+{
+    public bool Triggered => Why is not (IntentReason.BattleStart or IntentReason.TurnEnd);
+}
+
+/// <summary>A threat effect (a taunt) raised <see cref="Target"/>'s Threat score.</summary>
+public sealed record ThreatAdded(Unit Target, ProcDef Proc, double Amount) : Outcome;
+
 /// <summary>A cast cancelled by an interrupt or a stun: the spell fizzles.</summary>
 public sealed record Interrupted(Unit Unit, Cast Cast) : Outcome;
 

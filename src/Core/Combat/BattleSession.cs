@@ -99,6 +99,14 @@ public sealed class BattleSession
         if (unit.LosesTurn)
         {
             Battle.SkipTurn(unit);
+            Battle.EndTurn(unit);
+            return;
+        }
+        // Enemies carry out the plan they showed (and plan the next turn once this one is done).
+        if (Battle.HasIntents(unit))
+        {
+            Play(unit, Battle.TakeIntent(unit));
+            Battle.EndTurn(unit);
             return;
         }
         // Confusion and Fear take the turn out of the player's hands (Jeremy, 2026-10-08): Confusion acts at random,

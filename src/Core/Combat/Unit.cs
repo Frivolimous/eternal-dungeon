@@ -10,8 +10,8 @@ public readonly record struct DamageTaken(int Absorbed, int ToHealth, bool Kille
 
 /// <summary>
 /// A unit in battle (Anchor: Stat system › Stat types). Vitals are whole numbers: Health and Mana up to their
-/// stat maximums, Shield on top of Health (it absorbs damage first), and Act on the 100-point meter. Threat
-/// and Vulnerability are hidden and used by enemy targeting.
+/// stat maximums, Shield on top of Health (it absorbs damage first), and Act on the 100-point meter. The Threat
+/// score and Vulnerability are hidden and used by enemy targeting.
 /// </summary>
 public sealed class Unit
 {
@@ -42,11 +42,22 @@ public sealed class Unit
     /// <summary>The name in combat logs, numbered when a battle has several of the same unit ("Goblin Grunt #2").</summary>
     public string Name { get; set; }
 
-    /// <summary>Threat earned in this battle: damage dealt plus healing done (Anchor: Enemy targeting).</summary>
-    public double ThreatEarned { get; set; }
+    /// <summary>
+    /// Hidden. The Threat score for this battle (Anchor: Combat › Enemy targeting): Starting Threat when the battle
+    /// begins, then every point of damage dealt (overkill and Shield included) and healing done (overheal included),
+    /// plus threat effects. It only goes up.
+    /// </summary>
+    public double ThreatScore { get; set; }
 
-    /// <summary>Hidden. Threat earned plus the Threat stat (Stealth lowers it).</summary>
-    public double Threat => ThreatEarned + Stats.Get("threat");
+    /// <summary>Hidden. The Threatening stat, never below 0 (Stealth makes it 0 while it lasts).</summary>
+    public double Threatening => Math.Max(0, Stats.Get("threatening"));
+
+    /// <summary>What enemies score: the Threat score × Threatening, applied now, so the unit's full history counts
+    /// again once a Threatening change ends.</summary>
+    public double EffectiveThreat => ThreatScore * Threatening;
+
+    /// <summary>An enemy's committed next action, shown on its card (null for heroes).</summary>
+    public Intent? Intent { get; set; }
 
     /// <summary>Hidden. Rises as Health drops: the share of Health missing, plus the Vulnerability stat in percent.</summary>
     public double Vulnerability => 1 - (double)Health / Math.Max(1, MaxHealth) + Stats.Get("vulnerability") / 100;

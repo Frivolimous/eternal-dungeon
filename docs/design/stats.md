@@ -11,7 +11,7 @@ A tag stat is written TAG STAT value, and it combines the same way as its base s
 
 | Group | Stats |
 | --- | --- |
-| Character (untagged) | Health, Mana, Speed, Initiative, Threat, Vulnerability (hidden), All Damage, All Resist |
+| Character (untagged) | Health, Mana, Speed, Initiative, Threatening, Starting Threat, Vulnerability (the last three hidden), All Damage, All Resist |
 | Attack (tag-keyed) | Base Dmg, Power, Multiplier, Penetrate, Hit, Rate (chance stat, Add), C.Rate, C.Mult |
 | Defense (tag-keyed) | Resist, Avoid, Devaluation (Deval: chance stat, Add) |
 | Vitals | Health (from skills and armor), Mana (from skills and some gear), Action (from Speed), Shield (from blocking, actions and spells) |
@@ -64,7 +64,7 @@ Which stats use each mode:
 
 | Mode | Stats |
 | --- | --- |
-| Add | Health, Mana, Speed, Initiative, Threat, Vulnerability, All Damage, Base Dmg, Power, Multiplier, Rate and Deval (chance stats, Add), C.Rate (hard cap 200%), C.Mult |
+| Add | Health, Mana, Speed, Initiative, Threatening (base 100%, never below 0), Starting Threat, Vulnerability, All Damage, Base Dmg, Power, Multiplier, Rate and Deval (chance stats, Add), C.Rate (hard cap 200%), C.Mult |
 | Mult | None for now. Reserved for rare, build-defining effects. |
 | Dim | All Resist, Penetrate, Hit, Resist, Avoid (chance stats: they generally stay between 0 and 1; curses are the exception and can push them below 0). Hit is offset by 1: its modifiers combine from 0 and the total is 1 + that, so it's 100% by default (see Combat › Formulas) |
 
@@ -77,5 +77,7 @@ Rate and Deval are chance stats (Add), written as fractions: unlike the Dim chan
 | Rate | Intellect | Gadget 0.001 a point, Cryptic 0.0005 a point (Intellect 10 = +1% Gadget procs) |
 | Deval | Tenacity | Control 0.01 a point (Tenacity 10 = Control procs ÷ 1.1) |
 | Deval | Bosses (data) | Force 0.5 (the Goblin Chief: stagger halved) |
+
+Threatening multiplies a unit's Threat score when enemies score targets (Stealth: −100%, so ×0 while it lasts), and Starting Threat is the score a unit begins each battle with (gear such as shields and heavy armor, skills such as Imposing Presence). See Combat › Enemy targeting. They replaced the flat Threat stat (2026-10-08).
 
 Two untagged stats feed the damage formula: All Damage (Add; factor 1 + All Damage, like Multiplier) and All Resist (Dim).
