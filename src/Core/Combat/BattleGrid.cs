@@ -49,7 +49,8 @@ public sealed class BattleGrid
     /// <summary>Area ids on the default board.</summary>
     public const int PartyArea = 0, EnemyArea = 1;
 
-    public IReadOnlyList<BattleArea> Areas { get; }
+    readonly List<BattleArea> areas;
+    public IReadOnlyList<BattleArea> Areas => areas;
     public IReadOnlyList<Front> Fronts { get; }
 
     readonly Dictionary<Unit, Tile> anchors = [];
@@ -72,7 +73,7 @@ public sealed class BattleGrid
             if (areas[f.AreaA].Side == areas[f.AreaB].Side) throw new ArgumentException($"front {f} joins two areas of one side");
         }
         if (areas.Any(a => !fronts.Any(f => f.Touches(a.Id)))) throw new ArgumentException("every area needs a front");
-        Areas = areas;
+        this.areas = [.. areas];
         Fronts = fronts;
     }
 
@@ -226,8 +227,18 @@ public sealed class BattleGrid
             case ActionTarget.Tile:
                 return "targets_a_tile";
         }
-        if (action.Range is not (ActionRange.Melee or ActionRange.Reach) || action.Target != ActionTarget.Enemy)
-            return null;
+        if (action.Target != ActionTarget.Enemy) return null;
+        return CantReach(actor, action, target);
+    }
+
+    /// <summary>
+    /// Whether <paramref name="action"/>'s range reaches <paramref name="target"/>, whichever side it's on: a Confused
+    /// unit can hit its allies. Melee and Reach follow the reach rules below; everything else reaches every tile.
+    /// </summary>
+    public string? CantReach(Unit actor, ActionDef action, Unit target)
+    {
+        if (!target.Alive) return "target_down";
+        if (action.Range is not (ActionRange.Melee or ActionRange.Reach)) return null;
         if (AnchorOf(actor) is not { } a || AnchorOf(target) is not { } b) return "out_of_reach";
 
         var reach = action.Range == ActionRange.Reach ? 2 : 1;
@@ -238,7 +249,7 @@ public sealed class BattleGrid
             return Footprint(actor).Any(x => Footprint(target).Any(y => Math.Max(Math.Abs(x.Row - y.Row), Math.Abs(x.Col - y.Col)) <= reach))
                 ? null
                 : "out_of_reach";
-        if (Intruding(target)) return "out_of_reach";
+        if (Intruding(target) || SideOf(a) == SideOf(b)) return "out_of_reach";
         if (!InFrontRow(actor)) return "not_in_front_row";
 
         // Across a front: from the front row, the target's first row (two for Reach), in the same lane or the next
@@ -333,24 +344,74 @@ public sealed class BattleGrid
     }
 
     /// <summary>
-    /// While <paramref name="area"/>'s front row has no living unit and there's someone behind, everyone in it
-    /// steps one row forward. Returns the units that moved. Areas with more than one front don't collapse (M3).
+    /// The forward collapse (Jeremy, 2026-10-08). When none of <paramref name="area"/>'s own units stands in its front
+    /// row, its own units step forward until one does. Units of the other side standing in it (a Rogue that moved in)
+    /// don't count and don't step with them: each keeps its tile if it's still free, else goes to the front-most free
+    /// tile there (nearest its lane), else to the front-most free tile of its own side's area, else a new back row is
+    /// added to that area for it. Areas with more than one front don't collapse (M3).
     /// </summary>
-    public List<Unit> Collapse(int area)
+    /// <returns>Every unit that moved, with where from, where to, and why ("collapse" or "displaced"), and the areas
+    /// that grew a row.</returns>
+    public (List<(Unit Unit, Tile From, Tile To, string Why)> Moves, List<int> Grown) Collapse(int area)
     {
-        var moved = new List<Unit>();
-        if (FrontsOf(area).Count() != 1) return moved;
+        var moves = new List<(Unit, Tile, Tile, string)>();
+        var grown = new List<int>();
+        if (FrontsOf(area).Count() != 1) return (moves, grown);
+        var side = Areas[area].Side;
         var edge = FacingOf(area);
         var (back, _) = Steps(edge);
-        while (true)
-        {
-            var inArea = anchors.Where(kv => kv.Key.Alive && kv.Value.Area == area).Select(kv => kv.Key).ToList();
-            if (inArea.Count == 0 || inArea.Any(u => DepthOf(u, edge) == 0)) return moved;
-            foreach (var u in inArea)
-            {
+        var here = anchors.Where(kv => kv.Key.Alive && kv.Value.Area == area).Select(kv => kv.Key).ToList();
+        var own = here.Where(u => u.Side == side).ToList();
+        if (own.Count == 0 || own.Any(u => DepthOf(u, edge) == 0)) return (moves, grown);
+
+        var from = here.ToDictionary(u => u, u => anchors[u]);
+        var guests = here.Where(u => u.Side != side).OrderBy(u => Relative(from[u]).Depth).ThenBy(u => Relative(from[u]).Lane).ToList();
+        foreach (var g in guests) anchors.Remove(g);
+        while (!own.Any(u => DepthOf(u, edge) == 0))
+            foreach (var u in own)
                 anchors[u] = Step(anchors[u], back, -1);
-                if (!moved.Contains(u)) moved.Add(u);
+        foreach (var u in own)
+            moves.Add((u, from[u], anchors[u], "collapse"));
+
+        foreach (var guest in guests)
+        {
+            var was = from[guest];
+            var lane = Relative(was).Lane;
+            Tile? spot = Fits(guest, was) ? was : FrontMost(guest, area, lane);
+            if (spot is null)
+            {
+                var home = HomeOf(guest.Side).Id;
+                spot = FrontMost(guest, home, lane);
+                if (spot is null)
+                {
+                    AddBackRow(home);
+                    grown.Add(home);
+                    spot = FrontMost(guest, home, lane);
+                }
             }
+            anchors[guest] = spot!.Value;
+            if (spot.Value != was) moves.Add((guest, was, spot.Value, "displaced"));
         }
+        return (moves, grown);
+    }
+
+    /// <summary>The free tile nearest <paramref name="area"/>'s front where <paramref name="unit"/> fits, nearest
+    /// <paramref name="lane"/> first; null when there's none.</summary>
+    Tile? FrontMost(Unit unit, int area, int lane) =>
+        TilesOf(area)
+            .OrderBy(t => Relative(t).Depth).ThenBy(t => Math.Abs(Relative(t).Lane - lane)).ThenBy(t => Relative(t).Lane)
+            .Cast<Tile?>()
+            .FirstOrDefault(t => Fits(unit, t!.Value));
+
+    /// <summary>Adds a row at the back of <paramref name="area"/> (the row furthest from its front). Where the back is
+    /// row or column 0, everything in the area shifts by one so its front-relative position is unchanged.</summary>
+    public void AddBackRow(int area)
+    {
+        var a = Areas[area];
+        var edge = FacingOf(area);
+        areas[area] = edge is Edge.RowStart or Edge.RowEnd ? a with { Rows = a.Rows + 1 } : a with { Cols = a.Cols + 1 };
+        if (edge is Edge.RowEnd or Edge.ColEnd)
+            foreach (var (u, t) in anchors.Where(kv => kv.Value.Area == area).ToList())
+                anchors[u] = edge == Edge.RowEnd ? t with { Row = t.Row + 1 } : t with { Col = t.Col + 1 };
     }
 }

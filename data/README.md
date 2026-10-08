@@ -31,7 +31,7 @@ Godot's translation system, so the simulator and the game print the same lines. 
 | `stats` | A stat | `combine`: add, dim or mult. `point_value`: what one compound point adds (Power 1, others 0.01) |
 | `compound_stats` | A compound stat (Strength…) | Its recipe is in `compound_stat_rows` |
 | `compound_stat_rows` | One recipe row | Points × `coef` go to that tag's stat |
-| `effects` | An effect or buff | `duration`: instant (default), `turns` (set `turns`), or until_next_turn. `shield_max_health`: a Shield worth that share of max Health; a buff's Shield goes when the buff ends. Stat changes are in `effect_stats` |
+| `effects` | An effect or buff | `duration`: instant (default), `turns` (set `turns`), or until_next_turn. `shield_max_health`: a Shield worth that share of max Health; a buff's Shield goes when the buff ends. Stat changes are in `effect_stats`. `break_on_attack`: the buff ends when its holder uses an enemy-targeted action (Stealth) |
 | `effect_stats` | A stat a buff changes | `tag` is optional |
 | `procs` | A proc | `chance`: the base chance (default 1 = 100%). Amounts (damage, heal, shield, lifesteal, hit stats) add up only across merged copies; an effect never adds up. The example procs are ported from EternalQuestMobile and aren't on any starter unit yet |
 | `proc_hit_stats` | A this-hit stat of a before_damage proc | |

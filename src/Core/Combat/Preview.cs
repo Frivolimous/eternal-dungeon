@@ -20,8 +20,7 @@ public sealed record TargetPreview(
     double CritChance,
     double BrutalChance,
     IReadOnlyList<EffectRef> Effects,
-    IReadOnlyList<ProcChance> Procs,
-    bool RandomTarget);
+    IReadOnlyList<ProcChance> Procs);
 
 /// <summary>When a unit's turns would come: when its cast completes (if the action has a cast time) and when its
 /// next turn starts, in sub-ticks. An estimate at the unit's current Speed: buffs ending can move it.</summary>
@@ -48,8 +47,7 @@ public static class Preview
             brutal = Resolution.Damage(actor, action, target, 2).Final;
             c = Resolution.CritChance(Resolution.CRate(actor, action, target));
         }
-        return new TargetPreview(target, hit, normal, crit, brutal, c, c, action.Effects, Procs(battle, actor, action, target),
-            BattleSession.Confused(actor, action));
+        return new TargetPreview(target, hit, normal, crit, brutal, c, c, action.Effects, Procs(battle, actor, action, target));
     }
 
     static readonly ProcTrigger[] ActorTriggers = [ProcTrigger.Hit, ProcTrigger.Crit, ProcTrigger.Brutal, ProcTrigger.Miss, ProcTrigger.ActionComplete];

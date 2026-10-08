@@ -22,6 +22,10 @@ public partial class CardFace : Control
     readonly bool rotatePortrait;
     public CardMark Mark { get; set; }
 
+    /// <summary>A moment's portrait state set by the screen while it animates: "attacking", "hurt" or
+    /// "knocked_out". It wins over the lasting states (casting, low HP).</summary>
+    public string? Moment { get; set; }
+
     public CardFace(BattleScreen screen, Unit unit, Vector2 size, bool rotatePortrait)
     {
         this.screen = screen;
@@ -142,6 +146,7 @@ public partial class CardFace : Control
 
     string PortraitState()
     {
+        if (Moment is { } moment) return moment;
         if (!Unit.Alive) return "knocked_out";
         if (Unit.Casting is not null) return "casting";
         return Unit.Health < Unit.MaxHealth / 3.0 ? "low_hp" : ArtCatalog.DefaultState;

@@ -160,7 +160,6 @@ public class SessionTests
         Assert.Equal(Resolution.Damage(warrior, attack, grunt).Final, p.Damage);
         Assert.Equal(Resolution.Damage(warrior, attack, grunt, 2).Final, p.BrutalDamage);
         Assert.Equal(Resolution.CritChance(0.05), p.CritChance, 12);
-        Assert.False(p.RandomTarget);
     }
 
     [Fact]

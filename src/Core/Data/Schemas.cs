@@ -44,7 +44,8 @@ public static class Schemas
         Enum<CcKind>("cc", @default: CcKind.None),
         Int("stagger", @default: 0),
         Int("delayed_damage", @default: 0),
-        Enum<Displace>("displace", @default: Displace.None));
+        Enum<Displace>("displace", @default: Displace.None),
+        Bool("break_on_attack"));
 
     public static readonly TableSchema EffectStats = Child("effect_stats", "effects", "effect", ["stat", "tag"], StatEntry);
 

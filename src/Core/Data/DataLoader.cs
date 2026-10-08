@@ -249,13 +249,14 @@ public static class DataLoader
             r.Enum<CcKind>("cc"),
             r.Int("stagger"),
             r.Int("delayed_damage"),
-            r.Enum<Displace>("displace"));
+            r.Enum<Displace>("displace"),
+            r.Bool("break_on_attack"));
 
         if (!def.IsBuff)
         {
             if (statRows.Count > 0)
                 throw statRows[0].Error("effect", "only buffs (effects with a duration) can have stats");
-            foreach (var buffOnly in new[] { "stacking", "max_stacks", "periodic_damage", "periodic_heal", "procs", "cc", "delayed_damage" })
+            foreach (var buffOnly in new[] { "stacking", "max_stacks", "periodic_damage", "periodic_heal", "procs", "cc", "delayed_damage", "break_on_attack" })
                 if (r.Has(buffOnly))
                     throw r.Error(buffOnly, "only buffs (effects with a duration) can have this");
         }

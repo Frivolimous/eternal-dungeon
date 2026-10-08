@@ -159,6 +159,8 @@ public static class CombatLog
         Fizzled { Reason: FizzleReason.TargetFell } f => s.Format("log.fizzle_target_fell", ("target", f.Target?.Name)),
         Fizzled f => s.Format("log.fizzle_caster_fell", ("caster", f.Caster.Name), ("action", f.Action.Name)),
         Died d => s.Format("log.died", ("unit", d.Unit.Name)),
+        AreaGrew a => s.Format(a.Side == Side.Party ? "log.area_grew_party" : "log.area_grew_enemy"),
+        Moved m when m.Why == "displaced" => s.Format("log.displaced", ("unit", m.Unit.Name), ("from", Pos(grid, s, m.Unit, m.From)), ("to", Pos(grid, s, m.Unit, m.To))),
         Moved m when m.Why == "collapse" => s.Format("log.collapse", ("unit", m.Unit.Name), ("from", Pos(grid, s, m.Unit, m.From)), ("to", Pos(grid, s, m.Unit, m.To))),
         Moved m when m.Why == "Move" => s.Format("log.moved", ("unit", m.Unit.Name), ("from", Pos(grid, s, m.Unit, m.From)), ("to", Pos(grid, s, m.Unit, m.To))),
         Moved m => s.Format("log.moved_by", ("unit", m.Unit.Name), ("from", Pos(grid, s, m.Unit, m.From)), ("to", Pos(grid, s, m.Unit, m.To)), ("why", m.Why)),

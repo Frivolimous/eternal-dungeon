@@ -16,7 +16,6 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 | Rule | Placeholder |
 | --- | --- |
 | Battle time limit | 300 base-speed turns, then a stalemate (no winner). If this ever happens in practice, the encounter is badly designed: investigate rather than tune the limit |
-| Confusion | Picks its target at random among the action's valid targets. WIP: undecided whether confused units can target allies |
 | Stagger drain | 10 per buff-clock turn. Kept until tuning |
 | Stagger break length | A break stuns until the bar drains, about 10 turns (showcase seed 42: the Warrior is out from T 4.15 to T 14.27). Revisit in the combat balance pass after M2: for example a faster drain while white, or a fixed 1–2 turn stun |
 
@@ -25,7 +24,7 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 | Rule | Placeholder |
 | --- | --- |
 | Stealth mastery | Until masteries exist as a system (M3), the Rogue unit has it built in: its Move (50 AP, like Move) reaches any empty tile in its area or in the enemy area, and applies Stealth until its next turn. A unit standing in the other side's area melees, and is meleed by, units on adjacent or diagonal tiles there. While in the enemy area, Move can also go to any empty tile in its own area (Jeremy, 2026-10-08) |
-| Stealth | +0.5 Avoid and −50 Threat until the unit's next turn (the old Cloak numbers). Attacking doesn't break it yet; the Rogue tree's "crits don't break Stealth" suggests attacks should, to decide with the skill trees |
+| Stealth | +0.5 Avoid and −50 Threat until the unit's next turn (the old Cloak numbers). Using an enemy-targeted action breaks it, hit or miss (Jeremy, 2026-10-08), through the effect's break_on_attack flag. Exception still to build: with 1+ points in Deadly Shadows a crit doesn't break it (skill points arrive in M3) |
 
 ## Enemy targeting
 

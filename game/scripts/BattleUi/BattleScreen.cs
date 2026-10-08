@@ -120,9 +120,21 @@ public partial class BattleScreen : Control
             unitButtons[unit] = b;
             overlay.AddChild(b);
         }
+        AddTileButtons();
+
+        ShowSpeed();
+        Resized += Layout0;
+        Layout0();
+        PlayOn();
+    }
+
+    /// <summary>A pointer target for every tile that doesn't have one yet (the board can gain a row).</summary>
+    void AddTileButtons()
+    {
         foreach (var area in Battle.Grid.Areas)
             foreach (var tile in Battle.Grid.TilesOf(area.Id))
             {
+                if (tileButtons.ContainsKey(tile)) continue;
                 var b = OverlayButton();
                 b.Visible = false;
                 b.Pressed += () => TilePressed(tile);
@@ -131,11 +143,6 @@ public partial class BattleScreen : Control
                 tileButtons[tile] = b;
                 overlay.AddChild(b);
             }
-
-        ShowSpeed();
-        Resized += Layout0;
-        Layout0();
-        PlayOn();
     }
 
     static class Layout
@@ -263,6 +270,7 @@ public partial class BattleScreen : Control
         {
             details.Show(r.Actor);
             actor.Lift(true, s * 0.2f);
+            if (r.Outcomes.FirstOrDefault() is not CastStarted && action.Target != ActionTarget.Tile) SetMoment(r.Actor, "attacking");
             if (r.Outcomes.FirstOrDefault() is CastStarted)
             {
                 Float(r.Actor, T("ui.casting"), Ui.Mana);
@@ -283,6 +291,7 @@ public partial class BattleScreen : Control
         RefreshAll(s * 0.4f);
         await Wait(r.Action is null ? s * 0.4f : s * 0.75f);
         actor.Lift(false, s * 0.15f);
+        SetMoment(r.Actor, null);
     }
 
     Settings Settings => Main.Settings;
@@ -297,15 +306,18 @@ public partial class BattleScreen : Control
                 board.Cards[miss.Target].Sidestep(s * 0.4f);
                 break;
             case Damaged d:
+                Hurt(d.Target, s);
                 var crit = d.Breakdown.CritTiers;
                 Float(d.Target, (d.Taken.Absorbed + d.Taken.ToHealth).ToString(), crit == 2 ? Ui.Gold : crit == 1 ? new Color(1, 0.6f, 0.3f) : Colors.White,
                     crit == 2 ? 34 : crit == 1 ? 28 : 22, crit == 2 ? T("ui.brutal") : crit == 1 ? T("ui.crit") : null);
                 board.Cards[d.Target].Shake(s * 0.35f, crit + 1);
                 break;
             case ProcDamaged pd:
+                Hurt(pd.Target, s);
                 Float(pd.Target, (pd.Taken.Absorbed + pd.Taken.ToHealth).ToString(), new Color(1, 0.75f, 0.4f), 18, pd.Proc.Name);
                 break;
             case PeriodicDamaged p:
+                Hurt(p.Target, s);
                 Float(p.Target, (p.Taken.Absorbed + p.Taken.ToHealth).ToString(), new Color(0.6f, 0.9f, 0.35f), 18);
                 break;
             case DelayedDamaged p:
@@ -331,17 +343,52 @@ public partial class BattleScreen : Control
                 Float(l.Unit, T("ui.turn_lost"), Ui.Dim, 14);
                 break;
             case Died d:
-                board.Cards[d.Unit].Flip(true, s * 0.8f);
+                // A moment on the knocked-out portrait, then the card flips face down.
+                SetMoment(d.Unit, "knocked_out");
+                if (s <= 0)
+                    board.Cards[d.Unit].Flip(true, 0);
+                else
+                {
+                    falling.Add(d.Unit);
+                    GetTree().CreateTimer(s * 1.2f).Timeout += () =>
+                    {
+                        if (!IsInsideTree()) return;
+                        falling.Remove(d.Unit);
+                        board.Cards[d.Unit].Flip(true, s * 0.8f);
+                    };
+                }
                 break;
         }
     }
 
+    readonly HashSet<Unit> falling = [];      // fallen units still showing their knocked-out portrait
+
+    /// <summary>Shows a moment's portrait state on a card (null clears it).</summary>
+    void SetMoment(Unit unit, string? moment)
+    {
+        if (!unit.Alive && moment != "knocked_out") return;
+        board.Cards[unit].Face.Moment = moment;
+        board.Cards[unit].Redraw();
+    }
+
+    /// <summary>The "hurt" portrait for a moment after damage.</summary>
+    void Hurt(Unit unit, float s)
+    {
+        if (!unit.Alive) return;
+        SetMoment(unit, "hurt");
+        GetTree().CreateTimer(Math.Max(0.35f, s * 0.9f)).Timeout += () =>
+        {
+            if (IsInsideTree() && board.Cards[unit].Face.Moment == "hurt") SetMoment(unit, null);
+        };
+    }
+
     void RefreshAll(float seconds)
     {
+        if (board.SyncTiles()) AddTileButtons();
         board.PlaceCards(seconds);
         foreach (var (unit, card) in board.Cards)
         {
-            if (!unit.Alive) card.Flip(true, seconds);
+            if (!unit.Alive && !falling.Contains(unit)) card.Flip(true, seconds);
             else card.SetTilted(unit.Stunned);
             card.Redraw();
         }
@@ -478,7 +525,7 @@ public partial class BattleScreen : Control
         {
             var targets = Options.TargetsFor(Battle, hero, action);
             foreach (var t in targets) board.Cards[t].Face.Mark = CardMark.Valid;
-            info.Text = F(BattleSession.Confused(hero, action) ? "ui.pick_target_confused" : "ui.pick_target", ("action", action.Name));
+            info.Text = F("ui.pick_target", ("action", action.Name));
             if (targets.Count > 0) unitButtons[targets[0]].GrabFocus();
         }
         foreach (var c in board.Cards.Values) c.Redraw();
@@ -508,7 +555,6 @@ public partial class BattleScreen : Control
     string PreviewText(TargetPreview p)
     {
         var parts = new List<string> { p.Target.Name };
-        if (p.RandomTarget) parts.Add(T("ui.preview_random_target"));
         if (picked!.Target == ActionTarget.Enemy) parts.Add(F("ui.preview_hit", ("chance", CombatLog.Pct(p.HitChance))));
         if (p.Damage is { } dmg)
         {
@@ -531,7 +577,7 @@ public partial class BattleScreen : Control
         if (mode == Mode.Playing) { skip = true; return; }
         if (mode != Mode.ChooseTarget || hero is null || picked is null) return;
         if (!Options.TargetsFor(Battle, hero, picked).Contains(unit)) return;
-        Confirm(new Choice(hero.Id, picked.Id, BattleSession.Confused(hero, picked) ? null : unit.Id));
+        Confirm(new Choice(hero.Id, picked.Id, unit.Id));
     }
 
     void TilePressed(Tile tile)

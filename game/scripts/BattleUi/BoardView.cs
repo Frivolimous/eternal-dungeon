@@ -47,22 +47,7 @@ public partial class BoardView : Node3D
         table.Position = new Vector3(0, -0.01f, 0);
         AddChild(table);
 
-        foreach (var area in Grid.Areas)
-        {
-            var cells = Grid.TilesOf(area.Id).Select(CellRect).ToList();
-            var bounds = cells.Aggregate((a, b) => a.Merge(b)).Grow(10);
-            var mat = Quad(bounds.Size / CardView.PixelsPerUnit, Flat(new Color(Ui.Side(area.Side).Darkened(0.65f), 0.55f)));
-            mat.Position = World(bounds.GetCenter(), -0.005f);
-            AddChild(mat);
-            foreach (var tile in Grid.TilesOf(area.Id))
-            {
-                var r = CellRect(tile);
-                var quad = Quad((r.Size - new Vector2(10, 10)) / CardView.PixelsPerUnit, tileMaterial);
-                quad.Position = World(r.GetCenter(), -0.003f);
-                tiles[tile] = quad;
-                AddChild(quad);
-            }
-        }
+        BuildTiles();
 
         foreach (var unit in screen.Session.Battle.Units)
         {
@@ -72,6 +57,44 @@ public partial class BoardView : Node3D
             AddChild(card);
         }
         PlaceCards(0);
+    }
+
+    readonly List<Node3D> tableNodes = [];
+    List<BattleArea> built = [];
+
+    /// <summary>The area mats and tiles. Rebuilt if an area's size changes (it gained a back row).</summary>
+    void BuildTiles()
+    {
+        foreach (var n in tableNodes) n.QueueFree();
+        tableNodes.Clear();
+        tiles.Clear();
+        foreach (var area in Grid.Areas)
+        {
+            var cells = Grid.TilesOf(area.Id).Select(CellRect).ToList();
+            var bounds = cells.Aggregate((a, b) => a.Merge(b)).Grow(10);
+            var mat = Quad(bounds.Size / CardView.PixelsPerUnit, Flat(new Color(Ui.Side(area.Side).Darkened(0.65f), 0.55f)));
+            mat.Position = World(bounds.GetCenter(), -0.005f);
+            AddChild(mat);
+            tableNodes.Add(mat);
+            foreach (var tile in Grid.TilesOf(area.Id))
+            {
+                var r = CellRect(tile);
+                var quad = Quad((r.Size - new Vector2(10, 10)) / CardView.PixelsPerUnit, tileMaterial);
+                quad.Position = World(r.GetCenter(), -0.003f);
+                tiles[tile] = quad;
+                AddChild(quad);
+                tableNodes.Add(quad);
+            }
+        }
+        built = [.. Grid.Areas];
+    }
+
+    /// <summary>Rebuilds the tiles if an area changed size; returns whether it did.</summary>
+    public bool SyncTiles()
+    {
+        if (built.SequenceEqual(Grid.Areas)) return false;
+        BuildTiles();
+        return true;
     }
 
     // ---- Layout ----

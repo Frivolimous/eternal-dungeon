@@ -138,7 +138,6 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Hexer 160 HP
 [T 11.67] Rogue → Dagger Attack → Goblin Grunt
          hit (90%) · 14 dmg (Physical) · Goblin Grunt HP 13 → 0
          Goblin Grunt falls
-         Rogue steps forward (r1c1 (opposing area) → r0c1 (opposing area))
          Goblin Hexer steps forward (r1c2 → r0c2)
 [T 11.80] Elementalist begins casting Fire Bolt at Goblin Hexer (ready at T 12.30)
 [T 12.30] Elementalist → Fire Bolt → Goblin Hexer
@@ -154,23 +153,17 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Hexer 160 HP
 [T 13.30] Elementalist → Frost Shard → Goblin Hexer
          hit (90%) · 15 dmg (Arcane, Ice) · Goblin Hexer HP 111 → 96
          applies Chill (-30 speed, 2 turns) on Goblin Hexer
-[T 13.34] Rogue → Move
-         Rogue moves r0c1 (opposing area) → r1c0 (opposing area)
-         applies Stealth (+0.5 avoid, -50 threat, until next turn) on Rogue
-[T 13.75] Stealth on Rogue ends
-[T 13.75] Rogue → Defend
+[T 13.34] Rogue → Defend
          applies Guard (+0.3 avoid, Shield 10, until next turn) on Rogue
 [T 14.00] Dread on Rogue ends
+[T 14.17] Guard on Rogue ends
+[T 14.17] Rogue → Dagger Attack → Goblin Hexer
+         hit (90%) · 14 dmg (Physical) · Goblin Hexer HP 96 → 82
 [T 14.30] Elementalist begins casting Fire Bolt at Goblin Hexer (ready at T 14.80)
 [T 14.48] Goblin Hexer begins casting Hex Bolt at Rogue (ready at T 15.08)
-[T 14.59] Guard on Rogue ends
-[T 14.59] Rogue → Move
-         Rogue moves r1c0 (opposing area) → r0c1 (opposing area)
-         applies Stealth (+0.5 avoid, -50 threat, until next turn) on Rogue
 [T 14.80] Elementalist → Fire Bolt → Goblin Hexer
-         hit (90%) · 28 dmg (Arcane, Fire) · Goblin Hexer HP 96 → 68
+         hit (90%) · 28 dmg (Arcane, Fire) · Goblin Hexer HP 82 → 54
 [T 15.00] Chill on Goblin Hexer ends
-[T 15.00] Stealth on Rogue ends
 [T 15.00] Rogue → Defend
          applies Guard (+0.3 avoid, Shield 10, until next turn) on Rogue
 [T 15.08] Goblin Hexer → Hex Bolt → Rogue
@@ -179,18 +172,17 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Hexer 160 HP
          Flaming deals 5 dmg (Arcane, Fire) to Rogue (HP 11 → 6)
          applies Dread (Fear, 2 turns) on Rogue
 [T 15.80] Elementalist → Frost Shard → Goblin Hexer
-         hit (90%) · 15 dmg (Arcane, Ice) · Goblin Hexer HP 68 → 53
+         hit (90%) · 15 dmg (Arcane, Ice) · Goblin Hexer HP 54 → 39
          applies Chill (-30 speed, 2 turns) on Goblin Hexer
 [T 15.84] Guard on Rogue ends
-[T 15.84] Rogue → Move
-         Rogue moves r0c1 (opposing area) → r1c0 (opposing area)
-         applies Stealth (+0.5 avoid, -50 threat, until next turn) on Rogue
-[T 16.25] Stealth on Rogue ends
-[T 16.25] Rogue → Defend
+[T 15.84] Rogue → Defend
          applies Guard (+0.3 avoid, Shield 10, until next turn) on Rogue
 [T 16.39] Goblin Hexer begins casting Hex Bolt at Rogue (ready at T 16.99)
+[T 16.67] Guard on Rogue ends
+[T 16.67] Rogue → Defend
+         applies Guard (+0.3 avoid, Shield 10, until next turn) on Rogue
 [T 16.80] Elementalist → Attack → Goblin Hexer
-         hit (90%) · 15 dmg (Physical) · Goblin Hexer HP 53 → 38
+         hit (90%) · 15 dmg (Physical) · Goblin Hexer HP 39 → 24
 [T 16.99] Goblin Hexer → Hex Bolt → Rogue
          hit (60%) · 11 dmg (Spirit, Dark) · Shield absorbs 10 · Rogue HP 6 → 5
          Goblin Hexer's Flaming procs (100%)
@@ -198,7 +190,7 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Hexer 160 HP
          Rogue falls
 [T 17.00] Chill on Goblin Hexer ends
 [T 17.80] Elementalist → Attack → Goblin Hexer
-         hit (90%) · 15 dmg (Physical) · Goblin Hexer HP 38 → 23
+         hit (90%) · 15 dmg (Physical) · Goblin Hexer HP 24 → 9
 [T 18.10] Goblin Hexer begins casting Hex Bolt at Elementalist (ready at T 18.70)
 [T 18.70] Goblin Hexer → Hex Bolt → Elementalist
          hit (77%) · 11 dmg (Spirit, Dark) · Elementalist HP 80 → 69

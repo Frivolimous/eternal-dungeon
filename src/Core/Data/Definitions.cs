@@ -266,7 +266,10 @@ public sealed record EffectDef(
     CcKind Cc = CcKind.None,
     int Stagger = 0,
     int DelayedDamage = 0,
-    Displace Displace = Displace.None)
+    Displace Displace = Displace.None,
+    bool BreakOnAttack = false)
 {
     public bool IsBuff => Duration != DurationKind.Instant;
+
+    // BreakOnAttack: the buff ends when its holder uses an enemy-targeted action, hit or miss (Stealth).
 }

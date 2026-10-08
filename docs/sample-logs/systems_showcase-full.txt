@@ -231,7 +231,6 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Hexer 160 HP
          C.Rate 0.05 → 5%: roll 0.172 → no crit
          dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
          Goblin Grunt falls
-         Rogue steps forward (r1c1 (opposing area) → r0c1 (opposing area))
          Goblin Hexer steps forward (r1c2 → r0c2)
 [T 11.80] Elementalist begins casting Fire Bolt at Goblin Hexer (ready at T 12.30)
 [T 12.30] Elementalist → Fire Bolt → Goblin Hexer
@@ -257,73 +256,69 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Hexer 160 HP
          roll 0.462 vs 0.903 → hit
          dmg = base 12 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15 → 15
          applies Chill (-30 speed, 2 turns) on Goblin Hexer
-[T 13.34] Rogue → Move
-         Rogue moves r0c1 (opposing area) → r1c0 (opposing area)
-         applies Stealth (+0.5 avoid, -50 threat, until next turn) on Rogue
-[T 13.75] Stealth on Rogue ends
-[T 13.75] Rogue → Defend
+[T 13.34] Rogue → Defend
          applies Guard (+0.3 avoid, Shield 10, until next turn) on Rogue
 [T 14.00] Dread on Rogue ends
+[T 14.17] Guard on Rogue ends
+[T 14.17] Rogue → Dagger Attack → Goblin Hexer
+         hit (90%) · 14 dmg (Physical) · Goblin Hexer HP 96 → 82
+         roll 0.718 vs 0.903 → hit
+         C.Rate 0.05 → 5%: roll 0.586 → no crit
+         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
 [T 14.30] Elementalist begins casting Fire Bolt at Goblin Hexer (ready at T 14.80)
 [T 14.48] Goblin Hexer begins casting Hex Bolt at Rogue (ready at T 15.08)
-[T 14.59] Guard on Rogue ends
-[T 14.59] Rogue → Move
-         Rogue moves r1c0 (opposing area) → r0c1 (opposing area)
-         applies Stealth (+0.5 avoid, -50 threat, until next turn) on Rogue
 [T 14.80] Elementalist → Fire Bolt → Goblin Hexer
-         hit (90%) · 28 dmg (Arcane, Fire) · Goblin Hexer HP 96 → 68
-         roll 0.718 vs 0.903 → hit
+         hit (90%) · 28 dmg (Arcane, Fire) · Goblin Hexer HP 82 → 54
+         roll 0.683 vs 0.903 → hit
          dmg = base 22 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 27.5 → 28
 [T 15.00] Chill on Goblin Hexer ends
-[T 15.00] Stealth on Rogue ends
 [T 15.00] Rogue → Defend
          applies Guard (+0.3 avoid, Shield 10, until next turn) on Rogue
 [T 15.08] Goblin Hexer → Hex Bolt → Rogue
          hit (60%) · 11 dmg (Spirit, Dark) · Shield absorbs 10 · Rogue HP 12 → 11
-         roll 0.586 vs 0.599 → hit
+         roll 0.324 vs 0.599 → hit
          dmg = base 10 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 11 → 11
-         Goblin Hexer's Flaming procs (100%): roll 0.683
+         Goblin Hexer's Flaming procs (100%): roll 0.248
          Flaming deals 5 dmg (Arcane, Fire) to Rogue (HP 11 → 6)
          dmg = base 5 × power 1 (0) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 5 → 5
          applies Dread (Fear, 2 turns) on Rogue
 [T 15.80] Elementalist → Frost Shard → Goblin Hexer
-         hit (90%) · 15 dmg (Arcane, Ice) · Goblin Hexer HP 68 → 53
-         roll 0.324 vs 0.903 → hit
+         hit (90%) · 15 dmg (Arcane, Ice) · Goblin Hexer HP 54 → 39
+         roll 0.073 vs 0.903 → hit
          dmg = base 12 × power 1.25 (25) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15 → 15
          applies Chill (-30 speed, 2 turns) on Goblin Hexer
 [T 15.84] Guard on Rogue ends
-[T 15.84] Rogue → Move
-         Rogue moves r0c1 (opposing area) → r1c0 (opposing area)
-         applies Stealth (+0.5 avoid, -50 threat, until next turn) on Rogue
-[T 16.25] Stealth on Rogue ends
-[T 16.25] Rogue → Defend
+[T 15.84] Rogue → Defend
          applies Guard (+0.3 avoid, Shield 10, until next turn) on Rogue
 [T 16.39] Goblin Hexer begins casting Hex Bolt at Rogue (ready at T 16.99)
+[T 16.67] Guard on Rogue ends
+[T 16.67] Rogue → Defend
+         applies Guard (+0.3 avoid, Shield 10, until next turn) on Rogue
 [T 16.80] Elementalist → Attack → Goblin Hexer
-         hit (90%) · 15 dmg (Physical) · Goblin Hexer HP 53 → 38
-         roll 0.248 vs 0.903 → hit
-         C.Rate 0.05 → 5%: roll 0.073 → no crit
+         hit (90%) · 15 dmg (Physical) · Goblin Hexer HP 39 → 24
+         roll 0.089 vs 0.903 → hit
+         C.Rate 0.05 → 5%: roll 0.95 → no crit
          dmg = base 15 × power 1 (0) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15 → 15
 [T 16.99] Goblin Hexer → Hex Bolt → Rogue
          hit (60%) · 11 dmg (Spirit, Dark) · Shield absorbs 10 · Rogue HP 6 → 5
-         roll 0.089 vs 0.599 → hit
+         roll 0.398 vs 0.599 → hit
          dmg = base 10 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 11 → 11
-         Goblin Hexer's Flaming procs (100%): roll 0.95
+         Goblin Hexer's Flaming procs (100%): roll 0.456
          Flaming deals 5 dmg (Arcane, Fire) to Rogue (HP 5 → 0)
          dmg = base 5 × power 1 (0) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 5 → 5
          Rogue falls
 [T 17.00] Chill on Goblin Hexer ends
 [T 17.80] Elementalist → Attack → Goblin Hexer
-         hit (90%) · 15 dmg (Physical) · Goblin Hexer HP 38 → 23
-         roll 0.398 vs 0.903 → hit
-         C.Rate 0.05 → 5%: roll 0.456 → no crit
+         hit (90%) · 15 dmg (Physical) · Goblin Hexer HP 24 → 9
+         roll 0.631 vs 0.903 → hit
+         C.Rate 0.05 → 5%: roll 0.516 → no crit
          dmg = base 15 × power 1 (0) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15 → 15
 [T 18.10] Goblin Hexer begins casting Hex Bolt at Elementalist (ready at T 18.70)
 [T 18.70] Goblin Hexer → Hex Bolt → Elementalist
          hit (77%) · 11 dmg (Spirit, Dark) · Elementalist HP 80 → 69
-         roll 0.631 vs 0.77 → hit
+         roll 0.341 vs 0.77 → hit
          dmg = base 10 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 11 → 11
-         Goblin Hexer's Flaming procs (100%): roll 0.516
+         Goblin Hexer's Flaming procs (100%): roll 0.572
          Flaming deals 5 dmg (Arcane, Fire) to Elementalist (HP 69 → 64)
          dmg = base 5 × power 1 (0) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 5 → 5
          applies Dread (Fear, 2 turns) on Elementalist
@@ -342,9 +337,9 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Hexer 160 HP
          Elementalist moves r0c0 → r0c1
 [T 20.41] Goblin Hexer → Hex Bolt → Elementalist
          hit (77%) · 11 dmg (Spirit, Dark) · Elementalist HP 64 → 53
-         roll 0.341 vs 0.77 → hit
+         roll 0.541 vs 0.77 → hit
          dmg = base 10 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 11 → 11
-         Goblin Hexer's Flaming procs (100%): roll 0.572
+         Goblin Hexer's Flaming procs (100%): roll 0.797
          Flaming deals 5 dmg (Arcane, Fire) to Elementalist (HP 53 → 48)
          dmg = base 5 × power 1 (0) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 5 → 5
          applies Dread (Fear, 2 turns) on Elementalist
@@ -361,9 +356,9 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Hexer 160 HP
 [T 22.00] Dread on Elementalist ends
 [T 22.13] Goblin Hexer → Hex Bolt → Elementalist
          hit (77%) · 11 dmg (Spirit, Dark) · Elementalist HP 48 → 37
-         roll 0.541 vs 0.77 → hit
+         roll 0.099 vs 0.77 → hit
          dmg = base 10 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 11 → 11
-         Goblin Hexer's Flaming procs (100%): roll 0.797
+         Goblin Hexer's Flaming procs (100%): roll 0.557
          Flaming deals 5 dmg (Arcane, Fire) to Elementalist (HP 37 → 32)
          dmg = base 5 × power 1 (0) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 5 → 5
          applies Dread (Fear, 2 turns) on Elementalist
@@ -382,9 +377,9 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Hexer 160 HP
          Elementalist steps forward (r1c0 → r0c0)
 [T 23.84] Goblin Hexer → Hex Bolt → Elementalist
          hit (77%) · 11 dmg (Spirit, Dark) · Elementalist HP 32 → 21
-         roll 0.099 vs 0.77 → hit
+         roll 0.215 vs 0.77 → hit
          dmg = base 10 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 11 → 11
-         Goblin Hexer's Flaming procs (100%): roll 0.557
+         Goblin Hexer's Flaming procs (100%): roll 0.724
          Flaming deals 5 dmg (Arcane, Fire) to Elementalist (HP 21 → 16)
          dmg = base 5 × power 1 (0) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 5 → 5
          refreshes Dread (Fear, 2 turns) on Elementalist
@@ -400,9 +395,9 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Hexer 160 HP
          Elementalist moves r0c0 → r0c1
 [T 25.55] Goblin Hexer → Hex Bolt → Elementalist
          hit (77%) · 11 dmg (Spirit, Dark) · Elementalist HP 16 → 5
-         roll 0.215 vs 0.77 → hit
+         roll 0.435 vs 0.77 → hit
          dmg = base 10 × power 1.1 (10) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 11 → 11
-         Goblin Hexer's Flaming procs (100%): roll 0.724
+         Goblin Hexer's Flaming procs (100%): roll 0.222
          Flaming deals 5 dmg (Arcane, Fire) to Elementalist (HP 5 → 0)
          dmg = base 5 × power 1 (0) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 5 → 5
          Elementalist falls

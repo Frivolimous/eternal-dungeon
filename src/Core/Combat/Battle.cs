@@ -123,7 +123,10 @@ public sealed partial class Battle
             throw new InvalidOperationException($"{action.Name} targets a tile: use ActAt");
         var aimed = action.Target == ActionTarget.Self ? actor : target
             ?? throw new InvalidOperationException($"{action.Name} needs a target");
-        if (Grid.CantTarget(actor, action, aimed) is string bad)
+        var bad = actor.Has(CcKind.Confusion) && action.Target is ActionTarget.Enemy or ActionTarget.Ally
+            ? (aimed == actor ? "only_targets_self" : Grid.CantReach(actor, action, aimed))
+            : Grid.CantTarget(actor, action, aimed);
+        if (bad is not null)
             throw new InvalidOperationException($"{actor.Name} can't aim {action.Name} at {aimed.Name}: {bad}");
         target = aimed;
         actor.SpendMana(action.ManaCost);
@@ -245,6 +248,12 @@ public sealed partial class Battle
 
         FireProcs(ProcTrigger.ActionComplete, new ProcEvent(actor, target, action, 0, queue, r));
         Process(queue, r);
+
+        // Attacking breaks buffs like Stealth, hit or miss (Jeremy, 2026-10-08). The Rogue tree's Deadly Shadows will
+        // keep Stealth on a crit once skill points exist (M3).
+        if (action.Target == ActionTarget.Enemy)
+            foreach (var buff in actor.Buffs.Where(b => b.Def.BreakOnAttack).ToList())
+                Expire(actor, buff, r, natural: false);
         CollapseAreas(r);
         return r;
     }
@@ -325,11 +334,13 @@ public sealed partial class Battle
     /// <summary>Collapses any area whose front row emptied (deaths, moves, pushes).</summary>
     void CollapseAreas(ActionResult r)
     {
-        foreach (var area in Grid.Areas.Select(a => a.Id))
+        foreach (var area in Grid.Areas.Select(a => a.Id).ToList())
         {
-            var before = Units.Where(u => u.Alive).ToDictionary(u => u, u => Grid.AnchorOf(u));
-            foreach (var u in Grid.Collapse(area))
-                r.Add(new Moved(u, before[u]!.Value, Grid.AnchorOf(u)!.Value, "collapse"));
+            var (moves, grown) = Grid.Collapse(area);
+            foreach (var g in grown)
+                r.Add(new AreaGrew(Grid.Areas[g].Side, g));
+            foreach (var (u, from, to, why) in moves)
+                r.Add(new Moved(u, from, to, why));
         }
     }
 

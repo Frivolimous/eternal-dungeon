@@ -54,7 +54,7 @@ Every character starts with Weapon C.Rate 5% and untagged C.Mult 0.5, so every w
 - **Melee reach:** from the front row, a melee action reaches the enemy's front row in the same lane or the next lane over: straight ahead or diagonal, never further along the line (decided 2026-10-08). Reach weapons also hit the second row, with the same lanes. A unit covering several lanes (size 2) reaches from, and can be reached in, each of them. Inside one area (a Rogue among the enemies), melee reaches adjacent and diagonal tiles only. Ranged attacks and spells reach any tile.
 - Rogues on either side can enter the opposing area: with the Stealth mastery (the Rogue's first), Move can also go to any empty tile in the enemy area, and every Move grants Stealth for 1 turn (less Threat). This replaces the old Sneak action. While a unit stands in the enemy area, its Move can also go to any empty tile in its own area, so it can come back (decided 2026-10-08).
 - Enemies usually appear in front. In an Ambushed battle they appear on all sides, and in a Surrounding battle the party flanks them.
-- When an area's front row empties, the area collapses forward. Some actions reposition enemies.
+- When none of an area's own units is left in its front row, its own units step forward until one is (the forward collapse). Units of the other side standing in it (a Rogue that moved in) don't count and don't step with them: each keeps its tile if it's still free, otherwise it goes to the front-most free tile there (nearest its lane), otherwise to the front-most free tile of its own area, otherwise its own area gains a new back row for it (decided 2026-10-08). Some actions reposition enemies.
 - Push and Pull move a unit one row back or forward within its area, only if the tiles are free.
 - Enemy size is its footprint: size 1 takes 1 tile (a person), size 1.5 takes 2 tiles in a column, front and back (a troll), and size 2 takes a 2×2 block of 4 tiles (a Balrog).
 
@@ -73,6 +73,8 @@ A unit with no usable skill (no valid target, or not enough Mana) uses these: it
 ## Crowd control
 
 CC can target a character or a tile: Slow, Stun, Stagger, Pull/Push/Move, Root, damage over time, delayed damage, stat reduction, action override (Confusion, Fear, Sleep), action restriction (Root, Silence) and conditional effects.
+
+Confusion: the unit loses all choice, heroes included. On its turn it uses a random usable action at a random target it can reach, allies included (or a random tile, or itself), decided 2026-10-08.
 
 Fear: a feared unit can only Defend, or Move to a tile further from the front. It can't attack or use skills. Unlike Stun (and Sleep), Fear doesn't skip the turn.
 

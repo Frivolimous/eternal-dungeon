@@ -16,6 +16,8 @@ public static class UnitAi
 {
     public static Decision? Decide(Battle battle, Unit unit)
     {
+        if (unit.Has(CcKind.Confusion))
+            return Confused(battle, unit);
         if (unit.Afraid)
             return Default(battle, unit, DefaultRole.Move, battle.Grid.RetreatOptions(unit)) ?? Default(battle, unit, DefaultRole.Defend);
 
@@ -100,12 +102,42 @@ public static class UnitAi
                     .Where(e => !rule.TargetCasting || e.Casting is not null)
                     .ToList();
                 if (enemies.Count == 0) return null;
-                // Confusion (placeholder): any valid target, at random.
-                var pick = unit.Has(CcKind.Confusion)
-                    ? enemies[battle.Rng.NextInt(enemies.Count)]
-                    : PickTarget(enemies, w, battle.Rng);
-                return new Decision(action, pick, null);
+                return new Decision(action, PickTarget(enemies, w, battle.Rng), null);
         }
+    }
+
+    /// <summary>
+    /// A Confused unit's turn (Jeremy, 2026-10-08): no choice, for heroes too. A random usable action, then a random
+    /// target among every unit it could reach, allies included (or a random tile, or itself). Both picks roll the
+    /// battle's RNG.
+    /// </summary>
+    public static Decision? Confused(Battle battle, Unit unit)
+    {
+        var options = new List<(ActionDef Action, List<Unit> Targets, List<Tile> Tiles)>();
+        foreach (var id in battle.Data.ActionsOf(unit.Def))
+        {
+            var action = battle.Data.Actions[id];
+            if (unit.CantUse(action) is not null) continue;
+            switch (action.Target)
+            {
+                case ActionTarget.Self:
+                    options.Add((action, [unit], []));
+                    break;
+                case ActionTarget.Tile:
+                    var tiles = unit.Afraid ? battle.Grid.RetreatOptions(unit).ToList() : battle.Grid.TileOptions(unit, action).ToList();
+                    if (tiles.Count > 0) options.Add((action, [], tiles));
+                    break;
+                default:
+                    var anyone = battle.Units.Where(u => u != unit && battle.Grid.CantReach(unit, action, u) is null).ToList();
+                    if (anyone.Count > 0) options.Add((action, anyone, []));
+                    break;
+            }
+        }
+        if (options.Count == 0) return null;
+        var (pick, targets, tileOptions) = options[battle.Rng.NextInt(options.Count)];
+        return tileOptions.Count > 0
+            ? new Decision(pick, null, tileOptions[battle.Rng.NextInt(tileOptions.Count)])
+            : new Decision(pick, targets[battle.Rng.NextInt(targets.Count)], null);
     }
 
     public static List<Unit> ValidTargets(Battle battle, Unit unit, ActionDef action) =>

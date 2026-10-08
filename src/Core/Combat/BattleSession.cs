@@ -4,8 +4,7 @@ namespace EternalDungeon.Core.Combat;
 
 /// <summary>
 /// One hero decision, as a replay stores it: the unit, the action, and its target unit or tile (an empty action
-/// means the hero waited). A Confused unit's enemy target is left out: the battle picks it at random (from its seeded
-/// RNG) after the choice. <see cref="Auto"/>: the hero's AI decided (auto-battle); a replay asks the AI again,
+/// means the hero waited). A Confused hero's turns aren't choices: it acts at random, and a replay rolls the same. <see cref="Auto"/>: the hero's AI decided (auto-battle); a replay asks the AI again,
 /// since the AI's own tie-break rolls are part of the battle's random sequence.
 /// </summary>
 public sealed record Choice(string Unit, string Action, string? Target = null, Tile? Tile = null, bool Auto = false);
@@ -102,6 +101,11 @@ public sealed class BattleSession
             Battle.SkipTurn(unit);
             return;
         }
+        if (unit.Has(CcKind.Confusion))
+        {
+            Play(unit, UnitAi.Confused(Battle, unit));
+            return;
+        }
         var auto = AutoBattle;
         if (unit.Side == Side.Party && scripted.TryDequeue(out var next))
         {
@@ -155,7 +159,6 @@ public sealed class BattleSession
         if (action.Target == ActionTarget.Tile)
             return choice.Tile is { } t && Options.TilesFor(Battle, unit, action).Contains(t) ? null : "can't move there";
         if (action.Target == ActionTarget.Self) return null;
-        if (Confused(unit, action)) return Options.TargetsFor(Battle, unit, action).Count > 0 ? null : "no_valid_target";
         if (choice.Target is null) return "needs a target";
         var target = Battle.Units.FirstOrDefault(u => u.Id == choice.Target);
         return target is null ? "unknown target" : Battle.Grid.CantTarget(unit, action, target);
@@ -188,10 +191,6 @@ public sealed class BattleSession
         return Battle.Results.Skip(first).ToList();
     }
 
-    /// <summary>A Confused unit's enemy-targeted action gets a random valid target (Anchor: placeholder).</summary>
-    public static bool Confused(Unit unit, ActionDef action) =>
-        unit.Has(CcKind.Confusion) && action.Target == ActionTarget.Enemy;
-
     void Apply(Unit unit, Choice choice)
     {
         if (choice.Action.Length == 0)
@@ -201,15 +200,7 @@ public sealed class BattleSession
             return;
         }
         var action = Battle.Data.Actions[choice.Action];
-        Unit? target = null;
-        if (Confused(unit, action))
-        {
-            var options = Options.TargetsFor(Battle, unit, action);
-            target = options[Battle.Rng.NextInt(options.Count)];
-            choice = choice with { Target = null };
-        }
-        else if (choice.Target is string id)
-            target = Battle.Unit(id);
+        var target = choice.Target is string id ? Battle.Unit(id) : null;
         choices.Add(choice);
         Play(unit, new Decision(action, target, choice.Tile));
     }

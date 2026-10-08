@@ -43,3 +43,5 @@
 | Battle layouts | A fixed enemy layout on the enemies' own 2×3 grid | Enemies stand on their own area (3×2 or 2×3 by default, growing with abilities), in a layout fixed by the encounter or generated (2026-10-08) |
 | Gold unlocks | Gold unlocked starting skill trees, harder dungeons and better loot | Gold unlocks starting skill trees and better loot; completing a dungeon unlocks the next (2026-10-08) |
 | Move | 50 AP to one neighbouring tile | 50 AP to any empty tile in the area the unit stands in; Fear: any tile further back (2026-10-08) |
+| Forward collapse | Every unit standing in the area stepped forward, including a Rogue from the other side, which also stopped the collapse while it stood in the front row | Only the area's own units count and step; a Rogue keeps its tile or moves to the front-most free one, then its own area, then a new back row (2026-10-08) |
+| Confusion | A random valid target for the unit's chosen action; heroes still chose the action | No choice at all: a random action at a random target in reach, allies included (2026-10-08) |

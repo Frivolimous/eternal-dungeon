@@ -48,6 +48,9 @@ public sealed record Died(Unit Unit) : Outcome;
 /// <summary>A unit changed tiles: by Move (the Rogue's can enter the enemy area), pushed or pulled, or the area collapsing forward.</summary>
 public sealed record Moved(Unit Unit, Tile From, Tile To, string Why) : Outcome;
 
+/// <summary>An area gained a back row (a unit forced out of the other side's area had nowhere else to go).</summary>
+public sealed record AreaGrew(Side Side, int Area) : Outcome;
+
 /// <summary>Stagger damage. <see cref="Broke"/>: the bar filled and the unit is stunned until it drains.</summary>
 public sealed record Staggered(Unit Target, int Amount, int Bar, bool Broke) : Outcome;
 
