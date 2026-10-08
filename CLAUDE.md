@@ -36,6 +36,9 @@ Set `$env:GODOT` to override the Godot path in scripts.
 
 ## Commands
 
+For Jeremy: `ed.bat` (repo root) is a numbered menu of the everyday commands, and docs/commands.md explains each in plain
+words. When a command is added or changes, update both (and the list below).
+
 ```bash
 dotnet test                                          # all tests, from the repo root
 dotnet build                                         # everything, including the Godot project
