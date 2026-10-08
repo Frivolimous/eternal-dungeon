@@ -40,8 +40,8 @@ Designed at **1280×800** (Steam Deck's native 16:10) and scaled up for larger s
    chance, damage on a normal hit, a crit and a Brutal crit with their chances, effects it would apply, and procs that
    could trigger with their chances. Damage is static (no damage roll), so the numbers are exact; procs aren't in them.
 4. Click to confirm; right-click or Escape steps back. Enemy turns play automatically.
-   **Enemy intents:** each enemy card shows what it will do next: the planned action's icon and a small portrait of
-   its target ("?" while Confused). When something the player did changes a plan (a taunt, Stealth, a target falling
+   **Enemy intents:** each enemy's next chip on the turn order shows what it will do: the planned action's icon and a
+   small portrait of its target ("?" while Confused). Its later chips show nothing: that turn isn't planned yet. When something the player did changes a plan (a taunt, Stealth, a target falling
    or moving away), the intent flashes, so the player sees it worked. A hero's details show its share of the party's
    threat.
 5. **Heroes the player can't fully control:** Stunned or Sleeping heroes lose the turn (shown briefly). Feared and Confused heroes

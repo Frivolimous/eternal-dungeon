@@ -112,7 +112,7 @@ Redesigned 2026-10-08 (Jeremy).
 
 The highest score wins. Ties are broken by a pick from the battle's seeded random generator, never a global one. Percent of the highest is kept on purpose: unlike percent of the total, it doesn't change with party size (a fifth unit or a pet doesn't dilute everyone). The UI can still show each hero's share of the total.
 
-**Committed intents.** Enemies decide their next action and target ahead of time, and the player sees it on their card.
+**Committed intents.** Enemies decide their next action and target ahead of time, and the player sees it on the turn order.
 
 - An enemy plans at the start of the battle (after fight-start procs) and at the end of each of its own turns. Planning uses the battle's seeded random generator when it's made, so replays stay exact. Its AI rules ("heal self below 40%") are checked when it plans, not when it acts.
 - On its turn it does what it planned. The plan changes, straight away, only when a unit does something:

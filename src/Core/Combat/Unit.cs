@@ -56,7 +56,7 @@ public sealed class Unit
     /// again once a Threatening change ends.</summary>
     public double EffectiveThreat => ThreatScore * Threatening;
 
-    /// <summary>An enemy's committed next action, shown on its card (null for heroes).</summary>
+    /// <summary>An enemy's committed next action, shown on its next turn-order chip (null for heroes).</summary>
     public Intent? Intent { get; set; }
 
     /// <summary>Hidden. Rises as Health drops: the share of Health missing, plus the Vulnerability stat in percent.</summary>

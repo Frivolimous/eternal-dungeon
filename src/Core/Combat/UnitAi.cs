@@ -5,7 +5,7 @@ namespace EternalDungeon.Core.Combat;
 /// <summary>What a unit will do with its turn: an action and its target unit or tile.</summary>
 public sealed record Decision(ActionDef Action, Unit? Target, Tile? Tile);
 
-/// <summary>An enemy's committed next turn, shown on its card (Anchor: Combat › Enemy targeting). A null
+/// <summary>An enemy's committed next turn, shown on the turn order (Anchor: Combat › Enemy targeting). A null
 /// <see cref="Decision"/> means it will wait. <see cref="Unknown"/>: it's Confused and will act at random ("?").</summary>
 public sealed record Intent(Decision? Decision, bool Unknown = false);
 
