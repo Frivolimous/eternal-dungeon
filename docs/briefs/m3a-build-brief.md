@@ -57,8 +57,8 @@ Write these into the Anchor first, in their sections, with superseded rows where
 
 These are written into the Anchor (with superseded rows), together with the Anchor updates above.
 
-1. **Trait gates ignore curses.** A choice gated by a trait reads the hero's trait level without curses, so −Trait only
-   lowers roll odds, while +Trait buffs can unlock gated choices. No Event in the manifest uses a −Trait curse.
+1. **No −Trait curses, ever.** Nothing lowers a trait, so a trait-gated choice a hero has once stays available. +Trait
+   buffs can raise a trait, improving odds and unlocking gated choices.
 2. **Hero kits at level 1:** Attack, Defend, Move, Flee and belt items. Power Attack, Stealth and Elemental Focus come
    with the first point in each tree. The Warrior keeps **Shield Bash** as a starter-shield action until equipment
    (M3B). The placeholder **Taunt** is removed.
@@ -125,7 +125,7 @@ The event engine from exploration.md, with these parts in M3A:
 
 - **Blocks:** Story (text, choices, decision previews), Branch, Combat, Resource Change, Reward, and Action.
 - **Action types in M3A:** set Event or Dungeon flags, map reveal, apply a buff or curse (timed in steps or
-  battles, including trait changes), resource changes (including +1 Camp charge and Gold), spawn a Sanctuary or an
+  battles, including +Trait buffs), resource changes (including +1 Camp charge and Gold), spawn a Sanctuary or an
   Alchemist Station, defer the Event. Not yet: the Map danger modifier, recruit ally, spawning Shops or Forges
   (M3B or M4).
 - **Conditions:** trait level, class, Dungeon flag, Event state, a hero's or the party's resources (including Gold:
@@ -187,7 +187,7 @@ The event engine from exploration.md, with these parts in M3A:
   can't be reached in Dungeon 0 (about 4 points), so test them with the debug tools.
 - **Opportunist** as decided above.
 - **Traits:** each hero gets its Primary class's 3 traits at level 1 (Secondary and Dabble come in M4). The trait
-  system includes levels from class layers and from buffs and curses (+Trait / −Trait).
+  system includes levels from class layers and from +Trait buffs (nothing lowers a trait).
 - **Spending points:** anywhere outside combat, through the Hero Panel. There's no respec in M3A.
 
 ## 7. Screens (Godot)

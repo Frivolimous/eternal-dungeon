@@ -60,3 +60,4 @@
 | Rogue › Opportunist | Refunds up to 50% of the AP cost, by the target's Stagger or Stun | 50% against a Stunned target, otherwise the target's Speed reduction from buffs and debuffs, capped at 50% (2026-10-08) |
 | Event data | Events were to follow the flat-table rules | Events are JSON files with every text as a string key (2026-10-08) |
 | Rest | Restored Stamina equal to max Stamina | The same, but never above max; fight costs are paid after the fight (2026-10-08) |
+| −Trait curses | Curses could lower a trait (−Trait), lowering Event odds without removing a choice | No −Trait curses, ever: nothing lowers a trait; +Trait buffs remain (Jeremy, 2026-10-08) |

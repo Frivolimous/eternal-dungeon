@@ -225,16 +225,16 @@ Event outcomes affect the expedition only through these:
 **Penalties**
 
 - Losing Health, Mana, Gold or 1 Stamina.
-- Lasting curses, timed in steps (Limping, Poison) or battles (Demoralized, Bleed, +50% Mana costs). They can lower a
-  trait (−Trait), which lowers Event odds without removing any choice.
+- Lasting curses, timed in steps (Limping, Poison) or battles (Demoralized, Bleed, +50% Mana costs). Curses never lower
+  a trait: there are no −Trait curses, ever (Jeremy, 2026-10-08).
 - Raising the Map danger modifier (+1) for an alarm.
 
 **Never**, to protect player agency:
 
 - No durability or item loss: traps and curses never break, rot or destroy items.
 - No locked Nodes or paths: the explored network stays fully open and readable.
-- No disabled choices: curses change odds through −Trait, never remove options. A choice gated by a trait reads the
-  hero's trait level **without** curses, so −Trait only lowers roll odds, while +Trait buffs can unlock gated choices
+- No disabled choices and no lowered traits: nothing lowers a trait (no −Trait curses, ever), so a trait-gated choice
+  a hero has once stays available. +Trait buffs can raise a trait, improving odds and unlocking gated choices
   (decided 2026-10-08).
 - No changes to max Health, Mana or Stamina from exploration Events, temporary or lasting.
 - No item upgrades inside Event text: upgrades happen at a spawned Forge or Alchemist Station.
@@ -264,7 +264,7 @@ Every block has an `id`, a `type` and a `config`, and blocks link to each other 
 | Branch | Routing on conditions, not shown to the player |
 | Combat | Starts a fight (Skirmish, Major or Boss) |
 | Resource Change | Changes Health, Mana or Stamina for eligible heroes |
-| Action | Sets Event or dungeon flags, spawns Interactables, reveals the map, applies buffs or curses (steps or battles, trait changes included), changes the Map danger modifier, changes resources (including +1 Camp), recruits a temporary ally, or defers the Event (resuming at a given block, or this one) |
+| Action | Sets Event or dungeon flags, spawns Interactables, reveals the map, applies buffs or curses (steps or battles; buffs can raise a trait, nothing lowers one), changes the Map danger modifier, changes resources (including +1 Camp), recruits a temporary ally, or defers the Event (resuming at a given block, or this one) |
 | Reward | Hands rewards to the reward system for display and assignment |
 
 - **Story:** every choice whose conditions hold is shown. Hovering one shows its decision preview: for a fight, its
