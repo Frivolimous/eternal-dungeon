@@ -240,7 +240,7 @@ Enemies: Goblin Chief 370 HP, Goblin Grunt #1 85 HP, Goblin Grunt #2 85 HP
          Goblin Chief falls
 [T 12.56] Guard on Goblin Grunt #2 ends
 [T 12.56] Goblin Grunt #2 → Move
-         Goblin Grunt #2 moves r0c2 → r0c1
+         Goblin Grunt #2 moves r0c2 → r0c0
 [T 12.92] Rogue → Dagger Attack → Goblin Grunt #2
          hit (90%) · 14 dmg (Physical) · Goblin Grunt #2 HP 85 → 71
          roll 0.74 vs 0.903 → hit

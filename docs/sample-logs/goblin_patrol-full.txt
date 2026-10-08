@@ -148,7 +148,7 @@ Enemies: Goblin Grunt #1 85 HP, Goblin Grunt #2 85 HP, Goblin Archer 60 HP, Gobl
          miss (77%)
          roll 0.818 vs 0.77 → miss
 [T 5.54] Goblin Shaman → Move
-         Goblin Shaman moves r1c2 → r1c1
+         Goblin Shaman moves r1c2 → r0c1
 [T 5.80] Elementalist → Frost Shard → Goblin Grunt #2
          hit (90%) · 15 dmg (Arcane, Ice) · Goblin Grunt #2 HP 30 → 15
          roll 0.898 vs 0.903 → hit
@@ -160,29 +160,29 @@ Enemies: Goblin Grunt #1 85 HP, Goblin Grunt #2 85 HP, Goblin Archer 60 HP, Gobl
          C.Rate 0.05 → 5%: roll 0.565 → no crit
          dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
 [T 6.00] Rot deals 4 to Rogue (HP 87 → 83)
-[T 6.07] Goblin Shaman → Attack → Rogue
-         hit (79%) · 15 dmg (Physical) · Rogue HP 83 → 68
-         roll 0.554 vs 0.791 → hit
+[T 6.07] Goblin Shaman → Attack → Warrior
+         hit (77%) · 15 dmg (Physical) · Warrior HP 15 → 0
+         roll 0.554 vs 0.77 → hit
          C.Rate 0.05 → 5%: roll 0.857 → no crit
          dmg = base 15 × power 1 (0) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15 → 15
+         Warrior falls
+         Elementalist steps forward (r1c1 → r0c1)
 [T 6.67] Rogue → Dagger Attack → Goblin Shaman
          hit (90%) · 14 dmg (Physical) · Goblin Shaman HP 31 → 17
          roll 0.828 vs 0.903 → hit
          C.Rate 0.05 → 5%: roll 0.52 → no crit
          dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
-[T 6.70] Warrior → Defend
-         applies Guard (+0.3 avoid, Shield 14, until next turn) on Warrior
-[T 6.77] Goblin Grunt #2 → Slash → Warrior
-         hit (54%) · 16 dmg (Physical) · Shield absorbs 14 · Warrior HP 15 → 13
-         roll 0.317 vs 0.539 → hit
+[T 6.77] Goblin Grunt #2 → Slash → Elementalist
+         hit (86%) · 16 dmg (Physical) · Elementalist HP 80 → 64
+         roll 0.317 vs 0.855 → hit
          C.Rate 0.05 → 5%: roll 0.192 → no crit
          dmg = base 15 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15.75 → 16
 [T 6.80] Elementalist begins casting Fire Bolt at Goblin Shaman (ready at T 7.30)
-[T 7.00] Rot deals 4 to Rogue (HP 68 → 64)
+[T 7.00] Rot deals 4 to Rogue (HP 83 → 79)
 [T 7.00] Rot on Rogue ends
 [T 7.00] Chill on Goblin Grunt #2 ends
 [T 7.12] Goblin Shaman → Attack → Rogue
-         hit (79%) · 23 dmg (Physical, crit) · Rogue HP 64 → 41
+         hit (79%) · 23 dmg (Physical, crit) · Rogue HP 79 → 56
          roll 0.644 vs 0.791 → hit
          C.Rate 0.05 → 5%: roll 0.029 → crit; Brutal roll 0.358 → no Brutal
          dmg = base 15 × power 1 (0) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) × crit 1.5 (1 × C.Mult 0.5, crit res 0, crit pen 0) = 22.5 → 23
@@ -194,11 +194,24 @@ Enemies: Goblin Grunt #1 85 HP, Goblin Grunt #2 85 HP, Goblin Archer 60 HP, Gobl
 [T 7.50] Rogue → Move
          Rogue moves r0c0 (opposing area) → r0c1 (opposing area)
          applies Stealth (+0.5 avoid, -50 threat, until next turn) on Rogue
-[T 7.70] Guard on Warrior ends
-[T 7.70] Warrior → Power Attack → Goblin Grunt #2
-         hit (90%) · 37 dmg (Physical) · Goblin Grunt #2 HP 15 → 0
+[T 7.92] Stealth on Rogue ends
+[T 7.92] Rogue → Dagger Attack → Goblin Grunt #2
+         hit (90%) · 14 dmg (Physical) · Goblin Grunt #2 HP 15 → 1
          roll 0.776 vs 0.903 → hit
          C.Rate 0.05 → 5%: roll 0.507 → no crit
-         dmg = base 15 × power 1.225 (22.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 2 (1) × all res 1 (0) = 36.75 → 37
+         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
+[T 7.96] Goblin Grunt #2 → Slash → Rogue
+         hit (79%) · 16 dmg (Physical) · Rogue HP 56 → 40
+         roll 0.62 vs 0.791 → hit
+         C.Rate 0.05 → 5%: roll 0.951 → no crit
+         dmg = base 15 × power 1.05 (5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 15.75 → 16
+[T 8.30] Elementalist → Frost Shard → Goblin Grunt #2
+         miss (90%)
+         roll 0.944 vs 0.903 → miss
+[T 8.75] Rogue → Dagger Attack → Goblin Grunt #2
+         hit (90%) · 14 dmg (Physical) · Goblin Grunt #2 HP 1 → 0
+         roll 0.219 vs 0.903 → hit
+         C.Rate 0.05 → 5%: roll 0.787 → no crit
+         dmg = base 12 × power 1.175 (17.5) × mult 1 (0) × resist 1 (res 0, pen 0) × all dmg 1 (0) × all res 1 (0) = 14.1 → 14
          Goblin Grunt #2 falls
-[T 7.70] Victory: the party wins.
+[T 8.75] Victory: the party wins.

@@ -1,46 +1,47 @@
 Goblin Patrol · 1000 battles · seeds 1–1000
-Win rate         89.5%  (895 won, 105 lost, 0 stalemates)
-Battle length    10.7 turns on average
-Party HP left    25.3% on average, 0.0% at worst
-Hit rate         84.1% of 43208 attacks
+Win rate         85.7%  (857 won, 143 lost, 0 stalemates)
+Battle length    11.0 turns on average
+Party HP left    24.4% on average, 0.0% at worst
+Hit rate         84.2% of 43527 attacks
 
 Damage dealt per battle
-  Rogue                     128.4
-  Elementalist              127.6
-  Goblin Grunt              119.9
-  Warrior                    80.4
-  Goblin Archer              74.6
+  Rogue                     131.9
+  Elementalist              123.6
+  Goblin Grunt              121.5
+  Warrior                    78.3
+  Goblin Archer              75.9
   Goblin Shaman              56.1
 
 Hero deaths per battle
   Warrior                     0.9
-  Elementalist                0.2
+  Elementalist                0.4
   Rogue                       0.2
 
 Actions used per battle
   Elementalist: Attack                  0.0
-  Elementalist: Fire Bolt               3.8
-  Elementalist: Frost Shard             4.2
-  Goblin Archer: Shot                   6.8
-  Goblin Grunt: Move                    0.1
-  Goblin Grunt: Slash                   9.9
-  Goblin Shaman: Attack                 2.8
-  Goblin Shaman: Defend                 0.3
+  Elementalist: Fire Bolt               3.6
+  Elementalist: Frost Shard             4.0
+  Goblin Archer: Shot                   6.9
+  Goblin Grunt: Defend                  0.3
+  Goblin Grunt: Move                    0.2
+  Goblin Grunt: Slash                  10.2
+  Goblin Shaman: Attack                 2.9
+  Goblin Shaman: Defend                 0.0
   Goblin Shaman: Mend                   2.3
   Goblin Shaman: Move                   1.0
   Goblin Shaman: Rotting Hex            1.7
-  Rogue: Dagger Attack                 10.9
+  Rogue: Dagger Attack                 11.3
   Rogue: Defend                         0.5
-  Rogue: Move                           1.4
-  Warrior: Attack                       1.1
-  Warrior: Defend                       0.9
+  Rogue: Move                           1.3
+  Warrior: Attack                       1.0
+  Warrior: Defend                       0.8
   Warrior: Power Attack                 2.1
 
 Effects and CC applied per battle
-  Chill                                 3.2
-  Guard                                 1.8
+  Chill                                 3.1
+  Guard                                 1.6
   Rot                                   1.3
-  Stealth                               1.4
+  Stealth                               1.3
   Stagger breaks                        0.0
   Casts interrupted                     0.0
 

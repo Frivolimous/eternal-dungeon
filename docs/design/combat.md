@@ -66,7 +66,7 @@ Every unit, heroes and enemies, has three default actions on top of its own skil
 | --- | --- | --- |
 | Attack | 100 | Basic weapon attack |
 | Defend | 100 | +0.3 Avoid and a Shield of 10% max Health until the unit's next turn |
-| Move | 50 | One tile within the unit's own area |
+| Move | 50 | Any empty tile in the area the unit stands in |
 
 A unit with no usable skill (no valid target, or not enough Mana) uses these: it Attacks if it has a valid target, otherwise it Moves to step into an empty front tile if it can, otherwise it sidesteps along its row to a tile from which its melee reaches someone, otherwise it Defends. This keeps "enemies generally stay put" true while stopping melee enemies from waiting behind their own front line.
 
@@ -74,7 +74,7 @@ A unit with no usable skill (no valid target, or not enough Mana) uses these: it
 
 CC can target a character or a tile: Slow, Stun, Stagger, Pull/Push/Move, Root, damage over time, delayed damage, stat reduction, action override (Confusion, Fear, Sleep), action restriction (Root, Silence) and conditional effects.
 
-Fear: a feared unit can only Defend, or Move one tile away from the front. It can't attack or use skills. Unlike Stun (and Sleep), Fear doesn't skip the turn.
+Fear: a feared unit can only Defend, or Move to a tile further from the front. It can't attack or use skills. Unlike Stun (and Sleep), Fear doesn't skip the turn.
 
 Damage over time scales with the caster: when it's applied, the caster's Power and Multiplier factors for the tags of the action (or proc) that applied it are locked in, and every tick uses them. Shield still absorbs ticks.
 

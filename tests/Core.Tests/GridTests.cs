@@ -128,7 +128,7 @@ public class GridTests
     }
 
     [Fact]
-    public void Move_steps_to_an_empty_neighbouring_tile_for_50_ap()
+    public void Move_goes_to_any_empty_tile_in_the_area_for_50_ap()
     {
         var warrior = U("warrior", "warrior", Side.Party);
         var rogue = U("rogue", "rogue", Side.Party);
@@ -139,12 +139,14 @@ public class GridTests
         grid.Place(grunt, E(0, 0));
         var b = new Battle(Repo, [warrior, rogue, grunt], seed: 1, grid);
 
-        Assert.Equal([P(1, 0)], grid.MoveOptions(warrior));               // the rogue blocks (0, 1)
+        Assert.Equal([P(0, 2), P(1, 0), P(1, 1), P(1, 2)], grid.MoveOptions(warrior));   // every empty tile; the rogue holds (0, 1)
         warrior.ActTicks = TurnClock.TurnThreshold;
-        var r = b.ActAt(warrior, Repo.Actions["move"], P(1, 0));
-        Assert.Equal(new Moved(warrior, P(0, 0), P(1, 0), "Move"), r.Outcomes[0]);
+        var r = b.ActAt(warrior, Repo.Actions["move"], P(1, 2));          // across the area in one Move
+        Assert.Equal(new Moved(warrior, P(0, 0), P(1, 2), "Move"), r.Outcomes[0]);
         Assert.Equal(5000, warrior.ActTicks);                            // 50 AP
-        Assert.Throws<InvalidOperationException>(() => b.ActAt(warrior, Repo.Actions["move"], P(1, 2)));  // not adjacent
+        warrior.ActTicks = TurnClock.TurnThreshold;
+        Assert.Throws<InvalidOperationException>(() => b.ActAt(warrior, Repo.Actions["move"], P(0, 1)));  // taken
+        Assert.Throws<InvalidOperationException>(() => b.ActAt(warrior, Repo.Actions["move"], E(1, 1)));  // not its area
     }
 
     [Fact]

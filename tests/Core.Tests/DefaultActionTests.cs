@@ -84,9 +84,10 @@ public class DefaultActionTests
         var b = new Battle(Repo, [w, grunt1, grunt2], seed: 1, grid);
 
         var step = UnitAi.Decide(b, grunt2)!;
-        Assert.Equal(("move", E(0, 2)), (step.Action.Id, step.Tile));
+        Assert.Equal(("move", E(0, 0)), (step.Action.Id, step.Tile));   // the free front tile from which it reaches the Warrior
 
-        grid.Place(U(Repo, "goblin_grunt", "g3", Side.Enemy), E(0, 2)); // now blocked
+        grid.Place(U(Repo, "goblin_grunt", "g3", Side.Enemy), E(0, 0)); // the front row is now full
+        grid.Place(U(Repo, "goblin_grunt", "g4", Side.Enemy), E(0, 2));
         Assert.Equal("defend", UnitAi.Decide(b, grunt2)!.Action.Id);
     }
 
@@ -101,7 +102,7 @@ public class DefaultActionTests
         var b = new Battle(Repo, [w, grunt], seed: 1, grid);
 
         var d = UnitAi.Decide(b, grunt)!;
-        Assert.Equal(("move", E(0, 1)), (d.Action.Id, d.Tile));         // one step over brings the Warrior diagonal
+        Assert.Equal(("move", E(0, 0)), (d.Action.Id, d.Tile));         // along its row to face the Warrior
         Assert.Equal(E(0, 2), grid.AnchorOf(grunt));                    // trying tiles left the grid as it was
     }
 
@@ -141,10 +142,11 @@ public class DefaultActionTests
         Assert.Null(w.CantUse(data.Actions["defend"]));
 
         var retreat = UnitAi.Decide(b, w)!;
-        Assert.Equal(("move", P(1, 1)), (retreat.Action.Id, retreat.Tile));
+        Assert.Equal("move", retreat.Action.Id);
+        Assert.Equal(1, grid.Depth(retreat.Tile!.Value));                // any tile further from the front
         w.ActTicks = TurnClock.TurnThreshold;
         Assert.Throws<InvalidOperationException>(() => b.ActAt(w, data.Actions["move"], P(0, 2)));   // sideways: not away
-        b.ActAt(w, data.Actions["move"], P(1, 1));
+        b.ActAt(w, data.Actions["move"], P(1, 2));
 
         Assert.Equal("defend", UnitAi.Decide(b, w)!.Action.Id);         // nowhere further back
     }

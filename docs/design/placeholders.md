@@ -24,7 +24,7 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 
 | Rule | Placeholder |
 | --- | --- |
-| Stealth mastery | Until masteries exist as a system (M3), the Rogue unit has it built in: its Move (50 AP, like Move) reaches a neighbouring tile or any empty tile in the enemy area, and applies Stealth until its next turn. A unit standing in the other side's area melees, and is meleed by, units on adjacent or diagonal tiles there. While in the enemy area, Move can also go to any empty tile in its own area (Jeremy, 2026-10-08) |
+| Stealth mastery | Until masteries exist as a system (M3), the Rogue unit has it built in: its Move (50 AP, like Move) reaches any empty tile in its area or in the enemy area, and applies Stealth until its next turn. A unit standing in the other side's area melees, and is meleed by, units on adjacent or diagonal tiles there. While in the enemy area, Move can also go to any empty tile in its own area (Jeremy, 2026-10-08) |
 | Stealth | +0.5 Avoid and −50 Threat until the unit's next turn (the old Cloak numbers). Attacking doesn't break it yet; the Rogue tree's "crits don't break Stealth" suggests attacks should, to decide with the skill trees |
 
 ## Enemy targeting

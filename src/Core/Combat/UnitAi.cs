@@ -33,32 +33,36 @@ public static class UnitAi
                 return decision;
         }
         if (DefaultAttack(battle, unit, profile.ThreatWeight) is { } attack) return attack;
-        var forward = battle.Grid.ForwardOptions(unit);
-        return Default(battle, unit, DefaultRole.Move, forward)
-            ?? Default(battle, unit, DefaultRole.Move, SidestepOptions(battle, unit))
+        // Step forward, preferring a tile from which its melee reaches someone; else sidestep toward a target.
+        var forward = battle.Grid.ForwardOptions(unit).ToList();
+        return Default(battle, unit, DefaultRole.Move, [.. Reaching(battle, unit, forward), .. forward])
+            ?? Default(battle, unit, DefaultRole.Move, Reaching(battle, unit, SameRow(battle, unit)))
             ?? Default(battle, unit, DefaultRole.Defend);
     }
 
+    static IEnumerable<Tile> SameRow(Battle battle, Unit unit) =>
+        battle.Grid.AnchorOf(unit) is { } from ? battle.Grid.MoveOptions(unit).Where(t => battle.Grid.Depth(t) == battle.Grid.Depth(from)) : [];
+
     /// <summary>
-    /// Neighbouring tiles in the unit's row from which one of its melee actions would have a valid target: melee only
-    /// reaches straight ahead or diagonally, so a unit with nobody in reach steps sideways toward someone. Each tile is
-    /// tried by moving the unit there and back (no rolls, nothing else changes).
+    /// The <paramref name="tiles"/> from which one of the unit's melee actions would have a valid target (melee only
+    /// reaches straight ahead or diagonally). Each tile is tried by moving the unit there and back (no rolls, nothing
+    /// else changes).
     /// </summary>
-    static List<Tile> SidestepOptions(Battle battle, Unit unit)
+    static List<Tile> Reaching(Battle battle, Unit unit, IEnumerable<Tile> tiles)
     {
         var grid = battle.Grid;
         if (grid.AnchorOf(unit) is not { } from) return [];
         var melee = battle.Data.ActionsOf(unit.Def).Select(id => battle.Data.Actions[id])
             .Where(a => a.Target == ActionTarget.Enemy && a.Range is ActionRange.Melee or ActionRange.Reach && unit.CantUse(a) is null)
             .ToList();
-        var tiles = new List<Tile>();
-        foreach (var tile in grid.MoveOptions(unit).Where(t => grid.Depth(t) == grid.Depth(from)))
+        var reaching = new List<Tile>();
+        foreach (var tile in tiles.ToList())
         {
             grid.MoveTo(unit, tile);
-            if (melee.Any(a => ValidTargets(battle, unit, a).Count > 0)) tiles.Add(tile);
+            if (melee.Any(a => ValidTargets(battle, unit, a).Count > 0)) reaching.Add(tile);
             grid.MoveTo(unit, from);
         }
-        return tiles;
+        return reaching;
     }
 
     /// <summary>The default Attack at the best-scoring valid target, if the unit can use it and has one.</summary>

@@ -262,24 +262,23 @@ public sealed class BattleGrid
             .Any(t => from.Any(lane => Math.Abs(lane - Lane(t, theirs)) <= 1));
     }
 
-    /// <summary>Where <paramref name="unit"/> could step with Move: an empty tile next to it in the area it
-    /// stands in (Small units only).</summary>
+    /// <summary>Where <paramref name="unit"/> could go with Move: any empty tile in the area it stands in (Small units
+    /// only; Jeremy, 2026-10-08: Move isn't limited to neighbouring tiles).</summary>
     public IEnumerable<Tile> MoveOptions(Unit unit)
     {
         if (unit.Def.Size != UnitSize.Small || AnchorOf(unit) is not { } at) return [];
-        Tile[] next = [at with { Row = at.Row - 1 }, at with { Row = at.Row + 1 }, at with { Col = at.Col - 1 }, at with { Col = at.Col + 1 }];
-        return InOrder(next.Where(t => Inside(t) && At(t) is null));
+        return InOrder(TilesOf(at.Area).Where(t => At(t) is null));
     }
 
     /// <summary>Tiles in front-relative order (area, depth, lane), so choices don't depend on the layout.</summary>
     IEnumerable<Tile> InOrder(IEnumerable<Tile> tiles) =>
         tiles.OrderBy(t => t.Area).ThenBy(t => Relative(t).Depth).ThenBy(t => Relative(t).Lane);
 
-    /// <summary>Move options one row nearer the front.</summary>
+    /// <summary>Move options nearer the front.</summary>
     public IEnumerable<Tile> ForwardOptions(Unit unit) =>
         AnchorOf(unit) is { } at ? MoveOptions(unit).Where(t => Depth(t) < Depth(at)) : [];
 
-    /// <summary>Where a feared unit may Move: an empty neighbouring tile one row further from the front.</summary>
+    /// <summary>Where a feared unit may Move: an empty tile further from the front.</summary>
     public IEnumerable<Tile> RetreatOptions(Unit unit) =>
         AnchorOf(unit) is { } at ? MoveOptions(unit).Where(t => Depth(t) > Depth(at)) : [];
 

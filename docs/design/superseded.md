@@ -42,3 +42,4 @@
 | Skill trees, masteries and traits timing | Built in M4 | Built in M3 for the three starting classes, including the trait system; M4 adds the other classes, Secondary and Dabble picks and exploration skills (2026-10-08) |
 | Battle layouts | A fixed enemy layout on the enemies' own 2×3 grid | Enemies stand on their own area (3×2 or 2×3 by default, growing with abilities), in a layout fixed by the encounter or generated (2026-10-08) |
 | Gold unlocks | Gold unlocked starting skill trees, harder dungeons and better loot | Gold unlocks starting skill trees and better loot; completing a dungeon unlocks the next (2026-10-08) |
+| Move | 50 AP to one neighbouring tile | 50 AP to any empty tile in the area the unit stands in; Fear: any tile further back (2026-10-08) |
