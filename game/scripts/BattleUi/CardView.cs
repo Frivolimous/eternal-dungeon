@@ -24,6 +24,7 @@ public partial class CardView : Node3D
     bool lifted, faceDown;
     Tween? moveTween;
     Tween? turnTween;   // the one tween allowed to turn the card (shake, tilt, flip), so they never fight
+    Vector3 rest;       // the card's resting turn: tilted while stunned, flat otherwise; a shake ends here
 
     /// <summary>Where the card rests on the table (its centre), in world units.</summary>
     public Vector3 Home { get; private set; }
@@ -139,7 +140,7 @@ public partial class CardView : Node3D
         var t = turnTween = CreateTween();
         var step = seconds / 6;
         foreach (var dx in new[] { 0.08f, -0.07f, 0.05f, -0.03f, 0.015f, 0f })
-            t.TweenProperty(pivot, "rotation_degrees", new Vector3(dx * 60 * strength, 0, dx * 40 * strength), step);
+            t.TweenProperty(pivot, "rotation_degrees", rest + new Vector3(dx * 60 * strength, 0, dx * 40 * strength), step);
     }
 
     /// <summary>A miss: the target sidesteps and comes back.</summary>
@@ -156,7 +157,9 @@ public partial class CardView : Node3D
     {
         if (faceDown) return;
         var to = new Vector3(0, on ? 12 : 0, 0);
-        if (pivot.RotationDegrees.IsEqualApprox(to) || turnTween?.IsRunning() == true) return;
+        if (rest.IsEqualApprox(to)) return;
+        rest = to;
+        turnTween?.Kill();
         turnTween = CreateTween();
         turnTween.TweenProperty(pivot, "rotation_degrees", to, 0.2f);
     }
