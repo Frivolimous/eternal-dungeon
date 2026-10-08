@@ -1,0 +1,3 @@
+echo Exporting sheets to tsv...
+dotnet run --project ..\src\Sim -- export-tsv ..\sheets
+echo Complete. The tsv files are in the sheets folder.
