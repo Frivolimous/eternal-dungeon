@@ -1,8 +1,25 @@
 # M2 Build Brief: Playable battle
 
-Written 2026-10-04 from a design session with Jeremy, revised the same day after Claude's review. The Design
-Anchor (`docs/design/`) wins wherever this brief disagrees. Prerequisites (the placeholder review and the M1 log
-review) are done.
+Written 2026-10-04 from a design session with Jeremy, revised the same day after Claude's review, and updated
+2026-10-08 for the class and exploration decisions (see the next section). The Design Anchor (`docs/design/`) wins
+wherever this brief disagrees. Prerequisites (the placeholder review and the M1 log review) are done.
+
+## Decisions since the brief (2026-10-07)
+
+The class and exploration decisions changed some of what M2 shows. All of this is built and in the Anchor:
+
+- **Crit stats are C.Rate and C.Mult** (never written out), in data, logs and the details panel.
+- **No H.Regen or M.Regen.** Health and Mana don't regenerate in battle (healing or Mana over time exists only as
+  effects), and they will carry over through a dungeon. Casters can now run out of Mana mid-fight: the Elementalist
+  has 120 Mana (placeholder) and the Goblin Shaman stops casting once dry.
+- **AI fallback:** a unit with no usable skill (no target, or no Mana) Attacks if it can, else steps toward the front,
+  else Defends.
+- **Elemental tag:** Fire, Electric and Ice actions and procs also carry Elemental; the Elemental compound is the
+  single row Elemental Power 1. The log's damage kinds are unchanged ("Arcane, Fire").
+- **The Rogue's Stealth mastery replaces Sneak:** the Rogue's Move (50 AP) reaches a neighbouring tile or any empty
+  enemy tile, and every Move grants **Stealth** (the renamed Cloak). There is no separate Sneak action; the Rogue's
+  action bar shows Attack, Dagger Attack, Defend and Move. Masteries, skill trees and traits are otherwise M3–M4 work.
+- **Floors are now Maps** (exploration.md), which only affects the out-of-scope list here.
 
 ## Goal
 
@@ -23,7 +40,8 @@ styles. The checkpoint is about **feel**: is a battle readable and satisfying, a
 
 - The Google Sheets sync itself: a small separate task right after M2, built on section 2.
 - Multi-front layouts (Ambushed, Surrounding) and encounter modifiers: M3.
-- Dungeons, floors, XP, loot and saving: M3.
+- Dungeons, Maps and exploration, XP, loot and saving: M3.
+- Skill trees, masteries (beyond the Rogue's built-in Stealth) and traits: M3–M4.
 - Audio: a separate pass once the art style is chosen.
 - Full controller polish: M6. M2 must not rule it out (section 8).
 - Damage variance: damage stays static (no damage roll). Only hit, crit and Brutal are random.
@@ -110,7 +128,8 @@ Designed at **1280×800** (Steam Deck's native 16:10) and scaled up for larger s
 ## 5. Action bar
 
 - Actions are **buttons styled as small card frames**: icon, name, AP cost, Mana cost and cast time. They're
-  not a hand of cards. The default actions (Attack, Defend, Move) are included.
+  not a hand of cards. The default actions (Attack, Defend, Move) are included; where a unit has its own version of
+  one (the Rogue's Move), it takes the default's place.
 - Unusable actions (no Mana, Silenced, Rooted, Feared, no valid target) are shown disabled with the reason on
   hover.
 
@@ -120,7 +139,8 @@ Designed at **1280×800** (Steam Deck's native 16:10) and scaled up for larger s
 2. Hovering an action shows a **ghost marker on the timeline** where the hero's next turn would land, given that
    action's AP cost and the hero's current Speed. For a cast it shows two points: when the cast completes and when
    the next turn lands. It's an estimate: a buff expiring can move it.
-3. Picking an action highlights valid targets (or empty tiles for Move). Hovering a target shows the **preview**:
+3. Picking an action highlights valid targets (or empty tiles for Move; the Rogue's Move also lights the enemy area's
+   empty tiles). Hovering a target shows the **preview**:
    the hit chance as a percentage, the damage on a normal hit, a crit and a Brutal crit, each with its chance, and
    any effects it would apply. Procs aren't included in the numbers; procs that could trigger are listed with their
    chance.
@@ -202,4 +222,8 @@ a test checks that previewing changes nothing (the battle plays identically with
       art falls back to a generated placeholder card, never a crash).
 - [ ] No UI text is hard-coded, and no text is baked into images. Statuses are readable without color.
 - [ ] The Anchor has `presentation.md` and an updated Battlefield section, and `CLAUDE.md` lists any new commands.
-- [ ] **Checkpoint:** Jeremy plays several fights, judges the feel, and picks an art style.
+- [ ] The 2026-10-07 decisions show in the game: C.Rate and C.Mult in the details panel, no regeneration, casters
+      that run dry fall back on Attack, and the Rogue's Move enters the enemy area with Stealth (no Sneak button).
+- [ ] **Checkpoint:** Jeremy plays several fights, judges the feel, and picks an art style. Also worth judging:
+      whether fights feel right with finite Mana (Elementalist 120), and whether the Rogue's 50-AP Stealth Move is
+      too cheap compared with the old 100-AP Sneak.
