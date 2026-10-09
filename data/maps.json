@@ -1,1 +1,4 @@
-[]
+[
+  { "dungeon": "dungeon_0", "order": 1, "id": "forest_edge", "name": "Forest Edge", "start": "fe_trail" },
+  { "dungeon": "dungeon_0", "order": 2, "id": "goblin_ruins", "name": "Goblin Ruins", "start": "gr_thicket" }
+]

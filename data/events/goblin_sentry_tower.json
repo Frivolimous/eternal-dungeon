@@ -1,0 +1,13 @@
+{ "id": "goblin_sentry_tower", "type": "outpost", "tags": ["goblin", "outdoors", "forest"], "blocks": [
+  { "id": "intro", "type": "story", "image": "tower", "choices": [
+    { "id": "sneak", "conditions": [{ "type": "trait", "trait": ["deception", "streetwise"] }], "success": "sneaked" },
+    { "id": "rush", "success": "fight" },
+    { "id": "ignore" } ] },
+  { "id": "sneaked", "type": "story", "success": "lookout" },
+  { "id": "fight", "type": "combat", "encounter": "d0_tower_guards", "scale": "major", "success": "lookout" },
+  { "id": "lookout", "type": "action", "actions": [
+    { "type": "reveal", "nodes": ["gr_fortress"], "icon": "boss" },
+    { "type": "reveal", "nodes": ["gr_grove", "gr_marsh"], "icon": "enemies" } ], "success": "loot" },
+  { "id": "loot", "type": "reward", "rewards": [{ "type": "gold", "amount": 10 }], "success": "view" },
+  { "id": "view", "type": "story" }
+] }

@@ -1,0 +1,30 @@
+{ "id": "goblin_camp", "type": "boss", "tags": ["goblin", "outdoors", "ruins"], "blocks": [
+  { "id": "intro", "type": "story", "image": "fortress", "choices": [
+    { "id": "sneak", "conditions": [{ "type": "trait", "trait": "deception" }], "success": "sneaked" },
+    { "id": "sabotage", "conditions": [{ "type": "trait", "trait": "disable" }], "success": "sabotaged" },
+    { "id": "storm", "success": "stormed" },
+    { "id": "later", "success": "wait" } ] },
+  { "id": "sneaked", "type": "story", "success": "pot" },
+  { "id": "sabotaged", "type": "story", "success": "chief_ready" },
+  { "id": "stormed", "type": "story", "success": "patrol" },
+  { "id": "patrol", "type": "combat", "encounter": "d0_camp_patrol", "scale": "major", "success": "inside" },
+  { "id": "inside", "type": "story", "success": "pot" },
+  { "id": "pot", "type": "story", "success": "chief" },
+  { "id": "chief", "type": "combat", "encounter": "d0_goblin_chief", "scale": "boss", "success": "rescued" },
+  { "id": "chief_ready", "type": "combat", "encounter": "d0_goblin_chief", "scale": "boss", "initiative": "first_strike", "success": "rescued" },
+  { "id": "rescued", "type": "action", "actions": [{ "type": "flag", "key": "son_rescued" }, { "type": "complete_dungeon" }], "success": "ending" },
+  { "id": "ending", "type": "branch", "next": [
+    { "conditions": [{ "type": "flag", "key": "merchant_freed" }, { "type": "flag", "key": "wife_saved" }], "success": "family_reward" },
+    { "conditions": [{ "type": "flag", "key": "merchant_freed" }], "success": "father_reward" },
+    { "conditions": [{ "type": "flag", "key": "wife_saved" }], "success": "mother_reward" },
+    { "success": "alone_reward" } ] },
+  { "id": "family_reward", "type": "reward", "rewards": [{ "type": "gold", "amount": 50 }], "success": "family" },
+  { "id": "father_reward", "type": "reward", "rewards": [{ "type": "gold", "amount": 30 }], "success": "father" },
+  { "id": "mother_reward", "type": "reward", "rewards": [{ "type": "gold", "amount": 30 }], "success": "mother" },
+  { "id": "alone_reward", "type": "reward", "rewards": [{ "type": "gold", "amount": 20 }], "success": "alone" },
+  { "id": "family", "type": "story" },
+  { "id": "father", "type": "story" },
+  { "id": "mother", "type": "story" },
+  { "id": "alone", "type": "story" },
+  { "id": "wait", "type": "action", "actions": [{ "type": "defer", "resume": "intro" }] }
+] }

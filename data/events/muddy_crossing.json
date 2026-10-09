@@ -1,0 +1,13 @@
+{ "id": "muddy_crossing", "type": "hazard", "tags": ["outdoors", "swamp"], "blocks": [
+  { "id": "intro", "type": "story", "image": "mud", "choices": [
+    { "id": "push", "conditions": [{ "type": "trait", "trait": "discipline" }], "success": "pushed" },
+    { "id": "firm", "conditions": [{ "type": "trait", "trait": "awareness" }], "success": "found" },
+    { "id": "wade", "success": "wade_cost" },
+    { "id": "around", "success": "around_cost" } ] },
+  { "id": "pushed", "type": "story" },
+  { "id": "found", "type": "story" },
+  { "id": "wade_cost", "type": "resource", "resource": "stamina", "amount": -1, "target": "all", "success": "waded" },
+  { "id": "waded", "type": "story" },
+  { "id": "around_cost", "type": "action", "actions": [{ "type": "buff", "buff": "sluggish", "target": "all" }], "success": "went_around" },
+  { "id": "went_around", "type": "story" }
+] }

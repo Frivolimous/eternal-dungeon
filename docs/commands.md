@@ -19,6 +19,8 @@ the repo root) and pick a number. `ed 2` runs option 2 straight away.
 | 10 | Play a saved replay in the simulator | Lists the replays saved by the game, then prints the chosen one's log |
 | 11 | Run the tests | Every automated test |
 | 12 | Export the Windows build | Writes the game to `builds\windows\` (copy the whole folder to another PC) |
+| 13 | Play one Dungeon 0 Event | Asks for an Event, a seed and your choices, then prints its text, the choices with their previews, rolls, fights and what changed. Choices you leave out are the first one shown |
+| 14 | Auto-play Dungeon 0 | One run with its whole log, or many runs with a summary: how often the party finishes, where it wipes, Health, Mana and Stamina at each boss |
 
 The Google Sheet rule of thumb: **pull before** changing data here, **push after**. Both stop and ask before
 overwriting edits that exist on only one side (the sheet or `data\`).
@@ -42,6 +44,7 @@ overwriting edits that exist on only one side (the sheet or `data\`).
 | `dotnet run --project src\Sim -- format-data` | Rewrites `data\*.json` in their standard form, after editing JSON by hand |
 | `dotnet run --project src\Sim -- art-requests` | Regenerates `docs\art-requests.md` (after adding units or actions) |
 | `dotnet run --project src\Sim -- encounters` | Lists the encounter ids |
+| `dotnet run --project src\Sim -- event goblin_camp --flags merchant_freed,wife_saved --gold 50` | Plays an Event with Dungeon flags and Gold set first, to see a branch (add `--battle-log` to print the fights) |
 | `dotnet run --project src\Sim -- pull-sheets --force` | Pull even though `data\` has changes not on the sheet (they're dropped) |
 | `dotnet run --project src\Sim -- push-sheets --force` | Push even though the sheet has edits not in `data\` (they're overwritten) |
 | `dotnet run --project src\Sim -- help` | Every simulator command |

@@ -52,6 +52,9 @@ dotnet run --project src/Sim -- pull-sheets [--force]  # the content Google Shee
 dotnet run --project src/Sim -- push-sheets [--force]  # data/ → the Google Sheet (tools/pull-sheets.bat, push-sheets.bat)
 dotnet run --project src/Sim -- format-data          # rewrite data/*.json in canonical form (after hand edits)
 dotnet run --project src/Sim -- replay fight.replay.json   # play a replay saved by the game, print its log
+dotnet run --project src/Sim -- event caged_merchant --seed 1 [--choices a,b] [--flags f] [--gold N] [--battle-log]  # one Event, headless
+dotnet run --project src/Sim -- dungeon dungeon_0 --seed 1 [--battle-log]   # auto-play one whole run, print its log
+dotnet run --project src/Sim -- dungeon dungeon_0 --runs 200                # many runs: completion, wipes, resources at bosses
 dotnet run --project src/Sim -- assets               # check the asset manifest and art styles, list AI placeholders
 dotnet run --project src/Sim -- art-requests         # rewrite docs/art-requests.md (a test checks it's current)
 dotnet test --filter-method "*Bad_enum*"             # one test by name (wildcards allowed)
@@ -80,7 +83,7 @@ visual change.
 
 ```
 data/              JSON content, one flat table per file (data/README.md lists them). Embedded into the game
-                   assembly at build.
+                   assembly at build. data/events/: one JSON file per Event (nested blocks).
 src/Core/          rules library, plain C#, no Godot
 src/Sim/           command-line tool (assembly name `sim`): battle simulator, data and asset checks
 docs/design/       the Design Anchor;  docs/briefs/  build briefs;  docs/sample-logs/  simulator output
@@ -174,6 +177,15 @@ The rules themselves are in the Anchor; this is the map from rule to code.
   that reproduces the battle exactly. AI-made hero decisions are marked `auto` and re-asked on replay, because the
   AI's tie-breaks roll the battle RNG. Previews (target numbers, ghost marker, timeline) are pure: UI code must never
   roll the battle RNG or call the AI just to look (a test checks previews change nothing).
+- **Dungeon runs** (`Core/Exploration`): `DungeonRun` (partial: `RunEvents.cs` the event engine, `RunBattles.cs` fights from
+  the run's state, `EventPreview.cs` pure choice previews) is driven like a `BattleSession`: every action returns a
+  `RunResult`; a Combat block hands the caller a `BattleSession` to play, then `FinishBattle` carries Health, Mana, belt
+  charges, deaths and Stamina back and continues the Event. All randomness (Active Hero, rolls, random targets, each
+  battle's seed) comes from the run's one RNG. `Hero` holds run state (traits = Primary class + +Trait buffs; traits
+  are stats in the `trait` group, never unit columns). Events are JSON in `data/events/` (`EventLoader` checks every
+  link, key and id; text keys are derived: `event.<id>.<block>[.<choice>]`). `RunPolicy` is the simple auto-player
+  behind `sim dungeon` and `DungeonSummary`. Flee is a proc result (`Unit.Fled`: out of the fight, not dead; `Alive` is
+  false for both).
 - `Core.Combat` is the battle namespace (a `Battle` namespace would clash with the `Battle` class).
 - **Balance is deferred:** combat balance waits until after M2, dungeon balance until after M3. Until then the
   starter encounters only need to run cleanly (fights chain through a dungeon's Maps with no passive regeneration, so a single-fight win rate is the wrong

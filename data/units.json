@@ -7,5 +7,9 @@
   { "id": "goblin_shaman", "name": "Goblin Shaman", "size": 1, "health": 10, "mana": 40, "speed": -5, "initiative": 5, "hit": -0.1, "avoid": 0, "magic": 10, "actions": ["rotting_hex", "mend"], "ai": "goblin_shaman" },
   { "id": "goblin_brute", "name": "Goblin Brute", "size": 1.5, "health": 150, "speed": -30, "initiative": 0, "hit": -0.15, "avoid": -0.03, "strength": 20, "actions": ["brute_smash"], "ai": "goblin_brute" },
   { "id": "goblin_hexer", "name": "Goblin Hexer", "size": 1, "health": 110, "speed": -10, "initiative": 20, "hit": -0.1, "avoid": 0, "magic": 10, "actions": ["hex_bolt"], "ai": "goblin_hexer", "procs": ["flaming"] },
-  { "id": "goblin_chief", "name": "Goblin Chief", "size": 2, "health": 320, "speed": -15, "initiative": 0, "hit": -0.1, "avoid": 0, "strength": 20, "fortification": 10, "actions": ["chief_cleave", "war_cry"], "ai": "goblin_chief" }
+  { "id": "goblin_chief", "name": "Goblin Chief", "size": 2, "health": 320, "speed": -15, "initiative": 0, "hit": -0.1, "avoid": 0, "strength": 20, "fortification": 10, "actions": ["chief_cleave", "war_cry"], "ai": "goblin_chief" },
+  { "id": "wolf", "name": "Wolf", "size": 1, "health": 0, "speed": 20, "initiative": 10, "avoid": 0, "strength": 5, "dodge": 10, "actions": ["wolf_bite"], "ai": "wolf" },
+  { "id": "bog_crocodile", "name": "Bog Crocodile", "size": 1.5, "health": 130, "speed": -20, "initiative": 0, "hit": -0.1, "avoid": -0.03, "strength": 15, "fortification": 10, "actions": ["croc_bite"], "ai": "bog_crocodile" },
+  { "id": "wild_boar", "name": "Wild Boar", "size": 1, "health": 80, "speed": 0, "initiative": 5, "hit": -0.1, "avoid": 0, "strength": 10, "actions": ["boar_gore"], "ai": "wild_boar" },
+  { "id": "goblin_captain", "name": "Goblin Captain", "size": 1, "health": 110, "speed": -5, "initiative": 5, "hit": -0.1, "avoid": 0, "strength": 15, "fortification": 5, "actions": ["chief_cleave", "war_cry"], "ai": "goblin_chief" }
 ]

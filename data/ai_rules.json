@@ -19,5 +19,8 @@
   { "profile": "hero_rogue", "order": 3, "action": "stealth_move", "not_intruding": true, "to_enemy_area": true },
   { "profile": "hero_elementalist", "order": 0, "action": "mana_potion", "self_mana_below": 0.15 },
   { "profile": "hero_elementalist", "order": 1, "action": "frost_shard", "not_twice_in_a_row": true, "target_missing_buff": "chill" },
-  { "profile": "hero_elementalist", "order": 2, "action": "fire_bolt" }
+  { "profile": "hero_elementalist", "order": 2, "action": "fire_bolt" },
+  { "profile": "wolf", "order": 1, "action": "wolf_bite" },
+  { "profile": "bog_crocodile", "order": 1, "action": "croc_bite" },
+  { "profile": "wild_boar", "order": 1, "action": "boar_gore" }
 ]

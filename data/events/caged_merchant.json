@@ -1,0 +1,28 @@
+{ "id": "caged_merchant", "type": "rescue", "tags": ["goblin", "outdoors", "forest"], "start": "check", "blocks": [
+  { "id": "check", "type": "branch", "next": [
+    { "conditions": [{ "type": "event_flag", "key": "visited" }, { "type": "flag", "key": "gatekeeper_key" }], "success": "key" },
+    { "conditions": [{ "type": "event_flag", "key": "visited" }], "success": "again" },
+    { "success": "first" } ] },
+  { "id": "first", "type": "action", "actions": [{ "type": "event_flag", "key": "visited" }], "success": "intro" },
+  { "id": "intro", "type": "story", "image": "merchant", "choices": [
+    { "id": "tear", "conditions": [{ "type": "class", "class": "warrior" }], "success": "torn" },
+    { "id": "pick", "conditions": [{ "type": "trait", "trait": "disable" }],
+      "roll": { "base": 0.4, "trait": "disable", "per_point": 0.3 }, "success": "picked", "failure": "snapped" },
+    { "id": "leave", "success": "wait" } ] },
+  { "id": "again", "type": "story", "image": "merchant", "choices": [
+    { "id": "tear", "conditions": [{ "type": "class", "class": "warrior" }], "success": "torn" },
+    { "id": "pick", "conditions": [{ "type": "trait", "trait": "disable" }],
+      "roll": { "base": 0.4, "trait": "disable", "per_point": 0.3 }, "success": "picked", "failure": "snapped" },
+    { "id": "leave", "success": "wait" } ] },
+  { "id": "torn", "type": "story", "success": "guards" },
+  { "id": "snapped", "type": "story", "success": "guards" },
+  { "id": "guards", "type": "combat", "encounter": "d0_cage_guards", "scale": "major", "success": "freed" },
+  { "id": "picked", "type": "story", "success": "freed" },
+  { "id": "key", "type": "story", "success": "freed" },
+  { "id": "freed", "type": "action", "actions": [
+    { "type": "flag", "key": "merchant_freed" },
+    { "type": "reveal", "nodes": ["fe_post"], "icon": "boss" } ], "success": "thanks" },
+  { "id": "thanks", "type": "reward", "rewards": [{ "type": "gold", "amount": 10 }], "success": "farewell" },
+  { "id": "farewell", "type": "story" },
+  { "id": "wait", "type": "action", "actions": [{ "type": "defer", "resume": "check" }] }
+] }

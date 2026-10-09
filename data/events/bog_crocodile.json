@@ -1,0 +1,10 @@
+{ "id": "bog_crocodile", "type": "ambush", "tags": ["wild_beast", "outdoors", "swamp"], "blocks": [
+  { "id": "intro", "type": "story", "image": "bog", "choices": [
+    { "id": "cross", "roll": { "base": 0.2, "trait": "awareness", "per_point": 0.4 }, "success": "spotted", "failure": "lunge" } ] },
+  { "id": "spotted", "type": "story", "success": "fight_ready" },
+  { "id": "lunge", "type": "story", "success": "fight_surprised" },
+  { "id": "fight_ready", "type": "combat", "encounter": "d0_bog_crocodile", "scale": "major", "initiative": "first_strike", "success": "gullet" },
+  { "id": "fight_surprised", "type": "combat", "encounter": "d0_bog_crocodile", "scale": "major", "initiative": "surprised", "success": "gullet" },
+  { "id": "gullet", "type": "reward", "rewards": [{ "type": "gold", "amount": 15 }, { "type": "item", "item": "health_potion" }], "success": "after" },
+  { "id": "after", "type": "story" }
+] }

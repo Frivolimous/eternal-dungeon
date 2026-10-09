@@ -7,5 +7,8 @@
   { "id": "goblin_hexer", "name": "Hexer", "threat_weight": 0.5 },
   { "id": "hero_warrior", "name": "Warrior (scripted)", "threat_weight": 0.25 },
   { "id": "hero_rogue", "name": "Rogue (scripted)", "threat_weight": 0.25 },
-  { "id": "hero_elementalist", "name": "Elementalist (scripted)", "threat_weight": 0.25 }
+  { "id": "hero_elementalist", "name": "Elementalist (scripted)", "threat_weight": 0.25 },
+  { "id": "wolf", "name": "Wolf", "threat_weight": 0.25 },
+  { "id": "bog_crocodile", "name": "Crocodile", "threat_weight": 0.5 },
+  { "id": "wild_boar", "name": "Boar", "threat_weight": 0.5 }
 ]

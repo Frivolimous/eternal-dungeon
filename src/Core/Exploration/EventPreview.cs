@@ -34,6 +34,9 @@ public sealed partial class DungeonRun
         {
             switch (def.Block(id))
             {
+                case StoryBlock { Choices.Count: 0 } s:
+                    id = s.Success;                         // text on the way: look past it
+                    break;
                 case StoryBlock:
                     return new Outlook(null, false, false);
                 case CombatBlock c:

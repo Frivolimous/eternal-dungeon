@@ -1,0 +1,11 @@
+{ "id": "overgrown_shrine", "type": "shrine", "tags": ["outdoors", "forest", "ruins"], "blocks": [
+  { "id": "intro", "type": "story", "image": "shrine", "choices": [
+    { "id": "read", "conditions": [{ "type": "trait", "trait": ["arcana", "scholar"] }], "success": "rite" },
+    { "id": "pray", "roll": { "base": 0.5 }, "success": "blessed", "failure": "cursed" },
+    { "id": "leave" } ] },
+  { "id": "rite", "type": "story", "success": "blessed" },
+  { "id": "blessed", "type": "action", "actions": [{ "type": "buff", "buff": "wild_blessing", "target": "all" }], "success": "blessed_text" },
+  { "id": "blessed_text", "type": "story" },
+  { "id": "cursed", "type": "action", "actions": [{ "type": "buff", "buff": "forsaken", "target": "all" }], "success": "cursed_text" },
+  { "id": "cursed_text", "type": "story" }
+] }

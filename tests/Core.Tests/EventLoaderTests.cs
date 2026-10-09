@@ -17,7 +17,7 @@ public class EventLoaderTests
     public void The_test_dungeon_loads()
     {
         var data = RunTestData.Data;
-        Assert.Equal(4, data.Events.Count);
+        Assert.Equal(4, data.Events.Keys.Count(k => k.StartsWith("t_")));
         var start = data.Events["t_start"];
         Assert.Equal("intro", start.Start);
         var pick = ((StoryBlock)start.Block("intro")).Choices[0];

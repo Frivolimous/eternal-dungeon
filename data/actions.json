@@ -20,5 +20,8 @@
   { "id": "flee", "name": "Flee", "target": "self", "ap_cost": 100, "procs": ["flee"], "note": "Heroes only: leaves the battle at once, from any tile (Jeremy, 2026-10-08)" },
   { "id": "health_potion", "name": "Health Potion", "tags": ["buff"], "target": "self", "ap_cost": 50, "procs": ["health_potion"] },
   { "id": "mana_potion", "name": "Mana Potion", "tags": ["buff"], "target": "self", "ap_cost": 50, "procs": ["mana_potion"] },
-  { "id": "throwing_spikes", "name": "Throwing Spikes", "tags": ["gadget", "ranged", "projectile", "physical"], "target": "enemy", "range": "any", "ap_cost": 50, "base_damage": 12, "note": "A Gadget belt item (Jeremy, 2026-10-08); the damage is a placeholder" }
+  { "id": "throwing_spikes", "name": "Throwing Spikes", "tags": ["gadget", "ranged", "projectile", "physical"], "target": "enemy", "range": "any", "ap_cost": 50, "base_damage": 12, "note": "A Gadget belt item (Jeremy, 2026-10-08); the damage is a placeholder" },
+  { "id": "wolf_bite", "name": "Bite", "tags": ["weapon", "physical", "melee"], "target": "enemy", "range": "melee", "ap_cost": 100, "base_damage": 11 },
+  { "id": "croc_bite", "name": "Crushing Bite", "tags": ["weapon", "physical", "melee", "heavy"], "target": "enemy", "range": "melee", "ap_cost": 100, "base_damage": 20 },
+  { "id": "boar_gore", "name": "Gore", "tags": ["weapon", "physical", "melee", "force"], "target": "enemy", "range": "melee", "ap_cost": 100, "base_damage": 16, "procs": ["push"] }
 ]

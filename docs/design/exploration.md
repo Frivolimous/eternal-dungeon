@@ -285,33 +285,23 @@ Hero.
 
 ### Block shapes (for implementation)
 
+The format as built (M3A; the full reference is in `data/README.md` › Events): a block is a flat object with its
+`id`, `type` and fields, in snake_case like every other data file, and text is never inline: it's a key in
+`strings.csv` derived from the ids (`event.<id>.<block>`, `event.<id>.<block>.<choice>`). Previews are worked out from
+the blocks (a fight's scale and Stamina, a roll's chance), so they need no text of their own.
+
 ```json
-{ "id": "intro", "type": "story", "config": {
-    "heroImage": "goblin_prisoner", "text": "A wounded goblin begs you for help.",
-    "next": [
-      { "text": "Attack the Guard", "success": "guard_combat",
-        "preview": { "type": "combat", "encounterType": "skirmish", "staminaCost": 0, "details": "Low Difficulty Combat" } },
-      { "text": "Try to slip past in the shadows",
-        "resolution": { "type": "roll", "chance": { "base": 0.7, "modifiers": [
-            { "source": "trait", "key": "awareness", "mode": "perPoint", "value": 0.1 },
-            { "source": "exhaustion", "mode": "flat", "value": -0.2 } ] },
-          "success": "bypass_success", "failure": "ambush_combat" },
-        "preview": { "type": "risk", "successText": "70% Chance: Avoid Encounter (0 Stamina)",
-          "failureText": "30% Chance: Ambushed (Major Combat - 1 Stamina)" } } ] } }
+{ "id": "intro", "type": "story", "choices": [
+    { "id": "pick", "conditions": [{ "type": "trait", "trait": "disable" }],
+      "roll": { "base": 0.4, "trait": "disable", "per_point": 0.3 }, "success": "picked", "failure": "snapped" },
+    { "id": "leave", "success": "wait" } ] }
 
-{ "id": "check_prisoners", "type": "branch", "config": { "next": [
-    { "condition": { "type": "dungeonFlag", "key": "prisoners_rescued", "operator": "==", "value": true }, "success": "reward" },
-    { "success": "nothing" } ] } }
+{ "id": "guards", "type": "combat", "encounter": "d0_cage_guards", "scale": "major", "initiative": "surprised", "success": "freed" }
 
-{ "id": "goblin_patrol", "type": "combat", "config": {
-    "encounter": { "type": "generated", "encounterType": "skirmish", "dangerModifier": 1, "rarity": "common" },
-    "success": "victory_block", "flee": "closed_event" } }
+{ "id": "freed", "type": "action", "actions": [ { "type": "flag", "key": "merchant_freed" },
+    { "type": "reveal", "nodes": ["fe_post"], "icon": "boss" } ], "success": "thanks" }
 
-{ "id": "injury", "type": "resourceChange", "config": { "resource": "health", "amount": -10, "target": "active", "success": "next_block_id" } }
-
-{ "id": "defer_choice", "type": "action", "config": { "actionType": "deferEvent", "resumeBlockId": "intro" } }
-
-{ "id": "reward", "type": "reward", "config": { "rewards": [ { "type": "gold", "amount": 50 } ], "success": "after_reward" } }
+{ "id": "wait", "type": "action", "actions": [{ "type": "defer", "resume": "check" }] }
 ```
 
 Events are the one exception to flat tables (decided 2026-10-08): nested blocks don't fit them, so each Event is a JSON

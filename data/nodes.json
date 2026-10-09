@@ -1,1 +1,20 @@
-[]
+[
+  { "id": "fe_trail", "map": "forest_edge", "name": "Forest Edge Trail", "type": "start", "feature": "cage", "x": 8, "y": 50, "event": "caged_merchant" },
+  { "id": "fe_bog", "map": "forest_edge", "name": "Black Bog", "type": "standard", "feature": "swamp", "x": 30, "y": 72, "event": "bog_crocodile" },
+  { "id": "fe_altar", "map": "forest_edge", "name": "Mossy Altar", "type": "standard", "feature": "shrine", "x": 30, "y": 28, "event": "overgrown_shrine" },
+  { "id": "fe_cave", "map": "forest_edge", "name": "Bone Cave", "type": "standard", "feature": "cave", "x": 52, "y": 15, "event": "wolf_den" },
+  { "id": "fe_flats", "map": "forest_edge", "name": "Mud Flats", "type": "standard", "feature": "mud", "x": 52, "y": 80, "event": "muddy_crossing" },
+  { "id": "fe_camp", "map": "forest_edge", "name": "Ransacked Camp", "type": "standard", "feature": "campsite", "x": 68, "y": 42, "event": "abandoned_campsite" },
+  { "id": "fe_spring", "map": "forest_edge", "name": "Dry Spring", "type": "empty", "feature": "spring", "x": 76, "y": 78 },
+  { "id": "fe_post", "map": "forest_edge", "name": "Gatekeeper's Post", "type": "map_boss", "feature": "garrison", "x": 92, "y": 52, "event": "gatekeeper_garrison", "interactables": ["pathway"] },
+  { "id": "gr_thicket", "map": "goblin_ruins", "name": "Thorn Thicket", "type": "start", "feature": "thicket", "x": 8, "y": 50, "event": "merchants_wife" },
+  { "id": "gr_path", "map": "goblin_ruins", "name": "Narrow Path", "type": "standard", "feature": "tripwire", "x": 26, "y": 25, "event": "goblin_tripwire" },
+  { "id": "gr_marsh", "map": "goblin_ruins", "name": "Reed Marsh", "type": "standard", "feature": "snare", "x": 26, "y": 76, "event": "poachers_snare" },
+  { "id": "gr_hill", "map": "goblin_ruins", "name": "Lookout Hill", "type": "standard", "feature": "tower", "x": 46, "y": 10, "event": "goblin_sentry_tower" },
+  { "id": "gr_grove", "map": "goblin_ruins", "name": "Oak Grove", "type": "standard", "feature": "boar_ground", "x": 46, "y": 42, "event": "wild_boar_charge" },
+  { "id": "gr_stone", "map": "goblin_ruins", "name": "Standing Stone", "type": "standard", "feature": "standing_stone", "x": 46, "y": 88, "event": "runed_boundary_stone" },
+  { "id": "gr_glade", "map": "goblin_ruins", "name": "Hermit's Glade", "type": "standard", "feature": "herbalist", "x": 66, "y": 72, "event": "wandering_herbalist" },
+  { "id": "gr_chapel", "map": "goblin_ruins", "name": "Ruined Chapel", "type": "sanctuary", "feature": "chapel", "x": 66, "y": 50, "interactables": ["sanctuary"] },
+  { "id": "gr_burned", "map": "goblin_ruins", "name": "Burned Camp", "type": "empty", "feature": "burned_camp", "x": 70, "y": 20 },
+  { "id": "gr_fortress", "map": "goblin_ruins", "name": "Goblin Fortress", "type": "final_boss", "feature": "fortress", "x": 92, "y": 46, "event": "goblin_camp" }
+]

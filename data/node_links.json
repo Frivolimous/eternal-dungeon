@@ -1,1 +1,24 @@
-[]
+[
+  { "node": "fe_trail", "to": "fe_bog" },
+  { "node": "fe_trail", "to": "fe_altar" },
+  { "node": "fe_bog", "to": "fe_flats" },
+  { "node": "fe_altar", "to": "fe_cave" },
+  { "node": "fe_cave", "to": "fe_camp" },
+  { "node": "fe_flats", "to": "fe_camp" },
+  { "node": "fe_flats", "to": "fe_spring" },
+  { "node": "fe_camp", "to": "fe_post" },
+  { "node": "fe_spring", "to": "fe_post" },
+  { "node": "gr_thicket", "to": "gr_path" },
+  { "node": "gr_thicket", "to": "gr_marsh" },
+  { "node": "gr_path", "to": "gr_hill" },
+  { "node": "gr_path", "to": "gr_grove" },
+  { "node": "gr_marsh", "to": "gr_stone" },
+  { "node": "gr_marsh", "to": "gr_grove" },
+  { "node": "gr_hill", "to": "gr_burned" },
+  { "node": "gr_grove", "to": "gr_chapel" },
+  { "node": "gr_stone", "to": "gr_glade" },
+  { "node": "gr_glade", "to": "gr_chapel" },
+  { "node": "gr_glade", "to": "gr_fortress" },
+  { "node": "gr_chapel", "to": "gr_burned" },
+  { "node": "gr_burned", "to": "gr_fortress" }
+]

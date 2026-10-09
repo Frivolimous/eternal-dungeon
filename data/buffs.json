@@ -8,5 +8,11 @@
   { "id": "daze", "name": "Dazed", "duration": "turns", "length": 1, "key_1": "cc", "value_1": "stun" },
   { "id": "dread", "name": "Dread", "duration": "turns", "length": 2, "key_1": "cc", "value_1": "fear" },
   { "id": "berserk", "name": "Berserk", "duration": "turns", "length": 3 },
-  { "id": "armor_break", "name": "Armor Break", "duration": "actions", "length": 1 }
+  { "id": "armor_break", "name": "Armor Break", "duration": "actions", "length": 1 },
+  { "id": "wild_blessing", "name": "Wild Blessing", "duration": "steps", "length": 5 },
+  { "id": "forsaken", "name": "Forsaken", "duration": "battles", "length": 3 },
+  { "id": "sluggish", "name": "Sluggish", "duration": "steps", "length": 3 },
+  { "id": "bleeding", "name": "Bleeding", "duration": "battles", "length": 3, "key_1": "periodic_damage", "value_1": "3" },
+  { "id": "rune_charged", "name": "Rune-Charged", "duration": "battles", "length": 3 },
+  { "id": "mana_drain", "name": "Mana Drain", "duration": "battles", "length": 2, "key_1": "mana_drain", "value_1": "3" }
 ]

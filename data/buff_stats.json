@@ -6,5 +6,9 @@
   { "buff": "chill", "stat": "speed", "value": -30 },
   { "buff": "taunting", "stat": "threatening", "value": 0.5 },
   { "buff": "berserk", "stat": "power", "value": 25 },
-  { "buff": "armor_break", "stat": "penetrate", "value": 0.5 }
+  { "buff": "armor_break", "stat": "penetrate", "value": 0.5 },
+  { "buff": "wild_blessing", "stat": "awareness", "value": 1 },
+  { "buff": "forsaken", "stat": "power", "value": -25 },
+  { "buff": "sluggish", "stat": "speed", "value": -10 },
+  { "buff": "rune_charged", "stat": "power", "tag": "spell", "value": 15 }
 ]

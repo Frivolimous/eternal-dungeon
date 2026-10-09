@@ -1,0 +1,16 @@
+{ "id": "merchants_wife", "type": "ambush", "tags": ["goblin", "outdoors", "forest"], "blocks": [
+  { "id": "intro", "type": "story", "image": "wife", "choices": [
+    { "id": "wary", "conditions": [{ "type": "trait", "trait": "awareness" }], "success": "trap_seen" },
+    { "id": "rush", "success": "ambushed" } ] },
+  { "id": "trap_seen", "type": "story", "success": "fight" },
+  { "id": "ambushed", "type": "story", "success": "fight_surprised" },
+  { "id": "fight", "type": "combat", "encounter": "d0_raiders", "scale": "major", "success": "saved" },
+  { "id": "fight_surprised", "type": "combat", "encounter": "d0_raiders", "scale": "major", "initiative": "surprised", "success": "saved" },
+  { "id": "saved", "type": "action", "actions": [{ "type": "flag", "key": "wife_saved" }], "success": "husband" },
+  { "id": "husband", "type": "branch", "next": [
+    { "conditions": [{ "type": "flag", "key": "merchant_freed" }], "success": "gifts" },
+    { "success": "worried" } ] },
+  { "id": "gifts", "type": "reward", "rewards": [{ "type": "item", "item": "health_potion" }, { "type": "item", "item": "mana_potion" }], "success": "grateful" },
+  { "id": "grateful", "type": "story" },
+  { "id": "worried", "type": "story" }
+] }

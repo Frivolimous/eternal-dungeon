@@ -103,6 +103,28 @@ public sealed partial class DungeonRun
         return Record(r);
     }
 
+    /// <summary>
+    /// Debug tools only (the debug menu, <c>sim event</c>): explores any Node of any Map at once, skipping eligibility,
+    /// so its Event can be played directly. Starts the run there if it hasn't started.
+    /// </summary>
+    public RunResult DebugExplore(string nodeId)
+    {
+        if (State != RunState.Exploring) throw new InvalidOperationException("Finish the current Event first");
+        var node = Nodes[nodeId];
+        started = true;
+        var r = new RunResult();
+        if (Map.Id != node.Def.Map || Results.Count == 0)
+        {
+            MapIndex = Dungeon.Maps.ToList().FindIndex(m => m.Id == node.Def.Map);
+            r.Add(new MapEntered(Map));
+        }
+        ExploreNode(node, r);
+        return Record(r);
+    }
+
+    /// <summary>Debug tools only: sets the party's Gold.</summary>
+    public void DebugSetGold(int gold) => Gold = Math.Max(0, gold);
+
     public bool Over => State is RunState.Completed or RunState.Wiped;
 
     // ---- What the player can do ----

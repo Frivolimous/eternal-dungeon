@@ -1,0 +1,15 @@
+{ "id": "poachers_snare", "type": "discovery", "tags": ["outdoors", "swamp"], "blocks": [
+  { "id": "intro", "type": "story", "image": "snare", "choices": [
+    { "id": "marks", "conditions": [{ "type": "trait", "trait": "streetwise" }], "success": "stash" },
+    { "id": "reset", "conditions": [{ "type": "trait", "trait": "disable" }], "success": "catch" },
+    { "id": "cut", "roll": { "base": 0.5 }, "success": "catch", "failure": "fumble" },
+    { "id": "leave" } ] },
+  { "id": "stash", "type": "reward", "rewards": [{ "type": "gold", "amount": 25 }], "success": "stash_text" },
+  { "id": "stash_text", "type": "story" },
+  { "id": "catch", "type": "reward", "rewards": [{ "type": "gold", "amount": 10 }, { "type": "item", "item": "health_potion" }], "success": "catch_text" },
+  { "id": "catch_text", "type": "story" },
+  { "id": "fumble", "type": "action", "actions": [{ "type": "gold", "amount": -15 }], "success": "fumble_text" },
+  { "id": "fumble_text", "type": "story", "success": "fight" },
+  { "id": "fight", "type": "combat", "encounter": "d0_scavengers", "scale": "major", "success": "after" },
+  { "id": "after", "type": "story" }
+] }

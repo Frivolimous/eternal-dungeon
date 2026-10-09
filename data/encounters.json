@@ -2,5 +2,17 @@
   { "id": "goblin_patrol", "name": "Goblin Patrol" },
   { "id": "brute_squad", "name": "Brute Squad" },
   { "id": "chief_hall", "name": "The Goblin Chief", "layout": "side_on" },
-  { "id": "systems_showcase", "name": "Systems Showcase" }
+  { "id": "systems_showcase", "name": "Systems Showcase" },
+  { "id": "d0_cage_guards", "name": "Goblin Guards" },
+  { "id": "d0_bog_crocodile", "name": "Bog Crocodile" },
+  { "id": "d0_wolves", "name": "Wolf Pack" },
+  { "id": "d0_gatekeeper", "name": "Gatekeeper Garrison" },
+  { "id": "d0_gatekeeper_bluffed", "name": "Gatekeeper Garrison (outer guard fooled)" },
+  { "id": "d0_raiders", "name": "Goblin Raiders" },
+  { "id": "d0_tripwire_patrol", "name": "Goblin Patrol" },
+  { "id": "d0_tower_guards", "name": "Tower Lookouts" },
+  { "id": "d0_scavengers", "name": "Scavengers" },
+  { "id": "d0_wild_boar", "name": "Wild Boar" },
+  { "id": "d0_camp_patrol", "name": "Outer Patrol" },
+  { "id": "d0_goblin_chief", "name": "The Goblin Chief", "layout": "side_on" }
 ]

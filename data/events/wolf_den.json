@@ -1,0 +1,11 @@
+{ "id": "wolf_den", "type": "lair", "tags": ["wild_beast", "outdoors", "forest"], "blocks": [
+  { "id": "intro", "type": "story", "image": "wolf_den", "choices": [
+    { "id": "roar", "conditions": [{ "type": "trait", "trait": "intimidation" }], "success": "scattered" },
+    { "id": "enter", "success": "fight" },
+    { "id": "leave" } ] },
+  { "id": "scattered", "type": "reward", "rewards": [{ "type": "gold", "amount": 10 }], "success": "scattered_text" },
+  { "id": "scattered_text", "type": "story" },
+  { "id": "fight", "type": "combat", "encounter": "d0_wolves", "scale": "major", "success": "scraps" },
+  { "id": "scraps", "type": "reward", "rewards": [{ "type": "gold", "amount": 15 }, { "type": "item", "item": "mana_potion" }], "success": "scraps_text" },
+  { "id": "scraps_text", "type": "story" }
+] }

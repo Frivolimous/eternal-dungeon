@@ -1,0 +1,16 @@
+{ "id": "goblin_tripwire", "type": "trap", "tags": ["goblin", "outdoors", "forest"], "blocks": [
+  { "id": "intro", "type": "story", "image": "tripwire", "choices": [
+    { "id": "look", "roll": { "base": 0.3, "trait": "awareness", "per_point": 0.4 }, "success": "spotted", "failure": "sprung" } ] },
+  { "id": "spotted", "type": "story", "choices": [
+    { "id": "disarm", "conditions": [{ "type": "trait", "trait": "disable" }],
+      "roll": { "base": 0.5, "trait": "disable", "per_point": 0.3 }, "success": "salvaged", "failure": "sprung" },
+    { "id": "step_over", "success": "stepped_over" } ] },
+  { "id": "stepped_over", "type": "story" },
+  { "id": "salvaged", "type": "reward", "rewards": [{ "type": "item", "item": "throwing_spikes", "amount": 2 }], "success": "salvaged_text" },
+  { "id": "salvaged_text", "type": "story" },
+  { "id": "sprung", "type": "resource", "resource": "health", "amount": -8, "target": "active", "success": "bleed" },
+  { "id": "bleed", "type": "action", "actions": [{ "type": "buff", "buff": "bleeding", "target": "active" }], "success": "logs" },
+  { "id": "logs", "type": "story", "success": "patrol" },
+  { "id": "patrol", "type": "combat", "encounter": "d0_tripwire_patrol", "scale": "major", "success": "after" },
+  { "id": "after", "type": "story" }
+] }

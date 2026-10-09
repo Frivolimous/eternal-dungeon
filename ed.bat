@@ -34,6 +34,9 @@ echo   11  Run the tests
 echo.
 echo   12  Export the Windows build
 echo.
+echo   13  Play one Dungeon 0 Event in the simulator
+echo   14  Auto-play Dungeon 0 (one run, or many with a summary)
+echo.
 echo    0  Quit
 echo.
 set "PICK="
@@ -61,6 +64,8 @@ if "%PICK%"=="9" goto batch
 if "%PICK%"=="10" goto replay
 if "%PICK%"=="11" goto tests
 if "%PICK%"=="12" goto build
+if "%PICK%"=="13" goto event
+if "%PICK%"=="14" goto dungeon
 echo   No option "%PICK%".
 exit /b 1
 
@@ -148,4 +153,33 @@ exit /b
 powershell -ExecutionPolicy Bypass -File tools\build.ps1
 echo.
 echo   The game is in builds\windows\ ^(copy the whole folder^).
+exit /b
+
+:event
+echo   Events: caged_merchant bog_crocodile wolf_den overgrown_shrine muddy_crossing abandoned_campsite
+echo           gatekeeper_garrison merchants_wife goblin_tripwire goblin_sentry_tower poachers_snare
+echo           wild_boar_charge runed_boundary_stone wandering_herbalist goblin_camp
+set "EVT=caged_merchant"
+set /p "EVT=  Event id [caged_merchant]: "
+set "SEED=1"
+set /p "SEED=  Seed [1]: "
+set "CHOICES="
+set /p "CHOICES=  Choice ids in order, comma-separated (blank: always the first shown): "
+if "%CHOICES%"=="" (
+  dotnet run --project src\Sim -- event %EVT% --seed %SEED%
+) else (
+  dotnet run --project src\Sim -- event %EVT% --seed %SEED% --choices %CHOICES%
+)
+exit /b
+
+:dungeon
+set "RUNS=1"
+set /p "RUNS=  Runs (1 prints the whole run's log) [1]: "
+set "SEED=1"
+set /p "SEED=  Seed [1]: "
+if "%RUNS%"=="1" (
+  dotnet run --project src\Sim -- dungeon dungeon_0 --seed %SEED%
+) else (
+  dotnet run --project src\Sim -- dungeon dungeon_0 --runs %RUNS% --seed %SEED%
+)
 exit /b

@@ -31,6 +31,8 @@ try
         "import-tsv" => ImportTsv(),
         "format-data" => FormatData(),
         "replay" => PlayReplay(),
+        "event" => RunCommands.Event(LoadData(), positional, options),
+        "dungeon" => RunCommands.Dungeon(LoadData(), positional, options),
         "art-requests" => ArtRequests(),
         "pull-sheets" => PullSheets(),
         "push-sheets" => PushSheets(),
@@ -344,6 +346,10 @@ int Help()
           export-tsv <folder>                                        write every data table as a TSV (for spreadsheets)
           import-tsv <folder>                                        validate TSVs, print the changes, write data/*.json
           replay <file> [--log-level brief|full]                     play a replay saved by the game, print its log
+          event <id> [--seed N] [--choices a,b] [--flags f,g] [--gold N] [--battle-log]
+                                                                     play one Event headless: text, choices, previews, rolls
+          dungeon [dungeon_0] [--seed N] [--battle-log]              auto-play a whole dungeon run and print its log
+          dungeon [dungeon_0] --runs N [--seed first]                auto-play many runs, then a summary
           format-data                                                rewrite data/*.json in canonical form
           assets                                                     check the asset manifest and art styles, list AI placeholders
           art-requests                                               write docs/art-requests.md (every image a style needs)

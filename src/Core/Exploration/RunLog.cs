@@ -77,6 +77,7 @@ public static class RunLog
         ResourceChanged c => s.Format("run.resource", ("hero", c.Hero.Name), ("resource", ResourceName(s, c.Resource)),
             ("change", (c.After - c.Before > 0 ? "+" : "") + (c.After - c.Before)), ("before", c.Before), ("after", c.After)),
         StatusChanged c => s.Format("run.status", ("hero", c.Hero.Name), ("status", StatusName(s, c.After))),
+        FlagSet { EventOnly: true } => null,
         FlagSet f => s.Format("run.flag", ("key", f.Key), ("value", f.Value ? "true" : "false")),
         NodeRevealed n => s.Format(n.Icon == RevealIcon.None ? "run.revealed" : "run.revealed_icon", ("node", n.Node.Name),
             ("icon", s["reveal." + Key(n.Icon)])),

@@ -1,0 +1,11 @@
+{ "id": "wandering_herbalist", "type": "merchant", "tags": ["outdoors", "forest"], "blocks": [
+  { "id": "intro", "type": "story", "image": "herbalist", "choices": [
+    { "id": "help", "conditions": [{ "type": "trait", "trait": "scholar" }], "success": "helped" },
+    { "id": "pay", "conditions": [{ "type": "gold", "min": 25 }], "success": "paid" },
+    { "id": "later", "success": "wait" } ] },
+  { "id": "helped", "type": "story", "success": "set_up" },
+  { "id": "paid", "type": "action", "actions": [{ "type": "gold", "amount": -25 }], "success": "set_up" },
+  { "id": "set_up", "type": "action", "actions": [{ "type": "spawn", "interactable": "alchemist_station" }], "success": "station" },
+  { "id": "station", "type": "story" },
+  { "id": "wait", "type": "action", "actions": [{ "type": "defer", "resume": "intro" }] }
+] }

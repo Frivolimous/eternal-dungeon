@@ -1,0 +1,19 @@
+{ "id": "runed_boundary_stone", "type": "shrine", "tags": ["outdoors", "ruins"], "blocks": [
+  { "id": "intro", "type": "story", "image": "stone", "choices": [
+    { "id": "draw", "conditions": [{ "type": "class", "class": "elementalist" }], "success": "drawn" },
+    { "id": "attune", "conditions": [{ "type": "trait", "trait": "arcana" }], "success": "attuned" },
+    { "id": "decipher", "conditions": [{ "type": "trait", "trait": "scholar" }], "success": "deciphered" },
+    { "id": "touch", "roll": { "base": 0.5 }, "success": "touched", "failure": "drained" },
+    { "id": "leave" } ] },
+  { "id": "drawn", "type": "resource", "resource": "mana", "share": 0.5, "target": "all", "success": "charged" },
+  { "id": "charged", "type": "action", "actions": [{ "type": "buff", "buff": "rune_charged", "target": "active" }], "success": "drawn_text" },
+  { "id": "drawn_text", "type": "story" },
+  { "id": "attuned", "type": "resource", "resource": "mana", "share": 0.5, "target": "all", "success": "attuned_text" },
+  { "id": "attuned_text", "type": "story" },
+  { "id": "deciphered", "type": "action", "actions": [{ "type": "reveal", "nodes": ["gr_chapel"], "icon": "sanctuary" }], "success": "deciphered_text" },
+  { "id": "deciphered_text", "type": "story" },
+  { "id": "touched", "type": "resource", "resource": "mana", "share": 0.3, "target": "all", "success": "touched_text" },
+  { "id": "touched_text", "type": "story" },
+  { "id": "drained", "type": "action", "actions": [{ "type": "buff", "buff": "mana_drain", "target": "all" }], "success": "drained_text" },
+  { "id": "drained_text", "type": "story" }
+] }
