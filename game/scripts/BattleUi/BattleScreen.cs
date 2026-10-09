@@ -467,7 +467,7 @@ public partial class BattleScreen : Control
         if (demo)
         {
             // Screenshot mode: show the first usable enemy-targeted action and its first target's preview.
-            var action = Battle.Data.ActionsOf(h.Def).Select(id => Battle.Data.Actions[id])
+            var action = h.ActionIds.Select(id => Battle.Data.Actions[id])
                 .FirstOrDefault(a => a.Target == ActionTarget.Enemy && Options.Unusable(Battle, h, a) is null);
             if (action is not null)
             {
@@ -483,7 +483,7 @@ public partial class BattleScreen : Control
     {
         ClearActionBar();
         var i = 0;
-        foreach (var id in Battle.Data.ActionsOf(h.Def))
+        foreach (var id in h.ActionIds)
         {
             var action = Battle.Data.Actions[id];
             var why = Options.Unusable(Battle, h, action);
@@ -606,7 +606,7 @@ public partial class BattleScreen : Control
             ClearMarks();
             board.Cards[h].Face.Mark = CardMark.Active;
             foreach (var c in board.Cards.Values) c.Redraw();
-            var index = Battle.Data.ActionsOf(h.Def).ToList().IndexOf(picked!.Id);
+            var index = h.ActionIds.ToList().IndexOf(picked!.Id);
             picked = null;
             info.Text = F("ui.your_turn", ("hero", h.Name));
             if (index >= 0 && index < actionBar.GetChildCount()) ((Control)actionBar.GetChild(index)).GrabFocus();

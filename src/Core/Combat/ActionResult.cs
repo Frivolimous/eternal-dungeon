@@ -66,6 +66,18 @@ public sealed record IntentSet(Unit Unit, Intent Intent, IntentReason Why) : Out
 /// <summary>A threat effect (a taunt) raised <see cref="Target"/>'s Threat score.</summary>
 public sealed record ThreatAdded(Unit Target, ProcDef Proc, double Amount) : Outcome;
 
+/// <summary>A unit left the battle (Flee). It's out of the fight but not dead.</summary>
+public sealed record Fled(Unit Unit) : Outcome;
+
+/// <summary>Mana restored (a Mana Potion). <see cref="Source"/> is the proc's name.</summary>
+public sealed record ManaRestored(Unit Target, string Source, int Amount) : Outcome;
+
+/// <summary>Mana a buff drained on a buff-clock turn (the Mana Drain curse).</summary>
+public sealed record ManaDrained(Unit Target, Buff Buff, int Amount) : Outcome;
+
+/// <summary>A belt item's action spent one of its charges; <see cref="Left"/> remain in that slot.</summary>
+public sealed record ChargeSpent(Unit Unit, ItemDef Item, int Left) : Outcome;
+
 /// <summary>A cast cancelled by an interrupt or a stun: the spell fizzles.</summary>
 public sealed record Interrupted(Unit Unit, Cast Cast) : Outcome;
 

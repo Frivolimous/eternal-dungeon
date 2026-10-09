@@ -16,7 +16,7 @@ public class DefaultActionTests
     {
         Assert.Equal(new DefaultActions("attack", "defend", "move"), Repo.DefaultActions);
         Assert.Equal(["goblin_slash", "attack", "defend", "move"], Repo.ActionsOf(Repo.Units["goblin_grunt"]));
-        Assert.Equal(["power_attack", "shield_bash", "taunt", "attack", "defend", "move"], Repo.ActionsOf(Repo.Units["warrior"]));
+        Assert.Equal(["power_attack", "shield_bash", "taunt", "flee", "attack", "defend", "move"], Repo.ActionsOf(Repo.Units["warrior"]));
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public class DefaultActionTests
     [Fact]
     public void An_action_can_replace_a_default_for_the_units_that_have_it()
     {
-        Assert.Equal(["dagger_attack", "attack", "defend", "stealth_move"], Repo.ActionsOf(Repo.Units["rogue"]));
+        Assert.Equal(["dagger_attack", "flee", "attack", "defend", "stealth_move"], Repo.ActionsOf(Repo.Units["rogue"]));
         Assert.Equal("stealth_move", Repo.DefaultFor(Repo.Units["rogue"], DefaultRole.Move));
         Assert.Equal("move", Repo.DefaultFor(Repo.Units["warrior"], DefaultRole.Move));
 

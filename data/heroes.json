@@ -1,0 +1,5 @@
+[
+  { "id": "warrior", "name": "Warrior", "class": "warrior", "unit": "warrior", "row": 0, "col": 1, "belt": ["health_potion"] },
+  { "id": "rogue", "name": "Rogue", "class": "rogue", "unit": "rogue", "row": 0, "col": 0, "belt": ["health_potion"] },
+  { "id": "elementalist", "name": "Elementalist", "class": "elementalist", "unit": "elementalist", "row": 1, "col": 1, "belt": ["mana_potion"] }
+]

@@ -18,5 +18,18 @@
   { "id": "c_mult", "name": "C.Mult", "group": "attack", "combine": "add" },
   { "id": "resist", "name": "Resist", "group": "defense", "combine": "dim" },
   { "id": "avoid", "name": "Avoid", "group": "defense", "combine": "dim" },
-  { "id": "deval", "name": "Deval", "group": "defense", "combine": "add" }
+  { "id": "deval", "name": "Deval", "group": "defense", "combine": "add" },
+  { "id": "military", "name": "Military", "group": "trait", "combine": "add", "integer": true },
+  { "id": "discipline", "name": "Discipline", "group": "trait", "combine": "add", "integer": true },
+  { "id": "intimidation", "name": "Intimidation", "group": "trait", "combine": "add", "integer": true },
+  { "id": "survival", "name": "Survival", "group": "trait", "combine": "add", "integer": true },
+  { "id": "athletics", "name": "Athletics", "group": "trait", "combine": "add", "integer": true },
+  { "id": "awareness", "name": "Awareness", "group": "trait", "combine": "add", "integer": true },
+  { "id": "persuasion", "name": "Persuasion", "group": "trait", "combine": "add", "integer": true },
+  { "id": "streetwise", "name": "Streetwise", "group": "trait", "combine": "add", "integer": true },
+  { "id": "deception", "name": "Deception", "group": "trait", "combine": "add", "integer": true },
+  { "id": "disable", "name": "Disable", "group": "trait", "combine": "add", "integer": true },
+  { "id": "arcana", "name": "Arcana", "group": "trait", "combine": "add", "integer": true },
+  { "id": "scholar", "name": "Scholar", "group": "trait", "combine": "add", "integer": true },
+  { "id": "spiritual", "name": "Spiritual", "group": "trait", "combine": "add", "integer": true }
 ]

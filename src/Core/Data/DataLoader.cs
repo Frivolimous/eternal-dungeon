@@ -22,7 +22,7 @@ public sealed class DataTables(IReadOnlyDictionary<string, Table> tables)
             tables[schema.Name] = read(schema) ?? throw new DataException(fileName(schema), "", "file is missing");
         foreach (var schema in Schemas.BeforeUnits)
             Get(schema);
-        Get(Schemas.Units(tables["stats"].Rows.Select(r => r.Str("id")), tables["compound_stats"].Rows.Select(r => r.Str("id"))));
+        Get(Schemas.Units(tables["stats"].Rows.Where(r => r.Enum<StatGroup>("group") != StatGroup.Trait).Select(r => r.Str("id")), tables["compound_stats"].Rows.Select(r => r.Str("id"))));
         foreach (var schema in Schemas.AfterUnits)
             Get(schema);
         return new DataTables(tables);
@@ -37,7 +37,7 @@ public sealed class DataTables(IReadOnlyDictionary<string, Table> tables)
 /// Reads and validates every data table. Any problem throws a <see cref="DataException"/> naming the file, row and
 /// column; a successful load means the content is internally consistent.
 /// </summary>
-public static class DataLoader
+public static partial class DataLoader
 {
     /// <summary>Each side's area on the battle grid (Anchor: 3×2 by default).</summary>
     public const int AreaCols = 3, AreaRows = 2;
@@ -50,10 +50,12 @@ public static class DataLoader
 
     public static GameData LoadDirectory(string directory) => Load(DataSource.FromDirectory(directory));
 
-    public static GameData Load(DataSource source) => Build(DataTables.FromJson(source), Strings.Load(source));
+    public static GameData Load(DataSource source) => Build(DataTables.FromJson(source), Strings.Load(source), source);
 
-    /// <summary>Validates <paramref name="t"/> and builds the game's content from it.</summary>
-    public static GameData Build(DataTables t, Strings? text = null)
+    /// <summary>Validates <paramref name="t"/> and builds the game's content from it. With <paramref name="files"/>,
+    /// the Events in its <c>events/</c> folder are read and checked too (against the tables and
+    /// <paramref name="text"/>).</summary>
+    public static GameData Build(DataTables t, Strings? text = null, DataSource? files = null)
     {
         CheckParents(t);
 
@@ -82,6 +84,8 @@ public static class DataLoader
         var actions = t["actions"].Rows.Select(r => ReadAction(r, t, tags, procsById)).ToDictionary(a => a.Id);
         var ais = t["ai_profiles"].Rows.Select(r => ReadAiProfile(r, t, actions, buffIds)).ToDictionary(a => a.Id);
         var defaultActions = ReadDefaultActions(t, actions);
+        var items = t["items"].Rows.Select(r => ReadItem(r, t, actions, procsById)).ToList();
+        var classes = t["classes"].Rows.Select(r => ReadClass(r, t, stats)).ToDictionary(c => c.Id);
         var unitDefaults = t["default_stats"].Rows.Select(r => ReadStatEntry(r, tags, stats, t)).ToList();
 
         var units = new List<UnitDef>();
@@ -99,15 +103,22 @@ public static class DataLoader
             var has = unit.Actions
                 .Concat(defaultActions is null ? [] : new[] { DefaultRole.Attack, DefaultRole.Defend, DefaultRole.Move }
                     .Where(x => !replaced.Contains(x)).Select(defaultActions.For))
+                .Concat(items.Select(i => i.Action))                   // a hero's AI may use its belt items
                 .ToHashSet();
             if (ais[unit.Ai].Rules.FirstOrDefault(x => !has.Contains(x.Action)) is { } missing)
-                throw r.Error("ai", $"its AI \"{unit.Ai}\" uses \"{missing.Action}\", which isn't in its actions or the default actions");
+                throw r.Error("ai", $"its AI \"{unit.Ai}\" uses \"{missing.Action}\", which isn't in its actions, the default actions or a belt item");
             units.Add(unit);
         }
         var unitsById = units.ToDictionary(u => u.Id);
         var encounters = t["encounters"].Rows.Select(r => ReadEncounter(r, t, unitsById)).ToList();
-        return new GameData([.. tags.Values], [.. stats.Values], compounds, units, [.. actions.Values], buffs, [.. ais.Values],
-            encounters, unitDefaults, procs, defaultActions, text);
+        var heroes = ReadHeroes(t, classes, unitsById, items);
+        var dungeons = ReadDungeons(t);
+        var data = new GameData([.. tags.Values], [.. stats.Values], compounds, units, [.. actions.Values], buffs, [.. ais.Values],
+            encounters, unitDefaults, procs, defaultActions, text,
+            [.. classes.Values], heroes, items, dungeons, ReadRunRules(t));
+        if (files is not null)
+            data.Events = EventLoader.Load(files, data);
+        return data;
     }
 
     /// <summary>Every child row must point at a row of its parent table.</summary>
@@ -230,7 +241,7 @@ public static class DataLoader
     static BuffDef ReadBuff(Row r, DataTables t, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats)
     {
         var duration = r.Enum<DurationKind>("duration");
-        if (duration is DurationKind.Turns or DurationKind.Actions && r.Int("length") < 1)
+        if (duration is not DurationKind.UntilNextTurn && r.Int("length") < 1)
             throw r.Error("length", $"a buff lasting {JsonField.SnakeCase(duration.ToString())} needs a length of at least 1");
         if (duration == DurationKind.UntilNextTurn && r.Has("length"))
             throw r.Error("length", "a buff lasting until the next turn has no length");
@@ -279,6 +290,7 @@ public static class DataLoader
                 BuffEffect.PeriodicDamage => def with { PeriodicDamage = Whole() },
                 BuffEffect.PeriodicHeal => def with { PeriodicHeal = Whole() },
                 BuffEffect.DelayedDamage => def with { DelayedDamage = Whole() },
+                BuffEffect.ManaDrain => def with { ManaDrain = Whole() },
                 _ => def with
                 {
                     Cc = System.Enum.GetValues<CcKind>().Where(c => c != CcKind.None).FirstOrDefault(c => JsonField.SnakeCase(c.ToString()) == value) is var cc && cc != CcKind.None
@@ -322,11 +334,11 @@ public static class DataLoader
             }
             var name = JsonField.SnakeCase(key.ToString());
             if (!seen.Add(key)) throw r.Error(keyColumn, $"{name} is already one of this proc's results");
-            if (key == ProcResult.Interrupt)
+            if (key is ProcResult.Interrupt or ProcResult.Flee)
             {
                 if (r.OptStr(valueColumn) is string flag && flag != "true")
-                    throw r.Error(valueColumn, $"interrupt takes true or nothing, got \"{flag}\"");
-                proc = proc with { Interrupt = true };
+                    throw r.Error(valueColumn, $"{name} takes true or nothing, got \"{flag}\"");
+                proc = key == ProcResult.Flee ? proc with { Flee = true } : proc with { Interrupt = true };
                 continue;
             }
             var value = r.OptStr(valueColumn) ?? throw r.Error(valueColumn, $"{name} needs a value");
@@ -336,6 +348,7 @@ public static class DataLoader
                     throw r.Error(valueColumn, $"{name} needs a number, got \"{value}\"");
                 return n > 0 ? n : throw r.Error(valueColumn, $"{name} must be above 0");
             }
+            double Share() => Amount() is var n && n <= 1 ? n : throw r.Error(valueColumn, $"{name} is a share of the maximum, at most 1");
             proc = key switch
             {
                 ProcResult.Damage => proc with { Damage = Amount() },
@@ -343,6 +356,8 @@ public static class DataLoader
                 ProcResult.Shield => proc with { Shield = Amount() },
                 ProcResult.Lifesteal => proc with { Lifesteal = Amount() },
                 ProcResult.Threat => proc with { Threat = Amount() },
+                ProcResult.HealShare => proc with { HealShare = Share() },
+                ProcResult.ManaShare => proc with { ManaShare = Share() },
                 ProcResult.Stagger => proc with
                 {
                     Stagger = Amount() is var s && s == Math.Floor(s) ? (int)s : throw r.Error(valueColumn, $"stagger needs a whole number, got \"{value}\""),
@@ -365,7 +380,7 @@ public static class DataLoader
 
         if (proc.Chance <= 0) throw r.Error("chance", "must be above 0");
         if (!proc.DoesSomething)
-            throw r.Error("key_1", "the proc does nothing: give it a result (damage, heal, shield, lifesteal, stagger, threat, interrupt, displace or apply_buff)");
+            throw r.Error("key_1", "the proc does nothing: give it a result (damage, heal, shield, lifesteal, stagger, threat, interrupt, displace, apply_buff, heal_share, mana_share or flee)");
         if (phase == ProcPhase.BeforeDamage && trigger != ProcTrigger.Hit)
             throw r.Error("phase", "only hit procs can resolve before damage");
         if (proc.Lifesteal > 0 && Array.IndexOf(HitTriggers, trigger) < 0)
@@ -462,7 +477,7 @@ public static class DataLoader
             if (toEnemyArea && def.MoveTo != MoveTo.OwnOrEnemy)
                 throw x.Error("to_enemy_area", "needs a move that can enter the enemy area (move_to own_or_enemy)");
             rules.Add(new AiRule(def.Id, x.OptNum("ally_health_below"), x.OptNum("self_health_below"), buff,
-                x.Bool("not_intruding"), x.Bool("not_twice_in_a_row"), targetBuff, casting, toEnemyArea));
+                x.Bool("not_intruding"), x.Bool("not_twice_in_a_row"), targetBuff, casting, toEnemyArea, x.OptNum("self_mana_below")));
         }
         if (rules.Count == 0) throw r.Error($"needs at least one rule in {t["ai_rules"].File}");
         return new AiProfileDef(r.Str("id"), r.Str("name"), w, rules);
@@ -472,9 +487,9 @@ public static class DataLoader
     static DefaultActions? ReadDefaultActions(DataTables t, Dictionary<string, ActionDef> actions)
     {
         string[] keys = [AttackKey, DefendKey, MoveKey];
-        var rows = t["defaults"].Rows;
-        if (rows.FirstOrDefault(r => !keys.Contains(r.Str("key"))) is { } unknown)
-            throw unknown.Error("key", $"unknown key (allowed: {string.Join(", ", keys)})");
+        if (t["defaults"].Rows.FirstOrDefault(r => !keys.Contains(r.Str("key")) && !RunRuleKeys.Contains(r.Str("key"))) is { } unknown)
+            throw unknown.Error("key", $"unknown key (allowed: {string.Join(", ", keys.Concat(RunRuleKeys))})");
+        var rows = t["defaults"].Rows.Where(r => keys.Contains(r.Str("key"))).ToList();
         if (rows.Count == 0) return null;
         if (keys.FirstOrDefault(k => rows.All(r => r.Str("key") != k)) is { } missing)
             throw new DataException(t["defaults"].File, "", $"needs all of {string.Join(", ", keys)} (missing {missing})");
@@ -567,8 +582,9 @@ public static class DataLoader
                     }
                 placements.Add(new Placement(id, row, col));
             }
-            if (placements.Count is 0 or > BattleGrid.MaxUnitsPerSide)
-                throw r.Error($"each side needs 1 to {BattleGrid.MaxUnitsPerSide} units; the {JsonField.SnakeCase(side.ToString())} side has {placements.Count}");
+            // No party rows: the party comes from the run (or, in the simulator, the preset heroes).
+            if ((placements.Count == 0 && side == Combat.Side.Enemy) || placements.Count > BattleGrid.MaxUnitsPerSide)
+                throw r.Error($"the enemy side needs 1 to {BattleGrid.MaxUnitsPerSide} units and the party up to {BattleGrid.MaxUnitsPerSide}; the {JsonField.SnakeCase(side.ToString())} side has {placements.Count}");
             return placements;
         }
         return new EncounterDef(r.Str("id"), r.Str("name"), Side(Combat.Side.Party), Side(Combat.Side.Enemy), r.Enum<BoardLayout>("layout"));

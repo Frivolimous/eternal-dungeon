@@ -11,7 +11,7 @@ public sealed record Intent(Decision? Decision, bool Unknown = false);
 
 /// <summary>Why an enemy made or changed its plan. The first two are routine; the rest are triggers the player
 /// caused (and the intent flashes).</summary>
-public enum IntentReason { BattleStart, TurnEnd, TargetFell, TargetHid, Drawn, Blocked, Feared, Confused }
+public enum IntentReason { BattleStart, TurnEnd, TargetFell, TargetFled, TargetHid, Drawn, Blocked, Feared, Confused }
 
 /// <summary>
 /// Picks actions and targets from a unit's AI profile (Anchor: Combat › Enemy targeting). Rules are tried in
@@ -35,6 +35,7 @@ public static class UnitAi
             var action = battle.Data.Actions[rule.Action];
             if (unit.CantUse(action) is not null) continue;
             if (rule.SelfHealthBelow is double self && unit.Health >= self * unit.MaxHealth) continue;
+            if (rule.SelfManaBelow is double mana && unit.Mana >= mana * unit.MaxMana) continue;
             if (rule.MissingBuff is string buff && unit.Buffs.Any(b => b.Def.Id == buff)) continue;
             // On a self action, "ally below" means some other ally is (a taunt to protect them).
             if (action.Target == ActionTarget.Self && rule.AllyHealthBelow is double share
@@ -65,7 +66,7 @@ public static class UnitAi
     {
         var grid = battle.Grid;
         if (grid.AnchorOf(unit) is not { } from) return [];
-        var melee = battle.Data.ActionsOf(unit.Def).Select(id => battle.Data.Actions[id])
+        var melee = unit.ActionIds.Select(id => battle.Data.Actions[id])
             .Where(a => a.Target == ActionTarget.Enemy && a.Range is ActionRange.Melee or ActionRange.Reach && unit.CantUse(a) is null)
             .ToList();
         var reaching = new List<Tile>();
@@ -125,7 +126,7 @@ public static class UnitAi
     public static Decision? Confused(Battle battle, Unit unit)
     {
         var options = new List<(ActionDef Action, List<Unit> Targets, List<Tile> Tiles)>();
-        foreach (var id in battle.Data.ActionsOf(unit.Def))
+        foreach (var id in unit.ActionIds)
         {
             var action = battle.Data.Actions[id];
             if (unit.CantUse(action) is not null) continue;

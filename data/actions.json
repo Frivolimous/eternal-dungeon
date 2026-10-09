@@ -16,5 +16,9 @@
   { "id": "mend", "name": "Mend", "tags": ["spirit", "spell", "buff"], "target": "ally", "range": "any", "ap_cost": 100, "mana_cost": 10, "procs": ["mend"] },
   { "id": "brute_smash", "name": "Smash", "tags": ["weapon", "physical", "melee", "heavy", "force"], "target": "enemy", "range": "melee", "ap_cost": 100, "base_damage": 17, "procs": ["smash_stagger"] },
   { "id": "chief_cleave", "name": "Cleave", "tags": ["weapon", "physical", "melee", "heavy"], "target": "enemy", "range": "melee", "ap_cost": 100, "base_damage": 20 },
-  { "id": "war_cry", "name": "War Cry", "tags": ["buff"], "target": "self", "ap_cost": 100, "procs": ["war_cry"] }
+  { "id": "war_cry", "name": "War Cry", "tags": ["buff"], "target": "self", "ap_cost": 100, "procs": ["war_cry"] },
+  { "id": "flee", "name": "Flee", "target": "self", "ap_cost": 100, "procs": ["flee"], "note": "Heroes only: leaves the battle at once, from any tile (Jeremy, 2026-10-08)" },
+  { "id": "health_potion", "name": "Health Potion", "tags": ["buff"], "target": "self", "ap_cost": 50, "procs": ["health_potion"] },
+  { "id": "mana_potion", "name": "Mana Potion", "tags": ["buff"], "target": "self", "ap_cost": 50, "procs": ["mana_potion"] },
+  { "id": "throwing_spikes", "name": "Throwing Spikes", "tags": ["gadget", "ranged", "projectile", "physical"], "target": "enemy", "range": "any", "ap_cost": 50, "base_damage": 12, "note": "A Gadget belt item (Jeremy, 2026-10-08); the damage is a placeholder" }
 ]

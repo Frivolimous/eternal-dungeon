@@ -34,7 +34,12 @@ static class TestData
             Repo.UnitDefaults,
             [.. Repo.ProcList, .. applies, .. procs ?? []],
             Repo.DefaultActions,
-            Repo.Text);
+            Repo.Text,
+            [.. Repo.Classes.Values],
+            Repo.Heroes,
+            Repo.ItemList,
+            Repo.DungeonList,
+            Repo.RunRules) { Events = Repo.Events };
     }
 
     static ProcDef Applies(ActionDef action, string id) =>

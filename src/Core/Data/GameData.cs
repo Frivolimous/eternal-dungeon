@@ -13,8 +13,40 @@ public sealed class GameData(
     IReadOnlyList<StatValue>? unitDefaults = null,
     IReadOnlyList<ProcDef>? procList = null,
     DefaultActions? defaultActions = null,
-    Strings? text = null)
+    Strings? text = null,
+    IReadOnlyList<ClassDef>? classList = null,
+    IReadOnlyList<HeroDef>? heroList = null,
+    IReadOnlyList<ItemDef>? itemList = null,
+    IReadOnlyList<DungeonDef>? dungeonList = null,
+    RunRules? runRules = null)
 {
+    /// <summary>Classes, with their family and traits.</summary>
+    public IReadOnlyDictionary<string, ClassDef> Classes { get; } = (classList ?? []).ToDictionary(c => c.Id);
+
+    /// <summary>The preset party a new game starts with, in party order.</summary>
+    public IReadOnlyList<HeroDef> Heroes { get; } = heroList ?? [];
+
+    public IReadOnlyList<ItemDef> ItemList { get; } = itemList ?? [];
+    public IReadOnlyDictionary<string, ItemDef> Items { get; } = (itemList ?? []).ToDictionary(i => i.Id);
+
+    /// <summary>The belt item whose battle action is <paramref name="actionId"/>, or null.</summary>
+    public ItemDef? ItemFor(string actionId) => ItemList.FirstOrDefault(i => i.Action == actionId);
+
+    public IReadOnlyList<DungeonDef> DungeonList { get; } = dungeonList ?? [];
+    public IReadOnlyDictionary<string, DungeonDef> Dungeons { get; } = (dungeonList ?? []).ToDictionary(d => d.Id);
+
+    /// <summary>Every Node of every dungeon, by id (node ids are unique across Maps).</summary>
+    public IReadOnlyDictionary<string, NodeDef> Nodes { get; } =
+        (dungeonList ?? []).SelectMany(d => d.Maps).SelectMany(m => m.Nodes).ToDictionary(n => n.Id);
+
+    public RunRules RunRules { get; } = runRules ?? new RunRules();
+
+    /// <summary>Events from data/events/, by id. Empty when only the tables were loaded.</summary>
+    public IReadOnlyDictionary<string, EventDef> Events { get; internal set; } = new Dictionary<string, EventDef>();
+
+    /// <summary>The traits (stats in the trait group), in table order.</summary>
+    public IEnumerable<StatDef> Traits => StatList.Where(s => s.Group == StatGroup.Trait);
+
     /// <summary>Every piece of text the game shows (strings.csv).</summary>
     public Strings Text { get; } = text ?? Strings.Parse("keys,en\n");
 

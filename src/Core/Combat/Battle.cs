@@ -95,6 +95,8 @@ public sealed partial class Battle
                     r.Add(new PeriodicDamaged(unit, buff, taken, before));
                     if (taken.Killed) AddDeath(unit, r);
                 }
+                if (buff.Def.ManaDrain > 0 && unit.Alive)
+                    r.Add(new ManaDrained(unit, buff, unit.DrainMana(buff.Def.ManaDrain * buff.Stacks)));
                 if (buff.Def.PeriodicHeal > 0 && unit.Alive)
                 {
                     var before = unit.Health;
@@ -134,16 +136,48 @@ public sealed partial class Battle
         actor.SpendMana(action.ManaCost);
         TurnClock.Spend(actor, action.ApCost);
         actor.LastActionId = action.Id;
+        var charge = SpendCharge(actor, action);
 
         if (action.CastTime > 0)
         {
             Clock.BeginCast(actor, action.Id, target?.Id, action.CastTime);
             var r = new ActionResult(Clock.Tick, actor, action, target);
+            if (charge is not null) r.Add(charge);
             r.Add(new CastStarted(action.CastTime, actor.Casting!.CompletesAt));
             return Record(r);
         }
-        return Record(Resolve(actor, action, target));
+        var done = Resolve(actor, action, target);
+        if (charge is not null) done.Outcomes.Insert(0, charge);
+        return Record(done);
     }
+
+    /// <summary>A belt item's action spends one charge from the actor's belt (Anchor: Equipment › Belt items).</summary>
+    static ChargeSpent? SpendCharge(Unit actor, ActionDef action)
+    {
+        if (actor.Belt.FirstOrDefault(s => s.Item.Action == action.Id && s.Charges > 0) is not { } slot) return null;
+        slot.Charges--;
+        return new ChargeSpent(actor, slot.Item, slot.Charges);
+    }
+
+    /// <summary>
+    /// A run-long buff or curse joins the battle (Anchor: Exploration › Rewards and penalties): it lasts the whole fight.
+    /// Call before <see cref="Start"/>.
+    /// </summary>
+    public void JoinRunBuff(Unit unit, BuffDef def)
+    {
+        if (started) throw new InvalidOperationException("Run buffs join before the battle starts");
+        var buff = new Buff(def, RunSource, RunSource);
+        unit.Buffs.Add(buff);
+        AddStacks(unit, buff, 1);
+        if (def.ShieldMaxHealth > 0)
+        {
+            buff.ShieldGranted = ShieldAmount(def, unit);
+            unit.AddShield(buff.ShieldGranted);
+        }
+    }
+
+    /// <summary>The caster and source of buffs that come from the dungeon run, not from a unit.</summary>
+    public const string RunSource = "run";
 
     /// <summary>A tile-targeted action: Move steps to an empty tile next to the unit in the area it stands in; the
     /// Rogue's Move can also go to any empty tile in the other side's area. Then action-complete procs fire (the

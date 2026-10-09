@@ -38,10 +38,16 @@ public sealed class BattleSession
     public double TimeLimit { get; init; } = BattleRunner.DefaultTimeLimit;
 
     public BattleSession(GameData data, EncounterDef encounter, ulong seed, IEnumerable<Choice>? replay = null)
+        : this(EncounterSetup.Build(data, encounter, seed), encounter, seed, replay)
+    {
+    }
+
+    /// <summary>A session for a battle already set up (a dungeon run's fight, built from the run's state).</summary>
+    public BattleSession(Battle battle, EncounterDef encounter, ulong seed, IEnumerable<Choice>? replay = null)
     {
         Encounter = encounter;
         Seed = seed;
-        Battle = EncounterSetup.Build(data, encounter, seed);
+        Battle = battle;
         foreach (var c in replay ?? []) scripted.Enqueue(c);
     }
 
@@ -164,7 +170,7 @@ public sealed class BattleSession
         if (choice.Unit != unit.Id) return $"it's {unit.Name}'s turn";
         if (choice.Action.Length == 0) return null;
         if (!Battle.Data.Actions.TryGetValue(choice.Action, out var action)) return $"unknown action {choice.Action}";
-        if (!Battle.Data.ActionsOf(unit.Def).Contains(action.Id)) return $"{unit.Name} doesn't have {action.Name}";
+        if (!unit.ActionIds.Contains(action.Id)) return $"{unit.Name} doesn't have {action.Name}";
         if (unit.CantUse(action) is string why) return why;
         if (action.Target == ActionTarget.Tile)
             return choice.Tile is { } t && Options.TilesFor(Battle, unit, action).Contains(t) ? null : "can't move there";

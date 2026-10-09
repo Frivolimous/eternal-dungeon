@@ -59,7 +59,15 @@ public sealed class Unit
     /// <summary>An enemy's committed next action, shown on its next turn-order chip (null for heroes).</summary>
     public Intent? Intent { get; set; }
 
-    public bool Alive => Health > 0;
+    /// <summary>In the fight: not dead and not fled. A unit that fled is out of the battle (like the dead, nothing
+    /// targets it and it takes no turns), but it isn't dead.</summary>
+    public bool Alive => Health > 0 && !Fled;
+
+    /// <summary>The unit used Flee and left the battle (Anchor: Exploration › Combat in exploration).</summary>
+    public bool Fled { get; private set; }
+
+    /// <summary>A hero's belt items for this battle, with their charges left. Using one spends a charge.</summary>
+    public List<BeltSlot> Belt { get; } = [];
     public double Act => ActTicks / 100.0;
     public int MaxHealth => (int)Math.Round(Stats.Get("health"));
     public int MaxMana => (int)Math.Round(Stats.Get("mana"));
@@ -86,6 +94,7 @@ public sealed class Unit
     /// strings table as <c>reason.{code}</c>), or null if it can.</summary>
     public string? CantUse(ActionDef action)
     {
+        if (data.ItemFor(action.Id) is { } item && !Belt.Any(s => s.Item == item && s.Charges > 0)) return "no_charges";
         if (action.ManaCost > Mana) return "not_enough_mana";
         if (action.Target == ActionTarget.Tile && Has(CcKind.Root)) return "rooted";
         if (action.Tags.Contains("spell") && Has(CcKind.Silence)) return "silenced";
@@ -93,6 +102,11 @@ public sealed class Unit
             return "afraid";
         return null;
     }
+
+    /// <summary>Everything this unit can do now: its own and the default actions (<see cref="GameData.ActionsOf"/>),
+    /// then its belt items with charges left.</summary>
+    public IEnumerable<string> ActionIds =>
+        data.ActionsOf(Def).Concat(Belt.Where(s => s.Charges > 0).Select(s => s.Item.Action)).Distinct();
 
     /// <param name="id">Unique in the battle, such as <c>goblin_grunt#2</c>.</param>
     readonly GameData data;
@@ -115,6 +129,29 @@ public sealed class Unit
         Health = MaxHealth;
         Mana = MaxMana;
         ActTicks = (long)Stats.Get("initiative") * TurnClock.TicksPerTurn;
+    }
+
+    /// <summary>Starts the battle with Health and Mana from a dungeon run (they carry between fights), within the
+    /// maximums.</summary>
+    public void SetVitals(int health, int mana)
+    {
+        Health = Math.Clamp(health, 0, MaxHealth);
+        Mana = Math.Clamp(mana, 0, MaxMana);
+    }
+
+    /// <summary>Leaves the battle (Flee): out of the fight from now on, but not dead.</summary>
+    public void Flee()
+    {
+        Fled = true;
+        Casting = null;
+    }
+
+    /// <summary>Loses Mana, never below 0; returns how much was lost.</summary>
+    public int DrainMana(int amount)
+    {
+        var lost = Math.Min(Mana, Math.Max(0, amount));
+        Mana -= lost;
+        return lost;
     }
 
     /// <summary>Applies damage: Shield first, then Health, which stops at 0.</summary>
@@ -160,7 +197,13 @@ public sealed class Unit
         return true;
     }
 
-    public void RestoreMana(int amount) => Mana = Math.Min(MaxMana, Mana + Math.Max(0, amount));
+    /// <summary>Restores Mana up to the maximum; returns how much was restored.</summary>
+    public int RestoreMana(int amount)
+    {
+        var restored = Alive ? Math.Min(MaxMana - Mana, Math.Max(0, amount)) : 0;
+        Mana += restored;
+        return restored;
+    }
 
     public override string ToString() => $"{Id} ({Health}/{MaxHealth})";
 }
@@ -181,4 +224,11 @@ public static class BattleRules
             _ => null,
         };
     }
+}
+
+/// <summary>One belt slot in battle: an item and the charges left in it.</summary>
+public sealed class BeltSlot(ItemDef item, int charges)
+{
+    public ItemDef Item { get; } = item;
+    public int Charges { get; set; } = charges;
 }

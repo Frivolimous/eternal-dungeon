@@ -5,7 +5,7 @@ namespace EternalDungeon.Core.Combat;
 // Committed enemy intents (Anchor: Combat › Enemy targeting; Jeremy, 2026-10-08). Enemies plan their next turn at the
 // start of the battle and at the end of each of their turns, and the player sees the plan. A plan changes only when a
 // unit does something to it, never because a buff wore off or ordinary damage and healing moved the scores:
-//   - its target falls, or something makes the plan impossible (a move, push or collapse, Silence, Root): re-plan;
+//   - its target falls or flees, or something makes the plan impossible (a move, push or collapse, Silence, Root): re-plan;
 //   - its target has its Threatening lowered (enters Stealth): re-plan;
 //   - another unit has its Threatening raised, or a threat effect (taunt) lands on it: re-pick between it and the
 //     current target, weighted by their scores;
@@ -99,6 +99,10 @@ public sealed partial class Battle
                 case Died d:
                     d.Unit.Intent = null;
                     foreach (var p in Aiming(d.Unit)) Replan(p, IntentReason.TargetFell);
+                    break;
+                case Fled f:
+                    f.Unit.Intent = null;
+                    foreach (var p in Aiming(f.Unit)) Replan(p, IntentReason.TargetFled);
                     break;
                 case Moved:
                     check = true;

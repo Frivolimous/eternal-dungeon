@@ -174,6 +174,12 @@ public static class CombatLog
         Fizzled { Reason: FizzleReason.TargetFell } f => s.Format("log.fizzle_target_fell", ("target", f.Target?.Name)),
         Fizzled f => s.Format("log.fizzle_caster_fell", ("caster", f.Caster.Name), ("action", f.Action.Name)),
         Died d => s.Format("log.died", ("unit", d.Unit.Name)),
+        Fled f => s.Format("log.fled", ("unit", f.Unit.Name)),
+        ManaRestored m when m.Amount > 0 => s.Format("log.mana_restored", ("source", m.Source), ("target", m.Target.Name), ("amount", m.Amount)),
+        ManaRestored => null,
+        ManaDrained m when m.Amount > 0 => s.Format("log.mana_drained", ("buff", m.Buff.Def.Name), ("target", m.Target.Name), ("amount", m.Amount)),
+        ManaDrained => null,
+        ChargeSpent c => s.Format("log.charge_spent", ("item", c.Item.Name), ("left", c.Left)),
         AreaGrew a => s.Format(a.Side == Side.Party ? "log.area_grew_party" : "log.area_grew_enemy"),
         Moved m when m.Why == "displaced" => s.Format("log.displaced", ("unit", m.Unit.Name), ("from", Pos(grid, s, m.Unit, m.From)), ("to", Pos(grid, s, m.Unit, m.To))),
         Moved m when m.Why == "collapse" => s.Format("log.collapse", ("unit", m.Unit.Name), ("from", Pos(grid, s, m.Unit, m.From)), ("to", Pos(grid, s, m.Unit, m.To))),
@@ -206,6 +212,7 @@ public static class CombatLog
         if (d.PeriodicDamage > 0)
             bits.Add(s.Format("log.buff_dot", ("amount", Math.Max(1, (int)Math.Round(d.PeriodicDamage * b.Stacks * b.Buff.DotFactor, MidpointRounding.AwayFromZero)))));
         if (d.PeriodicHeal > 0) bits.Add(s.Format("log.buff_hot", ("amount", d.PeriodicHeal * b.Stacks)));
+        if (d.ManaDrain > 0) bits.Add(s.Format("log.buff_mana_drain", ("amount", d.ManaDrain * b.Stacks)));
         if (d.Cc != CcKind.None) bits.Add(CcName(s, d.Cc));
         foreach (var x in d.Stats)
         {
@@ -218,6 +225,7 @@ public static class CombatLog
         if (d.Duration == DurationKind.Turns) bits.Add(s.Format("log.buff_turns", ("turns", b.Remaining)));
         if (d.Duration == DurationKind.UntilNextTurn) bits.Add(s["log.buff_until_next_turn"]);
         if (d.Duration == DurationKind.Actions) bits.Add(s.Format(b.Remaining == 1 ? "log.buff_action" : "log.buff_actions", ("actions", b.Remaining)));
+        if (d.Duration is DurationKind.Steps or DurationKind.Battles) bits.Add(s["log.buff_whole_battle"]);
         if (b.Stacks > 1) bits.Add(s.Format("log.buff_stacks", ("stacks", b.Stacks)));
         return s.Format("log.buff", ("name", d.Name), ("details", string.Join(s["log.list_separator"], bits)));
     }

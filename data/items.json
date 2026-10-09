@@ -1,0 +1,5 @@
+[
+  { "id": "health_potion", "name": "Health Potion", "action": "health_potion", "uses": 2, "outside_combat": true, "price": 20 },
+  { "id": "mana_potion", "name": "Mana Potion", "action": "mana_potion", "uses": 2, "outside_combat": true, "price": 20 },
+  { "id": "throwing_spikes", "name": "Throwing Spikes", "action": "throwing_spikes", "uses": 2 }
+]

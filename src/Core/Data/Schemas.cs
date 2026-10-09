@@ -79,6 +79,7 @@ public static class Schemas
         Id("action"),
         Number("ally_health_below"),
         Number("self_health_below"),
+        Number("self_mana_below"),
         Id("missing_buff", required: false),
         Bool("not_intruding"),
         Bool("not_twice_in_a_row"),
@@ -112,12 +113,37 @@ public static class Schemas
     /// <summary>Stats every unit starts with, before its own.</summary>
     public static readonly TableSchema DefaultStats = new("default_stats", StatEntry, ["stat", "tag"]);
 
+    /// <summary>Classes: family and their 3 traits (stats in the trait group), most central first.</summary>
+    public static readonly TableSchema Classes = Top("classes", Enum<ClassFamily>("family", required: true), List("traits"));
+
+    /// <summary>Belt items: the battle action, charges per belt slot, use outside combat, Alchemist price.</summary>
+    public static readonly TableSchema Items = Top("items",
+        Id("action"), Int("uses", required: true), Bool("outside_combat"), Int("price", @default: 0));
+
+    /// <summary>The preset party Dungeon 0 starts with.</summary>
+    public static readonly TableSchema Heroes = Top("heroes",
+        Id("class"), Id("unit"), Int("row", required: true), Int("col", required: true), List("belt"));
+
+    public static readonly TableSchema Dungeons = Top("dungeons", Int("camp_charges", @default: 1));
+
+    public static readonly TableSchema Maps = Child("maps", "dungeons", "dungeon", ["order"],
+        Int("order", required: true), Id("id"), Text("name", required: true), Enum<MapKind>("kind", @default: MapKind.Outdoor), Id("start"));
+
+    public static readonly TableSchema Nodes = new("nodes",
+        [Id("id"), Id("map"), Text("name", required: true), Enum<NodeType>("type", required: true), Id("feature"),
+         Number("x", required: true), Number("y", required: true), Id("event", required: false), List("interactables"), Text("note")],
+        ["id"], "maps", "map");
+
+    /// <summary>Connections between Nodes, both ways (one row per pair).</summary>
+    public static readonly TableSchema NodeLinks = Child("node_links", "nodes", "node", ["to"], Id("to"));
+
     /// <summary>The tables loaded before units, whose columns depend on the stats and compound stats.</summary>
     public static readonly TableSchema[] BeforeUnits =
-        [Tags, Stats, CompoundStats, CompoundStatRows, Buffs, BuffStats, Procs, Actions, AiProfiles, AiRules];
+        [Tags, Stats, CompoundStats, CompoundStatRows, Buffs, BuffStats, Procs, Actions, AiProfiles, AiRules, Classes, Items];
 
     /// <summary>The tables loaded after units.</summary>
-    public static readonly TableSchema[] AfterUnits = [UnitTagStats, Encounters, EncounterUnits, Defaults, DefaultStats];
+    public static readonly TableSchema[] AfterUnits =
+        [UnitTagStats, Encounters, EncounterUnits, Defaults, DefaultStats, Heroes, Dungeons, Maps, Nodes, NodeLinks];
 
     /// <summary>All table names, in load order.</summary>
     public static IEnumerable<string> Names => BeforeUnits.Select(s => s.Name).Append("units").Concat(AfterUnits.Select(s => s.Name));

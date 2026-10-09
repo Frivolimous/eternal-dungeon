@@ -1,0 +1,5 @@
+[
+  { "id": "warrior", "name": "Warrior", "family": "primary", "traits": ["military", "discipline", "intimidation"] },
+  { "id": "rogue", "name": "Rogue", "family": "belt", "traits": ["streetwise", "deception", "disable"] },
+  { "id": "elementalist", "name": "Elementalist", "family": "spell", "traits": ["arcana", "scholar", "awareness"] }
+]

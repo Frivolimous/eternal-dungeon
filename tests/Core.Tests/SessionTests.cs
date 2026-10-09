@@ -125,7 +125,7 @@ public class SessionTests
     public void Every_reason_code_has_text()
     {
         string[] codes = ["not_enough_mana", "rooted", "silenced", "afraid", "target_down", "only_targets_self", "not_an_ally",
-            "not_an_enemy", "targets_a_tile", "out_of_reach", "not_in_front_row", "nowhere_to_move", "no_valid_target"];
+            "not_an_enemy", "targets_a_tile", "out_of_reach", "not_in_front_row", "nowhere_to_move", "no_valid_target", "no_charges"];
         foreach (var code in codes) Assert.True(Repo.Text.Has("reason." + code), code);
         var src = Path.Combine(TestPaths.RepoRoot, "src", "Core", "Combat");
         var used = Directory.GetFiles(src, "*.cs").SelectMany(f => System.Text.RegularExpressions.Regex.Matches(File.ReadAllText(f),

@@ -10,5 +10,6 @@
     <!-- Data ships inside the game assembly, so exports carry it. Read with DataSource.FromAssembly. -->
     <EmbeddedResource Include="..\data\*.json" LogicalName="data/%(Filename)%(Extension)" />
     <EmbeddedResource Include="..\data\strings.csv" LogicalName="data/%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\data\events\*.json" LogicalName="data/events/%(Filename)%(Extension)" />
   </ItemGroup>
 </Project>

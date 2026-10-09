@@ -162,6 +162,18 @@ public sealed partial class Battle
             Interrupt(target, r);
         if (def.Displace != Displace.None && target.Alive && Grid.AnchorOf(target) is { } from && Grid.Shove(target, def.Displace) is { } to)
             r.Add(new Moved(target, from, to, def.Name));
+        if (def.HealShare > 0 && target.Alive)
+            HealFromProc(def, owner, target, def.HealShare * scale * target.MaxHealth, r);
+        if (def.ManaShare > 0 && target.Alive)
+        {
+            var amount = (int)Math.Round(def.ManaShare * scale * target.MaxMana, MidpointRounding.AwayFromZero);
+            r.Add(new ManaRestored(target, def.Name, target.RestoreMana(amount)));
+        }
+        if (def.Flee && target.Alive)
+        {
+            target.Flee();
+            r.Add(new Fled(target));
+        }
         if (def.Buff is string buff)
             e.Queue.Enqueue(new Pending(Data.Buffs[buff], owner, fromAction ? e.Action!.Id : $"proc:{def.Id}", target, def.Tags));
     }

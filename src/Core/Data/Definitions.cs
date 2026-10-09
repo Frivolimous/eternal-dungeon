@@ -21,8 +21,10 @@ public enum CombineMode
     Mult,
 }
 
-/// <summary>Character stats are untagged; Attack and Defense stats can be keyed to a tag.</summary>
-public enum StatGroup { Character, Attack, Defense }
+/// <summary>Character stats are untagged; Attack and Defense stats can be keyed to a tag. Traits (Awareness, Disable…)
+/// are exploration stats: a hero's level in each comes from its classes and +Trait buffs, and Events check them
+/// (Anchor: Classes › Class traits). They aren't unit columns.</summary>
+public enum StatGroup { Character, Attack, Defense, Trait }
 
 public sealed record StatDef(
     string Id,
@@ -90,7 +92,8 @@ public sealed record AiRule(
     bool NotTwiceInARow = false,
     string? TargetMissingBuff = null,
     bool TargetCasting = false,
-    bool ToEnemyArea = false);
+    bool ToEnemyArea = false,
+    double? SelfManaBelow = null);
 
 /// <summary>
 /// The actions every unit has on top of its own (defaults.json): a basic weapon Attack, Defend and Move. Fear
@@ -168,13 +171,17 @@ public sealed record ActionDef(
 }
 
 /// <summary>How long a buff lasts: until the holder's next turn starts, a number of buff-clock turns, or a number
-/// of the holder's own actions (a buff applied before damage with 1 action lasts just that hit).</summary>
-public enum DurationKind { UntilNextTurn, Turns, Actions }
+/// of the holder's own actions (a buff applied before damage with 1 action lasts just that hit). Steps and battles
+/// are run-long buffs and curses from Events (Anchor: Exploration › Rewards and penalties): a step is one Node
+/// explored, and a battle-timed one counts down as each battle ends. Either kind joins every battle while it lasts,
+/// for the whole fight.</summary>
+public enum DurationKind { UntilNextTurn, Turns, Actions, Steps, Battles }
 
 /// <summary>What a proc does, one result per key/value pair (Anchor: Combat › Procs). Damage, heal, Shield,
-/// lifesteal, stagger and threat are amounts, which add up when copies merge; displace, interrupt and apply buff are
-/// states.</summary>
-public enum ProcResult { Damage, Heal, Shield, Lifesteal, Stagger, Threat, Interrupt, Displace, ApplyBuff }
+/// lifesteal, stagger and threat are amounts, which add up when copies merge; displace, interrupt, flee and apply buff
+/// are states. Heal share and Mana share restore that share of the target's maximum, unscaled (potions); flee takes
+/// the target out of the battle (the Flee action).</summary>
+public enum ProcResult { Damage, Heal, Shield, Lifesteal, Stagger, Threat, Interrupt, Displace, ApplyBuff, HealShare, ManaShare, Flee }
 
 /// <summary>The event a proc fires on (Anchor: Combat › Procs). Hit, Miss, Crit, Brutal and ActionComplete are the
 /// owner's own actions; Struck, Avoided and Damaged are actions against the owner (Damaged: only damage from
@@ -227,9 +234,13 @@ public sealed record ProcDef(
     string? Buff = null,
     bool Interrupt = false,
     bool IgnoreDeval = false,
-    double Threat = 0)
+    double Threat = 0,
+    double HealShare = 0,
+    double ManaShare = 0,
+    bool Flee = false)
 {
-    public bool DoesSomething => Damage > 0 || Heal > 0 || Shield > 0 || Lifesteal > 0 || Stagger > 0 || Threat > 0 || Interrupt || Displace != Displace.None || Buff is not null;
+    public bool DoesSomething => Damage > 0 || Heal > 0 || Shield > 0 || Lifesteal > 0 || Stagger > 0 || Threat > 0 || Interrupt
+        || Displace != Displace.None || Buff is not null || HealShare > 0 || ManaShare > 0 || Flee;
 }
 
 /// <summary>
@@ -277,9 +288,11 @@ public sealed record BuffDef(
     IReadOnlyList<string> Procs,
     CcKind Cc = CcKind.None,
     int DelayedDamage = 0,
-    bool BreakOnAttack = false)
+    bool BreakOnAttack = false,
+    int ManaDrain = 0)
 {
     // BreakOnAttack: the buff ends when its holder uses an enemy-targeted action, hit or miss (Stealth).
+    // ManaDrain: Mana its holder loses every buff-clock turn (the Mana Drain curse).
 
     /// <summary>Applied again by the same source, it gains a stack (up to <see cref="MaxStacks"/>).</summary>
     public bool Stacking => MaxStacks > 1;
@@ -287,5 +300,5 @@ public sealed record BuffDef(
 
 /// <summary>What a buff does, one per key/value pair in data: a Shield worth a share of max Health (gone when the
 /// buff ends), damage or healing every buff-clock turn, damage when it runs its course, crowd control, and ending
-/// when its holder attacks (a flag: no value, or true).</summary>
-public enum BuffEffect { Shield, PeriodicDamage, PeriodicHeal, DelayedDamage, Cc, BreakOnAttack }
+/// when its holder attacks (a flag: no value, or true), and Mana lost every buff-clock turn.</summary>
+public enum BuffEffect { Shield, PeriodicDamage, PeriodicHeal, DelayedDamage, Cc, BreakOnAttack, ManaDrain }
