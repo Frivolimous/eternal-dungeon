@@ -198,21 +198,10 @@ Secondary with it in its first two and a Dabble with it first, all different):
 Guile, Intimidation, Disable and Stealth top out at level 2 from classes (Talents, Races and +Trait buffs can still
 raise them). That's deliberate for now.
 
-### Trait levels, rolls and locks (2026-10-10)
+### Trait levels, rolls and locks
 
-- **Roll by default.** If an untrained hero could plausibly try it (look around, climb, sneak, bluff, scare, hold
-  their nerve), the choice is open to everyone and rolls, and the trait adds to the chance per level. Rolls scale
-  through levels 1 to 3 and already include Exhaustion. Awareness especially: anyone can spot something, the trained
-  spot it more easily.
-- **Lock when training is needed even to try:** reading old runes (Scholar), channeling magic (Arcana), a rite
-  (Spiritual), picking a lock (Disable), class options. A locked choice can still roll on its trait.
-- **Gate at a higher level only for a different or better choice,** not just better odds (Awareness 1 avoids being
-  Surprised; Awareness 2 turns the ambush into First Strike). Common traits (Awareness, Discipline, Scholar) can use
-  level 2 as their usual threshold; rare ones stay at level 1.
-- **Default shape:** one open roll everyone gets, plus one locked specialist option.
-- **Failure leads somewhere** worth reading (a fight, a cost, a joke), since more players will fail more rolls.
-- **Roll scale** (placeholder): a base chance by difficulty plus about 20% per trait level, so level 3 still
-  matters. Dungeon 0's current rolls (up to +40% per level) predate this.
+When a trait choice rolls and when it's locked, and how big rolls are (a base by difficulty plus 20% per level), is in
+the [Event guide](event-guide.md) (moved there 2026-10-10).
 
 ### What each trait opens (tentative, 2026-10-10)
 

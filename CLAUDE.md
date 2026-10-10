@@ -15,7 +15,8 @@ design, playtesting, review and art.
 - **Writing** (also part of the Anchor): [tone-guide.md](docs/design/tone-guide.md), the voice of every
   player-facing word (narrator, characters, heroes, lengths, don'ts), and [lore.md](docs/design/lore.md),
   established world facts (peoples, creatures, places, figures, powers). Claude keeps both: refine them as work
-  goes, write in Jeremy's ideas that fit, and push back on ones that contradict them.
+  goes, write in Jeremy's ideas that fit, and push back on ones that contradict them. How to build an Event (shape,
+  trait rolls and locks, roll sizes, endings) is in [event-guide.md](docs/design/event-guide.md).
 - **Build briefs** (what to build, acceptance criteria): [docs/briefs/](docs/briefs/). M0 + M1 is done; the
   Anchor wins wherever a brief disagrees.
 

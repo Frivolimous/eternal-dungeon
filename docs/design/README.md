@@ -19,6 +19,7 @@ The Anchor moved here from claude.ai on 2026-10-04 and is versioned with the cod
 - [Dungeons & adventure](dungeons.md)
 - [Exploration](exploration.md): Maps, Nodes, Events, Interactables, Stamina, Camps and Sanctuaries
 - [Meta progression](meta.md)
+- [Event guide](event-guide.md): how to make an Event: shape, trait rolls and locks, roll sizes, endings
 - [Tone guide](tone-guide.md): the voice of all player-facing text
 - [Lore](lore.md): established world facts (peoples, creatures, places, figures, powers); flagged additions await review
 - [Production plan](production.md)

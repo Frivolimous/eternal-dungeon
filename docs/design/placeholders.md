@@ -87,12 +87,12 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 | Gold | 10 for small finds, 15 for a beast's hoard, 25 for a boss, 20 to 50 at the end by how much of the family was saved |
 | Run buffs and curses | Threadsight +1 Awareness (5 steps); Knotted Muscles −25 Power (3 battles); Sluggish −10 Speed (3 steps); Bleeding 3 damage a turn (3 battles); Rune-Charged +15 Spell Power (3 battles); Mana Drain −3 Mana a turn (2 battles) |
 | Event damage | 6 (the campsite snare, a random hero), 8 (the tripwire's logs, plus Bleeding) |
-| Rolls | Pick the merchant's lock 40% + 30% per Disable; spot the crocodile 20% + 40% per Awareness; spot the tripwire 30% + 40% per Awareness, then disarm it 50% + 30% per Disable; unmodified gambles 50% |
+| Rolls | On the [Event guide](event-guide.md)'s scale: pick the merchant's lock Easy (50% + 20% per Disable); spot the crocodile Normal (30% + 20% per Awareness); spot the tripwire Normal, then disarm it Easy (Disable); gambles 50% (2026-10-10) |
 | Encounters | Dungeon 0's fights reuse the goblins and add a Wolf, a Bog Crocodile (Tall), a Wild Boar and the Gatekeeper (unit `goblin_captain`; numbers in data). The Gatekeeper fight: Gatekeeper, Grunt and Archer (intimidated: Gatekeeper and Archer). The Chief: Chief, Grunt and Shaman |
 | Goblin Camp, Military | Closing in through the guards' blind spot fights the outer patrol with First Strike, then the Chief as usual (Jeremy moved Military here from the Gatekeeper; Claude chose the effect, 2026-10-09) |
 | Goblin Camp, the Chief's last words | A story beat after the Chief falls and before the ending, so every ending starts from the same scene |
 | Trait definitions | What each of the 13 traits opens, with a "not this" column to stop overlap: [Classes](classes.md) › What each trait opens (2026-10-10) |
-| Roll scale | A base chance by difficulty plus about 20% per trait level ([Classes](classes.md) › Trait levels, rolls and locks) |
+| Roll scale | A base by difficulty (Easy 50%, Normal 30%, Hard 10%) plus 20% per trait level ([Event guide](event-guide.md) › Rolls, 2026-10-10) |
 | Decision previews | A path shows what it does before it stops: resource changes ("−1 Stamina (everyone)"), buffs and curses with their length (a curse lowers a stat or hurts or drains), Gold, Camp charges, items, a spawned Interactable, a map reveal; then the fight with its scale, Stamina, enemy count and initiative, "more choices", "come back later", or "no fight" when nothing happens. Loot after a fight isn't shown, and flags never are (2026-10-10) |
 | A battle that times out | Counts as a flee |
 | Flags in the log | Not shown: neither Event flags ("visited") nor Dungeon flags ("merchant_freed"); the story text says what changed. `sim event` lists the Dungeon flags set at the end (2026-10-10) |

@@ -86,7 +86,7 @@ An Event has a name, a base type, context tags, its blocks and their branching, 
 fewer that make clear what they do and roughly what they risk, voiceless heroes (`{hero}` or "the party", with no
 thoughts beyond the player's choice), and no exact numbers in the prose (the decision previews carry them). Peoples,
 places and figures come from the [lore](lore.md). A trait choice uses the trait for what it opens
-([Classes](classes.md) › What each trait opens).
+([Classes](classes.md) › What each trait opens). How to shape an Event, when to roll or lock a trait, roll sizes and endings are in the [Event guide](event-guide.md).
 
 - **Event state** belongs to one Event instance: choices made, actions taken, temporary flags, and the block a deferred
   Event resumes from. It's kept while the Event is deferred.

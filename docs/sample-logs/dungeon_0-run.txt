@@ -22,7 +22,7 @@ The Bog Crocodile (Rogue leads)
 The trail sinks into black, still water, and the only way on is through it. A sign on a dead tree reads NO SWIMMING. Someone has underlined it twice. Something has bitten off the corner.
 Elementalist takes the lead.
 → Elementalist: Wade across, watching the water. After all, wading isn't swimming!
-Elementalist rolls 60% (Awareness 1): success
+Elementalist rolls 50% (Awareness 1): success
 Elementalist spots a log drifting toward the party, against the current. Logs do not do that. Logs also do not have teeth! The crocodile lunges into a party that is ready for it.
 Battle: Bog Crocodile (Major fight, First Strike)
   Warrior 76/140 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 80/80 HP 94/120 MP St 3
@@ -132,7 +132,7 @@ The Goblin Tripwire (Rogue leads)
 The path narrows between two steep banks. It's quiet. Too quiet. The birds must have all gone to sing somewhere else?
 Elementalist takes the lead.
 → Elementalist: Birds know things. Watch the ground as you proceed.
-Elementalist rolls 70% (Awareness 1): failure
+Elementalist rolls 50% (Awareness 1): failure
 Elementalist: Health -8 (66 → 58)
 Elementalist gains Bleeding (3 battles)
 Elementalist's leg catches the wire. *SPROING!* Spiked logs thunder down the bank and catch Elementalist with a nasty, bleeding gash. Up the path, a goblin patrol cheers and comes jogging down to see what it caught.

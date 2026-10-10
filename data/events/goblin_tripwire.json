@@ -1,9 +1,9 @@
 { "id": "goblin_tripwire", "type": "trap", "tags": ["goblin", "outdoors", "forest"], "blocks": [
   { "id": "intro", "type": "story", "image": "tripwire", "choices": [
-    { "id": "look", "roll": { "base": 0.3, "trait": "awareness", "per_point": 0.4 }, "success": "spotted", "failure": "sprung" } ] },
+    { "id": "look", "roll": { "base": 0.3, "trait": "awareness", "per_point": 0.2 }, "success": "spotted", "failure": "sprung" } ] },
   { "id": "spotted", "type": "story", "choices": [
     { "id": "disarm", "conditions": [{ "type": "trait", "trait": "disable" }],
-      "roll": { "base": 0.5, "trait": "disable", "per_point": 0.3 }, "success": "salvaged", "failure": "sprung" },
+      "roll": { "base": 0.5, "trait": "disable", "per_point": 0.2 }, "success": "salvaged", "failure": "sprung" },
     { "id": "step_over", "success": "stepped_over" } ] },
   { "id": "stepped_over", "type": "story" },
   { "id": "salvaged", "type": "reward", "rewards": [{ "type": "item", "item": "throwing_spikes", "amount": 2 }], "success": "salvaged_text" },

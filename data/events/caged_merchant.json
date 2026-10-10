@@ -7,12 +7,12 @@
   { "id": "intro", "type": "story", "image": "merchant", "choices": [
     { "id": "tear", "conditions": [{ "type": "class", "class": "warrior" }], "success": "torn" },
     { "id": "pick", "conditions": [{ "type": "trait", "trait": "disable" }],
-      "roll": { "base": 0.4, "trait": "disable", "per_point": 0.3 }, "success": "picked", "failure": "snapped" },
+      "roll": { "base": 0.5, "trait": "disable", "per_point": 0.2 }, "success": "picked", "failure": "snapped" },
     { "id": "leave", "success": "wait" } ] },
   { "id": "again", "type": "story", "image": "merchant", "choices": [
     { "id": "tear", "conditions": [{ "type": "class", "class": "warrior" }], "success": "torn" },
     { "id": "pick", "conditions": [{ "type": "trait", "trait": "disable" }],
-      "roll": { "base": 0.4, "trait": "disable", "per_point": 0.3 }, "success": "picked", "failure": "snapped" },
+      "roll": { "base": 0.5, "trait": "disable", "per_point": 0.2 }, "success": "picked", "failure": "snapped" },
     { "id": "leave", "success": "wait" } ] },
   { "id": "torn", "type": "story", "success": "guards" },
   { "id": "snapped", "type": "story", "success": "guards" },
