@@ -19,6 +19,8 @@ The Anchor moved here from claude.ai on 2026-10-04 and is versioned with the cod
 - [Dungeons & adventure](dungeons.md)
 - [Exploration](exploration.md): Maps, Nodes, Events, Interactables, Stamina, Camps and Sanctuaries
 - [Meta progression](meta.md)
+- [Tone guide](tone-guide.md): the voice of all player-facing text
+- [Lore](lore.md): established world facts (peoples, creatures, places, figures, powers); flagged additions await review
 - [Production plan](production.md)
 - [Placeholders](placeholders.md): rules Claude chose where the Anchor was silent, for Jeremy to review
 - [Open questions](open-questions.md)

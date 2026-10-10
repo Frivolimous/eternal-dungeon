@@ -78,7 +78,8 @@ Events are the one exception to flat tables: each is a JSON file, `events/<id>.j
 link to each other by id. They don't sync with the Sheet, but their text does: every piece of it is a key in
 `strings.csv`, derived from the ids: `event.<id>.name`, `event.<id>.<block>` for a story block, and
 `event.<id>.<block>.<choice>` for a choice (`{hero}` in the text is the Active Hero). `sim data` (and every test run)
-checks every link, id and text key, and that every block can be reached. `sim event <id>` plays one.
+checks every link, id and text key, and that every block can be reached. `sim event <id>` plays one. The text is
+written to `docs/design/tone-guide.md` and `docs/design/lore.md`.
 
 ```json
 { "id": "wolf_den", "type": "lair", "tags": ["wild_beast", "outdoors", "forest"], "start": "intro", "blocks": [ … ] }

@@ -12,6 +12,10 @@ design, playtesting, review and art.
   area (stats, combat, presentation, classes, equipment, dungeons, exploration, meta, production), plus
   [placeholders.md](docs/design/placeholders.md) (rules Claude chose, for Jeremy to review),
   [open-questions.md](docs/design/open-questions.md) and [superseded.md](docs/design/superseded.md).
+- **Writing** (also part of the Anchor): [tone-guide.md](docs/design/tone-guide.md), the voice of every
+  player-facing word (narrator, characters, heroes, lengths, don'ts), and [lore.md](docs/design/lore.md),
+  established world facts (peoples, creatures, places, figures, powers). Claude keeps both: refine them as work
+  goes, write in Jeremy's ideas that fit, and push back on ones that contradict them.
 - **Build briefs** (what to build, acceptance criteria): [docs/briefs/](docs/briefs/). M0 + M1 is done; the
   Anchor wins wherever a brief disagrees.
 
@@ -121,7 +125,8 @@ what differs. Both stop (exit 3) rather than overwrite edits made on the other s
 
 **No hard-coded text.** Every word shown to a player, including the combat log, comes from `data/strings.csv`
 (`Strings`, `GameData.Text`; Godot's CSV translation format, named placeholders `{actor}`). Core formats the log
-from it; the game registers the same file with Godot's TranslationServer. When you add text, add its key there.
+from it; the game registers the same file with Godot's TranslationServer. When you add text, add its key there,
+written to the [tone guide](docs/design/tone-guide.md) (flavor in the narrator's voice; system text plain first).
 
 **Game screen (game/scripts/BattleUi).** It drives a Core `BattleSession` one clock event at a time and animates
 each result; it reads state, never changes it except through the session. Everything the player points at is a
@@ -144,6 +149,12 @@ check. AI-generated art is for placeholders only and must be flagged; nothing fl
   numbers.
 - **Deterministic.** All randomness goes through one seeded RNG that is passed in, never a global one. Same
   seed and data, same combat log.
+- **Tone and lore.** Player-facing text (event text, names, descriptions, dialogue) follows
+  [tone-guide.md](docs/design/tone-guide.md), including its length limits (event setup ≤ 50 words, option ≤ 10).
+  Check [lore.md](docs/design/lore.md) before naming peoples, places, figures, gods or professions, and never
+  contradict it. Anything new that will recur goes under lore.md's **Flagged** section for Jeremy (as rules go in
+  placeholders.md), and flagged lore stays out of content until he rules. Never invent a god or a sincere moment
+  unasked. The tone guide doesn't apply to code, comments, commits or design docs.
 - **Small, reviewable commits**, each doing one thing. After each M1 system lands, run the full test suite and
   a simulator battle.
 - Keep this file current: versions, commands, rules.

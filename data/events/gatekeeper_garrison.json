@@ -1,14 +1,14 @@
 { "id": "gatekeeper_garrison", "type": "boss", "tags": ["goblin", "outdoors", "ruins"], "blocks": [
   { "id": "intro", "type": "story", "image": "garrison", "choices": [
-    { "id": "weak_point", "conditions": [{ "type": "trait", "trait": "military" }], "success": "weak_point_text" },
+    { "id": "intimidate", "conditions": [{ "type": "trait", "trait": "intimidation" }], "success": "intimidate_text" },
     { "id": "bluff", "conditions": [{ "type": "trait", "trait": "deception" }], "success": "bluff_text" },
     { "id": "attack", "success": "fight" },
     { "id": "later", "success": "wait" } ] },
-  { "id": "weak_point_text", "type": "story", "success": "fight_ready" },
-  { "id": "bluff_text", "type": "story", "success": "fight_bluffed" },
+  { "id": "intimidate_text", "type": "story", "success": "fight_intimidate" },
+  { "id": "bluff_text", "type": "story", "success": "fight_ready" },
   { "id": "fight", "type": "combat", "encounter": "d0_gatekeeper", "scale": "boss", "success": "won" },
   { "id": "fight_ready", "type": "combat", "encounter": "d0_gatekeeper", "scale": "boss", "initiative": "first_strike", "success": "won" },
-  { "id": "fight_bluffed", "type": "combat", "encounter": "d0_gatekeeper_bluffed", "scale": "boss", "initiative": "first_strike", "success": "won" },
+  { "id": "fight_intimidate", "type": "combat", "encounter": "d0_gatekeeper_intimidated", "scale": "boss", "success": "won" },
   { "id": "won", "type": "action", "actions": [{ "type": "flag", "key": "gatekeeper_key" }], "success": "spoils" },
   { "id": "spoils", "type": "reward", "rewards": [{ "type": "gold", "amount": 25 }], "success": "won_text" },
   { "id": "won_text", "type": "story" },

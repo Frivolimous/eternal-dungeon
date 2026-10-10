@@ -1,7 +1,7 @@
 { "id": "abandoned_campsite", "type": "discovery", "tags": ["outdoors", "forest"], "blocks": [
   { "id": "intro", "type": "story", "image": "campsite", "choices": [
-    { "id": "careful", "conditions": [{ "type": "trait", "trait": "awareness" }], "success": "snare_found" },
-    { "id": "search", "success": "snare_sprung" } ] },
+    { "id": "search", "success": "snare_sprung" },
+    { "id": "careful", "conditions": [{ "type": "trait", "trait": "awareness" }], "success": "snare_found" } ] },
   { "id": "snare_found", "type": "story", "success": "choose" },
   { "id": "snare_sprung", "type": "resource", "resource": "health", "amount": -6, "target": "random", "success": "snared" },
   { "id": "snared", "type": "story", "success": "choose" },

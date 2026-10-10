@@ -84,12 +84,13 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 | Starting belts | Warrior and Rogue: 2 Health Potion charges; Elementalist: 2 Mana Potion charges. The Rogue's second slot starts empty (Throwing Spikes fill it) |
 | Throwing Spikes | 12 base damage; found as 2 charges at the Goblin Tripwire |
 | Alchemist prices | 20 Gold a charge (Health or Mana Potion); the Herbalist's fee is 25 |
-| Gold | 10 for small finds, 15 for a beast's hoard, 25 for a boss or a hidden stash, 20 to 50 at the end by how much of the family was saved |
+| Gold | 10 for small finds, 15 for a beast's hoard, 25 for a boss, 20 to 50 at the end by how much of the family was saved |
 | Run buffs and curses | Wild Blessing +1 Awareness (5 steps); Forsaken −25 Power (3 battles); Sluggish −10 Speed (3 steps); Bleeding 3 damage a turn (3 battles); Rune-Charged +15 Spell Power (3 battles); Mana Drain −3 Mana a turn (2 battles) |
 | Event damage | 6 (the campsite snare, a random hero), 8 (the tripwire's logs, plus Bleeding) |
 | Rolls | Pick the merchant's lock 40% + 30% per Disable; spot the crocodile 20% + 40% per Awareness; spot the tripwire 30% + 40% per Awareness, then disarm it 50% + 30% per Disable; unmodified gambles 50% |
-| Encounters | Dungeon 0's fights reuse the goblins and add a Wolf, a Bog Crocodile (Tall), a Wild Boar and a Goblin Captain (numbers in data). The Gatekeeper: Captain, Grunt and Archer (fooled: Captain and Archer). The Chief: Chief, Grunt and Shaman |
-| Goblin Camp, Disable | Sabotaging the barricade skips the outer patrol and gives First Strike against the Chief (the outline left open whether the patrol still fights) |
+| Encounters | Dungeon 0's fights reuse the goblins and add a Wolf, a Bog Crocodile (Tall), a Wild Boar and the Gatekeeper (unit `goblin_captain`; numbers in data). The Gatekeeper fight: Gatekeeper, Grunt and Archer (intimidated: Gatekeeper and Archer). The Chief: Chief, Grunt and Shaman |
+| Goblin Camp, Military | Closing in through the guards' blind spot fights the outer patrol with First Strike, then the Chief as usual (Jeremy moved Military here from the Gatekeeper; Claude chose the effect, 2026-10-09) |
+| Goblin Camp, the Chief's last words | A story beat after the Chief falls and before the ending, so every ending starts from the same scene |
 | A battle that times out | Counts as a flee |
 | Event-only flags | Not shown in the run log (they're an Event's bookkeeping, like "visited") |
 | Auto-play (`sim dungeon`) | The first choice shown (Events list trait and class options first, leaving last); auto-battle; belts filled from the pack; potions bought; a Sanctuary or Camp used when a hero's Stamina is at 0 or the party is below 40% Health, and before a boss when Stamina is 2 or less or Health below 80%; standard Nodes in map order, then deferred Events once something changed, then the boss |

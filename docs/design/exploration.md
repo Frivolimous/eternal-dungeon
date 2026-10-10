@@ -82,6 +82,11 @@ flags, earlier actions, the Event's own state, resources and other conditions.
 An Event has a name, a base type, context tags, its blocks and their branching, conditions, its own state, and outcomes
 (state changes, rewards, Interactables, or deferral).
 
+**Writing:** Event text follows the [tone guide](tone-guide.md): a setup of 50 words or fewer, choices of 10 words or
+fewer that make clear what they do and roughly what they risk, voiceless heroes (`{hero}` or "the party", with no
+thoughts beyond the player's choice), and no exact numbers in the prose (the decision previews carry them). Peoples,
+places and figures come from the [lore](lore.md).
+
 - **Event state** belongs to one Event instance: choices made, actions taken, temporary flags, and the block a deferred
   Event resumes from. It's kept while the Event is deferred.
 - **Dungeon flags** are the dungeon's persistent state: one flat dictionary of string keys for the whole expedition

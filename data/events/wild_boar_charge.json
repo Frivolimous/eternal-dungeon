@@ -1,8 +1,9 @@
 { "id": "wild_boar_charge", "type": "ambush", "tags": ["wild_beast", "outdoors", "forest"], "blocks": [
   { "id": "intro", "type": "story", "image": "boar", "choices": [
     { "id": "hold", "conditions": [{ "type": "trait", "trait": "discipline" }], "success": "held" },
-    { "id": "brace", "success": "fight" } ] },
+    { "id": "brace", "success": "charged" } ] },
   { "id": "held", "type": "story", "success": "fight_ready" },
+  { "id": "charged", "type": "story", "success": "fight" },
   { "id": "fight", "type": "combat", "encounter": "d0_wild_boar", "scale": "major", "success": "roast" },
   { "id": "fight_ready", "type": "combat", "encounter": "d0_wild_boar", "scale": "major", "initiative": "first_strike", "success": "roast" },
   { "id": "roast", "type": "resource", "resource": "health", "share": 0.15, "target": "all", "success": "feast" },

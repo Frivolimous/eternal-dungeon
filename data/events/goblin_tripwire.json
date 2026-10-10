@@ -11,6 +11,5 @@
   { "id": "sprung", "type": "resource", "resource": "health", "amount": -8, "target": "active", "success": "bleed" },
   { "id": "bleed", "type": "action", "actions": [{ "type": "buff", "buff": "bleeding", "target": "active" }], "success": "logs" },
   { "id": "logs", "type": "story", "success": "patrol" },
-  { "id": "patrol", "type": "combat", "encounter": "d0_tripwire_patrol", "scale": "major", "success": "after" },
-  { "id": "after", "type": "story" }
+  { "id": "patrol", "type": "combat", "encounter": "d0_tripwire_patrol", "scale": "major" }
 ] }

@@ -65,7 +65,8 @@ so looking can't change a battle.
 - Mouse first, with keyboard: 1–9 pick an action, Tab cycles targets, Space or Enter confirms, Escape cancels, and one
   key cycles battle speed. Everything runs on focus, so a controller can drive it later by mapping buttons; nothing
   depends on hover alone.
-- All UI text lives in string tables (data/strings.csv, Godot's translation format), never in scenes or code.
+- All UI text lives in string tables (data/strings.csv, Godot's translation format), never in scenes or code. UI text
+  is system text in the [tone guide](tone-guide.md)'s sense: plain and clear first, a little personality at most.
 - Statuses use shape plus colour, never colour alone. There is a text-size setting.
 
 ## Art

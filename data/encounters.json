@@ -7,7 +7,7 @@
   { "id": "d0_bog_crocodile", "name": "Bog Crocodile" },
   { "id": "d0_wolves", "name": "Wolf Pack" },
   { "id": "d0_gatekeeper", "name": "Gatekeeper Garrison" },
-  { "id": "d0_gatekeeper_bluffed", "name": "Gatekeeper Garrison (outer guard fooled)" },
+  { "id": "d0_gatekeeper_intimidated", "name": "Gatekeeper Garrison (outer guard intimidated)" },
   { "id": "d0_raiders", "name": "Goblin Raiders" },
   { "id": "d0_tripwire_patrol", "name": "Goblin Patrol" },
   { "id": "d0_tower_guards", "name": "Tower Lookouts" },
