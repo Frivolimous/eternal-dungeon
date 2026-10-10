@@ -44,4 +44,6 @@ Saving is constant (decided 2026-10-08): one save slot, written after every Node
 change and at every battle start. A battle in progress saves as its seed plus the decisions made so far (the replay
 format), so quitting mid-fight and loading replays it to the same point. Loading restores the exact state: the same
 random generator position, the same enemy intents, the same Event block. While the game is in development, a save made
-with older data warns and offers a restart instead of loading wrongly.
+with older data warns and offers a restart instead of loading wrongly. Since runs are deterministic, a
+save is the dungeon, its seed and every action taken (with the decisions of a battle in progress), and loading
+replays them (built 2026-10-10).

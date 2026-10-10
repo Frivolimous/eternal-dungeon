@@ -119,6 +119,6 @@ public sealed partial class DungeonRun
                 Close(r);
                 break;
         }
-        return Record(r);
+        return Record(r, new RunCommand("battle", Battle: [.. fight.Session.Choices]));
     }
 }

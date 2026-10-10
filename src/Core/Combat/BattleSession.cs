@@ -51,6 +51,13 @@ public sealed class BattleSession
         foreach (var c in replay ?? []) scripted.Enqueue(c);
     }
 
+    /// <summary>Queues hero decisions to play instead of asking (a saved battle being restored); <see cref="Advance"/>
+    /// plays them.</summary>
+    public void Script(IEnumerable<Choice> decisions)
+    {
+        foreach (var c in decisions) scripted.Enqueue(c);
+    }
+
     public bool Over => Battle.Winner is not null || Battle.Clock.Time > TimeLimit;
 
     bool Started;
@@ -62,8 +69,19 @@ public sealed class BattleSession
     public List<ActionResult> Advance()
     {
         var results = new List<ActionResult>();
-        while (!Over && Awaiting is null)
+        while (!Over)
+        {
+            if (Awaiting is { } hero)
+            {
+                // A queued decision for the hero already waiting (decisions scripted after a restore) plays at once.
+                if (!scripted.TryDequeue(out var next)) break;
+                if (next.Unit != hero.Id)
+                    throw new InvalidOperationException($"Replay out of step: expected {next.Unit}'s turn, got {hero.Id}'s");
+                results.AddRange(next.Auto ? ChooseByAi() : Choose(next));
+                continue;
+            }
             results.AddRange(Step());
+        }
         return results;
     }
 

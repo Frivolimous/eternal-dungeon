@@ -58,8 +58,9 @@ dotnet run --project src/Sim -- push-sheets [--force]  # data/ → the Google Sh
 dotnet run --project src/Sim -- format-data          # rewrite data/*.json in canonical form (after hand edits)
 dotnet run --project src/Sim -- replay fight.replay.json   # play a replay saved by the game, print its log
 dotnet run --project src/Sim -- event caged_merchant --seed 1 [--choices a,b] [--flags f] [--gold N] [--battle-log]  # one Event, headless
-dotnet run --project src/Sim -- dungeon dungeon_0 --seed 1 [--battle-log]   # auto-play one whole run, print its log
+dotnet run --project src/Sim -- dungeon dungeon_0 --seed 1 [--battle-log] [--save f]   # auto-play one whole run, print its log
 dotnet run --project src/Sim -- dungeon dungeon_0 --runs 200                # many runs: completion, wipes, resources at bosses
+dotnet run --project src/Sim -- load save.json        # restore a dungeon save and print the run it holds
 dotnet run --project src/Sim -- assets               # check the asset manifest and art styles, list AI placeholders
 dotnet run --project src/Sim -- art-requests         # rewrite docs/art-requests.md (a test checks it's current)
 dotnet test --filter-method "*Bad_enum*"             # one test by name (wildcards allowed)
@@ -196,7 +197,11 @@ The rules themselves are in the Anchor; this is the map from rule to code.
   battle's seed) comes from the run's one RNG. `Hero` holds run state (traits = Primary class + +Trait buffs; traits
   are stats in the `trait` group, never unit columns). Events are JSON in `data/events/` (`EventLoader` checks every
   link, key and id; text keys are derived: `event.<id>.<block>[.<choice>]`). `RunPolicy` is the simple auto-player
-  behind `sim dungeon` and `DungeonSummary`. Flee is a proc result (`Unit.Fled`: out of the fight, not dead; `Alive` is
+  behind `sim dungeon` and `DungeonSummary`. **Saving** (`SaveGame.cs`): every public run action records a `RunCommand`
+  (`DungeonRun.Commands`; a finished battle is one command with its hero decisions), so a save is dungeon + seed +
+  commands + the decisions of a battle in progress, and `Restore` replays them (same RNG position, intents, block). A new
+  public run action must record its command and be handled in `SaveGame.Apply`. `GameData.Fingerprint` (a hash of the
+  data files) tells a save made with other data. Flee is a proc result (`Unit.Fled`: out of the fight, not dead; `Alive` is
   false for both).
 - **Progression** (`Combat/Skills.cs`, `Exploration/Hero.cs`): a hero's tree levels (`Hero.SkillLevels`) decide its masteries
   (1, 6, 11 tree points); `Skills.Apply` puts skill stats (per level × level), granted actions and procs on a battle unit

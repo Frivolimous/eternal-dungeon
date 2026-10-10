@@ -33,6 +33,7 @@ try
         "replay" => PlayReplay(),
         "event" => RunCommands.Event(LoadData(), positional, options),
         "dungeon" => RunCommands.Dungeon(LoadData(), positional, options),
+        "load" => RunCommands.Load(LoadData(), positional),
         "art-requests" => ArtRequests(),
         "pull-sheets" => PullSheets(),
         "push-sheets" => PushSheets(),
@@ -348,8 +349,9 @@ int Help()
           replay <file> [--log-level brief|full]                     play a replay saved by the game, print its log
           event <id> [--seed N] [--choices a,b] [--flags f,g] [--gold N] [--battle-log]
                                                                      play one Event headless: text, choices, previews, rolls
-          dungeon [dungeon_0] [--seed N] [--battle-log]              auto-play a whole dungeon run and print its log
+          dungeon [dungeon_0] [--seed N] [--battle-log] [--save f]   auto-play a whole dungeon run and print its log
           dungeon [dungeon_0] --runs N [--seed first]                auto-play many runs, then a summary
+          load <save.json>                                           restore a dungeon save and print the run it holds
           format-data                                                rewrite data/*.json in canonical form
           assets                                                     check the asset manifest and art styles, list AI placeholders
           art-requests                                               write docs/art-requests.md (every image a style needs)

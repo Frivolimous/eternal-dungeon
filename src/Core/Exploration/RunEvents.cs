@@ -51,7 +51,7 @@ public sealed partial class DungeonRun
             next = result.Success ? choice.Success : choice.Failure;
         }
         Run(next, r);
-        return Record(r);
+        return Record(r, new RunCommand("choose", Choice: choiceId));
     }
 
     /// <summary>Continues past a story block without choices (no link: the Event closes).</summary>
@@ -61,7 +61,7 @@ public sealed partial class DungeonRun
             throw new InvalidOperationException("Nothing to continue");
         var r = new RunResult();
         Run(story.Success, r);
-        return Record(r);
+        return Record(r, new RunCommand("continue"));
     }
 
     /// <summary>A roll's chance for <paramref name="hero"/>: base, plus per trait point, plus its Exhaustion penalty,

@@ -56,6 +56,9 @@ public sealed class GameData(
 
     public RunRules RunRules { get; } = runRules ?? new RunRules();
 
+    /// <summary>A hash of the data files it was loaded from (empty when built from tables alone). Saves record it.</summary>
+    public string Fingerprint { get; internal set; } = "";
+
     /// <summary>Events from data/events/, by id. Empty when only the tables were loaded.</summary>
     public IReadOnlyDictionary<string, EventDef> Events { get; internal set; } = new Dictionary<string, EventDef>();
 

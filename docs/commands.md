@@ -45,6 +45,7 @@ overwriting edits that exist on only one side (the sheet or `data\`).
 | `dotnet run --project src\Sim -- art-requests` | Regenerates `docs\art-requests.md` (after adding units or actions) |
 | `dotnet run --project src\Sim -- encounters` | Lists the encounter ids |
 | `dotnet run --project src\Sim -- event goblin_camp --flags merchant_freed,wife_saved --gold 50` | Plays an Event with Dungeon flags and Gold set first, to see a branch (add `--battle-log` to print the fights) |
+| `dotnet run --project src\Sim -- load save.json` | Restores a dungeon save and prints the run it holds, up to where it was saved. Send a save with a bug report: it replays the run exactly |
 | `dotnet run --project src\Sim -- pull-sheets --force` | Pull even though `data\` has changes not on the sheet (they're dropped) |
 | `dotnet run --project src\Sim -- push-sheets --force` | Push even though the sheet has edits not in `data\` (they're overwritten) |
 | `dotnet run --project src\Sim -- help` | Every simulator command |

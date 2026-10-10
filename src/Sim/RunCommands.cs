@@ -100,8 +100,37 @@ static class RunCommands
         Console.WriteLine();
         Console.WriteLine($"Result: {run.State}. {Party(run)}");
         var s = run.Stats;
+        if (options.Get("save") is { } path)
+        {
+            File.WriteAllText(path, SaveGame.Of(run).ToJson());
+            Console.WriteLine($"Saved to {path}");
+        }
         Console.WriteLine($"{s.Steps} Nodes, {s.Battles} battles ({s.Victories} won, {s.Flees} fled), {s.Camps} Camps, " +
             $"{s.Sanctuaries} Sanctuaries, {s.ItemsUsed} belt charges used, {run.Gold} Gold left");
+        return 0;
+    }
+
+    /// <summary>Restores a save and prints the run it holds, up to where it was saved (a battle in progress stops at
+    /// the hero who was deciding).</summary>
+    public static int Load(GameData data, string? file)
+    {
+        if (file is null) throw new OptionException("Give the save file, for example: sim load save.json");
+        var save = SaveGame.Parse(File.ReadAllText(file), Path.GetFileName(file));
+        Console.WriteLine($"{data.Dungeons.GetValueOrDefault(save.Dungeon)?.Name ?? save.Dungeon} · seed {save.Seed} · {save.Commands.Count} actions · game {save.Game}");
+        if (save.DataChanged(data))
+            Console.WriteLine("Warning: the save was made with other data; it may not load the same way.");
+        DungeonRun run;
+        try { run = save.Restore(data); }
+        catch (SaveException e)
+        {
+            Console.Error.WriteLine(e.Message);
+            return 1;
+        }
+        foreach (var r in run.Results) Print(data, r);
+        Console.WriteLine();
+        Console.WriteLine($"State: {run.State}. {Party(run)}");
+        if (run.Battle is { Session: var s })
+            Console.WriteLine($"In battle: {s.Encounter.Name}, {s.Choices.Count} hero decisions so far{(s.Awaiting is { } h ? $", {h.Name} to decide" : "")}");
         return 0;
     }
 

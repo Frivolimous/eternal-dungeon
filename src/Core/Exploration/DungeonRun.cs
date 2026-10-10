@@ -104,7 +104,7 @@ public sealed partial class DungeonRun
         started = true;
         var r = new RunResult();
         EnterMap(0, r);
-        return Record(r);
+        return Record(r, new RunCommand("start"));
     }
 
     /// <summary>
@@ -123,11 +123,15 @@ public sealed partial class DungeonRun
             r.Add(new MapEntered(Map));
         }
         ExploreNode(node, r);
-        return Record(r);
+        return Record(r, new RunCommand("debug_explore", Node: nodeId));
     }
 
     /// <summary>Debug tools only: sets the party's Gold.</summary>
-    public void DebugSetGold(int gold) => Gold = Math.Max(0, gold);
+    public void DebugSetGold(int gold)
+    {
+        Gold = Math.Max(0, gold);
+        commands.Add(new RunCommand("debug_gold", Amount: Gold));
+    }
 
     public bool Over => State is RunState.Completed or RunState.Wiped;
 
@@ -164,7 +168,7 @@ public sealed partial class DungeonRun
         if (CantExplore(nodeId) is string why) throw new InvalidOperationException($"Can't explore {nodeId}: {why}");
         var r = new RunResult();
         ExploreNode(Nodes[nodeId], r);
-        return Record(r);
+        return Record(r, new RunCommand("explore", Node: nodeId));
     }
 
     public RunResult Resume(string nodeId)
@@ -174,7 +178,7 @@ public sealed partial class DungeonRun
         var r = new RunResult();
         var node = Nodes[nodeId];
         StartEvent(node, node.ResumeBlock!, resumed: true, r);
-        return Record(r);
+        return Record(r, new RunCommand("resume", Node: nodeId));
     }
 
     /// <summary>Camp (Anchor: Rest, Camp and Sanctuary): uses a charge, Rests, and restores part of Health and Mana.</summary>
@@ -184,7 +188,7 @@ public sealed partial class DungeonRun
         if (CampCharges <= 0) throw new InvalidOperationException("No Camp charges left");
         var r = new RunResult();
         UseCamp(automatic: false, r);
-        return Record(r);
+        return Record(r, new RunCommand("camp"));
     }
 
     /// <summary>Uses a Sanctuary or a Pathway (an Alchemist Station sells through <see cref="Buy"/>).</summary>
@@ -204,7 +208,7 @@ public sealed partial class DungeonRun
             default:
                 throw new InvalidOperationException($"Use Buy at an {kind}");
         }
-        return Record(r);
+        return Record(r, new RunCommand("use", Node: nodeId, Interactable: kind));
     }
 
     /// <summary>Buys one charge of <paramref name="itemId"/> at an Alchemist Station; it goes into the party pack.</summary>
@@ -219,7 +223,7 @@ public sealed partial class DungeonRun
         r.Add(new ItemBought(item, item.Price));
         r.Add(new GoldChanged(-item.Price, Gold));
         AddToPack(item, 1, r);
-        return Record(r);
+        return Record(r, new RunCommand("buy", Node: nodeId, Item: itemId));
     }
 
     (NodeState, InteractableState) UsableAt(string nodeId, InteractableKind kind)
@@ -250,7 +254,7 @@ public sealed partial class DungeonRun
             if (proc.HealShare > 0) ChangeResource(hero, EventResource.Health, Share(proc.HealShare, hero.MaxHealth), r);
             if (proc.ManaShare > 0) ChangeResource(hero, EventResource.Mana, Share(proc.ManaShare, hero.MaxMana), r);
         }
-        return Record(r);
+        return Record(r, new RunCommand("use_item", Hero: heroId, Item: itemId));
     }
 
     /// <summary>Moves charges of an item from the party pack into a hero's belt: topping up a slot that holds it, else
@@ -267,7 +271,7 @@ public sealed partial class DungeonRun
         TakeFromPack(itemId, moved);
         var r = new RunResult();
         r.Add(new ItemMoved(hero, item, moved, ToBelt: true));
-        return Record(r);
+        return Record(r, new RunCommand("to_belt", Hero: heroId, Item: itemId));
     }
 
     public string? CantMoveToBelt(string heroId, string itemId)
@@ -291,7 +295,7 @@ public sealed partial class DungeonRun
         Pack[itemId] = Pack.GetValueOrDefault(itemId) + slot.Charges;
         var r = new RunResult();
         r.Add(new ItemMoved(hero, slot.Item, slot.Charges, ToBelt: false));
-        return Record(r);
+        return Record(r, new RunCommand("to_pack", Hero: heroId, Item: itemId));
     }
 
     /// <summary>Puts one skill point into a tree skill (the Hero Panel: anywhere between Events). The masteries the new
@@ -309,7 +313,7 @@ public sealed partial class DungeonRun
         r.Add(new SkillRaised(hero, Data.Skills[skillId], level));
         foreach (var m in hero.Masteries.Except(masteries))
             r.Add(new MasteryUnlocked(hero, m));
-        return Record(r);
+        return Record(r, new RunCommand("spend", Hero: heroId, Skill: skillId));
     }
 
     /// <summary>XP for a won battle (Anchor: Dungeons › XP): the scale's XP shared equally by the heroes standing at the
@@ -487,11 +491,17 @@ public sealed partial class DungeonRun
         if (slot.Charges <= 0) hero.Belt.Remove(slot);
     }
 
-    RunResult Record(RunResult r)
+    RunResult Record(RunResult r, RunCommand command)
     {
+        commands.Add(command);
         Results.Add(r);
         return r;
     }
+
+    readonly List<RunCommand> commands = [];
+
+    /// <summary>Every action taken so far, in order: with the dungeon and seed, the whole run (see <see cref="SaveGame"/>).</summary>
+    public IReadOnlyList<RunCommand> Commands => commands;
 }
 
 /// <summary>Totals for the end screen and the dungeon simulator.</summary>

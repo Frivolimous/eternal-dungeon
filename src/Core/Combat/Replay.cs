@@ -32,15 +32,32 @@ public sealed record Replay(string Encounter, ulong Seed, IReadOnlyList<Choice> 
         var sb = new StringBuilder();
         sb.Append($"{{ \"encounter\": {JsonSerializer.Serialize(Encounter, Options)}, \"seed\": {Seed}, \"choices\": [");
         for (var i = 0; i < Choices.Count; i++)
-        {
-            var c = Choices[i];
-            var fields = new List<string> { $"\"unit\": {JsonSerializer.Serialize(c.Unit, Options)}", $"\"action\": {JsonSerializer.Serialize(c.Action, Options)}" };
-            if (c.Target is not null) fields.Add($"\"target\": {JsonSerializer.Serialize(c.Target, Options)}");
-            if (c.Tile is { } t) fields.Add($"\"tile\": [{t.Area}, {t.Row}, {t.Col}]");
-            if (c.Auto) fields.Add("\"auto\": true");
-            sb.Append(i == 0 ? "\n" : ",\n").Append("  { ").Append(string.Join(", ", fields)).Append(" }");
-        }
+            sb.Append(i == 0 ? "\n" : ",\n").Append("  ").Append(ChoiceJson(Choices[i]));
         return sb.Append(Choices.Count > 0 ? "\n] }\n" : "] }\n").ToString();
+    }
+
+    /// <summary>One choice as a one-line JSON object (replays and dungeon saves share it).</summary>
+    public static string ChoiceJson(Choice c)
+    {
+        var fields = new List<string> { $"\"unit\": {JsonSerializer.Serialize(c.Unit, Options)}", $"\"action\": {JsonSerializer.Serialize(c.Action, Options)}" };
+        if (c.Target is not null) fields.Add($"\"target\": {JsonSerializer.Serialize(c.Target, Options)}");
+        if (c.Tile is { } t) fields.Add($"\"tile\": [{t.Area}, {t.Row}, {t.Col}]");
+        if (c.Auto) fields.Add("\"auto\": true");
+        return "{ " + string.Join(", ", fields) + " }";
+    }
+
+    public static Choice ParseChoice(JsonField c)
+    {
+        c.OnlyFields("unit", "action", "target", "tile", "auto");
+        Tile? tile = null;
+        if (c.Optional("tile") is { } t)
+        {
+            var xyz = t.Items().Select(x => x.Int()).ToArray();
+            if (xyz.Length != 3) throw t.Error("expected [area, row, col]");
+            tile = new Tile(xyz[0], xyz[1], xyz[2]);
+        }
+        return new Choice(c["unit"].String(), c["action"].String(), c.Optional("target")?.String(), tile,
+            c.Optional("auto")?.Bool() ?? false);
     }
 
     public static Replay Parse(string text, string file = "replay")
@@ -49,20 +66,7 @@ public sealed record Replay(string Encounter, ulong Seed, IReadOnlyList<Choice> 
         root.OnlyFields("encounter", "seed", "choices");
         var seed = root["seed"];
         if (!seed.Element.TryGetUInt64(out var s)) throw seed.Error("expected a whole number");
-        var choices = new List<Choice>();
-        foreach (var c in root["choices"].Items())
-        {
-            c.OnlyFields("unit", "action", "target", "tile", "auto");
-            Tile? tile = null;
-            if (c.Optional("tile") is { } t)
-            {
-                var xyz = t.Items().Select(x => x.Int()).ToArray();
-                if (xyz.Length != 3) throw t.Error("expected [area, row, col]");
-                tile = new Tile(xyz[0], xyz[1], xyz[2]);
-            }
-            choices.Add(new Choice(c["unit"].String(), c["action"].String(), c.Optional("target")?.String(), tile,
-                c.Optional("auto")?.Bool() ?? false));
-        }
+        var choices = root["choices"].Items().Select(ParseChoice).ToList();
         return new Replay(root["encounter"].Id(), s, choices);
     }
 }

@@ -50,7 +50,22 @@ public static partial class DataLoader
 
     public static GameData LoadDirectory(string directory) => Load(DataSource.FromDirectory(directory));
 
-    public static GameData Load(DataSource source) => Build(DataTables.FromJson(source), Strings.Load(source), source);
+    public static GameData Load(DataSource source)
+    {
+        var data = Build(DataTables.FromJson(source), Strings.Load(source), source);
+        data.Fingerprint = Fingerprint(source);
+        return data;
+    }
+
+    /// <summary>A short hash of every data file (tables, text, Events), so a save can tell it was made with other data.</summary>
+    public static string Fingerprint(DataSource source)
+    {
+        var names = Schemas.Names.Select(n => n + ".json").Append(Strings.FileName).Concat(source.List(EventLoader.Folder));
+        // Line endings don't count: a checkout with CRLF is the same data.
+        var text = string.Concat(names.Select(n => n + "\n" + (source.Read(n) ?? "").Replace("\r\n", "\n") + "\n"));
+        var hash = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(text));
+        return Convert.ToHexString(hash)[..16].ToLowerInvariant();
+    }
 
     /// <summary>Validates <paramref name="t"/> and builds the game's content from it. With <paramref name="files"/>,
     /// the Events in its <c>events/</c> folder are read and checked too (against the tables and
