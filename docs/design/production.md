@@ -23,7 +23,7 @@ Claude is the main developer and Jeremy owns design, playtesting, review and art
   hero portrait state art; all non-portrait art.
 - **Balance:** single fights are not balanced on their own. From M3, fights are balanced for attrition between battles
   and for a dungeon's win rate (Jeremy, 2026-10-08).
-- **M3:** split into M3A (Dungeon 0, hand-authored, with the go/no-go checkpoint) and M3B (the generator, Indoor Maps and equipment, which moved here from M4), decided 2026-10-08. The M3A brief is written. Step 1 (Core, headless: the run model, the event engine, the 15 Events, Flee, belt items, run-state battles, `sim event` and `sim dungeon`) is built (2026-10-09) and waits for Jeremy's midpoint check.
+- **M3:** split into M3A (Dungeon 0, hand-authored, with the go/no-go checkpoint) and M3B (the generator, Indoor Maps and equipment, which moved here from M4), decided 2026-10-08. The M3A brief is written. Step 1 (Core, headless: the run model, the event engine, the 15 Events, Flee, belt items, run-state battles, `sim event` and `sim dungeon`) is built (2026-10-09; midpoint check done). Step 2 (progression: XP and levels, the three trees with Claude's proposed numbers, masteries, skill effects) is built (2026-10-10), its numbers for Jeremy to review in Placeholders › Progression.
 
 The battle simulator runs thousands of automated fights to check class power, Dim stacking and the power-share targets before anything is playtested.
 
