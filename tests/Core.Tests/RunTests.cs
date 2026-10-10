@@ -58,6 +58,39 @@ public class RunTests
     }
 
     [Fact]
+    public void Previews_name_what_each_path_does_before_it_stops()
+    {
+        var run = Started();
+        var pick = run.Previews.Single(p => p.Choice.Id == "pick");
+        // Success: Gold, a potion and the Keen buff (the flag stays hidden), then the end.
+        Assert.Equal("+10 Gold, +1 Health Potion, Keen (2 steps)", RunLog.OutlookText(D, pick.Success));
+        // Failure: the active hero loses Health.
+        Assert.Equal("−5 Health (one hero)", RunLog.OutlookText(D, pick.Failure!));
+        Assert.Equal("come back later", RunLog.OutlookText(D, run.Previews.Single(p => p.Choice.Id == "later").Success));
+        run.Choose("bash");
+        run.Explore("t_b");
+        // A fight shows its scale, Stamina, enemy count and initiative.
+        Assert.Equal("Major fight (1 Stamina, 1 enemy), First Strike", RunLog.OutlookText(D, run.Previews.SingleOrDefault()?.Success
+            ?? new Outlook((CombatBlock)D.Events["t_fight"].Block("fight"), false, false, [])));
+        Assert.True(RunLog.IsCurse(D, D.Buffs["t_weak"]));
+        Assert.False(RunLog.IsCurse(D, D.Buffs["t_keen"]));
+    }
+
+    [Fact]
+    public void Flags_never_show_in_the_run_log()
+    {
+        for (ulong seed = 1; seed < 50; seed++)
+        {
+            var run = Started(seed);
+            if (!run.Choose("pick").Of<EventRolled>().Single().Roll.Success) continue;
+            Assert.True(run.Flags["looted"]);
+            Assert.DoesNotContain(run.Results.SelectMany(r => RunLog.Lines(D, r)), l => l.Contains("looted"));
+            return;
+        }
+        Assert.Fail("no seed succeeded");
+    }
+
+    [Fact]
     public void A_trait_roll_is_made_by_the_best_hero_with_its_chance()
     {
         var run = Started();

@@ -13,7 +13,6 @@ Victory. Stamina −1. Warrior 76/140, Rogue 100/100, Elementalist 80/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
-Flag merchant_freed = true
 Revealed on the map: Gatekeeper's Post (boss)
 Gold +10 (now 10)
 The merchant presses a few coins into Warrior's hand, then, after a visible struggle, one more. "Bartleby Crumpwhistle, forever in your debt! They went east, past the Gatekeeper's post. Find my family! I'll wait at the trail. And find the cart, if it's no trouble!"
@@ -99,7 +98,6 @@ Victory. Stamina −1. Warrior 87/140, Rogue 32/100, Elementalist 80/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
-Flag gatekeeper_key = true
 Gold +25 (now 70)
 The Gatekeeper sinks to his knees. "Tell them... the Gatekeeper... kept the gate..." *Clonk*. His helmet keeps rolling long after he stops. The iron key drops into the dirt, the gate creaks open behind him, and the path east lies clear.
 The Gatekeeper Garrison is over.
@@ -124,7 +122,6 @@ Victory. Stamina −1. Warrior 30/140, Rogue 68/100, Elementalist 66/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
-Flag wife_saved = true
 +1 Health Potion (into the pack)
 +1 Mana Potion (into the pack)
 "Thank you, heroes!" the woman cries as the party frees her. "But they still have my son! Please, I don't want my boy to be goblin stew!" She brightens at news of her husband, then narrows her eyes. "Did he ask about the cart?" She presses her last potions into the party's hands. "The fortress is east. Bring my Tobble home!"
@@ -234,7 +231,6 @@ Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
 Bleeding wears off Elementalist.
-Flag son_rescued = true
 "You have not seen... the last... of my appetite..." *Gurgle*. *SPLOOSH*. The Goblin Chief topples into his own stew. Out from behind a barrel peeks a small, very relieved boy.
 Gold +50 (now 60)
 Tobble runs into his mother's arms, and at the forest trail his father is waiting. The Crumpwhistles are together again! They empty their savings into the party's hands. Bartleby hugs his wife, then his son, and then, for slightly longer, his recovered cart.

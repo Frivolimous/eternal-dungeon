@@ -141,14 +141,14 @@ The event engine from exploration.md, with these parts in M3A:
 - **Format:** one JSON file per Event in `data/events/`, text by string key. On load, validate every link, every
   string key and every encounter id, and report errors by file and block id, like the other data.
 - **Previews never roll anything,** like battle previews.
-- **To do (found while writing, 2026-10-09):** decision previews only describe fights, so outcomes that differ by
+- **Done (2026-10-10; was a to-do found while writing, 2026-10-09):** decision previews only describe fights, so outcomes that differ by
   buff, curse or reward read the same. The Overgrown Shrine's "Pray anyway" shows "50%: no fight / 50%: no fight"
   where it should say something like "50%: blessing / 50%: curse". Previews should also name the buffs, curses and
   other outcomes a branch leads to (Stamina, Gold or Camp changes, a spawned Sanctuary or Alchemist Station; the
   Herbalist's text no longer names her fee, since flavor text carries no numbers), and show when a fight is easier
   than the head-on one (the Gatekeeper's Intimidation choice fights a smaller squad, but its preview reads the same
   as attacking).
-- **To do (from the narrative pass, 2026-10-10):** the run log shows Dungeon flags as raw ids (`run.flag`: "Flag merchant_freed = true"). Players shouldn't see ids: either hide flags from the in-game log like Event-only flags, or give each flag a display string.
+- **Done (2026-10-10; was a to-do from the narrative pass):** the run log shows Dungeon flags as raw ids (`run.flag`: "Flag merchant_freed = true"). Players shouldn't see ids: either hide flags from the in-game log like Event-only flags, or give each flag a display string. Flags are now hidden from the log.
 
 ## 4. Resources and consumables
 

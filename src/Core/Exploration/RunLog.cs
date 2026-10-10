@@ -23,13 +23,65 @@ public static class RunLog
     public static string ChoiceText(Strings s, EventDef e, StoryBlock block, EventChoice choice) =>
         s[EventDef.ChoiceKey(e.Id, block.Id, choice.Id)];
 
-    /// <summary>"Major fight (1 Stamina)", "no fight", "come back later" or "ends the event".</summary>
-    public static string OutlookText(Strings s, Outlook o) =>
-        o.Fight is { } f ? s.Format("preview.fight", ("scale", ScaleName(s, f.Scale)), ("stamina", f.Scale == CombatScale.Skirmish ? 0 : 1))
-            + (f.Initiative == InitiativeModifier.None ? "" : s.Format("preview.initiative", ("initiative", s["initiative." + Key(f.Initiative)])))
-        : o.Defers ? s["preview.defers"]
-        : o.Ends ? s["preview.ends"]
-        : s["preview.story"];
+    /// <summary>
+    /// What a path leads to, in a few words: what happens on the way ("−25 Gold, Alchemist Station here"), then the
+    /// fight ("Boss fight (1 Stamina, 2 enemies)"), "more choices" or "come back later". A path that only ends says
+    /// "no fight".
+    /// </summary>
+    public static string OutlookText(GameData data, Outlook o)
+    {
+        var s = data.Text;
+        var parts = o.Effects.Select(e => EffectText(data, e)).OfType<string>().ToList();
+        if (o.Fight is { } f)
+        {
+            var enemies = data.Encounters[f.Encounter].Enemies.Count;
+            parts.Add(s.Format("preview.fight", ("scale", ScaleName(s, f.Scale)), ("stamina", f.Scale == CombatScale.Skirmish ? 0 : 1),
+                    ("enemies", s.Format(enemies == 1 ? "preview.enemy" : "preview.enemies", ("count", enemies))))
+                + (f.Initiative == InitiativeModifier.None ? "" : s.Format("preview.initiative", ("initiative", s["initiative." + Key(f.Initiative)]))));
+        }
+        else if (o.Defers) parts.Add(s["preview.defers"]);
+        else if (!o.Ends) parts.Add(s["preview.story"]);
+        else if (parts.Count == 0) parts.Add(s["preview.ends"]);
+        return string.Join(s["preview.separator"], parts);
+    }
+
+    static string Signed(int n) => (n > 0 ? "+" : "−") + Math.Abs(n);
+
+    static string? EffectText(GameData data, PreviewEffect e)
+    {
+        var s = data.Text;
+        switch (e)
+        {
+            case ResourceEffect { Block: var x }:
+                var amount = x.Share != 0 ? (x.Share > 0 ? "+" : "−") + Pct(Math.Abs(x.Share)) : Signed(x.Amount);
+                return s.Format(x.Target == EventTarget.All ? "preview.resource_all" : "preview.resource_one",
+                    ("amount", amount), ("resource", ResourceName(s, x.Resource)));
+            case ActionEffect { Action: BuffAction b }:
+                var buff = data.Buffs[b.Buff];
+                return s.Format(IsCurse(data, buff) ? "preview.curse" : "preview.buff", ("buff", buff.Name), ("length", BuffLength(s, buff)));
+            case ActionEffect { Action: GoldAction g }:
+                return s.Format("preview.gold", ("amount", Signed(g.Amount)));
+            case ActionEffect { Action: CampAction c }:
+                return s.Format("preview.camp", ("amount", Signed(c.Amount)));
+            case ActionEffect { Action: SpawnAction x }:
+                return s.Format("preview.spawn", ("interactable", InteractableName(s, x.Kind)));
+            case ActionEffect { Action: RevealAction }:
+                return s["preview.reveal"];
+            case RewardEffect { Reward: var r }:
+                return r.Kind switch
+                {
+                    RewardKind.Gold => s.Format("preview.gold", ("amount", Signed(r.Amount))),
+                    RewardKind.Camp => s.Format("preview.camp", ("amount", Signed(r.Amount))),
+                    _ => s.Format("preview.item", ("amount", Signed(r.Amount)), ("item", data.Items[r.Item!].Name)),
+                };
+            default:
+                return null;
+        }
+    }
+
+    /// <summary>A curse rather than a buff: it lowers a stat, or hurts or drains its holder.</summary>
+    public static bool IsCurse(GameData data, BuffDef b) =>
+        b.Stats.Any(x => x.Value < 0) || b.PeriodicDamage > 0 || b.DelayedDamage > 0 || b.ManaDrain > 0 || b.Cc != CcKind.None;
 
     /// <summary>A choice's preview: "70% (Rogue, Disable 1): no fight / 30%: Major fight (1 Stamina)".</summary>
     public static string PreviewText(GameData data, ChoicePreview p)
@@ -37,13 +89,13 @@ public static class RunLog
         var s = data.Text;
         var who = p.Heroes.Count == 1 ? p.Heroes[0].Name : "";
         if (p.Chance is not { } chance)
-            return OutlookText(s, p.Success);
+            return OutlookText(data, p.Success);
         var traits = p.Choice.Roll!.Traits;
         var detail = traits.Count > 0 && p.Heroes.Count > 0
             ? s.Format("preview.roll_trait", ("hero", who.Length > 0 ? who : p.Heroes[0].Name), ("trait", TraitNames(data, traits, p.Heroes[0])))
             : "";
-        return s.Format("preview.roll", ("chance", Pct(chance)), ("detail", detail), ("success", OutlookText(s, p.Success)),
-            ("fail_chance", Pct(1 - chance)), ("failure", OutlookText(s, p.Failure!)));
+        return s.Format("preview.roll", ("chance", Pct(chance)), ("detail", detail), ("success", OutlookText(data, p.Success)),
+            ("fail_chance", Pct(1 - chance)), ("failure", OutlookText(data, p.Failure!)));
     }
 
     static string TraitNames(GameData data, IReadOnlyList<string> traits, Hero hero)
@@ -77,8 +129,7 @@ public static class RunLog
         ResourceChanged c => s.Format("run.resource", ("hero", c.Hero.Name), ("resource", ResourceName(s, c.Resource)),
             ("change", (c.After - c.Before > 0 ? "+" : "") + (c.After - c.Before)), ("before", c.Before), ("after", c.After)),
         StatusChanged c => s.Format("run.status", ("hero", c.Hero.Name), ("status", StatusName(s, c.After))),
-        FlagSet { EventOnly: true } => null,
-        FlagSet f => s.Format("run.flag", ("key", f.Key), ("value", f.Value ? "true" : "false")),
+        FlagSet => null,                            // the story's bookkeeping: the text tells the player what changed
         NodeRevealed n => s.Format(n.Icon == RevealIcon.None ? "run.revealed" : "run.revealed_icon", ("node", n.Node.Name),
             ("icon", s["reveal." + Key(n.Icon)])),
         BuffGained b => s.Format("run.buff_gained", ("hero", b.Hero.Name), ("buff", b.Buff.Name), ("length", BuffLength(s, b.Buff))),
