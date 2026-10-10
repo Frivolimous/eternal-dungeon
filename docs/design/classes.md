@@ -155,23 +155,88 @@ Every class has 3 traits, ordered by how central they are to the class. A hero g
 
 Events can have special options that need a trait at some level, or a specific class. Trait level 1 is the most common, level 2 rare and level 3 extremely rare. Traits can also come from Talents or Races. The list will change once events are written and show which traits are over- or under-used.
 
+There are 13 traits (revised 2026-10-10: Stealth added, Streetwise and Deception merged into Guile; see Superseded).
+
 | Class | Trait 1 | Trait 2 | Trait 3 |
 | --- | --- | --- | --- |
 | Warrior | Military | Discipline | Intimidation |
-| Berserker | Survival | Intimidation | Athletics |
+| Berserker | Athletics | Intimidation | Survival |
 | Defender | Military | Awareness | Survival |
 | Captain | Persuasion | Military | Discipline |
 | Beastmaster | Survival | Awareness | Intimidation |
-| Rogue | Streetwise | Deception | Disable |
-| Ranger | Awareness | Survival | Athletics |
+| Rogue | Stealth | Guile | Disable |
+| Ranger | Awareness | Survival | Stealth |
 | Monk | Discipline | Athletics | Awareness |
 | Energist | Discipline | Arcana | Spiritual |
-| Tinkerer | Disable | Scholar | Streetwise |
+| Tinkerer | Disable | Scholar | Guile |
 | Elementalist | Arcana | Scholar | Awareness |
-| Arcanist | Arcana | Scholar | Discipline |
+| Arcanist | Scholar | Arcana | Discipline |
 | Cleric | Spiritual | Scholar | Persuasion |
-| Acolyte | Spiritual | Deception | Intimidation |
-| Bard | Persuasion | Deception | Streetwise |
+| Acolyte | Spiritual | Guile | Intimidation |
+| Bard | Persuasion | Guile | Athletics |
+
+How easy each trait is to get and stack, from the table (score: 3 per class with it first, 2 second, 1 third; Dabble:
+classes that have it first; max level: the highest level classes alone can reach, since level 3 needs a Primary, a
+Secondary with it in its first two and a Dabble with it first, all different):
+
+| Trait | Classes | Score | Dabble | Max level |
+| --- | --- | --- | --- | --- |
+| Discipline | 5 | 10 | Monk, Energist | 3 |
+| Awareness | 5 | 9 | Ranger | 3 |
+| Scholar | 4 | 9 | Arcanist | 3 |
+| Military | 3 | 8 | Warrior, Defender | 3 |
+| Arcana | 3 | 7 | Elementalist | 3 |
+| Persuasion | 3 | 7 | Captain, Bard | 3 |
+| Spiritual | 3 | 7 | Cleric, Acolyte | 3 |
+| Survival | 4 | 7 | Beastmaster | 3 |
+| Guile | 4 | 7 | none | 2 |
+| Athletics | 3 | 6 | Berserker | 3 |
+| Intimidation | 4 | 5 | none | 2 |
+| Disable | 2 | 4 | Tinkerer | 2 |
+| Stealth | 2 | 4 | Rogue | 2 |
+
+Guile, Intimidation, Disable and Stealth top out at level 2 from classes (Talents, Races and +Trait buffs can still
+raise them). That's deliberate for now.
+
+### Trait levels, rolls and locks (2026-10-10)
+
+- **Roll by default.** If an untrained hero could plausibly try it (look around, climb, sneak, bluff, scare, hold
+  their nerve), the choice is open to everyone and rolls, and the trait adds to the chance per level. Rolls scale
+  through levels 1 to 3 and already include Exhaustion. Awareness especially: anyone can spot something, the trained
+  spot it more easily.
+- **Lock when training is needed even to try:** reading old runes (Scholar), channeling magic (Arcana), a rite
+  (Spiritual), picking a lock (Disable), class options. A locked choice can still roll on its trait.
+- **Gate at a higher level only for a different or better choice,** not just better odds (Awareness 1 avoids being
+  Surprised; Awareness 2 turns the ambush into First Strike). Common traits (Awareness, Discipline, Scholar) can use
+  level 2 as their usual threshold; rare ones stay at level 1.
+- **Default shape:** one open roll everyone gets, plus one locked specialist option.
+- **Failure leads somewhere** worth reading (a fight, a cost, a joke), since more players will fail more rolls.
+- **Roll scale** (placeholder): a base chance by difficulty plus about 20% per trait level, so level 3 still
+  matters. Dungeon 0's current rolls (up to +40% per level) predate this.
+
+### What each trait opens (tentative, 2026-10-10)
+
+Drafted by Claude after writing Dungeon 0, for Jeremy to review (see Placeholders). Each trait opens one kind of
+choice. When two could fit, use the more specific one; Awareness is the fallback, not the default.
+
+| Trait | Opens choices that... | Dungeon 0 examples | Not this (use instead) |
+| --- | --- | --- | --- |
+| Military | use knowledge of soldiers and war: ranks, drills, formations, fortifications, protocol, tactics against an organized force | the camp guards' blind spot | spotting a lone ambush (Awareness) |
+| Discipline | take willpower: hold the line, endure hardship and exhaustion, resist fear, temptation and mind games | holding against the boar, marching through the mud | raw strength (Athletics) |
+| Intimidation | make others back down through threat or presence: beasts, bullies, cowards, underlings | scaring off the wolves, the Gatekeeper's guard | honest talk (Persuasion) |
+| Survival | use wilderness lore: tracking, foraging, terrain and weather, beasts' habits, snares, making camp, wild remedies | (none yet; the mud, the snare and the campsite would fit) | spotting something right now (Awareness) |
+| Athletics | take a physical feat: climbing, jumping, swimming, lifting, forcing, outrunning, tumbling | (none yet; the tower ladder, the bars would fit) | endurance (Discipline) |
+| Awareness | notice what's there right now: an ambush, a trap, a hidden thing, something wrong | the crocodile, the tripwire, the bushes with ears | knowing what it means (Survival, Military, Scholar) |
+| Persuasion | win someone over honestly: reason, charm, bargaining, calming, inspiring | (none yet; the herbalist, the wife would fit) | lies and cons (Guile), threats (Intimidation) |
+| Stealth | go unnoticed: sneak past, slip in or out, hide, move silently, take something without being seen | (none yet as Stealth; the sleeping lookouts, the camp's back way would fit) | fooling someone who sees you (Guile), noticing (Awareness) |
+| Guile | get your way by cunning: lies, bluffs, disguises, cons and distractions, plus knowing how the shady side works (rumors, thieves' signs, black markets, who to bribe) | "Look! A distraction!" | going unseen (Stealth), honest talk (Persuasion) |
+| Disable | work a mechanism: open, disarm, sabotage or rig locks, traps, snares and devices | the merchant's lock, the tripwire, the snare | spotting the trap first (Awareness) |
+| Arcana | handle magic: sense, channel, attune to or dispel it, use magical objects | attuning to the stone | reading about it (Scholar) |
+| Scholar | know things from study: old scripts and runes, history, herbs and creatures, identifying the unknown | the stone's map, the herbalist's herbs | using magic (Arcana) |
+| Spiritual | deal with faith and the unseen: prayer, shrines, rites, spirits, the dead, blessings and curses | (none yet; praying at the shrine would fit) | magic as a force (Arcana) |
+
+Stealth and Guile split the old Rogue ground cleanly: Stealth is about not being seen at all, Guile about being seen
+and getting away with it anyway.
 
 ## Exploration skills (WIP, M4)
 

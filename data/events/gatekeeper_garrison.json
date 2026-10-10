@@ -1,7 +1,7 @@
 { "id": "gatekeeper_garrison", "type": "boss", "tags": ["goblin", "outdoors", "ruins"], "blocks": [
   { "id": "intro", "type": "story", "image": "garrison", "choices": [
     { "id": "intimidate", "conditions": [{ "type": "trait", "trait": "intimidation" }], "success": "intimidate_text" },
-    { "id": "bluff", "conditions": [{ "type": "trait", "trait": "deception" }], "success": "bluff_text" },
+    { "id": "bluff", "conditions": [{ "type": "trait", "trait": "guile" }], "success": "bluff_text" },
     { "id": "attack", "success": "fight" },
     { "id": "later", "success": "wait" } ] },
   { "id": "intimidate_text", "type": "story", "success": "fight_intimidate" },

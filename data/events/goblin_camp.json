@@ -1,6 +1,6 @@
 { "id": "goblin_camp", "type": "boss", "tags": ["goblin", "outdoors", "ruins"], "blocks": [
   { "id": "intro", "type": "story", "image": "fortress", "choices": [
-    { "id": "sneak", "conditions": [{ "type": "trait", "trait": "streetwise" }], "success": "sneaked" },
+    { "id": "sneak", "conditions": [{ "type": "trait", "trait": "stealth" }], "success": "sneaked" },
     { "id": "drill", "conditions": [{ "type": "trait", "trait": "military" }], "success": "drilled" },
     { "id": "storm", "success": "stormed" },
     { "id": "later", "success": "wait" } ] },
