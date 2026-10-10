@@ -9,8 +9,10 @@ roll and lock rules moved here from Classes).
 
 - **Default shape:** a short setup, then one open choice everyone can take (usually a roll), one locked specialist
   option (a trait or class), and, where it makes sense, a way to leave or come back later.
-- **Order the choices** with the specialist options first, then the plain way in, then leaving or deferring. (The
-  simulator's auto-player takes the first choice shown, so this order also makes it use the party's traits.)
+- **Order the choices** usually with the specialist options first, then the plain way in, then leaving or
+  deferring. It's a habit, not a rule: change the order when the story reads better another way (Jeremy, 2026-10-10).
+- **Who writes what:** Jeremy and the narrative agent own Event writing and every revision of it. A development agent
+  may write a first pass of a new Event, then leaves rewrites to them (Jeremy, 2026-10-10).
 - **One trait, one job.** A trait choice uses the trait for what it opens ([Classes](classes.md) › What each trait
   opens). When two could fit, use the more specific one; Awareness is the fallback, not the default.
 - **Every choice must say what it does and roughly what it risks** in its words (tone guide › Player clarity). The

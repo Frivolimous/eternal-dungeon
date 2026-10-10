@@ -19,7 +19,7 @@ the repo root) and pick a number. `ed 2` runs option 2 straight away.
 | 10 | Play a saved replay in the simulator | Lists the replays saved by the game, then prints the chosen one's log |
 | 11 | Run the tests | Every automated test |
 | 12 | Export the Windows build | Writes the game to `builds\windows\` (copy the whole folder to another PC) |
-| 13 | Play one Dungeon 0 Event | Asks for an Event, a seed and your choices, then prints its text, the choices with their previews, rolls, fights and what changed. Choices you leave out are the first one shown |
+| 13 | Play one Dungeon 0 Event | Asks for an Event, a seed and your choices, then prints its text, the choices with their previews, rolls, fights and what changed. Choices you leave out go to the first specialist option shown (a trait or class one), else the first choice |
 | 14 | Auto-play Dungeon 0 | One run with its whole log, or many runs with a summary: how often the party finishes, where it wipes, Health, Mana and Stamina at each boss |
 
 The Google Sheet rule of thumb: **pull before** changing data here, **push after**. Both stop and ask before

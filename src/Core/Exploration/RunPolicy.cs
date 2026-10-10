@@ -5,8 +5,8 @@ namespace EternalDungeon.Core.Exploration;
 /// <summary>
 /// A simple player for whole runs (M3A brief §8: the attrition balancing tool), with every decision on fixed rules:
 /// <list type="bullet">
-/// <item>Choices: the first one shown. Events list their trait and class options first, then the plain way in, then
-/// leaving, so this uses the party's traits whenever it can and otherwise faces what's there.</item>
+/// <item>Choices: the first specialist option shown (one with a trait or class condition), so the party uses its traits
+/// whenever it can; otherwise the first choice shown. It doesn't rely on the order Events list their choices in.</item>
 /// <item>Fights: auto-battle (the heroes' scripted AI, which drinks potions when low).</item>
 /// <item>Between Events: fill belts from the pack (Mana Potions only for heroes with Mana), buy potions at an
 /// Alchemist Station, use a Sanctuary or Camp when someone is low on Stamina or Health (before a boss, sooner).</item>
@@ -42,7 +42,7 @@ public sealed class RunPolicy
         switch (run.State)
         {
             case RunState.Event:
-                Report(run.Choices.Count > 0 ? run.Choose(run.Choices[0].Id) : run.Continue());
+                Report(run.Choices.Count > 0 ? run.Choose(Pick(run.Choices).Id) : run.Continue());
                 return true;
             case RunState.Battle:
                 OnBattle?.Invoke(run);
@@ -56,6 +56,10 @@ public sealed class RunPolicy
                 return false;
         }
     }
+
+    /// <summary>The first specialist option (a trait or class condition), else the first choice.</summary>
+    public static EventChoice Pick(IReadOnlyList<EventChoice> choices) =>
+        choices.FirstOrDefault(c => c.Conditions.Any(x => x is TraitCondition or ClassCondition)) ?? choices[0];
 
     static bool IsBoss(NodeState n) => n.Def.Type is NodeType.MapBoss or NodeType.FinalBoss;
 

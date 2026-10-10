@@ -164,7 +164,7 @@ set /p "EVT=  Event id [caged_merchant]: "
 set "SEED=1"
 set /p "SEED=  Seed [1]: "
 set "CHOICES="
-set /p "CHOICES=  Choice ids in order, comma-separated (blank: always the first shown): "
+set /p "CHOICES=  Choice ids in order, comma-separated (blank: specialist options first): "
 if "%CHOICES%"=="" (
   dotnet run --project src\Sim -- event %EVT% --seed %SEED%
 ) else (

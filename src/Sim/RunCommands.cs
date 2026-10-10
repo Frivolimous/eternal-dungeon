@@ -46,7 +46,7 @@ static class RunCommands
                 continue;
             }
             PrintChoices(data, run);
-            var pick = choices.Count > 0 ? choices.Dequeue() : run.Choices[0].Id;
+            var pick = choices.Count > 0 ? choices.Dequeue() : RunPolicy.Pick(run.Choices).Id;
             if (run.Choices.All(c => c.Id != pick))
                 throw new OptionException($"\"{pick}\" isn't one of the choices shown ({string.Join(", ", run.Choices.Select(c => c.Id))})");
             Print(data, run.Choose(pick));

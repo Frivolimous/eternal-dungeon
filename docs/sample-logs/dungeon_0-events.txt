@@ -127,9 +127,8 @@ The Abandoned Campsite (Elementalist leads)
 A ransacked camp: torn tents, a cold fire pit, and supplies scattered in the dirt. Goblin work, judging by the bite marks on the cooking pot. One bedroll has a name stitched into it: BARTLEBY CRUMPWHISTLE. Beside it lies a receipt for one cart, paid in full.
   · search: Search the camp. Free supplies! → −6 Health (one hero), more choices
   · careful: Search carefully. There's always a catch! → more choices
-→ Elementalist: Search the camp. Free supplies!
-Rogue: Health -6 (100 → 94)
-A snare hidden under a bedroll snaps shut on an unlucky ankle! Goblin snares are crude and rusty, but they mean every bit of it.
+→ Elementalist: Search carefully. There's always a catch!
+Elementalist spots a snare hidden under a bedroll and springs it with a stick. The stick loses. Somewhere, a goblin's tummy growls.
 There's enough here to pack up and carry for a camp later. Or the crates could feed the fire pit and make this a safe place to rest. The crates are the only dry wood, so it's one or the other.
   · pack: Pack the supplies for a camp later. Waste not! → +1 Camp, +10 Gold, +1 Health Potion
   · rekindle: Burn the crates. A safe place to rest, right here. → Sanctuary here, +10 Gold, +1 Health Potion
@@ -140,7 +139,7 @@ Gold +10 (now 10)
 Under a tent, the party finds a few coins and a potion the goblins missed. They were busy with the cooking pot.
 The Abandoned Campsite is over.
 
-Warrior 140/140 HP St 4 · Rogue 94/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
 Gold 10, Camp charges 2, pack: Health Potion ×1
 
 ==============================

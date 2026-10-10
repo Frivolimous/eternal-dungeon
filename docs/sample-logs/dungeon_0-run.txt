@@ -63,9 +63,8 @@ The Muddy Crossing is over.
 The party explores Ransacked Camp.
 The Abandoned Campsite (Elementalist leads)
 A ransacked camp: torn tents, a cold fire pit, and supplies scattered in the dirt. Goblin work, judging by the bite marks on the cooking pot. One bedroll has a name stitched into it: BARTLEBY CRUMPWHISTLE. Beside it lies a receipt for one cart, paid in full.
-→ Elementalist: Search the camp. Free supplies!
-Rogue: Health -6 (100 → 94)
-A snare hidden under a bedroll snaps shut on an unlucky ankle! Goblin snares are crude and rusty, but they mean every bit of it.
+→ Elementalist: Search carefully. There's always a catch!
+Elementalist spots a snare hidden under a bedroll and springs it with a stick. The stick loses. Somewhere, a goblin's tummy growls.
 There's enough here to pack up and carry for a camp later. Or the crates could feed the fire pit and make this a safe place to rest. The crates are the only dry wood, so it's one or the other.
 → Elementalist: Pack the supplies for a camp later. Waste not!
 Camp charges +1 (now 2)
@@ -78,7 +77,6 @@ The party explores Dry Spring.
 The party makes camp and rests.
 Camp charges -1 (now 1)
 Warrior: Health +58 (82 → 140)
-Rogue: Health +6 (94 → 100)
 Elementalist: Mana +52 (68 → 120)
 Warrior: Stamina +2 (2 → 4)
 Rogue: Stamina +2 (2 → 4)
@@ -87,14 +85,14 @@ Threadsight wears off Warrior.
 Threadsight wears off Rogue.
 Threadsight wears off Elementalist.
 The party explores Gatekeeper's Post.
-The Gatekeeper Garrison (Elementalist leads)
+The Gatekeeper Garrison (Rogue leads)
 A guard post blocks the only path east: a palisade with one sturdy gate. Before it stand three goblins. The middle one wears a helmet meant for a warrior twice his size. "HALT!" he proclaims. "None pass the Gatekeeper!" He jangles a large iron key. "Also, the Gatekeeper is me."
 Warrior takes the lead.
 → Warrior: Frighten off his guards. Some goblins scare easily.
 Warrior stands tall, weapon raised, with a look that asks which of them plans to fall with the gate. One guard drops his spear and flees into the trees. The other stays, visibly shaken. So, a little, does the Gatekeeper.
 Battle: Gatekeeper Garrison (outer guard intimidated) (Boss fight)
   Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
-Victory. Stamina −1. Warrior 87/140, Rogue 32/100, Elementalist 80/80
+Victory. Stamina −1. Warrior 72/140, Rogue 100/100, Elementalist 45/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
@@ -103,9 +101,9 @@ The Gatekeeper sinks to his knees. "Tell them... the Gatekeeper... kept the gate
 The Gatekeeper Garrison is over.
 The party makes camp and rests.
 Camp charges -1 (now 0)
-Warrior: Health +53 (87 → 140)
-Rogue: Health +50 (32 → 82)
-Elementalist: Mana +36 (84 → 120)
+Warrior: Health +68 (72 → 140)
+Elementalist: Health +35 (45 → 80)
+Elementalist: Mana +26 (94 → 120)
 Warrior: Stamina +1 (3 → 4)
 Rogue: Stamina +1 (3 → 4)
 Elementalist: Stamina +1 (3 → 4)
@@ -117,8 +115,8 @@ A woman's scream cuts through the trees. "Help! Help! They're gonna turn me into
 → Elementalist: Investigate those suspicious bushes.
 Elementalist points out that one of the bushes has ears. The bush, offended, draws a knife. Goblin raiders pour out, but the party is ready for them!
 Battle: Goblin Raiders (Major fight)
-  Warrior 140/140 HP St 4 · Rogue 82/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
-Victory. Stamina −1. Warrior 30/140, Rogue 68/100, Elementalist 66/80
+  Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Victory. Stamina −1. Warrior 41/140, Rogue 100/100, Elementalist 52/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
@@ -128,32 +126,31 @@ Elementalist: Stamina -1 (4 → 3)
 The Merchant's Wife is over.
 Rogue puts 1 Health Potion in the belt.
 The party explores Narrow Path.
-The Goblin Tripwire (Rogue leads)
+The Goblin Tripwire (Elementalist leads)
 The path narrows between two steep banks. It's quiet. Too quiet. The birds must have all gone to sing somewhere else?
-Elementalist takes the lead.
 → Elementalist: Birds know things. Watch the ground as you proceed.
 Elementalist rolls 50% (Awareness 1): failure
-Elementalist: Health -8 (66 → 58)
+Elementalist: Health -8 (52 → 44)
 Elementalist gains Bleeding (3 battles)
 Elementalist's leg catches the wire. *SPROING!* Spiked logs thunder down the bank and catch Elementalist with a nasty, bleeding gash. Up the path, a goblin patrol cheers and comes jogging down to see what it caught.
 Battle: Goblin Patrol (Major fight)
-  Warrior 30/140 HP St 3 · Rogue 68/100 HP St 3 · Elementalist 58/80 HP 84/120 MP St 3
-Victory. Stamina −1. Warrior 48/140, Rogue 68/100, Elementalist 35/80
+  Warrior 41/140 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 44/80 HP 84/120 MP St 3
+Victory. Stamina −1. Warrior 53/140, Rogue 100/100, Elementalist 35/80
 Warrior: Stamina -1 (3 → 2)
 Rogue: Stamina -1 (3 → 2)
 Elementalist: Stamina -1 (3 → 2)
 The Goblin Tripwire is over.
 The party explores Reed Marsh.
-The Baited Snare (Rogue leads)
+The Baited Snare (Warrior leads)
 A rope snare dangles over the path, crude but obvious. Inside you see a small pile of coins, a good bait for human prey!
+Rogue takes the lead.
 → Rogue: Disable the snare, shouldn't be too hard
 Gold +10 (now 80)
 Rogue carefully traces the rope and finds the bent sapling meant to be used as the trigger. After jamming a stick to block the release, the snare is effectively disabled.
 The Baited Snare is over.
 The party explores Lookout Hill.
-The Goblin Sentry Tower (Warrior leads)
+The Goblin Sentry Tower (Rogue leads)
 A crude lookout platform rises above the trees, held together by rope, optimism, and one very tired ladder. Three goblin lookouts seem to be sleeping at the top. From up there, you could probably see the whole valley.
-Rogue takes the lead.
 → Rogue: Climb up the ladder slowly and quietly.
 Rogue climbs the ladder quiet as a snail, the goblins remaining fast asleep. The view is absolutely incredible!
 Revealed on the map: Goblin Fortress (boss)
@@ -167,13 +164,12 @@ An enraged boar paws the dirt of its feeding ground, tusks low. It isn't the Meg
 → Warrior: Hold the line
 Warrior plants their feet and doesn't budge an inch. The party forms up around them, and the boar thunders straight into a wall of steel.
 Battle: Wild Boar (Major fight, First Strike)
-  Warrior 48/140 HP St 2 · Rogue 68/100 HP St 2 · Elementalist 35/80 HP 58/120 MP St 2
-Victory. Stamina −1. Warrior 107/140, Rogue 83/100, Elementalist 41/80
+  Warrior 53/140 HP St 2 · Rogue 100/100 HP St 2 · Elementalist 35/80 HP 58/120 MP St 2
+Victory. Stamina −1. Warrior 94/140, Rogue 100/100, Elementalist 41/80
 Warrior: Stamina -1 (2 → 1)
 Rogue: Stamina -1 (2 → 1)
 Elementalist: Stamina -1 (2 → 1)
-Warrior: Health +21 (86 → 107)
-Rogue: Health +15 (68 → 83)
+Warrior: Health +21 (73 → 94)
 Elementalist: Health +12 (29 → 41)
 That night, the party roasts the boar over a small fire. It tastes of temper and acorns. A good meal does wonders.
 The Wild Boar is over.
@@ -211,8 +207,7 @@ Gold -20 (now 10)
 +1 Health Potion (into the pack)
 The party explores Burned Camp.
 The party rests at the Sanctuary.
-Warrior: Health +33 (107 → 140)
-Rogue: Health +17 (83 → 100)
+Warrior: Health +46 (94 → 140)
 Elementalist: Health +39 (41 → 80)
 Elementalist: Mana +20 (100 → 120)
 Warrior: Stamina +3 (1 → 4)
@@ -226,7 +221,7 @@ Rogue sneaks around the camp's walls. On the far side, a rotting board smelling 
 In the middle of the camp, the Goblin Chief, the fattest goblin anyone has ever seen, is lowering a small boy toward the bubbling pot. A shaman spins in circles beside it for luck. The Chief turns, outraged. "Who dares interrupt LUNCH?"
 Battle: The Goblin Chief (Boss fight)
   Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
-Victory. Stamina −1. Warrior 72/140, Rogue 44/100, Elementalist 29/80
+Victory. Stamina −1. Warrior 74/140, Rogue 74/100, Elementalist 50/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
@@ -237,5 +232,5 @@ Tobble runs into his mother's arms, and at the forest trail his father is waitin
 The Goblin Camp is over.
 The Goblin Raid is complete! Somewhere, a bard starts composing.
 
-Result: Completed. Warrior 72/140 HP St 3 · Rogue 44/100 HP St 3 · Elementalist 29/80 HP 48/120 MP St 3
+Result: Completed. Warrior 74/140 HP St 3 · Rogue 74/100 HP St 3 · Elementalist 50/80 HP 48/120 MP St 3
 18 Nodes, 7 battles (7 won, 0 fled), 2 Camps, 1 Sanctuaries, 4 belt charges used, 60 Gold left
