@@ -42,9 +42,9 @@ A mossy altar sits in a clearing, its vines woven through it so neatly it looks 
 Elementalist takes the lead.
 → Elementalist: Read the carvings and perform the rite. Properly.
 Elementalist traces the carvings and performs the rite: three bows, one turn, and a respectful nod to the smudge. The vines loosen slightly, which seems like approval.
-Warrior gains Wild Blessing (5 steps)
-Rogue gains Wild Blessing (5 steps)
-Elementalist gains Wild Blessing (5 steps)
+Warrior gains Threadsight (5 steps)
+Rogue gains Threadsight (5 steps)
+Elementalist gains Threadsight (5 steps)
 A warm wind stirs the clearing, and the forest snaps into focus. For a moment the whole world looks carefully stitched together, apart from a few bits nobody quite finished. The party's eyes stay sharp for a while.
 The Overgrown Shrine is over.
 The party explores Bone Cave.
@@ -84,9 +84,9 @@ Elementalist: Mana +52 (68 → 120)
 Warrior: Stamina +2 (2 → 4)
 Rogue: Stamina +2 (2 → 4)
 Elementalist: Stamina +2 (2 → 4)
-Wild Blessing wears off Warrior.
-Wild Blessing wears off Rogue.
-Wild Blessing wears off Elementalist.
+Threadsight wears off Warrior.
+Threadsight wears off Rogue.
+Threadsight wears off Elementalist.
 The party explores Gatekeeper's Post.
 The Gatekeeper Garrison (Elementalist leads)
 A guard post blocks the only path east: a palisade with one sturdy gate. Before it stand three goblins. The middle one wears a helmet meant for a warrior twice his size. "HALT!" he proclaims. "None pass the Gatekeeper!" He jangles a large iron key. "Also, the Gatekeeper is me."
@@ -111,7 +111,7 @@ Elementalist: Mana +36 (84 → 120)
 Warrior: Stamina +1 (3 → 4)
 Rogue: Stamina +1 (3 → 4)
 Elementalist: Stamina +1 (3 → 4)
-Forest Edge is behind the party.
+Forest Edge lies behind the party. Onward!
 · Goblin Ruins ·
 The party explores Thorn Thicket.
 The Merchant's Wife (Elementalist leads)
@@ -198,18 +198,18 @@ The hermit and Elementalist talk for hours about medicines, mushrooms and close 
 New at Hermit's Glade: Alchemist Station.
 She unpacks kettles, vials, and a small hand-painted sign: POTIONS. NOT MUSHROOMS. Her Alchemist Station is open for business.
 The Wandering Herbalist is over.
-Bought a Health Potion for 20 Gold.
+Bought Health Potion for 20 Gold.
 Gold -20 (now 70)
 +1 Health Potion (into the pack)
-Bought a Health Potion for 20 Gold.
+Bought Health Potion for 20 Gold.
 Gold -20 (now 50)
 +1 Health Potion (into the pack)
-Bought a Mana Potion for 20 Gold.
+Bought Mana Potion for 20 Gold.
 Gold -20 (now 30)
 +1 Mana Potion (into the pack)
 Warrior puts 2 Health Potion in the belt.
 The party explores Ruined Chapel.
-Bought a Health Potion for 20 Gold.
+Bought Health Potion for 20 Gold.
 Gold -20 (now 10)
 +1 Health Potion (into the pack)
 The party explores Burned Camp.
@@ -239,7 +239,7 @@ Flag son_rescued = true
 Gold +50 (now 60)
 Tobble runs into his mother's arms, and at the forest trail his father is waiting. The Crumpwhistles are together again! They empty their savings into the party's hands. Bartleby hugs his wife, then his son, and then, for slightly longer, his recovered cart.
 The Goblin Camp is over.
-The Goblin Raid is complete!
+The Goblin Raid is complete! Somewhere, a bard starts composing.
 
 Result: Completed. Warrior 72/140 HP St 3 · Rogue 44/100 HP St 3 · Elementalist 29/80 HP 48/120 MP St 3
 18 Nodes, 7 battles (7 won, 0 fled), 2 Camps, 1 Sanctuaries, 4 belt charges used, 60 Gold left

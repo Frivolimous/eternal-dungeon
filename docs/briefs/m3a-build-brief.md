@@ -148,6 +148,7 @@ The event engine from exploration.md, with these parts in M3A:
   Herbalist's text no longer names her fee, since flavor text carries no numbers), and show when a fight is easier
   than the head-on one (the Gatekeeper's Intimidation choice fights a smaller squad, but its preview reads the same
   as attacking).
+- **To do (from the narrative pass, 2026-10-10):** the run log shows Dungeon flags as raw ids (`run.flag`: "Flag merchant_freed = true"). Players shouldn't see ids: either hide flags from the in-game log like Event-only flags, or give each flag a display string.
 
 ## 4. Resources and consumables
 

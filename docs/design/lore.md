@@ -4,7 +4,7 @@ This file holds established world lore. Everything above **Flagged** is canon. F
 
 This file covers world facts only: peoples, creatures, places, figures, and powers. Classes, skills, items, and systems are defined in the Design Anchor. Where a lore entry names something that also exists as a mechanic, the Anchor wins on how it works.
 
-When you add something that is likely to recur, add it here and flag it for review. See `tone-guide.md`.
+When you add something meant to recur, add it here and flag it for review. One-off gags stay in their scene and never come here. See `tone-guide.md`.
 
 ---
 
@@ -25,6 +25,7 @@ Others helped Yermiyah bring the world into being. Those who are no longer activ
 - **Juliette the Savior** is a blessed soul from a faraway realm with infinite patience. She rewove everything that exists in her own manner, improving the works of Yue and Luca and finishing what they left undone. Without her, the world would be a mangled pile of grossness.
 - **Luca the Dabbler** was born in the outer realms but has always lived within inner realms. He conceived and visualized much of the world's inner workings and its visual wonders, and he watched over its quality.
 - **Stephan the Swift** is a young, kind, and humble soul. He is the world's bard, and his music accompanies those who explore it.
+- **Shrines of the old gods** still stand in out-of-the-way places: weathered altars whose names have worn past reading. Locals leave offerings at them without remembering why. In Dungeon 0, the Overgrown Shrine is Yue's: vines woven through it too neatly to be chance, the name worn to "a Y and a hopeful smudge", weaving imagery in its blessing and curse, and a hint of Juliette's work in the "bits nobody quite finished". A shrine never names its god.
 
 ### The being of pure darkness
 Acolytes serve an unnamed being of pure darkness. He is really nice once you get to know him. He is very specifically **not** the Shadow, and he makes a point of telling people so.
@@ -122,7 +123,5 @@ A realm of demons exists parallel to this world. It contains only evil, cruel be
 
 ## Flagged (not canon until ruled)
 
-- **Bog crocodiles** (Beasts; from Dungeon 0's Bog Crocodile event, 2026-10-09): they lurk in still swamp water and drift toward prey pretending to be logs, against the current, which logs don't do. Travelers post NO SWIMMING signs near the worst bogs, and the crocodiles eat the signs too.
-- **Shrines of the old gods** (from Dungeon 0's Overgrown Shrine event, 2026-10-09): weathered altars whose names have worn past reading. Locals still leave offerings at them without remembering why. The Overgrown Shrine is Yue's: vines woven through it too neatly to be chance, the name worn to "a Y and a hopeful smudge", weaving imagery in its blessing (the world "stitched together", a knot in every muscle as its curse), and a hint of Juliette's work in the "bits nobody quite finished". Content never names Yue.
-- **Goblin knots are terrible** (Goblins; from Dungeon 0's Goblin Tripwire and Goblin Camp, 2026-10-09): no self-respecting sailor would tie one, they come undone if you look at them sternly, and untying one still takes longer than tying it did. Goblin building in general runs on enthusiasm and optimism (the Caged Merchant's cage, the Sentry Tower).
-- **Wolves are house-proud** (Beasts; from Dungeon 0's Wolf Den event, 2026-10-09): a den is kept tidy, with bones picked clean and sorted, and skulls lined up at the entrance the way other households keep flowerpots. They are still beasts and exist only for violence; they just like it neat.
+None currently.
+

@@ -87,9 +87,9 @@ A mossy altar sits in a clearing, its vines woven through it so neatly it looks 
   · leave: Leave it be. Let the smudge rest. → no fight
 → Elementalist: Read the carvings and perform the rite. Properly.
 Elementalist traces the carvings and performs the rite: three bows, one turn, and a respectful nod to the smudge. The vines loosen slightly, which seems like approval.
-Warrior gains Wild Blessing (5 steps)
-Rogue gains Wild Blessing (5 steps)
-Elementalist gains Wild Blessing (5 steps)
+Warrior gains Threadsight (5 steps)
+Rogue gains Threadsight (5 steps)
+Elementalist gains Threadsight (5 steps)
 A warm wind stirs the clearing, and the forest snaps into focus. For a moment the whole world looks carefully stitched together, apart from a few bits nobody quite finished. The party's eyes stay sharp for a while.
 The Overgrown Shrine is over.
 
@@ -366,7 +366,7 @@ Flag son_rescued = true
 Gold +20 (now 20)
 Tobble is safe, but his family is nowhere to be found. The party sets off with him toward the forest edge to look for them. He solemnly hands over the few coins in his pocket, then asks if anyone has seen a cart.
 The Goblin Camp is over.
-The Goblin Raid is complete!
+The Goblin Raid is complete! Somewhere, a bard starts composing.
 
 Warrior 45/140 HP St 3 · Rogue 32/100 HP St 3 · Elementalist 59/80 HP 40/120 MP St 3
 Gold 20, Camp charges 1, pack: empty

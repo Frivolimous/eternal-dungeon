@@ -85,7 +85,7 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 | Throwing Spikes | 12 base damage; found as 2 charges at the Goblin Tripwire |
 | Alchemist prices | 20 Gold a charge (Health or Mana Potion); the Herbalist's fee is 25 |
 | Gold | 10 for small finds, 15 for a beast's hoard, 25 for a boss, 20 to 50 at the end by how much of the family was saved |
-| Run buffs and curses | Wild Blessing +1 Awareness (5 steps); Forsaken −25 Power (3 battles); Sluggish −10 Speed (3 steps); Bleeding 3 damage a turn (3 battles); Rune-Charged +15 Spell Power (3 battles); Mana Drain −3 Mana a turn (2 battles) |
+| Run buffs and curses | Threadsight +1 Awareness (5 steps); Knotted Muscles −25 Power (3 battles); Sluggish −10 Speed (3 steps); Bleeding 3 damage a turn (3 battles); Rune-Charged +15 Spell Power (3 battles); Mana Drain −3 Mana a turn (2 battles) |
 | Event damage | 6 (the campsite snare, a random hero), 8 (the tripwire's logs, plus Bleeding) |
 | Rolls | Pick the merchant's lock 40% + 30% per Disable; spot the crocodile 20% + 40% per Awareness; spot the tripwire 30% + 40% per Awareness, then disarm it 50% + 30% per Disable; unmodified gambles 50% |
 | Encounters | Dungeon 0's fights reuse the goblins and add a Wolf, a Bog Crocodile (Tall), a Wild Boar and the Gatekeeper (unit `goblin_captain`; numbers in data). The Gatekeeper fight: Gatekeeper, Grunt and Archer (intimidated: Gatekeeper and Archer). The Chief: Chief, Grunt and Shaman |

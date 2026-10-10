@@ -116,7 +116,9 @@ Write longer exposition only when explicitly asked to.
 
 ## System text
 
-Tooltips, stat explanations, menus, confirmations, and error messages are **plain and clear first**. Unlike flavor text, they may refer to the game directly ("Pause the game"). A small dose of personality is fine, as in a cancel button that pleads "Don't do it!", but never at the cost of clarity.
+Tooltips, stat explanations, menus, confirmations, logs, and error messages are **plain and clear first**. Unlike flavor text, they may refer to the game directly ("Pause the game"). A small dose of personality is fine, as in a cancel button that pleads "Don't do it!", but never at the cost of clarity.
+
+**Lines the player sees often stay plain; one-time moments get the voice.** A joke in "The party explores {node}." wears thin by the tenth Node. Finishing a dungeon ("Somewhere, a bard starts composing.") or a wipe ("The party has fallen. Such a shame...") happens rarely enough to carry one.
 
 ## Spelling and punctuation
 
@@ -157,4 +159,5 @@ Never use dashes as punctuation in player-facing text: no em dashes (—), en da
 
 Once a joke becomes lore, it is canon. All established lore lives in `docs/design/lore.md`.
 - Check it before inventing factions, places, peoples, recurring characters, or professions, and don't contradict it.
-- When you add something likely to recur, append it to the lore file and flag it for review.
+- When you add something meant to recur, append it to the lore file and flag it for review.
+- **Not every gag is lore.** Most jokes are one-offs that belong to their scene (the crocodile eating the NO SWIMMING sign, the house-proud wolves). Flag only what is worth building on: a people, place, figure or power that other content should be able to use.
