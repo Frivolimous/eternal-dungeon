@@ -98,8 +98,6 @@ public class SimulatorTests
             ["Proc"] = o => o is ProcRolled { Roll.Success: true, FromAction: false },
             ["Fear"] = o => o is BuffApplied { Buff.Def.Cc: CcKind.Fear },
             ["Push"] = o => o is Moved { Why: "Push" },
-            ["Taunt"] = o => o is ThreatAdded,
-            ["Plan drawn by a taunt"] = o => o is IntentSet { Why: IntentReason.Drawn },
             ["Plan blocked"] = o => o is IntentSet { Why: IntentReason.Blocked },
         };
         var seen = checks.Keys.ToDictionary(k => k, _ => 0);

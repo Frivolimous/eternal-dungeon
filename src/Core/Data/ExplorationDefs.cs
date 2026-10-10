@@ -34,7 +34,8 @@ public sealed record ItemDef(string Id, string Name, string Action, int Uses, bo
 
 /// <summary>
 /// Run-wide numbers kept in defaults.json (placeholders: Anchor: Placeholders › Exploration and progression). The
-/// defaults here are only used when the data leaves a key out.
+/// defaults here are only used when the data leaves a key out. XP is what a won battle gives, by scale, shared equally
+/// among the heroes who finish it standing.
 /// </summary>
 public sealed record RunRules(
     int MaxStamina = 4,
@@ -43,7 +44,10 @@ public sealed record RunRules(
     int SevereSpeed = -25,
     double ExhaustedRoll = -0.1,
     double SevereRoll = -0.25,
-    int InitiativeModifier = 30);
+    int InitiativeModifier = 30,
+    int XpSkirmish = 15,
+    int XpMajor = 45,
+    int XpBoss = 90);
 
 public enum MapKind { Outdoor, Indoor }
 
@@ -80,3 +84,32 @@ public sealed record MapDef(string Id, string Dungeon, string Name, MapKind Kind
 /// <summary>A hand-authored dungeon: its Maps in order and the Camp charges the party gets (Anchor: Exploration › Rest,
 /// Camp and Sanctuary).</summary>
 public sealed record DungeonDef(string Id, string Name, int CampCharges, IReadOnlyList<MapDef> Maps);
+
+/// <summary>A tree skill (5 levels, bought with skill points) or a mastery (one level, unlocked by the points spent in
+/// its class's tree; Anchor: Classes › Skill trees, Masteries).</summary>
+public enum SkillKind { Tree, Mastery }
+
+/// <summary>A stat (or compound stat) a skill raises: <see cref="PerLevel"/> × its level. A flag stat (an effect
+/// switched on, such as the opening crit) counts as on above 0.</summary>
+public sealed record SkillStat(string Stat, string? Tag, double PerLevel);
+
+/// <summary>
+/// One skill of a class: a tree skill with its prerequisite (1+ point in it) and tier position, or a mastery with the
+/// tree points that unlock it (1, 6, 11). Either can raise stats, grant actions (a mastery's active ability, or a
+/// replacement for a default action such as the Rogue's Move) and grant procs.
+/// </summary>
+public sealed record SkillDef(
+    string Id,
+    string Name,
+    string Class,
+    SkillKind Kind,
+    int Order,
+    int MaxLevel,
+    string? Requires,
+    int Points,
+    IReadOnlyList<string> Actions,
+    IReadOnlyList<string> Procs,
+    IReadOnlyList<SkillStat> Stats);
+
+/// <summary>A hero level and the total XP it takes to reach it.</summary>
+public sealed record LevelDef(int Level, int Xp);

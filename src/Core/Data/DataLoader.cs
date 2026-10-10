@@ -81,11 +81,12 @@ public static partial class DataLoader
                     throw r.Error("procs", $"unknown proc \"{p}\" (not in {t["procs"].File})");
 
         var procsById = procs.ToDictionary(p => p.Id);
-        var actions = t["actions"].Rows.Select(r => ReadAction(r, t, tags, procsById)).ToDictionary(a => a.Id);
+        var actions = t["actions"].Rows.Select(r => ReadAction(r, t, tags, stats, procsById)).ToDictionary(a => a.Id);
         var ais = t["ai_profiles"].Rows.Select(r => ReadAiProfile(r, t, actions, buffIds)).ToDictionary(a => a.Id);
         var defaultActions = ReadDefaultActions(t, actions);
         var items = t["items"].Rows.Select(r => ReadItem(r, t, actions, procsById)).ToList();
         var classes = t["classes"].Rows.Select(r => ReadClass(r, t, stats)).ToDictionary(c => c.Id);
+        var skills = ReadSkills(t, classes, actions, procIds, stats, compoundIds, tags);
         var unitDefaults = t["default_stats"].Rows.Select(r => ReadStatEntry(r, tags, stats, t)).ToList();
 
         var units = new List<UnitDef>();
@@ -104,18 +105,19 @@ public static partial class DataLoader
                 .Concat(defaultActions is null ? [] : new[] { DefaultRole.Attack, DefaultRole.Defend, DefaultRole.Move }
                     .Where(x => !replaced.Contains(x)).Select(defaultActions.For))
                 .Concat(items.Select(i => i.Action))                   // a hero's AI may use its belt items
+                .Concat(skills.SelectMany(s => s.Actions))             // and actions its skills grant
                 .ToHashSet();
             if (ais[unit.Ai].Rules.FirstOrDefault(x => !has.Contains(x.Action)) is { } missing)
-                throw r.Error("ai", $"its AI \"{unit.Ai}\" uses \"{missing.Action}\", which isn't in its actions, the default actions or a belt item");
+                throw r.Error("ai", $"its AI \"{unit.Ai}\" uses \"{missing.Action}\", which isn't in its actions, the default actions , a belt item or a skill");
             units.Add(unit);
         }
         var unitsById = units.ToDictionary(u => u.Id);
-        var encounters = t["encounters"].Rows.Select(r => ReadEncounter(r, t, unitsById)).ToList();
+        var encounters = t["encounters"].Rows.Select(r => ReadEncounter(r, t, unitsById, skills)).ToList();
         var heroes = ReadHeroes(t, classes, unitsById, items);
         var dungeons = ReadDungeons(t);
         var data = new GameData([.. tags.Values], [.. stats.Values], compounds, units, [.. actions.Values], buffs, [.. ais.Values],
             encounters, unitDefaults, procs, defaultActions, text,
-            [.. classes.Values], heroes, items, dungeons, ReadRunRules(t));
+            [.. classes.Values], heroes, items, dungeons, ReadRunRules(t), skills, ReadLevels(t));
         if (files is not null)
             data.Events = EventLoader.Load(files, data);
         return data;
@@ -397,7 +399,7 @@ public static partial class DataLoader
     static readonly ProcTrigger[] ActionTriggers =
         [ProcTrigger.Hit, ProcTrigger.Miss, ProcTrigger.Crit, ProcTrigger.Brutal, ProcTrigger.ActionComplete];
 
-    static ActionDef ReadAction(Row r, DataTables t, Dictionary<string, TagDef> tags, Dictionary<string, ProcDef> procs)
+    static ActionDef ReadAction(Row r, DataTables t, Dictionary<string, TagDef> tags, Dictionary<string, StatDef> stats, Dictionary<string, ProcDef> procs)
     {
         var actionTags = TagList(r, "tags", tags, t, withImplied: true);
 
@@ -439,7 +441,10 @@ public static partial class DataLoader
             r.Int("cast_time"),
             r.List("procs"),
             r.Enum<MoveTo>("move_to"),
-            r.Enum<DefaultRole>("replaces"));
+            r.Enum<DefaultRole>("replaces"),
+            r.Int("stamina_cost"),
+            [.. ChildrenOf(t, "action_stats", r.Str("id")).Select(x => ReadStatEntry(x, tags, stats, t))]);
+        if (action.StaminaCost < 0) throw r.Error("stamina_cost", "can't be negative");
         if ((action.Target == ActionTarget.Tile) != (action.MoveTo != MoveTo.None))
             throw r.Error("move_to", "tile actions need move_to (own or own_or_enemy), and only they can have it");
         if (action.Replaces != DefaultRole.None && !FitsRole(action, action.Replaces, out var what))
@@ -557,7 +562,7 @@ public static partial class DataLoader
         return new UnitDef(r.Str("id"), r.Str("name"), size, values, compoundValues, r.List("actions"), ai, r.List("procs"));
     }
 
-    static EncounterDef ReadEncounter(Row r, DataTables t, Dictionary<string, UnitDef> units)
+    static EncounterDef ReadEncounter(Row r, DataTables t, Dictionary<string, UnitDef> units, List<SkillDef> skills)
     {
         var rows = ChildrenOf(t, "encounter_units", r.Str("id")).ToList();
         List<Placement> Side(Side side)
@@ -580,7 +585,13 @@ public static partial class DataLoader
                         if (!taken.Add((y, x)))
                             throw p.Error($"{unit.Name} overlaps another unit at row {y}, col {x}");
                     }
-                placements.Add(new Placement(id, row, col));
+                // A party row can give its hero tree skills at level 1 (its masteries follow from those points).
+                var rowSkills = p.List("skills");
+                if (rowSkills.Count > 0 && side == Combat.Side.Enemy) throw p.Error("skills", "only party rows take skills");
+                foreach (var s in rowSkills)
+                    if (skills.All(x => x.Id != s || x.Kind != SkillKind.Tree))
+                        throw p.Error("skills", $"unknown tree skill \"{s}\" (not in {t["skills"].File})");
+                placements.Add(new Placement(id, row, col, rowSkills));
             }
             // No party rows: the party comes from the run (or, in the simulator, the preset heroes).
             if ((placements.Count == 0 && side == Combat.Side.Enemy) || placements.Count > BattleGrid.MaxUnitsPerSide)

@@ -137,6 +137,7 @@ public sealed partial class Battle
         TurnClock.Spend(actor, action.ApCost);
         actor.LastActionId = action.Id;
         var charge = SpendCharge(actor, action);
+        actor.StaminaSpent += action.StaminaCost;
 
         if (action.CastTime > 0)
         {
@@ -232,6 +233,8 @@ public sealed partial class Battle
         var r = new ActionResult(Clock.Tick, actor, action, target);
         var queue = new Queue<Pending>();
         var landed = true;
+        // The action's own stats (Deadly Precision) count while it resolves, hit roll included.
+        foreach (var s in action.UserStats) actor.Stats.Add(ActionSource, s.Stat, s.Value, s.Tag);
 
         if (action.Target == ActionTarget.Enemy && target is not null)
         {
@@ -287,9 +290,13 @@ public sealed partial class Battle
         if (action.Target == ActionTarget.Enemy)
             foreach (var buff in actor.Buffs.Where(b => b.Def.BreakOnAttack).ToList())
                 Expire(actor, buff, r, natural: false);
+        actor.Stats.RemoveSource(ActionSource);
         CollapseAreas(r);
         return r;
     }
+
+    /// <summary>The stat source of an action's own stats while it resolves.</summary>
+    public const string ActionSource = "action";
 
     /// <summary>Crit on a successful hit (Anchor: Combat › Formulas): roll at the chance from C.Rate; on a crit,
     /// roll again at the same chance for Brutal. No roll when the chance is 0. Returns the tiers (0–2).</summary>

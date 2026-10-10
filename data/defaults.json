@@ -8,5 +8,8 @@
   { "key": "severe_speed", "value": "-25" },
   { "key": "exhausted_roll", "value": "-0.1" },
   { "key": "severe_roll", "value": "-0.25" },
-  { "key": "initiative_modifier", "value": "30", "note": "Surprised: the party −30 Initiative; First Strike: +30" }
+  { "key": "initiative_modifier", "value": "30", "note": "Surprised: the party −30 Initiative; First Strike: +30" },
+  { "key": "xp_skirmish", "value": "15", "note": "XP a won battle gives, by scale, shared equally among the heroes standing at the end" },
+  { "key": "xp_major", "value": "45" },
+  { "key": "xp_boss", "value": "90" }
 ]

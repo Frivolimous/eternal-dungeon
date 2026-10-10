@@ -1,61 +1,57 @@
 Systems Showcase · 1000 battles · seeds 1–1000
-Win rate         96.4%  (964 won, 36 lost, 0 stalemates)
-Battle length    13.8 turns on average
-Party HP left    38.9% on average, 0.0% at worst
-Hit rate         93.5% of 41284 attacks
+Win rate         99.1%  (991 won, 9 lost, 0 stalemates)
+Battle length    12.0 turns on average
+Party HP left    47.9% on average, 0.0% at worst
+Hit rate         93.8% of 37888 attacks
 
 Damage dealt per battle
-  Elementalist              157.3
-  Rogue                     157.1
-  Warrior                   128.1
-  Goblin Brute              102.3
-  Goblin Hexer               67.8
-  Goblin Grunt               35.2
+  Elementalist              153.2
+  Rogue                     146.6
+  Warrior                   144.6
+  Goblin Brute               90.1
+  Goblin Hexer               56.4
+  Goblin Grunt               30.7
 
 Hero deaths per battle
-  Rogue                       0.3
   Elementalist                0.2
+  Rogue                       0.2
   Warrior                     0.0
 
 Actions used per battle
-  Elementalist: Attack                  0.0
-  Elementalist: Defend                  0.8
-  Elementalist: Fire Bolt               3.9
-  Elementalist: Frost Shard             4.6
-  Elementalist: Move                    0.5
-  Goblin Brute: Smash                   6.0
+  Elementalist: Defend                  0.9
+  Elementalist: Fire Bolt               3.2
+  Elementalist: Frost Shard             4.0
+  Elementalist: Move                    0.6
+  Goblin Brute: Smash                   5.2
   Goblin Grunt: Move                    0.0
-  Goblin Grunt: Slash                   2.6
-  Goblin Hexer: Hex Bolt                7.1
-  Rogue: Dagger Attack                 13.7
-  Rogue: Defend                         2.4
+  Goblin Grunt: Slash                   2.3
+  Goblin Hexer: Hex Bolt                6.1
+  Rogue: Dagger Attack                 12.8
+  Rogue: Defend                         2.0
   Rogue: Move                           1.7
-  Warrior: Attack                       0.5
-  Warrior: Defend                       2.6
-  Warrior: Move                         1.8
-  Warrior: Power Attack                 3.4
-  Warrior: Shield Bash                  1.6
-  Warrior: Taunt                        2.2
+  Warrior: Attack                       1.6
+  Warrior: Defend                       1.5
+  Warrior: Move                         1.3
+  Warrior: Power Attack                 3.3
+  Warrior: Shield Bash                  1.5
 
 Effects and CC applied per battle
-  Chill                                 4.1
-  Dazed (Stun)                          1.6
-  Dread (Fear)                          4.1
-  Guard                                 5.7
+  Chill                                 3.5
+  Dazed (Stun)                          1.5
+  Dread (Fear)                          3.4
+  Guard                                 4.4
   Stealth                               1.7
-  Taunting                              2.2
-  Act knocked back (stagger)           87.3
-  Casts interrupted                     1.8
+  Act knocked back (stagger)           78.1
+  Casts interrupted                     1.7
 
 Procs fired per battle
-  Elementalist: Chill                   4.1
-  Elementalist: Guard                   0.8
-  Goblin Brute: Stagger                 4.4
-  Goblin Hexer: Dread                   4.1
-  Goblin Hexer: Flaming                 4.2
-  Rogue: Guard                          2.4
+  Elementalist: Chill                   3.5
+  Elementalist: Guard                   0.9
+  Goblin Brute: Stagger                 3.9
+  Goblin Hexer: Dread                   3.4
+  Goblin Hexer: Flaming                 3.5
+  Rogue: Guard                          2.0
   Rogue: Stealth                        1.7
-  Warrior: Daze                         1.6
-  Warrior: Guard                        2.6
-  Warrior: Push                         1.6
-  Warrior: Taunt                        2.2
+  Warrior: Daze                         1.5
+  Warrior: Guard                        1.5
+  Warrior: Push                         1.5

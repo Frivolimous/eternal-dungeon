@@ -18,7 +18,7 @@ public sealed partial class Battle
     /// <paramref name="action"/>) the action's procs.</summary>
     public IEnumerable<ProcCopy> ProcsOf(Unit unit, ActionDef? action = null)
     {
-        foreach (var id in unit.Def.Procs ?? [])
+        foreach (var id in (unit.Def.Procs ?? []).Concat(unit.GrantedProcs))
             yield return new ProcCopy(Data.Procs[id], "unit");
         foreach (var buff in unit.Buffs)
             foreach (var id in buff.Def.Procs)

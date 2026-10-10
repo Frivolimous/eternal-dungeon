@@ -37,6 +37,14 @@ public static class Preview
 {
     public static TargetPreview Target(Battle battle, Unit actor, ActionDef action, Unit target)
     {
+        // The action's own stats count as they would while it resolves; they come off again before returning.
+        foreach (var s in action.UserStats) actor.Stats.Add(Battle.ActionSource, s.Stat, s.Value, s.Tag);
+        try { return TargetWith(battle, actor, action, target); }
+        finally { actor.Stats.RemoveSource(Battle.ActionSource); }
+    }
+
+    static TargetPreview TargetWith(Battle battle, Unit actor, ActionDef action, Unit target)
+    {
         var hit = action.Target == ActionTarget.Enemy ? Resolution.SuccessChance(actor, action, target) : 1;
         int? normal = null, crit = null, brutal = null;
         double c = 0;

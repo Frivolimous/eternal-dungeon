@@ -16,7 +16,7 @@ public class DefaultActionTests
     {
         Assert.Equal(new DefaultActions("attack", "defend", "move"), Repo.DefaultActions);
         Assert.Equal(["goblin_slash", "attack", "defend", "move"], Repo.ActionsOf(Repo.Units["goblin_grunt"]));
-        Assert.Equal(["power_attack", "shield_bash", "taunt", "flee", "attack", "defend", "move"], Repo.ActionsOf(Repo.Units["warrior"]));
+        Assert.Equal(["shield_bash", "flee", "attack", "defend", "move"], Repo.ActionsOf(Repo.Units["warrior"]));
     }
 
     [Fact]
@@ -33,8 +33,12 @@ public class DefaultActionTests
     [Fact]
     public void An_action_can_replace_a_default_for_the_units_that_have_it()
     {
-        Assert.Equal(["dagger_attack", "flee", "attack", "defend", "stealth_move"], Repo.ActionsOf(Repo.Units["rogue"]));
-        Assert.Equal("stealth_move", Repo.DefaultFor(Repo.Units["rogue"], DefaultRole.Move));
+        // The Stealth mastery (1 point in the Rogue's tree) grants the Rogue's Move, which replaces Move.
+        Assert.Equal(["dagger_attack", "flee", "attack", "defend", "move"], Repo.ActionsOf(Repo.Units["rogue"]));
+        var rogue = U(Repo, "rogue", "r", Side.Party);
+        Skills.Apply(Repo, rogue, new Dictionary<string, int> { ["shadow_mastery"] = 1 });
+        Assert.Equal(["dagger_attack", "flee", "attack", "defend", "stealth_move"], rogue.ActionIds);
+        Assert.Equal("stealth_move", Repo.DefaultFor(rogue.OwnActions, DefaultRole.Move));
         Assert.Equal("move", Repo.DefaultFor(Repo.Units["warrior"], DefaultRole.Move));
 
         static DataException ReplacementFails(string actions, string units) => TestData.TablesFail(
@@ -173,6 +177,7 @@ public class DefaultActionTests
     public void Not_twice_in_a_row_alternates_power_attack_and_attack()
     {
         var w = U(Repo, "warrior", "w", Side.Party);
+        Skills.Apply(Repo, w, new Dictionary<string, int> { ["vigor"] = 1 });   // Power Attack
         var g = U(Repo, "goblin_grunt", "g", Side.Enemy);
         g.Stats.Add("test", "health", 900);
         g.Heal(900);

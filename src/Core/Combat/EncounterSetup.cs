@@ -18,6 +18,12 @@ public static class EncounterSetup
         var presetParty = encounter.Party.Count == 0;
         var party = presetParty ? data.Heroes.Select(h => new Placement(h.Unit, h.Row, h.Col)).ToList() : encounter.Party;
         var units = Place(data, Side.Party, party, grid);
+        // A party row's tree skills (level 1 each) and the masteries they unlock; the hero starts at its new full Health.
+        foreach (var (p, unit) in party.Zip(units).Where(x => x.First.Skills is { Count: > 0 }))
+        {
+            Skills.Apply(data, unit, p.Skills!.ToDictionary(s => s, _ => 1));
+            unit.SetVitals(unit.MaxHealth, unit.MaxMana);
+        }
         if (presetParty)
             foreach (var (hero, unit) in data.Heroes.Zip(units))
                 foreach (var item in hero.Belt.Select(i => data.Items[i]))

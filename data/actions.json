@@ -8,7 +8,7 @@
   { "id": "fire_bolt", "name": "Fire Bolt", "tags": ["arcane", "spell", "ranged", "fire"], "target": "enemy", "range": "any", "ap_cost": 100, "mana_cost": 10, "base_damage": 22, "cast_time": 50 },
   { "id": "frost_shard", "name": "Frost Shard", "tags": ["arcane", "spell", "ranged", "ice", "control"], "target": "enemy", "range": "any", "ap_cost": 100, "mana_cost": 8, "base_damage": 12, "procs": ["chill"] },
   { "id": "shield_bash", "name": "Shield Bash", "tags": ["weapon", "physical", "melee", "force", "control"], "target": "enemy", "range": "melee", "ap_cost": 100, "base_damage": 6, "procs": ["daze", "push"] },
-  { "id": "taunt", "name": "Taunt", "tags": ["buff"], "target": "self", "ap_cost": 50, "procs": ["taunt"], "note": "Placeholder (2026-10-08): a simple taunt so the showcase shows threat effects and intents changing" },
+  { "id": "taunt", "name": "Taunt", "tags": ["buff"], "target": "self", "ap_cost": 50, "procs": ["taunt"], "note": "Not on any unit: removed from the Warrior in M3A (Imposing Presence gives Starting Threat). Kept to test threat effects" },
   { "id": "hex_bolt", "name": "Hex Bolt", "tags": ["spirit", "spell", "ranged", "dark", "curse"], "target": "enemy", "range": "any", "ap_cost": 100, "base_damage": 10, "cast_time": 60, "procs": ["dread"] },
   { "id": "goblin_slash", "name": "Slash", "tags": ["weapon", "physical", "melee"], "target": "enemy", "range": "melee", "ap_cost": 100, "base_damage": 15 },
   { "id": "goblin_shot", "name": "Shot", "tags": ["weapon", "physical", "ranged", "projectile"], "target": "enemy", "range": "any", "ap_cost": 100, "base_damage": 13 },
@@ -23,5 +23,9 @@
   { "id": "throwing_spikes", "name": "Throwing Spikes", "tags": ["gadget", "ranged", "projectile", "physical"], "target": "enemy", "range": "any", "ap_cost": 50, "base_damage": 12, "note": "A Gadget belt item (Jeremy, 2026-10-08); the damage is a placeholder" },
   { "id": "wolf_bite", "name": "Bite", "tags": ["weapon", "physical", "melee"], "target": "enemy", "range": "melee", "ap_cost": 100, "base_damage": 11 },
   { "id": "croc_bite", "name": "Crushing Bite", "tags": ["weapon", "physical", "melee", "heavy"], "target": "enemy", "range": "melee", "ap_cost": 100, "base_damage": 20 },
-  { "id": "boar_gore", "name": "Gore", "tags": ["weapon", "physical", "melee", "force"], "target": "enemy", "range": "melee", "ap_cost": 100, "base_damage": 16, "procs": ["push"] }
+  { "id": "boar_gore", "name": "Gore", "tags": ["weapon", "physical", "melee", "force"], "target": "enemy", "range": "melee", "ap_cost": 100, "base_damage": 16, "procs": ["push"] },
+  { "id": "defensive_blow", "name": "Defensive Blow", "tags": ["weapon", "physical", "melee"], "target": "enemy", "range": "melee", "ap_cost": 100, "base_damage": 15, "all_damage": -0.5, "procs": ["defensive_blow"], "note": "Warrior mastery (6 points): half damage, then Block until the next turn" },
+  { "id": "colossal_strike", "name": "Colossal Strike", "tags": ["weapon", "physical", "melee", "heavy"], "target": "enemy", "range": "melee", "ap_cost": 250, "base_damage": 15, "all_damage": 3, "stamina_cost": 1, "note": "Warrior mastery (11 points): ×4 damage, costs 1 Stamina (paid after the battle)" },
+  { "id": "quick_attack", "name": "Quick Attack", "tags": ["weapon", "physical", "melee", "light", "finesse"], "target": "enemy", "range": "melee", "ap_cost": 40, "base_damage": 10, "all_damage": -0.5, "note": "Rogue mastery (6 points): half damage, low AP" },
+  { "id": "deadly_precision", "name": "Deadly Precision", "tags": ["weapon", "physical", "melee", "light", "finesse"], "target": "enemy", "range": "melee", "ap_cost": 100, "base_damage": 10, "note": "Rogue mastery (11 points): Accuracy and Penetrate for this strike (action_stats)" }
 ]

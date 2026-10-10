@@ -75,6 +75,16 @@ public sealed record DungeonCompleted(DungeonDef Dungeon) : RunOutcome;
 
 public sealed record PartyWiped : RunOutcome;
 
+public sealed record XpGained(Hero Hero, int Amount, int Total) : RunOutcome;
+
+/// <summary>A hero reached a new level (and a skill point with it).</summary>
+public sealed record LevelUp(Hero Hero, int Level) : RunOutcome;
+
+public sealed record SkillRaised(Hero Hero, SkillDef Skill, int Level) : RunOutcome;
+
+/// <summary>A hero's tree points unlocked a mastery.</summary>
+public sealed record MasteryUnlocked(Hero Hero, SkillDef Mastery) : RunOutcome;
+
 /// <summary>Everything one run action did, in order.</summary>
 public sealed class RunResult
 {

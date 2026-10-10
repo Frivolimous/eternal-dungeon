@@ -8,7 +8,8 @@ public static partial class DataLoader
 {
     /// <summary>The keys of the defaults table that hold run rules (<see cref="RunRules"/>), all optional.</summary>
     public static readonly string[] RunRuleKeys =
-        ["max_stamina", "camp_restore", "exhausted_speed", "severe_speed", "exhausted_roll", "severe_roll", "initiative_modifier"];
+        ["max_stamina", "camp_restore", "exhausted_speed", "severe_speed", "exhausted_roll", "severe_roll", "initiative_modifier",
+         "xp_skirmish", "xp_major", "xp_boss"];
 
     static RunRules ReadRunRules(DataTables t)
     {
@@ -21,6 +22,7 @@ public static partial class DataLoader
             int Whole() => n == Math.Floor(n) ? (int)n : throw r.Error("value", $"{key} needs a whole number");
             double Share() => n is >= 0 and <= 1 ? n : throw r.Error("value", $"{key} is a share, from 0 to 1");
             double Penalty() => n is >= -1 and <= 0 ? n : throw r.Error("value", $"{key} is a roll penalty, from -1 to 0");
+            int Xp() => Whole() is >= 0 and var x ? x : throw r.Error("value", $"{key} can't be negative");
             rules = key switch
             {
                 "max_stamina" => rules with { MaxStamina = Whole() is > 0 and var m ? m : throw r.Error("value", "max_stamina must be above 0") },
@@ -29,7 +31,10 @@ public static partial class DataLoader
                 "severe_speed" => rules with { SevereSpeed = Whole() },
                 "exhausted_roll" => rules with { ExhaustedRoll = Penalty() },
                 "severe_roll" => rules with { SevereRoll = Penalty() },
-                _ => rules with { InitiativeModifier = Whole() },
+                "initiative_modifier" => rules with { InitiativeModifier = Whole() },
+                "xp_skirmish" => rules with { XpSkirmish = Xp() },
+                "xp_major" => rules with { XpMajor = Xp() },
+                _ => rules with { XpBoss = Xp() },
             };
         }
         return rules;
@@ -175,5 +180,93 @@ public static partial class DataLoader
                 if (seen.Add(next)) queue.Enqueue(next);
         if (map.Nodes.FirstOrDefault(n => !seen.Contains(n.Id)) is { } lost)
             throw m.Error($"node \"{lost.Id}\" can't be reached from the map's start");
+    }
+
+    /// <summary>Mastery thresholds: the tree points that unlock a class's 1st, 2nd and 3rd mastery (Anchor: Masteries).</summary>
+    public static readonly int[] MasteryPoints = [1, 6, 11];
+
+    static List<SkillDef> ReadSkills(DataTables t, Dictionary<string, ClassDef> classes, Dictionary<string, ActionDef> actions,
+        HashSet<string> procs, Dictionary<string, StatDef> stats, HashSet<string> compounds, Dictionary<string, TagDef> tags)
+    {
+        var skills = new List<SkillDef>();
+        var rows = t["skills"].Rows;
+        var ids = rows.ToDictionary(r => r.Str("id"));
+        foreach (var r in rows)
+        {
+            var id = r.Str("id");
+            if (!classes.ContainsKey(r.Str("class")))
+                throw r.Error("class", $"unknown class \"{r.Str("class")}\" (not in {t["classes"].File})");
+            var kind = r.Enum<SkillKind>("kind");
+            var requires = r.OptStr("requires");
+            var maxLevel = r.Int("max_level");
+            var points = r.Int("points");
+            if (kind == SkillKind.Tree)
+            {
+                if (maxLevel < 1) throw r.Error("max_level", "a tree skill needs at least 1 level");
+                if (r.Has("points")) throw r.Error("points", "only masteries unlock at a number of tree points");
+                if (requires is not null)
+                {
+                    if (!ids.TryGetValue(requires, out var parent)) throw r.Error("requires", $"unknown skill \"{requires}\"");
+                    if (parent.Str("class") != r.Str("class") || parent.Enum<SkillKind>("kind") != SkillKind.Tree)
+                        throw r.Error("requires", $"\"{requires}\" isn't a tree skill of the same class");
+                    // Prerequisites point to an earlier skill, so they can't loop.
+                    if (parent.Int("order") >= r.Int("order"))
+                        throw r.Error("requires", $"\"{requires}\" must come earlier in the tree (a lower order)");
+                }
+            }
+            else
+            {
+                if (r.Has("max_level") && maxLevel != 1) throw r.Error("max_level", "a mastery has one level");
+                maxLevel = 1;
+                if (requires is not null) throw r.Error("requires", "masteries unlock by tree points, not prerequisites");
+                if (!MasteryPoints.Contains(points))
+                    throw r.Error("points", $"a mastery unlocks at {string.Join(", ", MasteryPoints)} tree points, got {points}");
+            }
+            foreach (var a in r.List("actions"))
+                if (!actions.ContainsKey(a)) throw r.Error("actions", $"unknown action \"{a}\" (not in {t["actions"].File})");
+            foreach (var p in r.List("procs"))
+                if (!procs.Contains(p)) throw r.Error("procs", $"unknown proc \"{p}\" (not in {t["procs"].File})");
+            var skillStats = new List<SkillStat>();
+            foreach (var x in ChildrenOf(t, "skill_stats", id))
+            {
+                var stat = x.Str("stat");
+                string? tag = null;
+                if (compounds.Contains(stat))
+                {
+                    if (x.Has("tag")) throw x.Error("tag", "compound stats aren't keyed to a tag");
+                }
+                else
+                {
+                    var def = Stat(x, "stat", stats, t);
+                    if (x.Has("tag"))
+                    {
+                        tag = Tag(x, "tag", tags, t).Id;
+                        if (!def.TagKeyed) throw x.Error("stat", $"{def.Name} is a character stat and can't be keyed to a tag");
+                    }
+                    if (def.Group == StatGroup.Trait) throw x.Error("stat", "skills don't raise traits (traits come from classes)");
+                }
+                skillStats.Add(new SkillStat(stat, tag, x.Num("per_level")));
+            }
+            skills.Add(new SkillDef(id, r.Str("name"), r.Str("class"), kind, r.Int("order"), maxLevel, requires, points,
+                r.List("actions"), r.List("procs"), skillStats));
+        }
+        foreach (var cls in classes.Values)
+            foreach (var group in skills.Where(s => s.Class == cls.Id && s.Kind == SkillKind.Mastery).GroupBy(s => s.Points))
+                if (group.Count() > 1)
+                    throw new DataException(t["skills"].File, group.Last().Id, $"{cls.Name} has two masteries at {group.Key} points");
+        return skills;
+    }
+
+    static List<LevelDef> ReadLevels(DataTables t)
+    {
+        var levels = t["levels"].Rows.Select(r => new LevelDef(r.Int("level"), r.Int("xp"))).OrderBy(l => l.Level).ToList();
+        for (var i = 0; i < levels.Count; i++)
+        {
+            var row = t["levels"].Rows.First(r => r.Int("level") == levels[i].Level);
+            if (levels[i].Level != i + 1) throw row.Error("level", $"levels run 1, 2, 3… without gaps; expected {i + 1}");
+            if (i == 0 && levels[i].Xp != 0) throw row.Error("xp", "level 1 takes 0 XP");
+            if (i > 0 && levels[i].Xp <= levels[i - 1].Xp) throw row.Error("xp", "each level takes more total XP than the last");
+        }
+        return levels;
     }
 }

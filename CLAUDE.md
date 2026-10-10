@@ -198,6 +198,10 @@ The rules themselves are in the Anchor; this is the map from rule to code.
   link, key and id; text keys are derived: `event.<id>.<block>[.<choice>]`). `RunPolicy` is the simple auto-player
   behind `sim dungeon` and `DungeonSummary`. Flee is a proc result (`Unit.Fled`: out of the fight, not dead; `Alive` is
   false for both).
+- **Progression** (`Combat/Skills.cs`, `Exploration/Hero.cs`): a hero's tree levels (`Hero.SkillLevels`) decide its masteries
+  (1, 6, 11 tree points); `Skills.Apply` puts skill stats (per level × level), granted actions and procs on a battle unit
+  (`Unit.GrantedActions`, `OwnActions`; a granted action can replace a default, like the Rogue's Move). XP comes in
+  `DungeonRun.FinishBattle`; points are spent with `DungeonRun.SpendPoint` (between Events, or before `Start`).
 - `Core.Combat` is the battle namespace (a `Battle` namespace would clash with the `Battle` class).
 - **Balance is deferred:** combat balance waits until after M2, dungeon balance until after M3. Until then the
   starter encounters only need to run cleanly (fights chain through a dungeon's Maps with no passive regeneration, so a single-fight win rate is the wrong

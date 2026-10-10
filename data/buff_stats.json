@@ -10,5 +10,7 @@
   { "buff": "wild_blessing", "stat": "awareness", "value": 1 },
   { "buff": "forsaken", "stat": "power", "value": -25 },
   { "buff": "sluggish", "stat": "speed", "value": -10 },
-  { "buff": "rune_charged", "stat": "power", "tag": "spell", "value": 15 }
+  { "buff": "rune_charged", "stat": "power", "tag": "spell", "value": 15 },
+  { "buff": "defensive_blow", "stat": "avoid", "tag": "melee", "value": 0.2 },
+  { "buff": "defensive_blow", "stat": "avoid", "tag": "projectile", "value": 0.1 }
 ]

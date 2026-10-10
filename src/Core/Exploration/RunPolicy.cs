@@ -8,7 +8,7 @@ namespace EternalDungeon.Core.Exploration;
 /// <item>Choices: the first specialist option shown (one with a trait or class condition), so the party uses its traits
 /// whenever it can; otherwise the first choice shown. It doesn't rely on the order Events list their choices in.</item>
 /// <item>Fights: auto-battle (the heroes' scripted AI, which drinks potions when low).</item>
-/// <item>Between Events: fill belts from the pack (Mana Potions only for heroes with Mana), buy potions at an
+/// <item>Between Events: spend skill points (the least-raised skill it can raise, earliest first), fill belts from the pack (Mana Potions only for heroes with Mana), buy potions at an
 /// Alchemist Station, use a Sanctuary or Camp when someone is low on Stamina or Health (before a boss, sooner).</item>
 /// <item>Where to go: every eligible standard Node first, in map order, then deferred Events that might now go
 /// differently, then the boss, then the Pathway.</item>
@@ -28,7 +28,11 @@ public sealed class RunPolicy
     /// <summary>Plays the run until it's over or the policy has nothing left to do. Returns whether it ended.</summary>
     public bool Play(DungeonRun run, int maxActions = 2000)
     {
-        if (run.Results.Count == 0) Report(run.Start());
+        if (!run.Started)
+        {
+            Housekeeping(run);                      // the first skill point is spent before the first Event
+            Report(run.Start());
+        }
         for (var i = 0; i < maxActions && !run.Over; i++)
             if (!Step(run)) return false;
         return run.Over;
@@ -100,6 +104,12 @@ public sealed class RunPolicy
 
     void Housekeeping(DungeonRun run)
     {
+        // Skill points: each goes into the hero's least-raised skill it can raise, earliest in the tree first, so the
+        // first point always takes the first skill (and the first mastery).
+        foreach (var hero in run.Heroes.Where(h => !h.Dead))
+            while (run.Data.SkillsOf(hero.Class.Id).Where(s => hero.CantRaise(s.Id) is null)
+                       .OrderBy(s => hero.SkillLevel(s.Id)).ThenBy(s => s.Order).FirstOrDefault() is { } skill)
+                Report(run.SpendPoint(hero.Id, skill.Id));
         foreach (var (node, thing) in run.Usable.Where(u => u.Interactable.Kind == InteractableKind.AlchemistStation).ToList())
             foreach (var item in run.Data.ItemList.Where(i => i.Price > 0 && i.OutsideCombat))
                 while (run.Gold >= item.Price && run.Pack.GetValueOrDefault(item.Id) < 2)

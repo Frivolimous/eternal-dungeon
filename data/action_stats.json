@@ -1,0 +1,4 @@
+[
+  { "action": "deadly_precision", "stat": "hit", "tag": "weapon", "value": 0.25 },
+  { "action": "deadly_precision", "stat": "penetrate", "tag": "physical", "value": 0.5 }
+]

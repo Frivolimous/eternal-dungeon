@@ -70,7 +70,11 @@ public static class Schemas
         Int("cast_time", @default: 0),
         List("procs"),
         Enum<MoveTo>("move_to", @default: MoveTo.None),
-        Enum<DefaultRole>("replaces", @default: DefaultRole.None));
+        Enum<DefaultRole>("replaces", @default: DefaultRole.None),
+        Int("stamina_cost", @default: 0));
+
+    /// <summary>Stats an action adds to its user while it resolves (Deadly Precision's Accuracy and Penetrate).</summary>
+    public static readonly TableSchema ActionStats = Child("action_stats", "actions", "action", ["stat", "tag"], StatEntry);
 
     public static readonly TableSchema AiProfiles = Top("ai_profiles", Number("threat_weight", required: true));
 
@@ -105,7 +109,8 @@ public static class Schemas
     public static readonly TableSchema Encounters = Top("encounters", Enum<BoardLayout>("layout", @default: BoardLayout.Vertical));
 
     public static readonly TableSchema EncounterUnits = Child("encounter_units", "encounters", "encounter", ["side", "order"],
-        Enum<Side>("side", required: true), Int("order", required: true), Id("unit"), Int("row", required: true), Int("col", required: true));
+        Enum<Side>("side", required: true), Int("order", required: true), Id("unit"), Int("row", required: true), Int("col", required: true),
+        List("skills"));
 
     /// <summary>Settings as key/value rows (the keys are listed in <see cref="DataLoader"/>).</summary>
     public static readonly TableSchema Defaults = new("defaults", [Id("key"), Text("value", required: true), Text("note")], ["key"]);
@@ -119,6 +124,18 @@ public static class Schemas
     /// <summary>Belt items: the battle action, charges per belt slot, use outside combat, Alchemist price.</summary>
     public static readonly TableSchema Items = Top("items",
         Id("action"), Int("uses", required: true), Bool("outside_combat"), Int("price", @default: 0));
+
+    /// <summary>Tree skills and masteries of each class.</summary>
+    public static readonly TableSchema Skills = Top("skills",
+        Id("class"), Enum<SkillKind>("kind", required: true), Int("order", required: true), Int("max_level", @default: 5),
+        Id("requires", required: false), Int("points", @default: 0), List("actions"), List("procs"));
+
+    /// <summary>What a skill raises per level: a stat (optionally tag-keyed) or a compound stat.</summary>
+    public static readonly TableSchema SkillStats = Child("skill_stats", "skills", "skill", ["stat", "tag"],
+        Id("stat"), Id("tag", required: false), Number("per_level", required: true));
+
+    /// <summary>Hero levels and the total XP each takes.</summary>
+    public static readonly TableSchema Levels = new("levels", [Int("level", required: true), Int("xp", required: true), Text("note")], ["level"]);
 
     /// <summary>The preset party Dungeon 0 starts with.</summary>
     public static readonly TableSchema Heroes = Top("heroes",
@@ -139,7 +156,7 @@ public static class Schemas
 
     /// <summary>The tables loaded before units, whose columns depend on the stats and compound stats.</summary>
     public static readonly TableSchema[] BeforeUnits =
-        [Tags, Stats, CompoundStats, CompoundStatRows, Buffs, BuffStats, Procs, Actions, AiProfiles, AiRules, Classes, Items];
+        [Tags, Stats, CompoundStats, CompoundStatRows, Buffs, BuffStats, Procs, Actions, ActionStats, AiProfiles, AiRules, Classes, Items, Skills, SkillStats, Levels];
 
     /// <summary>The tables loaded after units.</summary>
     public static readonly TableSchema[] AfterUnits =

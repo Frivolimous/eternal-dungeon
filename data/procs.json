@@ -20,5 +20,6 @@
   { "id": "taunt", "name": "Taunt", "trigger": "action_complete", "tags": ["buff"], "target": "self", "key_1": "threat", "value_1": "60", "key_2": "apply_buff", "value_2": "taunting" },
   { "id": "flee", "name": "Flee", "trigger": "action_complete", "target": "self", "key_1": "flee" },
   { "id": "health_potion", "name": "Health Potion", "trigger": "action_complete", "target": "self", "key_1": "heal_share", "value_1": "0.4" },
-  { "id": "mana_potion", "name": "Mana Potion", "trigger": "action_complete", "target": "self", "key_1": "mana_share", "value_1": "0.4" }
+  { "id": "mana_potion", "name": "Mana Potion", "trigger": "action_complete", "target": "self", "key_1": "mana_share", "value_1": "0.4" },
+  { "id": "defensive_blow", "name": "Defensive Blow", "trigger": "action_complete", "tags": ["buff"], "target": "self", "key_1": "apply_buff", "value_1": "defensive_blow" }
 ]

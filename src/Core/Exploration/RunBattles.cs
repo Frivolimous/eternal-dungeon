@@ -40,6 +40,7 @@ public sealed partial class DungeonRun
         foreach (var hero in heroes)
         {
             var unit = new Unit(hero.Id, hero.Unit, Side.Party, Data) { Name = hero.Name };
+            hero.ApplySkills(unit);
             unit.SetVitals(hero.Health, hero.Mana);
             foreach (var slot in hero.Belt) unit.Belt.Add(new BeltSlot(slot.Item, slot.Charges));
             if (hero.SpeedPenalty != 0) unit.Stats.Add("exhaustion", "speed", hero.SpeedPenalty);
@@ -91,8 +92,11 @@ public sealed partial class DungeonRun
             if (unit.Health == 0) Kill(hero, r);
         }
         r.Add(new BattleEnded(fight.Session.Encounter, outcome, cost, fight.Heroes));
+        // The scale's cost, plus Stamina actions spent (Colossal Strike), for every hero who fought and lives.
         foreach (var hero in fight.Heroes)
-            ChangeResource(hero, EventResource.Stamina, -cost, r);
+            ChangeResource(hero, EventResource.Stamina, -cost - battle.Unit(hero.Id).StaminaSpent, r);
+        if (outcome == BattleOutcome.Victory)
+            AwardXp([.. fight.Heroes.Where(h => battle.Unit(h.Id).Alive)], fight.Block.Scale, r);
         foreach (var hero in Heroes.Where(h => !h.Dead))
             CountDown(hero, DurationKind.Battles, r);
         if (outcome == BattleOutcome.Victory) Stats.Victories++;

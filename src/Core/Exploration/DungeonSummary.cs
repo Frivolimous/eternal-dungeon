@@ -12,7 +12,7 @@ public sealed class DungeonSummary
 {
     int runs, completed, wiped, stuck;
     readonly Dictionary<string, int> wipes = [];
-    readonly Dictionary<string, List<(double Health, double Mana, double Stamina, int Alive)>> atBoss = [];
+    readonly Dictionary<string, List<(double Health, double Mana, double Stamina, int Alive, double Level)>> atBoss = [];
     double battles, victories, flees, camps, sanctuaries, items, steps, gold, dead;
 
     /// <summary>Plays one run with <see cref="RunPolicy"/> and adds it.</summary>
@@ -42,7 +42,7 @@ public sealed class DungeonSummary
         var withMana = heroes.Where(h => h.MaxMana > 0).ToList();
         list.Add((heroes.Sum(h => h.Health) / (double)heroes.Sum(h => h.MaxHealth),
             withMana.Count == 0 ? 0 : withMana.Sum(h => h.Mana) / (double)withMana.Sum(h => h.MaxMana),
-            heroes.Average(h => h.Stamina), heroes.Count));
+            heroes.Average(h => h.Stamina), heroes.Count, heroes.Average(h => h.Level)));
     }
 
     void Add(DungeonRun run, bool ended, string? lastNode)
@@ -83,10 +83,10 @@ public sealed class DungeonSummary
         }
         if (atBoss.Count > 0)
         {
-            sb.AppendLine("At each boss fight's start (average party Health, Mana, Stamina, heroes standing):");
+            sb.AppendLine("At each boss fight's start (average party Health, Mana, Stamina, heroes standing, hero level):");
             foreach (var (boss, list) in atBoss)
                 sb.AppendLine($"  {boss,-28} HP {Pct(list.Average(x => x.Health))}, MP {Pct(list.Average(x => x.Mana))}, " +
-                    $"Stamina {F(list.Average(x => x.Stamina))}, heroes {F(list.Average(x => x.Alive))} ({list.Count} fights)");
+                    $"Stamina {F(list.Average(x => x.Stamina))}, heroes {F(list.Average(x => x.Alive))}, level {F(list.Average(x => x.Level))} ({list.Count} fights)");
         }
         sb.AppendLine($"Per run: {F(steps / runs)} Nodes, {F(battles / runs)} battles ({F(victories / runs)} won, {F(flees / runs)} fled), " +
             $"{F(camps / runs)} Camps, {F(sanctuaries / runs)} Sanctuaries, {F(items / runs)} belt charges used, {F(gold / runs)} Gold left");

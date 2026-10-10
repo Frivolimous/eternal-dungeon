@@ -14,5 +14,6 @@
   { "id": "sluggish", "name": "Sluggish", "duration": "steps", "length": 3 },
   { "id": "bleeding", "name": "Bleeding", "duration": "battles", "length": 3, "key_1": "periodic_damage", "value_1": "3" },
   { "id": "rune_charged", "name": "Rune-Charged", "duration": "battles", "length": 3 },
-  { "id": "mana_drain", "name": "Mana Drain", "duration": "battles", "length": 2, "key_1": "mana_drain", "value_1": "3" }
+  { "id": "mana_drain", "name": "Mana Drain", "duration": "battles", "length": 2, "key_1": "mana_drain", "value_1": "3" },
+  { "id": "defensive_blow", "name": "Braced", "duration": "until_next_turn" }
 ]

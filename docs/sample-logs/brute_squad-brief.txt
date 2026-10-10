@@ -1,5 +1,5 @@
 Brute Squad · seed 42
-Party: Rogue 100 HP, Warrior 140 HP, Elementalist 80 HP
+Party: Rogue 100 HP, Warrior 148 HP, Elementalist 80 HP
 Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Archer 60 HP
 
 [T 0.59] Rogue → Dagger Attack → Goblin Grunt
@@ -7,88 +7,76 @@ Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Archer 60 HP
 [T 0.90] Goblin Archer → Shot → Elementalist
          hit (90%) · 14 dmg (Physical) · Elementalist HP 80 → 66
 [T 1.00] Warrior → Power Attack → Goblin Grunt
-         hit (100%) · 37 dmg (Physical) · Goblin Grunt HP 73 → 36
+         hit (100%) · 38 dmg (Physical) · Goblin Grunt HP 73 → 35
 [T 1.00] Elementalist → Frost Shard → Goblin Archer
-         hit (100%) · 15 dmg (Arcane, Ice) · Goblin Archer HP 60 → 45
+         hit (100%) · 18 dmg (Arcane, Ice) · Goblin Archer HP 60 → 42
          applies Chill (-30 speed, 2 turns) on Goblin Archer
 [T 1.12] Goblin Grunt → Slash → Warrior
-         hit (81%) · 16 dmg (Physical) · Warrior HP 140 → 124
+         hit (81%) · 16 dmg (Physical) · Warrior HP 148 → 132
 [T 1.21] Rogue → Dagger Attack → Goblin Grunt
-         hit (100%) · 12 dmg (Physical) · Goblin Grunt HP 36 → 24
+         hit (100%) · 12 dmg (Physical) · Goblin Grunt HP 35 → 23
 [T 1.43] Goblin Brute → Smash → Rogue
          hit (79%) · 22 dmg (Physical) · Rogue HP 100 → 78
          staggers Rogue: −20 Act
 [T 2.00] Rogue → Dagger Attack → Goblin Grunt
-         hit (100%) · 12 dmg (Physical) · Goblin Grunt HP 24 → 12
+         hit (100%) · 12 dmg (Physical) · Goblin Grunt HP 23 → 11
 [T 2.00] Elementalist begins casting Fire Bolt at Goblin Grunt (ready at T 2.50)
 [T 2.23] Goblin Grunt → Slash → Warrior
-         hit (81%) · 16 dmg (Physical) · Warrior HP 124 → 108
+         hit (81%) · 16 dmg (Physical) · Warrior HP 132 → 116
 [T 2.29] Goblin Archer → Shot → Elementalist
          hit (90%) · 14 dmg (Physical) · Elementalist HP 66 → 52
 [T 2.50] Elementalist → Fire Bolt → Goblin Grunt
-         hit (100%) · 28 dmg (Arcane, Fire) · Goblin Grunt HP 12 → 0
+         hit (100%) · 34 dmg (Arcane, Fire) · Goblin Grunt HP 11 → 0
          Goblin Grunt falls
 [T 2.63] Rogue → Dagger Attack → Goblin Brute
          hit (100%) · 11 dmg (Physical) · Goblin Brute HP 200 → 189
-[T 2.86] Goblin Brute → Smash → Warrior
-         miss (77%)
+[T 2.86] Goblin Brute → Smash → Rogue
+         hit (79%) · 33 dmg (Physical, crit) · Rogue HP 78 → 45
+         staggers Rogue: −20 Act
 [T 3.00] Chill on Goblin Archer ends
 [T 3.00] Warrior → Attack → Goblin Brute
          hit (100%) · 16 dmg (Physical) · Goblin Brute HP 189 → 173
-[T 3.25] Rogue → Dagger Attack → Goblin Brute
+[T 3.42] Rogue → Dagger Attack → Goblin Brute
          hit (100%) · 11 dmg (Physical) · Goblin Brute HP 173 → 162
 [T 3.50] Elementalist → Frost Shard → Goblin Archer
-         hit (100%) · 15 dmg (Arcane, Ice) · Goblin Archer HP 45 → 30
+         hit (100%) · 18 dmg (Arcane, Ice) · Goblin Archer HP 42 → 24
          applies Chill (-30 speed, 2 turns) on Goblin Archer
 [T 3.50] Goblin Archer → Shot → Elementalist
          hit (90%) · 14 dmg (Physical) · Elementalist HP 52 → 38
-[T 3.88] Rogue → Dagger Attack → Goblin Brute
-         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 162 → 151
-[T 4.00] Warrior → Taunt
-         Taunt: Warrior +60 Threat
-         applies Taunting (+0.5 threatening, 2 turns) on Warrior
-[T 4.29] Goblin Brute → Smash → Rogue
-         hit (79%) · 22 dmg (Physical) · Rogue HP 78 → 56
-         staggers Rogue: −20 Act
-[T 4.50] Warrior → Power Attack → Goblin Brute
-         hit (100%) · 33 dmg (Physical) · Goblin Brute HP 151 → 118
+[T 4.00] Warrior → Power Attack → Goblin Brute
+         hit (100%) · 34 dmg (Physical) · Goblin Brute HP 162 → 128
+[T 4.05] Rogue → Dagger Attack → Goblin Brute
+         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 128 → 117
+[T 4.29] Goblin Brute → Smash → Warrior
+         hit (77%) · 33 dmg (Physical, crit) · Warrior HP 116 → 83
+         staggers Warrior: −20 Act
 [T 4.50] Elementalist begins casting Fire Bolt at Goblin Archer (ready at T 5.00)
 [T 4.67] Rogue → Dagger Attack → Goblin Brute
-         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 118 → 107
+         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 117 → 106
 [T 4.93] Goblin Archer → Shot → Elementalist
-         hit (90%) · 14 dmg (Physical) · Elementalist HP 38 → 24
+         miss (90%)
 [T 5.00] Chill on Goblin Archer ends
 [T 5.00] Elementalist → Fire Bolt → Goblin Archer
-         hit (100%) · 28 dmg (Arcane, Fire) · Goblin Archer HP 30 → 2
+         hit (100%) · 34 dmg (Arcane, Fire) · Goblin Archer HP 24 → 0
+         Goblin Archer falls
 [T 5.30] Rogue → Dagger Attack → Goblin Brute
-         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 107 → 96
+         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 106 → 95
 [T 5.72] Goblin Brute → Smash → Warrior
-         hit (77%) · 22 dmg (Physical) · Warrior HP 108 → 86
+         hit (77%) · 22 dmg (Physical) · Warrior HP 83 → 61
          staggers Warrior: −20 Act
 [T 5.92] Rogue → Dagger Attack → Goblin Brute
-         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 96 → 85
-[T 5.95] Goblin Archer → Shot → Elementalist
-         hit (90%) · 14 dmg (Physical) · Elementalist HP 24 → 10
-[T 6.00] Taunting on Warrior ends
-[T 6.00] Elementalist → Frost Shard → Goblin Archer
-         hit (100%) · 15 dmg (Arcane, Ice) · Goblin Archer HP 2 → 0
-         Goblin Archer falls
+         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 95 → 84
+[T 6.00] Elementalist → Frost Shard → Goblin Brute
+         hit (100%) · 18 dmg (Arcane, Ice) · Goblin Brute HP 84 → 66
+         applies Chill (-30 speed, 2 turns) on Goblin Brute
+[T 6.40] Warrior → Attack → Goblin Brute
+         hit (100%) · 16 dmg (Physical) · Goblin Brute HP 66 → 50
 [T 6.55] Rogue → Dagger Attack → Goblin Brute
-         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 85 → 74
-[T 6.70] Warrior → Taunt
-         Taunt: Warrior +60 Threat
-         applies Taunting (+0.5 threatening, 2 turns) on Warrior
+         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 50 → 39
 [T 7.00] Elementalist begins casting Fire Bolt at Goblin Brute (ready at T 7.50)
-[T 7.15] Goblin Brute → Smash → Warrior
-         hit (77%) · 22 dmg (Physical) · Warrior HP 86 → 64
-         staggers Warrior: −20 Act
 [T 7.17] Rogue → Dagger Attack → Goblin Brute
-         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 74 → 63
+         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 39 → 28
 [T 7.40] Warrior → Power Attack → Goblin Brute
-         hit (100%) · 33 dmg (Physical) · Goblin Brute HP 63 → 30
-[T 7.50] Elementalist → Fire Bolt → Goblin Brute
-         hit (100%) · 28 dmg (Arcane, Fire) · Goblin Brute HP 30 → 2
-[T 7.80] Rogue → Dagger Attack → Goblin Brute
-         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 2 → 0
+         hit (100%) · 34 dmg (Physical) · Goblin Brute HP 28 → 0
          Goblin Brute falls
-[T 7.80] Victory: the party wins.
+[T 7.40] Victory: the party wins.

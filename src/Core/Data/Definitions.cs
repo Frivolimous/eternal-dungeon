@@ -120,7 +120,7 @@ public sealed record AiProfileDef(string Id, string Name, double ThreatWeight, I
 
 /// <summary>A unit and where it starts: <see cref="Row"/> 0 is the front; Tall and Large units anchor at their
 /// front-left tile.</summary>
-public sealed record Placement(string Unit, int Row, int Col);
+public sealed record Placement(string Unit, int Row, int Col, IReadOnlyList<string>? Skills = null);
 
 /// <summary>How the board is shown: party at the bottom and enemies at the top, or party left and enemies right.
 /// Presentation only: Core's rules are front-relative and ignore it.</summary>
@@ -162,8 +162,14 @@ public sealed record ActionDef(
     int CastTime,
     IReadOnlyList<string> Procs,
     MoveTo MoveTo = MoveTo.None,
-    DefaultRole Replaces = DefaultRole.None)
+    DefaultRole Replaces = DefaultRole.None,
+    int StaminaCost = 0,
+    IReadOnlyList<StatValue>? Stats = null)
 {
+    // StaminaCost: paid after the battle, by a hero in a dungeon run (Colossal Strike). Stats: added to the user while
+    // the action resolves (Deadly Precision's Accuracy and Penetrate).
+    public IReadOnlyList<StatValue> UserStats => Stats ?? [];
+
     public bool DealsDamage => BaseDamage > 0;
 
     // Procs: what the action does besides its own damage. They fire for the actor on this action's events only

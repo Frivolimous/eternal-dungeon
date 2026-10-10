@@ -33,7 +33,7 @@ public static class UnitAi
         foreach (var rule in profile.Rules)
         {
             var action = battle.Data.Actions[rule.Action];
-            if (unit.CantUse(action) is not null) continue;
+            if (!unit.ActionIds.Contains(action.Id) || unit.CantUse(action) is not null) continue;   // not (yet) its own: a belt item, a mastery
             if (rule.SelfHealthBelow is double self && unit.Health >= self * unit.MaxHealth) continue;
             if (rule.SelfManaBelow is double mana && unit.Mana >= mana * unit.MaxMana) continue;
             if (rule.MissingBuff is string buff && unit.Buffs.Any(b => b.Def.Id == buff)) continue;
@@ -82,7 +82,7 @@ public static class UnitAi
     /// <summary>The default Attack at the best-scoring valid target, if the unit can use it and has one.</summary>
     static Decision? DefaultAttack(Battle battle, Unit unit, double w)
     {
-        if (battle.Data.DefaultFor(unit.Def, DefaultRole.Attack) is not { } id) return null;
+        if (battle.Data.DefaultFor(unit.OwnActions, DefaultRole.Attack) is not { } id) return null;
         var action = battle.Data.Actions[id];
         if (unit.CantUse(action) is not null) return null;
         return Choose(battle, unit, action, new AiRule(action.Id), w);
@@ -197,7 +197,7 @@ public static class UnitAi
     /// the first of <paramref name="tiles"/>, or Defend.</summary>
     static Decision? Default(Battle battle, Unit unit, DefaultRole role, IEnumerable<Tile>? tiles = null)
     {
-        if (battle.Data.DefaultFor(unit.Def, role) is not { } id) return null;
+        if (battle.Data.DefaultFor(unit.OwnActions, role) is not { } id) return null;
         var action = battle.Data.Actions[id];
         if (unit.CantUse(action) is not null) return null;
         if (action.Target != ActionTarget.Tile) return new Decision(action, unit, null);

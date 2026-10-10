@@ -153,6 +153,10 @@ public static class RunLog
         MapCompleted m => s.Format("run.map_completed", ("map", m.Map.Name)),
         DungeonCompleted d => s.Format("run.dungeon_completed", ("dungeon", d.Dungeon.Name)),
         PartyWiped => s["run.wiped"],
+        XpGained x => s.Format("run.xp", ("hero", x.Hero.Name), ("amount", x.Amount), ("total", x.Total)),
+        LevelUp l => s.Format("run.level_up", ("hero", l.Hero.Name), ("level", l.Level)),
+        SkillRaised k => s.Format("run.skill_raised", ("hero", k.Hero.Name), ("skill", k.Skill.Name), ("level", k.Level)),
+        MasteryUnlocked m => s.Format("run.mastery", ("hero", m.Hero.Name), ("mastery", m.Mastery.Name)),
         _ => null,
     };
 

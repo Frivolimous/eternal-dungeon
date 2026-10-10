@@ -153,6 +153,7 @@ public class GridTests
     public void The_rogues_move_goes_into_the_enemy_area_where_melee_works_both_ways()
     {
         var rogue = U("rogue", "rogue", Side.Party);
+        Skills.Apply(Repo, rogue, new Dictionary<string, int> { ["shadow_mastery"] = 1 });   // the Stealth mastery
         var warrior = U("warrior", "warrior", Side.Party);
         var grunt = U("goblin_grunt", "grunt", Side.Enemy);
         var archer = U("goblin_archer", "archer", Side.Enemy);
@@ -164,7 +165,7 @@ public class GridTests
         var b = new Battle(Repo, [rogue, warrior, grunt, archer], seed: 1, grid);
 
         rogue.ActTicks = TurnClock.TurnThreshold;
-        var move = Repo.Actions[Repo.DefaultFor(rogue.Def, DefaultRole.Move)!];
+        var move = Repo.Actions[Repo.DefaultFor(rogue.OwnActions, DefaultRole.Move)!];
         Assert.Equal("stealth_move", move.Id);                           // the Stealth mastery replaces Move
         Assert.Contains(E(1, 2), Options.TilesFor(b, rogue, move));
         Assert.Contains(P(1, 1), Options.TilesFor(b, rogue, move));   // and it still steps within its own area

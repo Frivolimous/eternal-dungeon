@@ -30,12 +30,58 @@ public sealed class Hero
     public List<BeltSlot> Belt { get; } = [];
     public List<RunBuff> Buffs { get; } = [];
 
-    public int MaxHealth { get; }
-    public int MaxMana { get; }
+    public int MaxHealth { get; private set; }
+    public int MaxMana { get; private set; }
     public int MaxStamina { get; }
     public int BeltSlots => DataLoader.BeltSlots(Class);
 
     readonly RunRules rules;
+    readonly GameData data;
+
+    // ---- Progression (Anchor: Classes › Skill points; M3A brief §6) ----
+
+    public int Xp { get; internal set; }
+    public int Level => data.LevelFor(Xp);
+
+    /// <summary>Tree skill levels bought with points (masteries follow from them: <see cref="Masteries"/>).</summary>
+    public Dictionary<string, int> SkillLevels { get; } = [];
+
+    /// <summary>1 point per level, Level 1 included; points can be banked.</summary>
+    public int SkillPoints => Level - SkillLevels.Values.Sum();
+
+    /// <summary>Points spent in its Primary class's tree.</summary>
+    public int TreePoints => SkillLevels.Where(kv => data.Skills[kv.Key].Class == Class.Id).Sum(kv => kv.Value);
+
+    /// <summary>The masteries its tree points have unlocked, in order.</summary>
+    public IEnumerable<SkillDef> Masteries =>
+        data.SkillsOf(Class.Id).Where(s => s.Kind == SkillKind.Mastery && s.Points <= TreePoints);
+
+    public int SkillLevel(string skill) => SkillLevels.GetValueOrDefault(skill);
+
+    /// <summary>Why a point can't go into <paramref name="skill"/> now, as a reason code, or null if it can.</summary>
+    public string? CantRaise(string skill)
+    {
+        if (!data.Skills.TryGetValue(skill, out var s) || s.Kind != SkillKind.Tree || s.Class != Class.Id) return "not_in_tree";
+        if (SkillPoints <= 0) return "no_skill_points";
+        if (SkillLevel(skill) >= s.MaxLevel) return "skill_maxed";
+        if (s.Requires is { } r && SkillLevel(r) == 0) return "needs_prerequisite";
+        return null;
+    }
+
+    /// <summary>Puts the hero's skills on a battle unit (see <see cref="Skills.Apply"/>).</summary>
+    public void ApplySkills(Unit unit) => Skills.Apply(data, unit, SkillLevels);
+
+    /// <summary>Recomputes the maximums from the unit and its skills. A higher maximum raises the current value by the
+    /// same amount (Events never change maximums: Anchor › Never; skills do).</summary>
+    internal void RefreshMaximums()
+    {
+        var probe = new Unit(Def.Id, Unit, Side.Party, data);
+        ApplySkills(probe);
+        Health = Math.Max(0, Health + probe.MaxHealth - MaxHealth);
+        Mana = Math.Max(0, Mana + probe.MaxMana - MaxMana);
+        MaxHealth = probe.MaxHealth;
+        MaxMana = probe.MaxMana;
+    }
 
     public Hero(GameData data, HeroDef def)
     {
@@ -43,10 +89,8 @@ public sealed class Hero
         Class = data.Classes[def.Class];
         Unit = data.Units[def.Unit];
         rules = data.RunRules;
-        // The maximums are the unit's own (exploration never changes them: Anchor › Never).
-        var probe = new Unit(def.Id, Unit, Side.Party, data);
-        MaxHealth = probe.MaxHealth;
-        MaxMana = probe.MaxMana;
+        this.data = data;
+        RefreshMaximums();
         MaxStamina = rules.MaxStamina;
         Health = MaxHealth;
         Mana = MaxMana;

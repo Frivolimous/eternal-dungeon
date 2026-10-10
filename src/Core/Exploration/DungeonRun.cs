@@ -93,6 +93,10 @@ public sealed partial class DungeonRun
 
     bool started;
 
+    /// <summary>Whether the party has arrived (<see cref="Start"/>). Before that, skill points and belts can already be
+    /// set up: a new game starts with one point to spend.</summary>
+    public bool Started => started;
+
     /// <summary>The party arrives at the first Map's start Node (its Event, if any, begins).</summary>
     public RunResult Start()
     {
@@ -288,6 +292,46 @@ public sealed partial class DungeonRun
         var r = new RunResult();
         r.Add(new ItemMoved(hero, slot.Item, slot.Charges, ToBelt: false));
         return Record(r);
+    }
+
+    /// <summary>Puts one skill point into a tree skill (the Hero Panel: anywhere between Events). The masteries the new
+    /// tree total unlocks come with it.</summary>
+    public RunResult SpendPoint(string heroId, string skillId)
+    {
+        if (State != RunState.Exploring) throw new InvalidOperationException("Skill points are spent from the Hero Panel, between Events");
+        var hero = Hero(heroId);
+        if (hero.Dead) throw new InvalidOperationException($"{hero.Name} is dead");
+        if (hero.CantRaise(skillId) is string why) throw new InvalidOperationException($"Can't raise {skillId}: {why}");
+        var masteries = hero.Masteries.ToList();
+        var level = hero.SkillLevels[skillId] = hero.SkillLevel(skillId) + 1;
+        hero.RefreshMaximums();
+        var r = new RunResult();
+        r.Add(new SkillRaised(hero, Data.Skills[skillId], level));
+        foreach (var m in hero.Masteries.Except(masteries))
+            r.Add(new MasteryUnlocked(hero, m));
+        return Record(r);
+    }
+
+    /// <summary>XP for a won battle (Anchor: Dungeons › XP): the scale's XP shared equally by the heroes standing at the
+    /// end (not dead, not fled). Each levels up on its own.</summary>
+    void AwardXp(IReadOnlyList<Hero> standing, CombatScale scale, RunResult r)
+    {
+        if (standing.Count == 0) return;
+        var total = scale switch
+        {
+            CombatScale.Skirmish => Data.RunRules.XpSkirmish,
+            CombatScale.Major => Data.RunRules.XpMajor,
+            _ => Data.RunRules.XpBoss,
+        };
+        var share = total / standing.Count;
+        foreach (var hero in standing)
+        {
+            var level = hero.Level;
+            hero.Xp += share;
+            r.Add(new XpGained(hero, share, hero.Xp));
+            for (var l = level + 1; l <= hero.Level; l++)
+                r.Add(new LevelUp(hero, l));
+        }
     }
 
     // ---- Rules ----

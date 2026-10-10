@@ -66,6 +66,9 @@ public sealed class Unit
     /// <summary>The unit used Flee and left the battle (Anchor: Exploration › Combat in exploration).</summary>
     public bool Fled { get; private set; }
 
+    /// <summary>Stamina this unit's actions spent in the battle (Colossal Strike); a dungeon run takes it after the fight.</summary>
+    public int StaminaSpent { get; set; }
+
     /// <summary>A hero's belt items for this battle, with their charges left. Using one spends a charge.</summary>
     public List<BeltSlot> Belt { get; } = [];
     public double Act => ActTicks / 100.0;
@@ -98,7 +101,7 @@ public sealed class Unit
         if (action.ManaCost > Mana) return "not_enough_mana";
         if (action.Target == ActionTarget.Tile && Has(CcKind.Root)) return "rooted";
         if (action.Tags.Contains("spell") && Has(CcKind.Silence)) return "silenced";
-        if (Afraid && action.Id != data.DefaultFor(Def, DefaultRole.Defend) && action.Id != data.DefaultFor(Def, DefaultRole.Move))
+        if (Afraid && action.Id != data.DefaultFor(OwnActions, DefaultRole.Defend) && action.Id != data.DefaultFor(OwnActions, DefaultRole.Move))
             return "afraid";
         return null;
     }
@@ -106,7 +109,15 @@ public sealed class Unit
     /// <summary>Everything this unit can do now: its own and the default actions (<see cref="GameData.ActionsOf"/>),
     /// then its belt items with charges left.</summary>
     public IEnumerable<string> ActionIds =>
-        data.ActionsOf(Def).Concat(Belt.Where(s => s.Charges > 0).Select(s => s.Item.Action)).Distinct();
+        data.ActionsOf(OwnActions).Concat(Belt.Where(s => s.Charges > 0).Select(s => s.Item.Action)).Distinct();
+
+    /// <summary>The unit's own actions: its definition's, then those its skills grant (a mastery's active ability, or a
+    /// replacement for a default action such as the Rogue's Move).</summary>
+    public IReadOnlyList<string> OwnActions => [.. Def.Actions, .. GrantedActions];
+
+    /// <summary>Actions and procs the unit's skills grant (a hero's tree skills and masteries).</summary>
+    public List<string> GrantedActions { get; } = [];
+    public List<string> GrantedProcs { get; } = [];
 
     /// <param name="id">Unique in the battle, such as <c>goblin_grunt#2</c>.</param>
     readonly GameData data;

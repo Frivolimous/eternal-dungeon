@@ -93,7 +93,7 @@ public class RogueAndConfusionTests
             [.. c.UnitList.Select(u => u.Id == "warrior" ? u with { Procs = ["test_confused_start"] } : u)],
             c.ActionList, c.BuffList, c.AiProfileList, c.EncounterList, c.UnitDefaults,
             [.. c.ProcList, Proc("test_confused_start", ProcTrigger.FightStart, ProcTarget.Self) with { Buff = "test_confusion" }],
-            c.DefaultActions, c.Text);
+            c.DefaultActions, c.Text, skillList: c.SkillList);
         var s = new BattleSession(data, data.Encounters["goblin_patrol"], 5);
         s.Advance();
         var warrior = s.Battle.Units.First(u => u.Def.Id == "warrior");
@@ -126,7 +126,7 @@ public class RogueAndConfusionTests
             [.. c.UnitList.Select(u => u.Id == "warrior" ? u with { Procs = ["test_feared_start"] } : u)],
             c.ActionList, c.BuffList, c.AiProfileList, c.EncounterList, c.UnitDefaults,
             [.. c.ProcList, Proc("test_feared_start", ProcTrigger.FightStart, ProcTarget.Self) with { Buff = "dread" }],
-            c.DefaultActions, c.Text);
+            c.DefaultActions, c.Text, skillList: c.SkillList);
         var s = new BattleSession(data, data.Encounters["goblin_patrol"], 2);
         s.Advance();
         var warrior = s.Battle.Units.First(u => u.Def.Id == "warrior");

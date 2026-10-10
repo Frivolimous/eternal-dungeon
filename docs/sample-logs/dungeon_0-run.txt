@@ -1,5 +1,11 @@
 The Goblin Raid · seed 1 · auto-play
 Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior learns Vigor (level 1).
+Warrior masters Power Attack.
+Rogue learns Shadow Mastery (level 1).
+Rogue masters Stealth.
+Elementalist learns Magical Aptitude (level 1).
+Elementalist masters Elemental Focus.
 · Forest Edge ·
 The party explores Forest Edge Trail.
 The Caged Merchant (Elementalist leads)
@@ -8,11 +14,14 @@ Warrior takes the lead.
 → Warrior: Tear the bars apart. It will not be quiet.
 Warrior grabs the bars and heaves. The cage, never fully committed to being a cage, comes apart with an almighty crack. Nearby, two goblin voices shout and come running.
 Battle: Goblin Guards (Major fight)
-  Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
-Victory. Stamina −1. Warrior 76/140, Rogue 100/100, Elementalist 80/80
+  Warrior 148/148 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 130/130 MP St 4
+Victory. Stamina −1. Warrior 84/148, Rogue 100/100, Elementalist 80/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
+Warrior gains 15 XP (15 in all).
+Rogue gains 15 XP (15 in all).
+Elementalist gains 15 XP (15 in all).
 Revealed on the map: Gatekeeper's Post (boss)
 Gold +10 (now 10)
 The merchant presses a few coins into Warrior's hand, then, after a visible struggle, one more. "Bartleby Crumpwhistle, forever in your debt! They went east, past the Gatekeeper's post. Find my family! I'll wait at the trail. And find the cart, if it's no trouble!"
@@ -25,16 +34,25 @@ Elementalist takes the lead.
 Elementalist rolls 50% (Awareness 1): success
 Elementalist spots a log drifting toward the party, against the current. Logs do not do that. Logs also do not have teeth! The crocodile lunges into a party that is ready for it.
 Battle: Bog Crocodile (Major fight, First Strike)
-  Warrior 76/140 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 80/80 HP 94/120 MP St 3
-Victory. Stamina −1. Warrior 82/140, Rogue 100/100, Elementalist 80/80
+  Warrior 84/148 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 80/80 HP 104/130 MP St 3
+Victory. Stamina −1. Warrior 34/148, Rogue 100/100, Elementalist 80/80
 Warrior: Stamina -1 (3 → 2)
 Rogue: Stamina -1 (3 → 2)
 Elementalist: Stamina -1 (3 → 2)
+Warrior gains 15 XP (30 in all).
+Warrior reaches level 2: one more skill point.
+Rogue gains 15 XP (30 in all).
+Rogue reaches level 2: one more skill point.
+Elementalist gains 15 XP (30 in all).
+Elementalist reaches level 2: one more skill point.
 Gold +15 (now 25)
 +1 Health Potion (into the pack)
 Inside the crocodile, the party finds a pouch of coins, an unbroken potion, and most of the rest of the sign.
 The Bog Crocodile is over.
-Warrior puts 1 Health Potion in the belt.
+Warrior learns Battle Might (level 1).
+Rogue learns Deadly Shadows (level 1).
+Elementalist learns Elemental Affinity (level 1).
+Rogue puts 1 Health Potion in the belt.
 The party explores Mossy Altar.
 The Overgrown Shrine (Warrior leads)
 A mossy altar sits in a clearing, its vines woven through it so neatly it looks deliberate. A name is carved on top. Time has worn it down to a Y and a hopeful smudge. Someone still leaves offerings here. Nobody remembers why.
@@ -76,8 +94,8 @@ Rogue puts 1 Health Potion in the belt.
 The party explores Dry Spring.
 The party makes camp and rests.
 Camp charges -1 (now 1)
-Warrior: Health +58 (82 → 140)
-Elementalist: Mana +52 (68 → 120)
+Warrior: Health +74 (34 → 108)
+Elementalist: Mana +52 (78 → 130)
 Warrior: Stamina +2 (2 → 4)
 Rogue: Stamina +2 (2 → 4)
 Elementalist: Stamina +2 (2 → 4)
@@ -91,19 +109,28 @@ Warrior takes the lead.
 → Warrior: Frighten off his guards. Some goblins scare easily.
 Warrior stands tall, weapon raised, with a look that asks which of them plans to fall with the gate. One guard drops his spear and flees into the trees. The other stays, visibly shaken. So, a little, does the Gatekeeper.
 Battle: Gatekeeper Garrison (outer guard intimidated) (Boss fight)
-  Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
-Victory. Stamina −1. Warrior 72/140, Rogue 100/100, Elementalist 45/80
+  Warrior 108/148 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 130/130 MP St 4
+Victory. Stamina −1. Warrior 99/148, Rogue 100/100, Elementalist 45/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
+Warrior gains 30 XP (60 in all).
+Warrior reaches level 3: one more skill point.
+Rogue gains 30 XP (60 in all).
+Rogue reaches level 3: one more skill point.
+Elementalist gains 30 XP (60 in all).
+Elementalist reaches level 3: one more skill point.
 Gold +25 (now 70)
 The Gatekeeper sinks to his knees. "Tell them... the Gatekeeper... kept the gate..." *Clonk*. His helmet keeps rolling long after he stops. The iron key drops into the dirt, the gate creaks open behind him, and the path east lies clear.
 The Gatekeeper Garrison is over.
+Warrior learns Weapon Mastery (level 1).
+Rogue learns Dancing Shadows (level 1).
+Elementalist learns Mana Conduit (level 1).
 The party makes camp and rests.
 Camp charges -1 (now 0)
-Warrior: Health +68 (72 → 140)
+Warrior: Health +49 (99 → 148)
 Elementalist: Health +35 (45 → 80)
-Elementalist: Mana +26 (94 → 120)
+Elementalist: Mana +26 (114 → 140)
 Warrior: Stamina +1 (3 → 4)
 Rogue: Stamina +1 (3 → 4)
 Elementalist: Stamina +1 (3 → 4)
@@ -115,16 +142,19 @@ A woman's scream cuts through the trees. "Help! Help! They're gonna turn me into
 → Elementalist: Investigate those suspicious bushes.
 Elementalist points out that one of the bushes has ears. The bush, offended, draws a knife. Goblin raiders pour out, but the party is ready for them!
 Battle: Goblin Raiders (Major fight)
-  Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
-Victory. Stamina −1. Warrior 41/140, Rogue 100/100, Elementalist 52/80
+  Warrior 148/148 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 140/140 MP St 4
+Victory. Stamina −1. Warrior 65/148, Rogue 100/100, Elementalist 52/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
+Warrior gains 15 XP (75 in all).
+Rogue gains 15 XP (75 in all).
+Elementalist gains 15 XP (75 in all).
 +1 Health Potion (into the pack)
 +1 Mana Potion (into the pack)
 "Thank you, heroes!" the woman cries as the party frees her. "But they still have my son! Please, I don't want my boy to be goblin stew!" She brightens at news of her husband, then narrows her eyes. "Did he ask about the cart?" She presses her last potions into the party's hands. "The fortress is east. Bring my Tobble home!"
 The Merchant's Wife is over.
-Rogue puts 1 Health Potion in the belt.
+Warrior puts 1 Health Potion in the belt.
 The party explores Narrow Path.
 The Goblin Tripwire (Elementalist leads)
 The path narrows between two steep banks. It's quiet. Too quiet. The birds must have all gone to sing somewhere else?
@@ -134,12 +164,21 @@ Elementalist: Health -8 (52 → 44)
 Elementalist gains Bleeding (3 battles)
 Elementalist's leg catches the wire. *SPROING!* Spiked logs thunder down the bank and catch Elementalist with a nasty, bleeding gash. Up the path, a goblin patrol cheers and comes jogging down to see what it caught.
 Battle: Goblin Patrol (Major fight)
-  Warrior 41/140 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 44/80 HP 84/120 MP St 3
-Victory. Stamina −1. Warrior 53/140, Rogue 100/100, Elementalist 35/80
+  Warrior 65/148 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 44/80 HP 104/140 MP St 3
+Victory. Stamina −1. Warrior 94/148, Rogue 100/100, Elementalist 21/80
 Warrior: Stamina -1 (3 → 2)
 Rogue: Stamina -1 (3 → 2)
 Elementalist: Stamina -1 (3 → 2)
+Warrior gains 15 XP (90 in all).
+Warrior reaches level 4: one more skill point.
+Rogue gains 15 XP (90 in all).
+Rogue reaches level 4: one more skill point.
+Elementalist gains 15 XP (90 in all).
+Elementalist reaches level 4: one more skill point.
 The Goblin Tripwire is over.
+Warrior learns Fortitude (level 1).
+Rogue learns Executioner (level 1).
+Elementalist learns Elemental Attunement (level 1).
 The party explores Reed Marsh.
 The Baited Snare (Warrior leads)
 A rope snare dangles over the path, crude but obvious. Inside you see a small pile of coins, a good bait for human prey!
@@ -164,13 +203,16 @@ An enraged boar paws the dirt of its feeding ground, tusks low. It isn't the Meg
 → Warrior: Hold the line
 Warrior plants their feet and doesn't budge an inch. The party forms up around them, and the boar thunders straight into a wall of steel.
 Battle: Wild Boar (Major fight, First Strike)
-  Warrior 53/140 HP St 2 · Rogue 100/100 HP St 2 · Elementalist 35/80 HP 58/120 MP St 2
-Victory. Stamina −1. Warrior 94/140, Rogue 100/100, Elementalist 41/80
+  Warrior 104/158 HP St 2 · Rogue 100/100 HP St 2 · Elementalist 21/80 HP 86/140 MP St 2
+Victory. Stamina −1. Warrior 111/158, Rogue 100/100, Elementalist 27/80
 Warrior: Stamina -1 (2 → 1)
 Rogue: Stamina -1 (2 → 1)
 Elementalist: Stamina -1 (2 → 1)
-Warrior: Health +21 (73 → 94)
-Elementalist: Health +12 (29 → 41)
+Warrior gains 15 XP (105 in all).
+Rogue gains 15 XP (105 in all).
+Elementalist gains 15 XP (105 in all).
+Warrior: Health +24 (87 → 111)
+Elementalist: Health +12 (15 → 27)
 That night, the party roasts the boar over a small fire. It tastes of temper and acorns. A good meal does wonders.
 The Wild Boar is over.
 The party explores Standing Stone.
@@ -178,7 +220,7 @@ The Runed Boundary Stone (Rogue leads)
 A carved monolith hums with old warding magic, its runes glowing faintly blue. Actually, more like a turquoise.
 Elementalist takes the lead.
 → Elementalist: Drink in its power. It has plenty to spare.
-Elementalist: Mana +60 (40 → 100)
+Elementalist: Mana +70 (68 → 138)
 Elementalist gains Rune-Charged (3 battles)
 Elementalist presses both hands to the stone. Its power floods in, bright and cold, and stays. The stone hums a little lower, slightly put out, as the whole party's Mana surges.
 The Runed Boundary Stone is over.
@@ -200,16 +242,16 @@ Gold -20 (now 50)
 Bought Mana Potion for 20 Gold.
 Gold -20 (now 30)
 +1 Mana Potion (into the pack)
-Warrior puts 2 Health Potion in the belt.
+Warrior puts 1 Health Potion in the belt.
 The party explores Ruined Chapel.
 Bought Health Potion for 20 Gold.
 Gold -20 (now 10)
 +1 Health Potion (into the pack)
 The party explores Burned Camp.
 The party rests at the Sanctuary.
-Warrior: Health +46 (94 → 140)
-Elementalist: Health +39 (41 → 80)
-Elementalist: Mana +20 (100 → 120)
+Warrior: Health +47 (111 → 158)
+Elementalist: Health +53 (27 → 80)
+Elementalist: Mana +2 (138 → 140)
 Warrior: Stamina +3 (1 → 4)
 Rogue: Stamina +3 (1 → 4)
 Elementalist: Stamina +3 (1 → 4)
@@ -220,11 +262,14 @@ From cover, the party studies the goblin fortress. Smoke rises from a great cook
 Rogue sneaks around the camp's walls. On the far side, a rotting board smelling strongly of goblin urine can easily be kicked through.
 In the middle of the camp, the Goblin Chief, the fattest goblin anyone has ever seen, is lowering a small boy toward the bubbling pot. A shaman spins in circles beside it for luck. The Chief turns, outraged. "Who dares interrupt LUNCH?"
 Battle: The Goblin Chief (Boss fight)
-  Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
-Victory. Stamina −1. Warrior 74/140, Rogue 74/100, Elementalist 50/80
+  Warrior 158/158 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 140/140 MP St 4
+Victory. Stamina −1. Warrior 82/158, Rogue 100/100, Elementalist 53/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
+Warrior gains 30 XP (135 in all).
+Rogue gains 30 XP (135 in all).
+Elementalist gains 30 XP (135 in all).
 Bleeding wears off Elementalist.
 "You have not seen... the last... of my appetite..." *Gurgle*. *SPLOOSH*. The Goblin Chief topples into his own stew. Out from behind a barrel peeks a small, very relieved boy.
 Gold +50 (now 60)
@@ -232,5 +277,5 @@ Tobble runs into his mother's arms, and at the forest trail his father is waitin
 The Goblin Camp is over.
 The Goblin Raid is complete! Somewhere, a bard starts composing.
 
-Result: Completed. Warrior 74/140 HP St 3 · Rogue 74/100 HP St 3 · Elementalist 50/80 HP 48/120 MP St 3
-18 Nodes, 7 battles (7 won, 0 fled), 2 Camps, 1 Sanctuaries, 4 belt charges used, 60 Gold left
+Result: Completed. Warrior 82/158 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 53/80 HP 68/140 MP St 3
+18 Nodes, 7 battles (7 won, 0 fled), 2 Camps, 1 Sanctuaries, 2 belt charges used, 60 Gold left

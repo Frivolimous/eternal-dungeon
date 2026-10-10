@@ -39,7 +39,9 @@ static class TestData
             Repo.Heroes,
             Repo.ItemList,
             Repo.DungeonList,
-            Repo.RunRules) { Events = Repo.Events };
+            Repo.RunRules,
+            Repo.SkillList,
+            Repo.Levels) { Events = Repo.Events };
     }
 
     static ProcDef Applies(ActionDef action, string id) =>

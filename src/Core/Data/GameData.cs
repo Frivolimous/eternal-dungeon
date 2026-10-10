@@ -18,8 +18,23 @@ public sealed class GameData(
     IReadOnlyList<HeroDef>? heroList = null,
     IReadOnlyList<ItemDef>? itemList = null,
     IReadOnlyList<DungeonDef>? dungeonList = null,
-    RunRules? runRules = null)
+    RunRules? runRules = null,
+    IReadOnlyList<SkillDef>? skillList = null,
+    IReadOnlyList<LevelDef>? levelList = null)
 {
+    public IReadOnlyList<SkillDef> SkillList { get; } = skillList ?? [];
+    public IReadOnlyDictionary<string, SkillDef> Skills { get; } = (skillList ?? []).ToDictionary(s => s.Id);
+
+    /// <summary>Hero levels in order, from level 1 (0 XP).</summary>
+    public IReadOnlyList<LevelDef> Levels { get; } = levelList ?? [];
+
+    /// <summary>A class's skills: its tree skills in order, then its masteries by points.</summary>
+    public IEnumerable<SkillDef> SkillsOf(string classId) =>
+        SkillList.Where(s => s.Class == classId).OrderBy(s => s.Kind).ThenBy(s => s.Kind == SkillKind.Tree ? s.Order : s.Points);
+
+    /// <summary>The level a total of <paramref name="xp"/> reaches (1 when there's no level table).</summary>
+    public int LevelFor(int xp) => Levels.LastOrDefault(l => l.Xp <= xp)?.Level ?? 1;
+
     /// <summary>Classes, with their family and traits.</summary>
     public IReadOnlyDictionary<string, ClassDef> Classes { get; } = (classList ?? []).ToDictionary(c => c.Id);
 
@@ -55,17 +70,22 @@ public sealed class GameData(
 
     /// <summary>Everything <paramref name="unit"/> can do: its own actions, then the default ones (or its own
     /// replacement for each, such as the Rogue's Move) that it doesn't already list.</summary>
-    public IEnumerable<string> ActionsOf(UnitDef unit) =>
-        unit.Actions.Where(a => Actions[a].Replaces == DefaultRole.None)
-            .Concat(DefaultActions is null ? [] : DefaultRoles.Select(r => DefaultFor(unit, r)!))
+    public IEnumerable<string> ActionsOf(UnitDef unit) => ActionsOf(unit.Actions);
+
+    /// <summary>The same for a list of own actions (a unit's, plus what its skills grant).</summary>
+    public IEnumerable<string> ActionsOf(IReadOnlyList<string> own) =>
+        own.Where(a => Actions[a].Replaces == DefaultRole.None)
+            .Concat(DefaultActions is null ? [] : DefaultRoles.Select(r => DefaultFor(own, r)!))
             .Distinct();
 
     static readonly DefaultRole[] DefaultRoles = [DefaultRole.Attack, DefaultRole.Defend, DefaultRole.Move];
 
     /// <summary>The action <paramref name="unit"/> uses as its <paramref name="role"/> default: its own action that
     /// replaces it, or the shared default. Null when the data defines no defaults.</summary>
-    public string? DefaultFor(UnitDef unit, DefaultRole role) =>
-        unit.Actions.FirstOrDefault(a => Actions[a].Replaces == role) ?? DefaultActions?.For(role);
+    public string? DefaultFor(UnitDef unit, DefaultRole role) => DefaultFor(unit.Actions, role);
+
+    public string? DefaultFor(IReadOnlyList<string> own, DefaultRole role) =>
+        own.FirstOrDefault(a => Actions[a].Replaces == role) ?? DefaultActions?.For(role);
 
     public IReadOnlyList<ProcDef> ProcList { get; } = procList ?? [];
     public IReadOnlyDictionary<string, ProcDef> Procs { get; } = (procList ?? []).ToDictionary(p => p.Id);
