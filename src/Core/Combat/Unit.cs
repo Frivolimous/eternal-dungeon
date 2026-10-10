@@ -69,6 +69,9 @@ public sealed class Unit
     /// <summary>Stamina this unit's actions spent in the battle (Colossal Strike); a dungeon run takes it after the fight.</summary>
     public int StaminaSpent { get; set; }
 
+    /// <summary>Battle Might's opening crit has been used this battle.</summary>
+    public bool OpeningCritUsed { get; set; }
+
     /// <summary>A hero's belt items for this battle, with their charges left. Using one spends a charge.</summary>
     public List<BeltSlot> Belt { get; } = [];
     public double Act => ActTicks / 100.0;
@@ -90,6 +93,14 @@ public sealed class Unit
 
     public bool Afraid => Has(CcKind.Fear);
 
+    /// <summary>In Stealth: holding a buff that breaks when it attacks (Anchor: Classes › Rogue).</summary>
+    public bool Stealthed => Buffs.Any(b => b.Def.BreakOnAttack);
+
+    /// <summary>What <paramref name="action"/> costs this unit in Mana: its cost changed by the Mana Cost stat for its tags
+    /// (Mana Conduit makes Elemental spells cheaper), rounded, never below 0.</summary>
+    public int ManaCost(ActionDef action) => action.ManaCost <= 0 ? 0
+        : Math.Max(0, (int)Math.Round(action.ManaCost * (1 + Stats.Get("mana_cost", action.Tags)), MidpointRounding.AwayFromZero));
+
     /// <summary>The last action this unit used, for "not twice in a row" AI rules.</summary>
     public string? LastActionId { get; set; }
 
@@ -98,7 +109,7 @@ public sealed class Unit
     public string? CantUse(ActionDef action)
     {
         if (data.ItemFor(action.Id) is { } item && !Belt.Any(s => s.Item == item && s.Charges > 0)) return "no_charges";
-        if (action.ManaCost > Mana) return "not_enough_mana";
+        if (ManaCost(action) > Mana) return "not_enough_mana";
         if (action.Target == ActionTarget.Tile && Has(CcKind.Root)) return "rooted";
         if (action.Tags.Contains("spell") && Has(CcKind.Silence)) return "silenced";
         if (Afraid && action.Id != data.DefaultFor(OwnActions, DefaultRole.Defend) && action.Id != data.DefaultFor(OwnActions, DefaultRole.Move))

@@ -122,6 +122,32 @@ public class ProgressionTests
     }
 
     [Fact]
+    public void Stamina_an_action_spends_is_paid_after_the_battle()
+    {
+        var run = Run();
+        run.Hero("warrior").Xp = 1_000_000;                         // 11 tree points: Colossal Strike
+        foreach (var skill in new[] { "vigor", "vigor", "vigor", "vigor", "vigor", "weapon_mastery", "weapon_mastery",
+                     "weapon_mastery", "weapon_mastery", "weapon_mastery", "fortitude" })
+            run.SpendPoint("warrior", skill);
+        run.Start();
+        run.Choose("bash");
+        run.Explore("t_b");
+        run.Continue();
+        var s = run.Battle!.Session;
+        s.Advance();
+        while (s.Awaiting!.Id != "warrior") { s.ChooseByAi(); s.Advance(); }
+        var w = s.Battle.Unit("warrior");
+        w.ActTicks = TurnClock.TurnThreshold;
+        s.Battle.Unit("goblin_archer#1").Stats.Add("test", "avoid", -0.9);
+        s.Choose(new Choice("warrior", "colossal_strike", "goblin_archer#1"));
+        Assert.Equal(D.Actions["colossal_strike"].StaminaCost, w.StaminaSpent);
+        s.AutoBattle = true;
+        s.Advance();
+        run.FinishBattle();
+        Assert.Equal(D.RunRules.MaxStamina - 1 - D.Actions["colossal_strike"].StaminaCost, run.Hero("warrior").Stamina);
+    }
+
+    [Fact]
     public void A_party_rows_skills_give_it_its_masteries_in_a_plain_encounter()
     {
         var battle = EncounterSetup.Build(Repo, Repo.Encounters["systems_showcase"], 1);

@@ -65,10 +65,13 @@ public static class Resolution
 
     /// <summary>The attacker's C.Rate for the action's tags ÷ (1 + the target's Critical Deval), capped.</summary>
     public static double CRate(Unit attacker, ActionDef action, Unit target) =>
-        Math.Clamp(attacker.Stats.Get("c_rate", action.Tags) / Math.Max(MinDevalDivisor, 1 + target.Stats.GetKeyed("deval", Critical)),
+        Math.Clamp((attacker.Stats.Get("c_rate", action.Tags) + (attacker.Stealthed ? attacker.Stats.Get("stealth_c_rate", action.Tags) : 0)) / Math.Max(MinDevalDivisor, 1 + target.Stats.GetKeyed("deval", Critical)),
             0, MaxCRate);
 
     static readonly string[] Critical = ["critical"];
+
+    /// <summary>Executioner Power counts against a target below this share of its max Health (Anchor: Rogue › Executioner).</summary>
+    public const double ExecuteBelow = 0.5;
 
     /// <summary>The chance <paramref name="attacker"/>'s action succeeds against <paramref name="target"/>:
     /// the attacker's Hit and the target's Avoid, both for the action's tags.</summary>
@@ -108,14 +111,14 @@ public static class Resolution
         var d = target.Stats;
         return new DamageBreakdown(
             Base: action.BaseDamage + a.Get("base_dmg", tags),
-            Power: a.Get("power", tags),
+            Power: a.Get("power", tags) + (target.Health < target.MaxHealth * ExecuteBelow ? a.Get("execute_power", tags) : 0),
             Multiplier: a.Get("multiplier", tags),
             Resist: d.Get("resist", tags),
             Penetrate: a.Get("penetrate", tags),
             AllDamage: a.Get("all_damage") + action.AllDamage,
             AllResist: d.Get("all_resist"),
             CritTiers: critTiers,
-            CMult: critTiers > 0 ? a.Get("c_mult", tags) : 0,
+            CMult: critTiers > 0 ? a.Get("c_mult", tags) + (attacker.Stealthed ? a.Get("stealth_c_mult", tags) : 0) : 0,
             CritResist: critTiers > 0 ? d.GetKeyed("resist", Critical) : 0,
             CritPenetrate: critTiers > 0 ? a.GetKeyed("penetrate", Critical) : 0);
     }

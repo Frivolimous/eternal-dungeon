@@ -2,14 +2,14 @@ Goblin Patrol · 1000 battles · seeds 1–1000
 Win rate         100.0%  (1000 won, 0 lost, 0 stalemates)
 Battle length    6.8 turns on average
 Party HP left    42.7% on average, 7.9% at worst
-Hit rate         92.2% of 32868 attacks
+Hit rate         92.2% of 32862 attacks
 
 Damage dealt per battle
   Rogue                     110.4
   Elementalist              101.4
   Warrior                    96.8
   Goblin Grunt               77.2
-  Goblin Shaman              63.1
+  Goblin Shaman              63.2
   Goblin Archer              53.8
 
 Hero deaths per battle

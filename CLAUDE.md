@@ -200,7 +200,10 @@ The rules themselves are in the Anchor; this is the map from rule to code.
   false for both).
 - **Progression** (`Combat/Skills.cs`, `Exploration/Hero.cs`): a hero's tree levels (`Hero.SkillLevels`) decide its masteries
   (1, 6, 11 tree points); `Skills.Apply` puts skill stats (per level × level), granted actions and procs on a battle unit
-  (`Unit.GrantedActions`, `OwnActions`; a granted action can replace a default, like the Rogue's Move). XP comes in
+  (`Unit.GrantedActions`, `OwnActions`; a granted action can replace a default, like the Rogue's Move). Special effects are
+  stats too (`opening_crit`, `hit_stagger`, `execute_power`, `opportunist`, `mana_cost`, `stealth_*`, `elemental_ward`…), read
+  where they apply: `Resolution`, `Battle.RollCrit`/`Resolve`/`ApplyBuff`, and `BattleSkills.cs` (opening Block, AP refund,
+  auras recomputed after every result). XP comes in
   `DungeonRun.FinishBattle`; points are spent with `DungeonRun.SpendPoint` (between Events, or before `Start`).
 - `Core.Combat` is the battle namespace (a `Battle` namespace would clash with the `Battle` class).
 - **Balance is deferred:** combat balance waits until after M2, dungeon balance until after M3. Until then the

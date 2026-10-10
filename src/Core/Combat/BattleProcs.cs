@@ -146,12 +146,7 @@ public sealed partial class Battle
             r.Add(new Shielded(target, def.Name, amount));
         }
         if (def.Stagger > 0 && target.Alive)
-        {
-            var full = (int)Math.Round(def.Stagger * scale, MidpointRounding.AwayFromZero);
-            var amount = (int)Math.Round(full * StaggerTaken(target), MidpointRounding.AwayFromZero);
-            target.ActTicks -= amount * TurnClock.TicksPerTurn;
-            r.Add(new Staggered(target, amount, full - amount));
-        }
+            Stagger(target, (int)Math.Round(def.Stagger * scale, MidpointRounding.AwayFromZero), r);
         if (def.Threat > 0 && target.Alive)
         {
             var amount = def.Threat * scale;
@@ -178,6 +173,14 @@ public sealed partial class Battle
             e.Queue.Enqueue(new Pending(Data.Buffs[buff], owner, fromAction ? e.Action!.Id : $"proc:{def.Id}", target, def.Tags));
     }
 
+    /// <summary>Knocks <paramref name="target"/>'s Act back by <paramref name="full"/> less its Force Deval share.</summary>
+    void Stagger(Unit target, int full, ActionResult r)
+    {
+        var amount = (int)Math.Round(full * StaggerTaken(target), MidpointRounding.AwayFromZero);
+        target.ActTicks -= amount * TurnClock.TicksPerTurn;
+        r.Add(new Staggered(target, amount, full - amount));
+    }
+
     static void HealFromProc(ProcDef def, Unit owner, Unit target, double raw, ActionResult r)
     {
         var amount = (int)Math.Round(Math.Max(0, raw), MidpointRounding.AwayFromZero);
@@ -198,6 +201,10 @@ public sealed partial class Battle
     {
         if (started) throw new InvalidOperationException("The battle has already started");
         started = true;
+        // Imposing Presence: Block doubled from the start, until the first block.
+        foreach (var unit in Units.Where(u => u.Stats.Get("opening_block") > 0))
+            unit.Stats.Add(OpeningBlockSource, "block", unit.Stats.GetCompound("block"));
+        RefreshAuras();
         var r = new ActionResult(Clock.Tick, Units[0], null, null);
         var queue = new Queue<Pending>();
         foreach (var unit in Units)

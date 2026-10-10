@@ -164,7 +164,7 @@ Elementalist: Health -8 (52 → 44)
 Elementalist gains Bleeding (3 battles)
 Elementalist's leg catches the wire. *SPROING!* Spiked logs thunder down the bank and catch Elementalist with a nasty, bleeding gash. Up the path, a goblin patrol cheers and comes jogging down to see what it caught.
 Battle: Goblin Patrol (Major fight)
-  Warrior 65/148 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 44/80 HP 104/140 MP St 3
+  Warrior 65/148 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 44/80 HP 106/140 MP St 3
 Victory. Stamina −1. Warrior 94/148, Rogue 100/100, Elementalist 21/80
 Warrior: Stamina -1 (3 → 2)
 Rogue: Stamina -1 (3 → 2)
@@ -203,7 +203,7 @@ An enraged boar paws the dirt of its feeding ground, tusks low. It isn't the Meg
 → Warrior: Hold the line
 Warrior plants their feet and doesn't budge an inch. The party forms up around them, and the boar thunders straight into a wall of steel.
 Battle: Wild Boar (Major fight, First Strike)
-  Warrior 104/158 HP St 2 · Rogue 100/100 HP St 2 · Elementalist 21/80 HP 86/140 MP St 2
+  Warrior 104/158 HP St 2 · Rogue 100/100 HP St 2 · Elementalist 21/80 HP 89/140 MP St 2
 Victory. Stamina −1. Warrior 111/158, Rogue 100/100, Elementalist 27/80
 Warrior: Stamina -1 (2 → 1)
 Rogue: Stamina -1 (2 → 1)
@@ -220,7 +220,7 @@ The Runed Boundary Stone (Rogue leads)
 A carved monolith hums with old warding magic, its runes glowing faintly blue. Actually, more like a turquoise.
 Elementalist takes the lead.
 → Elementalist: Drink in its power. It has plenty to spare.
-Elementalist: Mana +70 (68 → 138)
+Elementalist: Mana +68 (72 → 140)
 Elementalist gains Rune-Charged (3 battles)
 Elementalist presses both hands to the stone. Its power floods in, bright and cold, and stays. The stone hums a little lower, slightly put out, as the whole party's Mana surges.
 The Runed Boundary Stone is over.
@@ -251,7 +251,6 @@ The party explores Burned Camp.
 The party rests at the Sanctuary.
 Warrior: Health +47 (111 → 158)
 Elementalist: Health +53 (27 → 80)
-Elementalist: Mana +2 (138 → 140)
 Warrior: Stamina +3 (1 → 4)
 Rogue: Stamina +3 (1 → 4)
 Elementalist: Stamina +3 (1 → 4)
@@ -263,7 +262,7 @@ Rogue sneaks around the camp's walls. On the far side, a rotting board smelling 
 In the middle of the camp, the Goblin Chief, the fattest goblin anyone has ever seen, is lowering a small boy toward the bubbling pot. A shaman spins in circles beside it for luck. The Chief turns, outraged. "Who dares interrupt LUNCH?"
 Battle: The Goblin Chief (Boss fight)
   Warrior 158/158 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 140/140 MP St 4
-Victory. Stamina −1. Warrior 82/158, Rogue 100/100, Elementalist 53/80
+Victory. Stamina −1. Warrior 55/158, Rogue 100/100, Elementalist 56/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
@@ -277,5 +276,5 @@ Tobble runs into his mother's arms, and at the forest trail his father is waitin
 The Goblin Camp is over.
 The Goblin Raid is complete! Somewhere, a bard starts composing.
 
-Result: Completed. Warrior 82/158 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 53/80 HP 68/140 MP St 3
+Result: Completed. Warrior 55/158 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 56/80 HP 81/140 MP St 3
 18 Nodes, 7 battles (7 won, 0 fled), 2 Camps, 1 Sanctuaries, 2 belt charges used, 60 Gold left

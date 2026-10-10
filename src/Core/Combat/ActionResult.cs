@@ -10,7 +10,7 @@ public sealed record Attempt(Unit Target, double Chance, Roll Roll) : Outcome;
 
 /// <summary>The crit rolls on a hit: a crit at <see cref="Chance"/>, then a Brutal crit at the same chance.
 /// <see cref="Tiers"/>: 0 none, 1 crit, 2 Brutal.</summary>
-public sealed record CritRolled(Unit Target, double CRate, double Chance, Roll Crit, Roll? Brutal) : Outcome
+public sealed record CritRolled(Unit Target, double CRate, double Chance, Roll Crit, Roll? Brutal, bool Opening = false) : Outcome
 {
     public int Tiers => !Crit.Success ? 0 : Brutal is { Success: true } ? 2 : 1;
 }
@@ -77,6 +77,12 @@ public sealed record ManaDrained(Unit Target, Buff Buff, int Amount) : Outcome;
 
 /// <summary>A belt item's action spent one of its charges; <see cref="Left"/> remain in that slot.</summary>
 public sealed record ChargeSpent(Unit Unit, ItemDef Item, int Left) : Outcome;
+
+/// <summary>Imposing Presence's doubled Block is spent: the unit avoided its first melee or projectile attack.</summary>
+public sealed record OpeningBlockSpent(Unit Unit) : Outcome;
+
+/// <summary>Opportunist: an attack gave back part of its AP.</summary>
+public sealed record ApRefunded(Unit Unit, int Ap) : Outcome;
 
 /// <summary>A cast cancelled by an interrupt or a stun: the spell fizzles.</summary>
 public sealed record Interrupted(Unit Unit, Cast Cast) : Outcome;

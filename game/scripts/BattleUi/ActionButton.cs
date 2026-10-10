@@ -17,9 +17,12 @@ public partial class ActionButton : Button
     readonly BattleScreen screen;
     readonly int number;
     readonly string? why;
+    readonly int mana;
 
-    public ActionButton(BattleScreen screen, ActionDef action, int number, string? why)
+    /// <param name="mana">What the action costs this unit (Mana Conduit lowers it).</param>
+    public ActionButton(BattleScreen screen, ActionDef action, int number, string? why, int mana)
     {
+        this.mana = mana;
         this.screen = screen;
         Action = action;
         this.number = number;
@@ -55,7 +58,7 @@ public partial class ActionButton : Button
 
         DrawString(font, new Vector2(4, 54), Action.Name, HorizontalAlignment.Center, Size.X - 8, 12, Ui.Ink);
         var costs = new List<string> { Txt.F("ui.ap_short", ("ap", Action.ApCost)) };
-        if (Action.ManaCost > 0) costs.Add(Txt.F("ui.mana_short", ("mana", Action.ManaCost)));
+        if (mana > 0) costs.Add(Txt.F("ui.mana_short", ("mana", mana)));
         if (Action.CastTime > 0) costs.Add(Txt.F("ui.cast_short", ("cast", Action.CastTime / 100.0)));
         DrawString(font, new Vector2(4, 72), string.Join(" ", costs), HorizontalAlignment.Center, Size.X - 8, 10, Ui.Dim);
         if (why is not null)

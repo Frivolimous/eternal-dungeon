@@ -12,16 +12,19 @@ Warrior takes the lead.
 → Warrior: Tear the bars apart. It will not be quiet.
 Warrior grabs the bars and heaves. The cage, never fully committed to being a cage, comes apart with an almighty crack. Nearby, two goblin voices shout and come running.
 Battle: Goblin Guards (Major fight)
-Victory. Stamina −1. Warrior 76/140, Rogue 100/100, Elementalist 80/80
+Victory. Stamina −1. Warrior 108/140, Rogue 100/100, Elementalist 80/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
+Warrior gains 15 XP (15 in all).
+Rogue gains 15 XP (15 in all).
+Elementalist gains 15 XP (15 in all).
 Revealed on the map: Gatekeeper's Post (boss)
 Gold +10 (now 10)
 The merchant presses a few coins into Warrior's hand, then, after a visible struggle, one more. "Bartleby Crumpwhistle, forever in your debt! They went east, past the Gatekeeper's post. Find my family! I'll wait at the trail. And find the cart, if it's no trouble!"
 The Caged Merchant is over.
 
-Warrior 76/140 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 80/80 HP 94/120 MP St 3
+Warrior 108/140 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 80/80 HP 94/120 MP St 3
 Gold 10, Camp charges 1, pack: empty
 Flags: merchant_freed
 
@@ -43,6 +46,9 @@ Victory. Stamina −1. Warrior 115/140, Rogue 75/100, Elementalist 80/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
+Warrior gains 15 XP (15 in all).
+Rogue gains 15 XP (15 in all).
+Elementalist gains 15 XP (15 in all).
 Gold +15 (now 15)
 +1 Health Potion (into the pack)
 Inside the crocodile, the party finds a pouch of coins, an unbroken potion, and most of the rest of the sign.
@@ -159,15 +165,21 @@ Warrior takes the lead.
 → Warrior: Frighten off his guards. Some goblins scare easily.
 Warrior stands tall, weapon raised, with a look that asks which of them plans to fall with the gate. One guard drops his spear and flees into the trees. The other stays, visibly shaken. So, a little, does the Gatekeeper.
 Battle: Gatekeeper Garrison (outer guard intimidated) (Boss fight)
-Victory. Stamina −1. Warrior 113/140, Rogue 48/100, Elementalist 24/80
+Victory. Stamina −1. Warrior 99/140, Rogue 73/100, Elementalist 52/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
+Warrior gains 30 XP (30 in all).
+Warrior reaches level 2: one more skill point.
+Rogue gains 30 XP (30 in all).
+Rogue reaches level 2: one more skill point.
+Elementalist gains 30 XP (30 in all).
+Elementalist reaches level 2: one more skill point.
 Gold +25 (now 25)
 The Gatekeeper sinks to his knees. "Tell them... the Gatekeeper... kept the gate..." *Clonk*. His helmet keeps rolling long after he stops. The iron key drops into the dirt, the gate creaks open behind him, and the path east lies clear.
 The Gatekeeper Garrison is over.
 
-Warrior 113/140 HP St 3 · Rogue 48/100 HP St 3 · Elementalist 24/80 HP 84/120 MP St 3
+Warrior 99/140 HP St 3 · Rogue 73/100 HP St 3 · Elementalist 52/80 HP 84/120 MP St 3
 Gold 25, Camp charges 1, pack: empty
 Flags: gatekeeper_key
 
@@ -185,14 +197,17 @@ A woman's scream cuts through the trees. "Help! Help! They're gonna turn me into
 → Elementalist: Investigate those suspicious bushes.
 Elementalist points out that one of the bushes has ears. The bush, offended, draws a knife. Goblin raiders pour out, but the party is ready for them!
 Battle: Goblin Raiders (Major fight)
-Victory. Stamina −1. Warrior 46/140, Rogue 100/100, Elementalist 66/80
+Victory. Stamina −1. Warrior 64/140, Rogue 100/100, Elementalist 52/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
+Warrior gains 15 XP (15 in all).
+Rogue gains 15 XP (15 in all).
+Elementalist gains 15 XP (15 in all).
 "Thank you, heroes!" the woman cries as the party frees her. "But they still have my son! Please, I don't want my boy to be goblin stew!" Her husband, she explains, is caged near the forest edge, probably still shouting about the cart. "Their fortress is east. Please, bring my Tobble home."
 The Merchant's Wife is over.
 
-Warrior 46/140 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 66/80 HP 84/120 MP St 3
+Warrior 64/140 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 52/80 HP 84/120 MP St 3
 Gold 0, Camp charges 1, pack: empty
 Flags: wife_saved
 
@@ -216,6 +231,9 @@ Victory. Stamina −1. Warrior 124/140, Rogue 86/100, Elementalist 35/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
+Warrior gains 15 XP (15 in all).
+Rogue gains 15 XP (15 in all).
+Elementalist gains 15 XP (15 in all).
 The Goblin Tripwire is over.
 
 Warrior 124/140 HP St 3 · Rogue 86/100 HP St 3 · Elementalist 35/80 HP 102/120 MP St 3
@@ -286,6 +304,9 @@ Victory. Stamina −1. Warrior 125/140, Rogue 100/100, Elementalist 80/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
+Warrior gains 15 XP (15 in all).
+Rogue gains 15 XP (15 in all).
+Elementalist gains 15 XP (15 in all).
 Warrior: Health +21 (104 → 125)
 That night, the party roasts the boar over a small fire. It tastes of temper and acorns. A good meal does wonders.
 The Wild Boar is over.
@@ -353,17 +374,23 @@ Rogue takes the lead.
 Rogue sneaks around the camp's walls. On the far side, a rotting board smelling strongly of goblin urine can easily be kicked through.
 In the middle of the camp, the Goblin Chief, the fattest goblin anyone has ever seen, is lowering a small boy toward the bubbling pot. A shaman spins in circles beside it for luck. The Chief turns, outraged. "Who dares interrupt LUNCH?"
 Battle: The Goblin Chief (Boss fight)
-Victory. Stamina −1. Warrior 45/140, Rogue 32/100, Elementalist 59/80
+Victory. Stamina −1. Warrior 34/140, Rogue 100/100, Elementalist 80/80
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
+Warrior gains 30 XP (30 in all).
+Warrior reaches level 2: one more skill point.
+Rogue gains 30 XP (30 in all).
+Rogue reaches level 2: one more skill point.
+Elementalist gains 30 XP (30 in all).
+Elementalist reaches level 2: one more skill point.
 "You have not seen... the last... of my appetite..." *Gurgle*. *SPLOOSH*. The Goblin Chief topples into his own stew. Out from behind a barrel peeks a small, very relieved boy.
 Gold +20 (now 20)
 Tobble is safe, but his family is nowhere to be found. The party sets off with him toward the forest edge to look for them. He solemnly hands over the few coins in his pocket, then asks if anyone has seen a cart.
 The Goblin Camp is over.
 The Goblin Raid is complete! Somewhere, a bard starts composing.
 
-Warrior 45/140 HP St 3 · Rogue 32/100 HP St 3 · Elementalist 59/80 HP 40/120 MP St 3
+Warrior 34/140 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 80/80 HP 40/120 MP St 3
 Gold 20, Camp charges 1, pack: empty
 Flags: son_rescued
 

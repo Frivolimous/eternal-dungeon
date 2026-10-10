@@ -1,9 +1,9 @@
 The Goblin Raid · 200 runs · seeds 1–200 · auto-play
-Completed 196/200 (98%), wiped 4
+Completed 199/200 (100%), wiped 1
 Wipes by Node (the last Event entered):
-  Goblin Fortress              4
+  Goblin Fortress              1
 At each boss fight's start (average party Health, Mana, Stamina, heroes standing, hero level):
   Gatekeeper Garrison (outer guard intimidated) HP 97%, MP 100%, Stamina 4.0, heroes 3.0, level 2.0 (200 fights)
-  The Goblin Chief             HP 100%, MP 91%, Stamina 4.0, heroes 2.9, level 4.0 (200 fights)
-Per run: 18.0 Nodes, 6.7 battles (6.6 won, 0.0 fled), 2.0 Camps, 0.9 Sanctuaries, 2.0 belt charges used, 83.3 Gold left
-Heroes dead at the end of a completed run: 0.1
+  The Goblin Chief             HP 100%, MP 89%, Stamina 4.0, heroes 2.9, level 4.0 (200 fights)
+Per run: 18.0 Nodes, 6.7 battles (6.7 won, 0.0 fled), 1.9 Camps, 0.8 Sanctuaries, 2.0 belt charges used, 84.0 Gold left
+Heroes dead at the end of a completed run: 0.2

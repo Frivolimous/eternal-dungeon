@@ -9,7 +9,7 @@
   { "id": "colossal_strike", "name": "Colossal Strike", "class": "warrior", "kind": "mastery", "order": 3, "points": 11, "actions": ["colossal_strike"] },
   { "id": "shadow_mastery", "name": "Shadow Mastery", "class": "rogue", "kind": "tree", "order": 1, "note": "T1" },
   { "id": "deadly_shadows", "name": "Deadly Shadows", "class": "rogue", "kind": "tree", "order": 2, "requires": "shadow_mastery", "note": "T2" },
-  { "id": "dancing_shadows", "name": "Dancing Shadows", "class": "rogue", "kind": "tree", "order": 3, "requires": "shadow_mastery", "note": "T2" },
+  { "id": "dancing_shadows", "name": "Dancing Shadows", "class": "rogue", "kind": "tree", "order": 3, "requires": "shadow_mastery", "procs": ["dancing_shadows"], "note": "T2" },
   { "id": "executioner", "name": "Executioner", "class": "rogue", "kind": "tree", "order": 4, "note": "T1" },
   { "id": "opportunist", "name": "Opportunist", "class": "rogue", "kind": "tree", "order": 5, "note": "T1" },
   { "id": "stealth", "name": "Stealth", "class": "rogue", "kind": "mastery", "order": 1, "points": 1, "actions": ["stealth_move"] },

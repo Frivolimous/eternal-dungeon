@@ -487,7 +487,7 @@ public partial class BattleScreen : Control
         {
             var action = Battle.Data.Actions[id];
             var why = Options.Unusable(Battle, h, action);
-            var button = new ActionButton(this, action, ++i, why);
+            var button = new ActionButton(this, action, ++i, why, h.ManaCost(action));
             button.Pressed += () => Pick(action);
             button.FocusEntered += () => ActionFocused(action, why);
             button.MouseEntered += () => button.GrabFocus();
@@ -499,7 +499,7 @@ public partial class BattleScreen : Control
     {
         if (mode != Mode.ChooseAction || hero is null) return;
         var parts = new List<string> { action.Name, F("ui.ap_cost", ("ap", action.ApCost)) };
-        if (action.ManaCost > 0) parts.Add(F("ui.mana_cost", ("mana", action.ManaCost)));
+        if (hero.ManaCost(action) > 0) parts.Add(F("ui.mana_cost", ("mana", hero.ManaCost(action))));
         if (action.CastTime > 0) parts.Add(F("ui.cast_time", ("cast", action.CastTime / 100.0)));
         if (why is not null) parts.Add(F("ui.unusable", ("reason", Text.Reason(why))));
         info.Text = string.Join(T("log.separator"), parts);

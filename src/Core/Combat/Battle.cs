@@ -133,7 +133,7 @@ public sealed partial class Battle
         if (bad is not null)
             throw new InvalidOperationException($"{actor.Name} can't aim {action.Name} at {aimed.Name}: {bad}");
         target = aimed;
-        actor.SpendMana(action.ManaCost);
+        actor.SpendMana(actor.ManaCost(action));
         TurnClock.Spend(actor, action.ApCost);
         actor.LastActionId = action.Id;
         var charge = SpendCharge(actor, action);
@@ -147,8 +147,14 @@ public sealed partial class Battle
             r.Add(new CastStarted(action.CastTime, actor.Casting!.CompletesAt));
             return Record(r);
         }
+        var refund = OpportunistRefund(actor, action, target);
         var done = Resolve(actor, action, target);
         if (charge is not null) done.Outcomes.Insert(0, charge);
+        if (refund > 0)
+        {
+            actor.ActTicks += (long)refund * TurnClock.TicksPerTurn;
+            done.Add(new ApRefunded(actor, refund));
+        }
         return Record(done);
     }
 
@@ -194,7 +200,7 @@ public sealed partial class Battle
         if (!options.Contains(tile))
             throw new InvalidOperationException($"{actor.Name} can't {action.Name} to {tile}");
 
-        actor.SpendMana(action.ManaCost);
+        actor.SpendMana(actor.ManaCost(action));
         TurnClock.Spend(actor, action.ApCost);
         actor.LastActionId = action.Id;
         var r = new ActionResult(Clock.Tick, actor, action, null);
@@ -233,6 +239,7 @@ public sealed partial class Battle
         var r = new ActionResult(Clock.Tick, actor, action, target);
         var queue = new Queue<Pending>();
         var landed = true;
+        var crit = 0;
         // The action's own stats (Deadly Precision) count while it resolves, hit roll included.
         foreach (var s in action.UserStats) actor.Stats.Add(ActionSource, s.Stat, s.Value, s.Tag);
 
@@ -246,6 +253,9 @@ public sealed partial class Battle
             {
                 FireProcs(ProcTrigger.Miss, new ProcEvent(actor, target, action, 0, queue, r));
                 FireProcs(ProcTrigger.Avoided, new ProcEvent(target, actor, action, 0, queue, r));
+                // Imposing Presence: the doubled Block lasts until the first melee or projectile attack it avoids.
+                if (action.Tags.Any(t => t is "melee" or "projectile") && target.Stats.RemoveSource(OpeningBlockSource) > 0)
+                    r.Add(new OpeningBlockSpent(target));
             }
             else
             {
@@ -257,7 +267,7 @@ public sealed partial class Battle
                 var dealt = 0;
                 if (action.DealsDamage && target.Alive)
                 {
-                    tiers = RollCrit(actor, action, target, r);
+                    tiers = crit = RollCrit(actor, action, target, r);
                     var breakdown = Resolution.Damage(actor, action, target, tiers);
                     var health = target.Health;
                     var taken = target.TakeDamage(breakdown.Final);
@@ -266,6 +276,10 @@ public sealed partial class Battle
                     r.Add(new Damaged(target, breakdown, taken, health));
                     if (taken.Killed) AddDeath(target, r);
                 }
+
+                // Weapon Mastery: each hit staggers (by the action's tags, so only weapon hits).
+                if (target.Alive && actor.Stats.Get("hit_stagger", action.Tags) is var stagger && stagger >= 0.5)
+                    Stagger(target, (int)Math.Round(stagger, MidpointRounding.AwayFromZero), r);
 
                 // Any hit wakes a sleeper.
                 foreach (var sleep in target.Buffs.Where(b => b.Def.Cc == CcKind.Sleep).ToList())
@@ -285,9 +299,8 @@ public sealed partial class Battle
         CountAction(actor, r);
         Process(queue, r);
 
-        // Attacking breaks buffs like Stealth, hit or miss (Jeremy, 2026-10-08). The Rogue tree's Deadly Shadows will
-        // keep Stealth on a crit once skill points exist (M3).
-        if (action.Target == ActionTarget.Enemy)
+        // Attacking breaks buffs like Stealth, hit or miss (Jeremy, 2026-10-08), unless it crits with Deadly Shadows.
+        if (action.Target == ActionTarget.Enemy && !(crit >= 1 && actor.Stats.Get("crit_keeps_stealth") > 0))
             foreach (var buff in actor.Buffs.Where(b => b.Def.BreakOnAttack).ToList())
                 Expire(actor, buff, r, natural: false);
         actor.Stats.RemoveSource(ActionSource);
@@ -304,9 +317,13 @@ public sealed partial class Battle
     {
         var cRate = Resolution.CRate(actor, action, target);
         var chance = Resolution.CritChance(cRate);
-        if (chance <= 0) return 0;
-        var crit = Rng.Roll(chance);
-        var outcome = new CritRolled(target, cRate, chance, crit, crit.Success ? Rng.Roll(chance) : null);
+        // Battle Might: the unit's first basic Attack that hits in a battle crits for sure (Brutal still rolls).
+        var opening = !actor.OpeningCritUsed && actor.Stats.Get("opening_crit") > 0
+            && action.Id == Data.DefaultFor(actor.OwnActions, DefaultRole.Attack);
+        if (opening) actor.OpeningCritUsed = true;
+        if (chance <= 0 && !opening) return 0;
+        var crit = opening ? new Roll(1, 0, true) : Rng.Roll(chance);
+        var outcome = new CritRolled(target, cRate, opening ? 1 : chance, crit, crit.Success && chance > 0 ? Rng.Roll(chance) : null, opening);
         r.Add(outcome);
         return outcome.Tiers;
     }
@@ -404,6 +421,9 @@ public sealed partial class Battle
             buff.ShieldGranted = ShieldAmount(p.Def, unit);
             unit.AddShield(buff.ShieldGranted);
         }
+        // Shadow Mastery: Stealth lasts longer, by whole turns.
+        if (p.Def.BreakOnAttack && p.Def.Duration == DurationKind.Turns)
+            buff.Remaining = p.Def.Length + (int)Math.Floor(unit.Stats.Get("stealth_turns") + 1e-9);
         r.Add(new BuffApplied(unit, buff, refreshed, buff.Stacks, buff.Remaining, buff.ShieldGranted));
         if (p.Def.Cc == CcKind.Stun) Interrupt(unit, r);
     }
@@ -456,6 +476,7 @@ public sealed partial class Battle
 
     ActionResult Record(ActionResult r)
     {
+        RefreshAuras();
         ReviewIntents(r);
         Results.Add(r);
         return r;

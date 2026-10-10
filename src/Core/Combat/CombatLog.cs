@@ -175,6 +175,8 @@ public static class CombatLog
         Fizzled f => s.Format("log.fizzle_caster_fell", ("caster", f.Caster.Name), ("action", f.Action.Name)),
         Died d => s.Format("log.died", ("unit", d.Unit.Name)),
         Fled f => s.Format("log.fled", ("unit", f.Unit.Name)),
+        OpeningBlockSpent b => s.Format("log.opening_block_spent", ("unit", b.Unit.Name)),
+        ApRefunded a => s.Format("log.ap_refunded", ("unit", a.Unit.Name), ("ap", a.Ap)),
         ManaRestored m when m.Amount > 0 => s.Format("log.mana_restored", ("source", m.Source), ("target", m.Target.Name), ("amount", m.Amount)),
         ManaRestored => null,
         ManaDrained m when m.Amount > 0 => s.Format("log.mana_drained", ("buff", m.Buff.Def.Name), ("target", m.Target.Name), ("amount", m.Amount)),
