@@ -120,9 +120,10 @@ Jeremy's layout (2026-10-11). The Hero Panel opens over the map, which goes 80% 
 stay in reach, and pressing another hero's card switches the panel to that hero. A click on the dark map, Close or
 Escape closes it.
 
-- **Left, the hero:** portrait, name and class, level with an XP bar, Stamina (big) with its status, then the stats
+- **Left, the hero:** portrait, name and class, level with an XP bar, Stamina (big) with its status, its traits at the
+  top right (one a line), then the stats
   that matter: the primary ones (Health, Mana, Speed, the compound stats) and any other that differs from a default
-  unit's, in two columns (hovering a value shows what skills add). Traits and run-long buffs and curses follow.
+  unit's, in two columns (hovering a value shows what skills add). Run-long buffs and curses follow.
 - **Right, a Skill Tree or Inventory tab.** The tree is drawn as a tree from the skills' prerequisites, headed by the
   class and its tree points, with the masteries (I, II, III) beside it and the skill points left below.
 - **A skill has four looks:** locked (its prerequisite has no point: dark), maxed (bright), raisable (plain), and

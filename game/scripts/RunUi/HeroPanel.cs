@@ -145,14 +145,25 @@ public partial class HeroPanel : Control
         right.AddChild(stamina);
         top.AddChild(right);
 
-        col.AddChild(Stats());
-
+        // Traits at the top right, one a line: what the hero brings to Events.
         var traits = Data.Traits.Where(t => hero.Trait(t.Id) > 0).ToList();
         if (traits.Count > 0)
         {
-            col.AddChild(Line(T("ui.traits"), 14, Ui.Gold));
-            col.AddChild(Line(string.Join("   ", traits.Select(t => F("ui.stat_line", ("stat", t.Name), ("value", hero.Trait(t.Id))))), 13, wrap: true));
+            var list = new VBoxContainer();
+            list.AddThemeConstantOverride("separation", 2);
+            var head = Line(T("ui.traits"), 14, Ui.Gold);
+            head.HorizontalAlignment = HorizontalAlignment.Right;
+            list.AddChild(head);
+            foreach (var t in traits)
+            {
+                var l = Line(F("ui.stat_line", ("stat", t.Name), ("value", hero.Trait(t.Id))), 14);
+                l.HorizontalAlignment = HorizontalAlignment.Right;
+                list.AddChild(l);
+            }
+            top.AddChild(list);
         }
+
+        col.AddChild(Stats());
         if (hero.Buffs.Count > 0)
         {
             col.AddChild(Line(T("ui.run_buffs"), 14, Ui.Gold));
