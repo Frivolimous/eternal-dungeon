@@ -19,6 +19,12 @@ public partial class BattleScreen : Control
     public BattleSession Session { get; }
     public ScreenshotJob? Screenshot { get; set; }
 
+    /// <summary>A dungeon run's battle: called at the start and whenever a hero waits for a decision (the run saves).</summary>
+    public Action? Checkpoint { get; init; }
+
+    /// <summary>A dungeon run's battle: called by the end panel's Continue, to hand the result back to the run.</summary>
+    public Action? Finished { get; init; }
+
     readonly BoardLayout layout;
     BoardView board = null!;
     Timeline timeline = null!;
@@ -125,6 +131,11 @@ public partial class BattleScreen : Control
         ShowSpeed();
         Resized += Layout0;
         Layout0();
+        // A battle restored from a save shows what already happened.
+        foreach (var r in Battle.Results)
+            foreach (var line in CombatLog.Lines(Battle, r, LogLevel.Brief))
+                log.AddText(line + "\n");
+        Checkpoint?.Invoke();                                   // a run battle saves as it starts
         PlayOn();
     }
 
@@ -218,6 +229,7 @@ public partial class BattleScreen : Control
             }
             if (Session.Awaiting is { } h)
             {
+                Checkpoint?.Invoke();
                 EnterChooseAction(h);
                 return;
             }
@@ -360,7 +372,7 @@ public partial class BattleScreen : Control
                     falling.Add(d.Unit);
                     GetTree().CreateTimer(s * 1.2f).Timeout += () =>
                     {
-                        if (!IsInsideTree()) return;
+                        if (!IsInstanceValid(this) || !IsInsideTree()) return;
                         falling.Remove(d.Unit);
                         board.Cards[d.Unit].Flip(true, s * 0.8f);
                     };
@@ -386,7 +398,8 @@ public partial class BattleScreen : Control
         SetMoment(unit, "hurt");
         GetTree().CreateTimer(Math.Max(0.35f, s * 0.9f)).Timeout += () =>
         {
-            if (IsInsideTree() && board.Cards[unit].Face.Moment == "hurt") SetMoment(unit, null);
+            // The screen may be gone by then (a run battle hands back to the map).
+            if (IsInstanceValid(this) && IsInsideTree() && board.Cards[unit].Face.Moment == "hurt") SetMoment(unit, null);
         };
     }
 
@@ -728,6 +741,18 @@ public partial class BattleScreen : Control
         };
         col.AddChild(Ui.Label(title, 30, Battle.Winner == Side.Party ? Ui.Gold : Ui.Enemy));
         col.AddChild(Ui.Label(F("ui.end_summary", ("encounter", Session.Encounter.Name), ("seed", Session.Seed), ("time", CombatLog.T(Battle.Clock.Tick))), 13, Ui.Dim));
+        if (Finished is { } finished)
+        {
+            // A run's battle: its result goes back to the run.
+            var go = Ui.Button(T("ui.continue"), finished);
+            col.AddChild(go);
+            AddChild(endPanel);
+            endPanel.Position = board.Region.GetCenter() - new Vector2(130, 60);
+            endPanel.CustomMinimumSize = new Vector2(260, 0);
+            go.GrabFocus();
+            if (Screenshot is { } shot) TakeScreenshot(shot);
+            return;
+        }
         var restart = Ui.Button(T("ui.restart"), () => Main.StartBattle(Session.Encounter.Id, Session.Seed, layout: layout));
         col.AddChild(restart);
         col.AddChild(Ui.Button(T("ui.next_seed"), () => Main.StartBattle(Session.Encounter.Id, Session.Seed + 1, layout: layout)));

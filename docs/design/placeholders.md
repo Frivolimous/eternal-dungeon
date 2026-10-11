@@ -74,6 +74,13 @@ this page. Numbers that live in data (unit stats, action damage) are tuned by th
 | Keys | S cycles speed, A toggles auto-battle, Space or a click skips an animation |
 | Text size | 85%, 100%, 115% or 130% |
 | Replays | Saved in the game's user folder as `<date>_<encounter>_<seed>.replay.json`, listed in the debug menu |
+| Exploration screen | The Map fills the left (Regions as boxes with a Feature icon, name and what is known; paths between visible ones, brighter where they lead somewhere new), the party bar along the bottom (portrait, level, Health, Mana, Stamina pips and status in words, belt, unspent points), and on the right Camp, Next Map, Hero Panel, Debug, Save and quit, the focused Node's details and the journal (the run log). Focus starts on something to do: an unexplored Node, a waiting Event, then the Pathway (2026-10-11) |
+| Event panel | Over the map: the Event's name, its picture or the Active Hero's portrait, what the last choice did, the story, then numbered choices (keys 1–9). A trait or class choice names its hero: "(Rogue · Disable 1)". The focused choice's preview shows under the list |
+| Hero Panel | Over the map, between Events only: hero tabs (with unspent points), then three columns: stats and traits (with what skills add), the tree and masteries (text from strings.csv, per-level numbers from the data), the belt and party pack. Escape closes it |
+| A new game | A short arrival panel offers "Spend skill points" (the Hero Panel) before "Set out"; closing the panel moves focus to Set out |
+| Announcements | Level-ups and new masteries float briefly at the top of the map |
+| Saving | After every run action, at a battle's start and whenever a hero waits for a decision; Save and quit just returns to the menu. Continue loads the one slot; a save made with other data asks first |
+| Debug (in a run) | +50 XP for everyone, full Health, Mana and Stamina, +50 Gold, reveal the Map, open any Event not yet found, auto-battle. The menu can also start a new run at any Node. Each is a recorded action, so debug runs save too |
 
 ## Dungeon 0 and runs (M3A step 1)
 

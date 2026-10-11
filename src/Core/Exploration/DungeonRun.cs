@@ -133,6 +133,45 @@ public sealed partial class DungeonRun
         commands.Add(new RunCommand("debug_gold", Amount: Gold));
     }
 
+    /// <summary>Debug tools only: every living hero gains <paramref name="amount"/> XP (and the levels it brings).</summary>
+    public RunResult DebugXp(int amount)
+    {
+        var r = new RunResult();
+        foreach (var hero in Heroes.Where(h => !h.Dead))
+        {
+            var level = hero.Level;
+            hero.Xp += amount;
+            r.Add(new XpGained(hero, amount, hero.Xp));
+            for (var l = level + 1; l <= hero.Level; l++) r.Add(new LevelUp(hero, l));
+        }
+        return Record(r, new RunCommand("debug_xp", Amount: amount));
+    }
+
+    /// <summary>Debug tools only: every living hero back to full Health, Mana and Stamina.</summary>
+    public RunResult DebugRestore()
+    {
+        var r = new RunResult();
+        foreach (var hero in Heroes.Where(h => !h.Dead))
+        {
+            ChangeResource(hero, EventResource.Health, hero.MaxHealth, r);
+            ChangeResource(hero, EventResource.Mana, hero.MaxMana, r);
+            ChangeResource(hero, EventResource.Stamina, hero.MaxStamina, r);
+        }
+        return Record(r, new RunCommand("debug_restore"));
+    }
+
+    /// <summary>Debug tools only: reveals every Node of the current Map.</summary>
+    public RunResult DebugReveal()
+    {
+        var r = new RunResult();
+        foreach (var node in Map.Nodes.Select(n => Nodes[n.Id]).Where(n => !n.Explored && n.Revealed is null))
+        {
+            node.Revealed = RevealIcon.None;
+            r.Add(new NodeRevealed(node.Def, RevealIcon.None));
+        }
+        return Record(r, new RunCommand("debug_reveal"));
+    }
+
     public bool Over => State is RunState.Completed or RunState.Wiped;
 
     // ---- What the player can do ----

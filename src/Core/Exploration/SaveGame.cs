@@ -38,8 +38,10 @@ public sealed record SaveGame(
     ulong Seed,
     IReadOnlyList<RunCommand> Commands,
     IReadOnlyList<Choice>? Battle,
-    bool AutoBattle = false)
+    bool AutoBattle = false,
+    int Seconds = 0)
 {
+    // Seconds: time played, for the end screen (it plays no part in restoring).
     public const int CurrentVersion = 1;
     public const string FileName = "save.json";
 
@@ -91,6 +93,9 @@ public sealed record SaveGame(
             case "start": run.Start(); break;
             case "debug_explore": run.DebugExplore(Need(c.Node, "node")); break;
             case "debug_gold": run.DebugSetGold(c.Amount ?? 0); break;
+            case "debug_xp": run.DebugXp(c.Amount ?? 0); break;
+            case "debug_restore": run.DebugRestore(); break;
+            case "debug_reveal": run.DebugReveal(); break;
             case "explore": run.Explore(Need(c.Node, "node")); break;
             case "resume": run.Resume(Need(c.Node, "node")); break;
             case "camp": run.Camp(); break;
@@ -125,6 +130,7 @@ public sealed record SaveGame(
         var sb = new StringBuilder();
         sb.Append($"{{ \"version\": {Version}, \"game\": {S(Game)}, \"data\": {S(Data)}, \"dungeon\": {S(Dungeon)}, \"seed\": {Seed},");
         sb.Append(AutoBattle ? " \"auto_battle\": true," : "");
+        sb.Append(Seconds > 0 ? $" \"seconds\": {Seconds}," : "");
         sb.Append("\n\"commands\": [");
         for (var i = 0; i < Commands.Count; i++)
             sb.Append(i == 0 ? "\n  " : ",\n  ").Append(CommandJson(Commands[i]));
@@ -158,7 +164,7 @@ public sealed record SaveGame(
         try
         {
             var root = JsonField.Parse(file, text);
-            root.OnlyFields("version", "game", "data", "dungeon", "seed", "auto_battle", "commands", "battle");
+            root.OnlyFields("version", "game", "data", "dungeon", "seed", "auto_battle", "seconds", "commands", "battle");
             if (!root["seed"].Element.TryGetUInt64(out var seed)) throw root["seed"].Error("expected a whole number");
             var commands = root["commands"].Items().Select(c =>
             {
@@ -170,7 +176,7 @@ public sealed record SaveGame(
             }).ToList();
             return new SaveGame(root["version"].Int(), root["game"].String(), root["data"].String(), root["dungeon"].String(),
                 seed, commands, root.Optional("battle")?.Items().Select(Replay.ParseChoice).ToList(),
-                root.Optional("auto_battle")?.Bool() ?? false);
+                root.Optional("auto_battle")?.Bool() ?? false, root.Optional("seconds")?.Int() ?? 0);
         }
         catch (DataException e)
         {

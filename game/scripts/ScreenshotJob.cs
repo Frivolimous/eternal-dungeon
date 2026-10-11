@@ -8,13 +8,18 @@ namespace EternalDungeon.Game;
 /// Screenshot mode (M2 brief §9): load an encounter and seed (or a replay), play a number of actions at instant speed
 /// (heroes on auto-battle unless a replay drives them), save a PNG of the screen and quit. Command line, after
 /// Godot's own arguments and a <c>--</c>:
+/// A dungeon run instead: <c>--run [dungeon_0] [--seed N] [--steps N] [--panel hero]</c> auto-plays N exploration steps
+/// (fights on auto-battle, headless) and shoots the run screen (or the battle it stopped in), with the Hero Panel open
+/// for <c>--panel hero</c>. With <c>--autopilot N</c> it plays N presses through the screens instead, as a keyboard player would (the
+/// focused button each time), then shoots: a smoke test of the screens and their transitions.
 /// <code>--screenshot out.png --encounter goblin_patrol [--seed 42] [--actions 6] [--layout side_on] [--style ink] [--replay f.replay.json] [--select-hero] [--keys 1,Tab,Enter] [--save-replay f] [--save-log f]</code>
 /// <c>--select-hero</c> stops at the next hero turn and shows an action's target preview; <c>--keys</c> instead presses
 /// those keys at that turn (to check keyboard play) and shoots once the screen is waiting again.
 /// It needs a real window: Godot's headless mode doesn't render.
 /// </summary>
 public sealed record ScreenshotJob(string Path, string Encounter, ulong Seed, int Actions, BoardLayout? Layout, string? Style,
-    Replay? Replay, bool StopAtHero, string[] Keys, string? SaveReplay = null, string? SaveLog = null)
+    Replay? Replay, bool StopAtHero, string[] Keys, string? SaveReplay = null, string? SaveLog = null,
+    string? Run = null, int Steps = 0, string? Panel = null, int Autopilot = 0)
 {
     public static ScreenshotJob? FromCommandLine(string[] args)
     {
@@ -37,6 +42,9 @@ public sealed record ScreenshotJob(string Path, string Encounter, ulong Seed, in
         return new ScreenshotJob(System.IO.Path.GetFullPath(path), encounter, seed, actions, layout, values.GetValueOrDefault("style"), replay,
             values.ContainsKey("select-hero") || values.ContainsKey("keys"),
             values.TryGetValue("keys", out var k) ? k.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) : [],
-            values.GetValueOrDefault("save-replay"), values.GetValueOrDefault("save-log"));
+            values.GetValueOrDefault("save-replay"), values.GetValueOrDefault("save-log"),
+            values.TryGetValue("run", out var run) ? (run.Length > 0 ? run : "dungeon_0") : null,
+            int.TryParse(values.GetValueOrDefault("steps"), out var steps) ? steps : 0, values.GetValueOrDefault("panel"),
+            int.TryParse(values.GetValueOrDefault("autopilot"), out var presses) ? presses : 0);
     }
 }

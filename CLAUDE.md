@@ -81,7 +81,10 @@ docs/art-requests.md and writes `game/assets/styles/<style>/<id>.png`. Masters s
 optionally `--layout side_on`, `--style <folder>`, `--replay f.replay.json`, `--select-hero` (stop at the next hero
 turn and show a target preview), `--keys 1,Tab,Enter` (press keys at that turn, to test keyboard play),
 `--save-replay f` and `--save-log f` (the in-game log, to compare with `sim replay f`). Look at the PNG after any
-visual change.
+visual change. A dungeon run instead: `--run [dungeon_0] [--seed N] [--steps N] [--panel hero|map]` auto-plays N steps headless
+and shoots the run screen (or the battle it stopped in; a panel plays on to the next moment between Events), and
+`--autopilot N` presses the focused button N times, as a keyboard player would, through every screen (it stops at the end
+screen): a smoke test of the screens and their transitions. Reference shots: `docs/screenshots/run_*.png`.
 
 **Git: work and commit on `master`.** Never create a branch unless Jeremy asks.
 
@@ -98,6 +101,9 @@ game/              Godot .NET project: presentation and input only
   scripts/Main.cs        app root: data, translations, settings, menu ↔ battle; screenshot mode (ScreenshotJob)
   scripts/BattleUi/      the battle screen: BattleScreen (turn flow, input, animation), BoardView (3D table and
                          layouts), CardView/CardFace (cards), Timeline, DetailsPanel, ActionButton, StatusIcon
+  scripts/RunUi/         the dungeon run: RunScreen (map, actions, journal; drives a DungeonRun), MapView/NodeButton
+                         (fog of war), PartyBar, EventPanel, HeroPanel, EndScreen. Main owns the run and saves it
+                         (user://save.json) after every action and at each hero decision in battle
   assets/manifest.json   fixed images (size, AI-placeholder flag) and the art styles
   assets/styles/<style>/ one folder per candidate art style, images by ArtCatalog id (docs/art-requests.md)
 docs/screenshots/  reference screenshots from screenshot mode

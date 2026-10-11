@@ -57,6 +57,9 @@ look without playing):
 & "C:\Tools\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64_console.exe" --path game -- --screenshot shot.png --encounter goblin_patrol --seed 42 --actions 6
 ```
 
+For the dungeon screens, `--run --seed 1 --steps 30` plays 30 steps and shoots the map (`--panel hero` opens the Hero
+Panel), and `--run --autopilot 1000` plays through every screen pressing the focused button, and shoots the end.
+
 Add `--style ink` for an art style, `--layout side_on` for the side-on board, or `--select-hero` to stop at the next
 hero turn with a target preview showing.
 

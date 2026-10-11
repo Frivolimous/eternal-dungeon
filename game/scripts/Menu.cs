@@ -1,5 +1,6 @@
 using EternalDungeon.Core.Combat;
 using EternalDungeon.Core.Data;
+using EternalDungeon.Core.Exploration;
 using Godot;
 using static EternalDungeon.Game.Text;
 
@@ -36,6 +37,7 @@ public partial class Menu : Control
 
         col.AddChild(Ui.Label(T("ui.title"), 32, Ui.Gold));
         col.AddChild(Ui.Label(T("ui.debug_menu"), 14, Ui.Dim));
+        col.AddChild(GameRow());
 
         var row = new HBoxContainer();
         row.AddThemeConstantOverride("separation", 16);
@@ -99,6 +101,83 @@ public partial class Menu : Control
 
         col.AddChild(Ui.Label(T("ui.menu_help"), 13, Ui.Dim));
         encounters.GrabFocus();
+    }
+
+    // ---- Dungeon 0 (M3A) ----
+
+    Button? continueButton;
+
+    /// <summary>New game, Continue (the one save slot), and the debug start: Dungeon 0 at any Node.</summary>
+    Control GameRow()
+    {
+        var row = new HBoxContainer();
+        row.AddThemeConstantOverride("separation", 10);
+        var newGame = Ui.Button(T("ui.new_game"), () => main.NewRun());
+        newGame.CustomMinimumSize = new Vector2(150, 44);
+        row.AddChild(newGame);
+        continueButton = Ui.Button(T("ui.continue_game"), Continue);
+        continueButton.CustomMinimumSize = new Vector2(150, 44);
+        continueButton.Disabled = !Main.HasSave;
+        row.AddChild(continueButton);
+        row.AddChild(Ui.Label(T("ui.start_at"), 14, Ui.Dim));
+        var nodes = main.Data.DungeonList.SelectMany(d => d.Maps).SelectMany(m => m.Nodes).ToList();
+        var pick = new OptionButton { AutoTranslateMode = AutoTranslateModeEnum.Disabled, SizeFlagsHorizontal = SizeFlags.ExpandFill };
+        foreach (var n in nodes)
+            pick.AddItem(n.Event is { } e ? $"{n.Name}: {T(EventDef.NameKey(e))}" : n.Name);
+        row.AddChild(pick);
+        row.AddChild(Ui.Button(T("ui.debug_open"), () =>
+        {
+            if (pick.Selected < 0) return;
+            var node = nodes[pick.Selected];
+            main.NewRun(dungeon: main.Data.DungeonList.First(d => d.Maps.Any(m => m.Id == node.Map)).Id);
+            main.Run!.DebugExplore(node.Id);
+            main.SaveRun();
+            main.ShowRun();
+        }));
+        return row;
+    }
+
+    void Continue()
+    {
+        SaveGame save;
+        try { save = SaveGame.Parse(System.IO.File.ReadAllText(Main.SavePath)); }
+        catch (Exception e) when (e is SaveException or System.IO.IOException)
+        {
+            Problem(e.Message);
+            return;
+        }
+        if (save.DataChanged(main.Data))
+        {
+            Problem(T("ui.save_other_data"), () => Load(save));
+            return;
+        }
+        Load(save);
+    }
+
+    void Load(SaveGame save)
+    {
+        try { main.LoadRun(save); }
+        catch (SaveException e) { Problem(e.Message); }
+    }
+
+    /// <summary>A save that can't be loaded as it is: say why, and offer a new game (or loading anyway).</summary>
+    void Problem(string message, Action? loadAnyway = null)
+    {
+        var panel = new PanelContainer();
+        var col = new VBoxContainer();
+        col.AddThemeConstantOverride("separation", 8);
+        panel.AddChild(col);
+        var text = Ui.Label(message, 15);
+        text.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+        text.CustomMinimumSize = new Vector2(420, 0);
+        col.AddChild(text);
+        var restart = Ui.Button(T("ui.new_game"), () => main.NewRun());
+        col.AddChild(restart);
+        if (loadAnyway is not null) col.AddChild(Ui.Button(T("ui.load_anyway"), loadAnyway));
+        col.AddChild(Ui.Button(T("ui.close"), panel.QueueFree));
+        AddChild(panel);
+        panel.Position = Size / 2 - new Vector2(220, 80);
+        restart.GrabFocus();
     }
 
     static HBoxContainer Option(string label, string[] items, int selected, Action<int> changed)
