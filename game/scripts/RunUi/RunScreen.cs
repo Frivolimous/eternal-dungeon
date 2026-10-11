@@ -6,8 +6,9 @@ using static EternalDungeon.Game.Text;
 namespace EternalDungeon.Game.RunUi;
 
 /// <summary>
-/// The exploration screen (M3A brief §7): the current Map under fog of war, the party bar, the actions (Camp, Next
-/// Map, Hero Panel), the run log, and the Event panel and Hero Panel over the map. It drives a Core
+/// The exploration screen (Anchor: Exploration › Map screen): a header (the Map, which Map of the dungeon, Gold, the
+/// journal's toggle), the Map under fog of war, and a footer (Camp, Hero Panel, the heroes, Options); the journal, the
+/// Event panel, the Hero Panel and small popups open over the map. It drives a Core
 /// <see cref="DungeonRun"/>: every action goes through <see cref="Act"/>, which saves the run and shows the result.
 /// Like the battle screen, it only reads state and never changes it except through the run.
 /// </summary>
@@ -20,12 +21,17 @@ public partial class RunScreen : Control
     MapView map = null!;
     PartyBar party = null!;
     RichTextLabel log = null!;
-    Label title = null!, purse = null!, info = null!;
-    Button camp = null!, nextMap = null!, heroPanelButton = null!;
+    Label title = null!, progress = null!, purse = null!;
+    Button journalButton = null!;
+    PanelContainer journal = null!;
     Control overlayLayer = null!;
     EventPanel? eventPanel;
     HeroPanel? heroPanel;
+    ColorRect? backdrop;
     Control? popup;
+
+    /// <summary>The journal stays open or shut across screens (a battle replaces this one).</summary>
+    static bool journalOpen;
 
     /// <summary>What the last action did, shown above the next story block (rolls, damage, rewards).</summary>
     List<string> lastLines = [];
@@ -36,54 +42,51 @@ public partial class RunScreen : Control
         Run = run;
     }
 
-    public const float TopHeight = 44, PartyHeight = 118, SideWidth = 360;
+    /// <summary>The header, the footer (party), and the journal's width when open (it covers the right of the map).</summary>
+    public const float TopHeight = 44, PartyHeight = 140, SideWidth = 360;
+
+    /// <summary>Exploration action slots per hero (M3A: the belt; M3B: the first 4 exploration spells or items).</summary>
+    public const int ActionSlots = 4;
 
     public override void _Ready()
     {
         AddChild(new ColorRect { Color = Ui.Background, AnchorRight = 1, AnchorBottom = 1, MouseFilter = MouseFilterEnum.Ignore });
 
-        // Top bar: the Map's name, then Gold, Camp charges and Nodes explored.
-        var top = new HBoxContainer { AnchorRight = 1, OffsetLeft = 12, OffsetRight = -12, OffsetTop = 6, OffsetBottom = TopHeight };
+        // Header: the Map's name and which Map of the dungeon it is, then Gold and the journal's toggle.
+        var top = new HBoxContainer { AnchorRight = 1, OffsetLeft = 12, OffsetRight = -12, OffsetTop = 4, OffsetBottom = TopHeight - 2 };
+        top.AddThemeConstantOverride("separation", 14);
         AddChild(top);
         title = Ui.Label("", 20, Ui.Gold);
-        title.SizeFlagsHorizontal = SizeFlags.ExpandFill;
         top.AddChild(title);
+        progress = Ui.Label("", 15, Ui.Dim);
+        top.AddChild(progress);
+        top.AddChild(new Control { SizeFlagsHorizontal = SizeFlags.ExpandFill, MouseFilter = MouseFilterEnum.Ignore });
         purse = Ui.Label("", 15);
         top.AddChild(purse);
+        journalButton = Ui.Button(T("ui.run_log"), ToggleJournal);
+        journalButton.ToggleMode = true;
+        top.AddChild(journalButton);
+        foreach (var l in new[] { title, progress, purse }) l.SizeFlagsVertical = SizeFlags.ShrinkCenter;
 
-        // The Map.
+        // The Map fills the middle.
         map = new MapView(this)
         {
             AnchorRight = 1, AnchorBottom = 1,
-            OffsetLeft = 10, OffsetTop = TopHeight, OffsetRight = -SideWidth - 10, OffsetBottom = -PartyHeight - 8,
+            OffsetLeft = 10, OffsetTop = TopHeight, OffsetRight = -10, OffsetBottom = -PartyHeight - 6,
         };
         AddChild(map);
 
-        // Right: actions, what's focused, and the log.
-        var side = new VBoxContainer
+        // The journal (the run log), over the right of the map while open.
+        journal = new PanelContainer
         {
             AnchorLeft = 1, AnchorRight = 1, AnchorBottom = 1,
-            OffsetLeft = -SideWidth, OffsetRight = -10, OffsetTop = TopHeight, OffsetBottom = -PartyHeight - 8,
+            OffsetLeft = -SideWidth - 10, OffsetRight = -10, OffsetTop = TopHeight, OffsetBottom = -PartyHeight - 6,
         };
+        AddChild(journal);
+        var side = new VBoxContainer();
         side.AddThemeConstantOverride("separation", 6);
-        AddChild(side);
-        camp = Ui.Button("", () => Act(Run.Camp));
-        side.AddChild(camp);
-        nextMap = Ui.Button(T("ui.next_map"), NextMap);
-        side.AddChild(nextMap);
-        heroPanelButton = Ui.Button(T("ui.hero_panel"), () => OpenHeroPanel());
-        side.AddChild(heroPanelButton);
-        var row = new HBoxContainer();
-        row.AddChild(Ui.Button(T("ui.debug"), OpenDebug));
-        var menu = Ui.Button(T("ui.save_and_quit"), Main.ShowMenu);
-        menu.SizeFlagsHorizontal = SizeFlags.ExpandFill;
-        row.AddChild(menu);
-        side.AddChild(row);
-        info = Ui.Label("", 13, Ui.Dim);
-        info.AutowrapMode = TextServer.AutowrapMode.WordSmart;
-        info.CustomMinimumSize = new Vector2(0, 54);
-        side.AddChild(info);
-        side.AddChild(Ui.Label(T("ui.run_log"), 13, Ui.Dim));
+        journal.AddChild(side);
+        side.AddChild(Ui.Label(T("ui.run_log"), 15, Ui.Gold));
         log = new RichTextLabel
         {
             ScrollFollowing = true, SizeFlagsVertical = SizeFlags.ExpandFill, SelectionEnabled = true,
@@ -91,6 +94,7 @@ public partial class RunScreen : Control
         };
         log.AddThemeFontSizeOverride("normal_font_size", Ui.Px(12));
         side.AddChild(log);
+        journal.Visible = journalButton.ButtonPressed = journalOpen;
 
         party = new PartyBar(this)
         {
@@ -110,6 +114,12 @@ public partial class RunScreen : Control
         if (Screenshot is { } job) TakeScreenshot(job);
     }
 
+    void ToggleJournal()
+    {
+        journalOpen = !journalOpen;
+        journal.Visible = journalButton.ButtonPressed = journalOpen;
+    }
+
     // ---- Acting ----
 
     /// <summary>Does a run action, saves, and shows what it did.</summary>
@@ -119,7 +129,7 @@ public partial class RunScreen : Control
         try { r = action(); }
         catch (InvalidOperationException e)
         {
-            info.Text = e.Message;                              // the screen offered something the rules refuse
+            Toast(e.Message);                                   // the screen offered something the rules refuse
             return;
         }
         Main.SaveRun();
@@ -159,13 +169,8 @@ public partial class RunScreen : Control
     public void Refresh()
     {
         title.Text = Run.Started ? Run.Map.Name : Run.Dungeon.Name;
-        purse.Text = F("ui.purse", ("gold", Run.Gold), ("camps", Run.CampCharges), ("steps", Run.Steps));
-        var exploring = Run.State == RunState.Exploring && Run.Started;
-        camp.Text = F("ui.camp", ("count", Run.CampCharges));
-        camp.Disabled = !exploring || Run.CampCharges <= 0;
-        nextMap.Visible = Run.Usable.Any(u => u.Interactable.Kind == InteractableKind.Pathway);
-        nextMap.Disabled = !exploring;
-        heroPanelButton.Disabled = Run.State != RunState.Exploring;
+        progress.Text = F("ui.map_progress", ("map", Run.MapIndex + 1), ("maps", Run.Dungeon.Maps.Count));
+        purse.Text = F("ui.purse", ("gold", Run.Gold));
         map.Refresh();
         party.Refresh();
         heroPanel?.Refresh();
@@ -196,8 +201,6 @@ public partial class RunScreen : Control
         Callable.From(map.FocusFirst).CallDeferred();
     }
 
-    public void Hint(string text) => info.Text = text;
-
     // ---- The Map: what pressing a Node does ----
 
     public void PressNode(NodeState node)
@@ -207,12 +210,6 @@ public partial class RunScreen : Control
         if (node.Event == EventStatus.Deferred) { Act(() => Run.Resume(node.Def.Id)); return; }
         var usable = Run.Usable.Where(u => u.Node == node).ToList();
         if (usable.Count > 0) OpenInteractables(node, usable.Select(u => u.Interactable).ToList());
-    }
-
-    void NextMap()
-    {
-        if (Run.Usable.FirstOrDefault(u => u.Interactable.Kind == InteractableKind.Pathway) is { Node: { } node })
-            Act(() => Run.UseInteractable(node.Def.Id, InteractableKind.Pathway));
     }
 
     /// <summary>A small list of what the party can do at a Node: use its Sanctuary, take its Pathway, buy at its
@@ -266,6 +263,64 @@ public partial class RunScreen : Control
         popup = null;
     }
 
+    /// <summary>Opens a small panel (one at a time) with a title; <paramref name="fill"/> adds its contents. Centred over
+    /// the map, or above the footer's right end for the Options and Debug panels.</summary>
+    VBoxContainer OpenPopup(string title, float width, bool atOptions = false)
+    {
+        ClosePopup();
+        var panel = new PanelContainer { CustomMinimumSize = new Vector2(width, 0) };
+        var col = new VBoxContainer();
+        col.AddThemeConstantOverride("separation", 6);
+        panel.AddChild(col);
+        col.AddChild(Ui.Label(title, 18, Ui.Gold));
+        popup = panel;
+        Overlay(panel);
+        Callable.From(() =>
+        {
+            var size = panel.GetCombinedMinimumSize();
+            panel.Position = atOptions
+                ? new Vector2(Size.X - size.X - 14, Size.Y - PartyHeight - size.Y - 10)
+                : new Vector2((Size.X - size.X) / 2, TopHeight + (Size.Y - TopHeight - PartyHeight - size.Y) / 2);
+        }).CallDeferred();
+        return col;
+    }
+
+    // ---- Camp: confirm first ----
+
+    public void ConfirmCamp()
+    {
+        if (Run.State != RunState.Exploring || Run.CampCharges <= 0) return;
+        var col = OpenPopup(T("ui.camp_confirm_title"), 380);
+        var text = Ui.Label(F("ui.camp_confirm_text", ("share", Math.Round(Main.Data.RunRules.CampRestore * 100)),
+            ("count", Run.CampCharges), ("after", Run.CampCharges - 1)), 14);
+        text.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+        col.AddChild(text);
+        var row = new HBoxContainer();
+        row.AddThemeConstantOverride("separation", 8);
+        var yes = Ui.Button(T("ui.camp_confirm"), () => { ClosePopup(); Act(Run.Camp); });
+        yes.SizeFlagsHorizontal = SizeFlags.ExpandFill;
+        row.AddChild(yes);
+        var no = Ui.Button(T("ui.cancel"), () => { ClosePopup(); FocusMap(); });
+        no.SizeFlagsHorizontal = SizeFlags.ExpandFill;
+        row.AddChild(no);
+        col.AddChild(row);
+        yes.GrabFocus();
+    }
+
+    // ---- Options: settings, debug tools, save and quit ----
+
+    public void OpenOptions()
+    {
+        var col = OpenPopup(T("ui.options"), 300, atOptions: true);
+        var auto = new CheckButton { Text = T("ui.auto_battle"), ButtonPressed = Main.Settings.AutoBattle, AutoTranslateMode = AutoTranslateModeEnum.Disabled };
+        auto.Toggled += on => Main.Settings.AutoBattle = on;
+        col.AddChild(auto);
+        col.AddChild(Ui.Button(T("ui.debug"), OpenDebug));
+        col.AddChild(Ui.Button(T("ui.save_and_quit"), Main.ShowMenu));
+        col.AddChild(Ui.Button(T("ui.close"), () => { ClosePopup(); FocusMap(); }));
+        auto.GrabFocus();
+    }
+
     // ---- The Hero Panel ----
 
     public void OpenHeroPanel(Hero? hero = null)
@@ -274,6 +329,10 @@ public partial class RunScreen : Control
         ClosePopup();
         if (heroPanel is null)
         {
+            // A dimmed backdrop: the panel is modal, and a click outside it closes it.
+            backdrop = new ColorRect { Color = new Color(0, 0, 0, 0.6f), AnchorRight = 1, AnchorBottom = 1 };
+            backdrop.GuiInput += e => { if (e is InputEventMouseButton { Pressed: true }) CloseHeroPanel(); };
+            Overlay(backdrop);
             heroPanel = new HeroPanel(this, hero ?? Run.Heroes[0]);
             Overlay(heroPanel);
         }
@@ -285,6 +344,8 @@ public partial class RunScreen : Control
     {
         if (heroPanel is null) return;
         heroPanel.QueueFree();
+        backdrop?.QueueFree();
+        backdrop = null;
         heroPanel = null;
         if (!refocus) return;
         if (arrivalGo is not null) arrivalGo.GrabFocus();     // points spent: set out next
@@ -318,7 +379,7 @@ public partial class RunScreen : Control
         col.AddChild(go);
         arrivalGo = go;
         Overlay(arrival);
-        arrival.Position = new Vector2((Size.X - SideWidth) / 2 - 240, Size.Y / 2 - 160);
+        arrival.Position = new Vector2(Size.X / 2 - 240, Size.Y / 2 - 160);
         col.GetChild<Button>(2).GrabFocus();
     }
 
@@ -326,12 +387,7 @@ public partial class RunScreen : Control
 
     void OpenDebug()
     {
-        ClosePopup();
-        var panel = new PanelContainer();
-        var col = new VBoxContainer();
-        col.AddThemeConstantOverride("separation", 6);
-        panel.AddChild(col);
-        col.AddChild(Ui.Label(T("ui.debug"), 18, Ui.Gold));
+        var col = OpenPopup(T("ui.debug"), 320, atOptions: true);
         var exploring = Run.State == RunState.Exploring && Run.Started;
         void Add(string key, Func<RunResult> act)
         {
@@ -343,9 +399,6 @@ public partial class RunScreen : Control
         Add("ui.debug_heal", Run.DebugRestore);
         Add("ui.debug_gold", () => { Run.DebugSetGold(Run.Gold + 50); return new RunResult(); });
         Add("ui.debug_reveal", Run.DebugReveal);
-        var auto = new CheckButton { Text = T("ui.auto_battle"), ButtonPressed = Main.Settings.AutoBattle, AutoTranslateMode = AutoTranslateModeEnum.Disabled };
-        auto.Toggled += on => Main.Settings.AutoBattle = on;
-        col.AddChild(auto);
         col.AddChild(Ui.Label(T("ui.debug_open_event"), 13, Ui.Dim));
         var events = new OptionButton { AutoTranslateMode = AutoTranslateModeEnum.Disabled };
         var nodes = Main.Data.Nodes.Values.Where(n => n.Event is not null && Run.Nodes[n.Id].Event == EventStatus.Pending).ToList();
@@ -359,11 +412,7 @@ public partial class RunScreen : Control
         });
         open.Disabled = !exploring || nodes.Count == 0;
         col.AddChild(open);
-        col.AddChild(Ui.Button(T("ui.close"), ClosePopup));
-        popup = panel;
-        Overlay(panel);
-        panel.Position = new Vector2(Size.X - SideWidth - 330, TopHeight + 10);
-        panel.CustomMinimumSize = new Vector2(320, 0);
+        col.AddChild(Ui.Button(T("ui.close"), () => { ClosePopup(); FocusMap(); }));
         col.GetChild<Button>(1).GrabFocus();
     }
 
@@ -378,7 +427,7 @@ public partial class RunScreen : Control
         label.AddThemeColorOverride("font_outline_color", Colors.Black);
         label.HorizontalAlignment = HorizontalAlignment.Center;
         label.Position = new Vector2(0, TopHeight + 10 + 30 * (toasts++ % 4));
-        label.Size = new Vector2(Size.X - SideWidth, 30);
+        label.Size = new Vector2(Size.X, 30);
         label.MouseFilter = MouseFilterEnum.Ignore;
         AddChild(label);
         var t = label.CreateTween();

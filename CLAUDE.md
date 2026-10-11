@@ -101,8 +101,9 @@ game/              Godot .NET project: presentation and input only
   scripts/Main.cs        app root: data, translations, settings, menu ↔ battle; screenshot mode (ScreenshotJob)
   scripts/BattleUi/      the battle screen: BattleScreen (turn flow, input, animation), BoardView (3D table and
                          layouts), CardView/CardFace (cards), Timeline, DetailsPanel, ActionButton, StatusIcon
-  scripts/RunUi/         the dungeon run: RunScreen (map, actions, journal; drives a DungeonRun), MapView/NodeButton
-                         (fog of war), PartyBar, EventPanel, HeroPanel, EndScreen. Main owns the run and saves it
+  scripts/RunUi/         the dungeon run: RunScreen (header, map, footer, journal; drives a DungeonRun), MapView/NodeButton
+                         (Regions from Core MapRegions, fog of war), PartyBar (the footer), EventPanel, HeroPanel,
+                         EndScreen. Main owns the run and saves it
                          (user://save.json) after every action and at each hero decision in battle
   assets/manifest.json   fixed images (size, AI-placeholder flag) and the art styles
   assets/styles/<style>/ one folder per candidate art style, images by ArtCatalog id (docs/art-requests.md)

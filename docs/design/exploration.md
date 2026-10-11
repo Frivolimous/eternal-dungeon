@@ -58,13 +58,36 @@ Region, Feature, Room and Hallway are only how a Node is drawn: underneath, ever
 
 ### Fog of war
 
-What the player sees of a Map (decided 2026-10-08, to try in M3A):
+What the player sees of a Map (decided 2026-10-08, to try in M3A; drawn as below 2026-10-11):
 
 - **Explored** Nodes show everything: their Feature, Interactables and any deferred Event.
-- **Eligible** Nodes show their position and Feature, but not their Event.
-- **Map reveals** show a Node's position and Feature even before it's eligible. An "enemies" or "boss" reveal adds an
-  icon. If this proves too little, reveals and eligible Nodes may also show the Event's type.
-- Everything else stays hidden.
+- **Eligible** Nodes (unexplored, linked to an explored one) show a **?**: the party can go there, but not what it is.
+- **Map reveals** show a Node's Feature even before it's eligible, faded, plus an icon for an "enemies", "boss" or
+  "sanctuary" reveal. A revealed Node that becomes eligible shows its Feature at full strength. If this proves too
+  little, reveals and eligible Nodes may also show the Event's type.
+- Everything else stays hidden: no icon, and no borders of its own.
+
+### Map screen
+
+The exploration screen looks like a sketched map (Jeremy's layout, 2026-10-11):
+
+- **Header:** the Map's name and which Map of the dungeon it is ("Map 1 / 2"), Gold, and a **Journal** button that
+  shows or hides the journal (the run log) over the right of the map. Later: completion, quest tips and progress.
+- **The Map** fills the middle, on neutral parchment. Each Node is a **Region**, the part of the Map nearest to it, split
+  by dashed borders that look hand-drawn. Only borders of Regions the player has seen are drawn, so the map grows as it's
+  explored. Where two Regions are linked, their border has a **passage**: a gap with a dotted path through it.
+- Each seen Region shows one **central icon**, which also says what can be pressed: **?** (unexplored, can be explored);
+  the Feature at full strength (something to do: a deferred Event, with a red dot, or an Interactable to use); the
+  Feature **dimmed** once complete (hover: "(complete)", nothing to press); the Feature **faded** for a Region seen from
+  afar but not reachable (no hover). The whole Region answers the mouse; keyboard and controller focus the icons.
+- There is **no party marker**: the party's location is indeterminate, and it can explore any linked Region.
+- **Footer:** the **Camp** button (a campfire with the charges left; it asks "Camp now?" with what a Camp restores
+  before using a charge) with the **Hero Panel** button under it; then each hero: its card as in battle (portrait,
+  level, Mana, Health; a red dot with the count while it has skill points; pressing it opens the Hero Panel on that
+  hero), its Stamina, and up to **4 exploration action slots**; **Options** at the right (settings, Save and quit,
+  debug tools).
+- The action slots show the hero's belt for now (an item usable outside combat is used by pressing it). From M3B they
+  show the first 4 exploration spells or items equipped on the belt.
 
 ### Moving between Maps
 

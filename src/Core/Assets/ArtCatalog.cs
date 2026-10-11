@@ -44,10 +44,11 @@ public static class ArtCatalog
 
     public const int ActionIconDisplay = 32, StatusIconDisplay = 18;
 
-    /// <summary>Exploration art at the reference layout: the Map area, a Node's Feature icon, an Event's picture.</summary>
-    public static readonly (int W, int H) MapDisplay = (900, 630);
+    /// <summary>Exploration art at the reference layout (1280×800): the Map area, a Node's Feature icon, the Camp
+    /// button's icon, an Event's picture.</summary>
+    public static readonly (int W, int H) MapDisplay = (1260, 600);
 
-    public const int FeatureIconDisplay = 40, EventImageDisplay = 132;
+    public const int FeatureIconDisplay = 80, CampIconDisplay = 40, EventImageDisplay = 132;
 
     public static string PortraitId(string unitId, string state = DefaultState) =>
         state == DefaultState ? $"portrait_{unitId}" : $"portrait_{unitId}_{state}";
@@ -92,13 +93,13 @@ public static class ArtCatalog
         foreach (var status in Statuses)
             list.Add(new ArtRequest(StatusIconId(status), StatusIconDisplay * 2, StatusIconDisplay * 2, "Status icons",
                 $"{status.Replace('_', ' ')}: a distinct shape, readable without colour", true));
-        // Exploration (M3A): each Map's background, each Node Feature's icon, and each Event picture.
-        foreach (var map in data.DungeonList.SelectMany(d => d.Maps))
-            list.Add(new ArtRequest($"map_{map.Id}", MapDisplay.W * 2, MapDisplay.H * 2, "Maps",
-                $"{map.Name}: the whole Map seen from above, no paths or labels (the game draws the Regions on it)", true));
+        // Exploration (M3A): the Map's parchment, the Camp icon, each Node Feature's icon, and each Event picture.
+        list.Add(new ArtRequest("map_background", MapDisplay.W * 2, MapDisplay.H * 2, "Maps",
+            "Neutral parchment for every Map, like the paper of a sketched map: no drawing on it (the game draws the Regions, borders and icons)", true));
+        list.Add(new ArtRequest("icon_camp", CampIconDisplay * 2, CampIconDisplay * 2, "Maps", "Camp (the Camp button): a campfire", true));
         foreach (var feature in data.Nodes.Values.GroupBy(n => n.Feature))
             list.Add(new ArtRequest($"icon_feature_{feature.Key}", FeatureIconDisplay * 2, FeatureIconDisplay * 2, "Feature icons",
-                $"{string.Join(", ", feature.Select(n => n.Name))}", true));
+                $"{string.Join(", ", feature.Select(n => n.Name))}: sketched in ink on transparency, like a drawing on the map", true));
         foreach (var image in data.Events.Values.SelectMany(e => e.Blocks).OfType<StoryBlock>().Select(b => b.Image).OfType<string>().Distinct())
             list.Add(new ArtRequest($"event_{image}", EventImageDisplay * 2, EventImageDisplay * 2, "Event pictures",
                 $"{string.Join(", ", data.Events.Values.Where(e => e.Blocks.OfType<StoryBlock>().Any(b => b.Image == image)).Select(e => data.Text[EventDef.NameKey(e.Id)]))} (shown instead of the Active Hero's portrait)", true));
