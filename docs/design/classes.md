@@ -49,7 +49,7 @@ Only the Warrior, Rogue and Elementalist (the starting three) have full trees an
 
 - 1 point per level, Level 1 included. The max level is 20, so a hero gets 20 points. The cap may be revisited when XP pacing is tuned.
 - Each tree skill has 5 levels. 9 skills × 5 levels = 45 points to max everything, so a hero can max fewer than half.
-- Points can be banked, and spent anywhere outside combat, between Events, through the Hero Panel. Respec is Town-only (decided 2026-10-08).
+- Points can be banked, and spent anywhere outside combat through the Hero Panel, during an Event too (2026-10-11). Respec is Town-only (decided 2026-10-08).
 - Each class tree has its own structure. A prerequisite is met with 1 or more points in the required skill.
 
 ## Skill trees

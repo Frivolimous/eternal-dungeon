@@ -6,113 +6,219 @@ using static EternalDungeon.Game.Text;
 namespace EternalDungeon.Game.RunUi;
 
 /// <summary>
-/// The Event screen (M3A brief §7), over the map: the Event's name, the Active Hero's portrait, what the last choice
-/// did (rolls, Health, rewards), the story text, and the choices. A choice that needs a trait or class says which hero
-/// takes it; its decision preview (chance, fight, costs, buffs) shows on hover or focus. With no choices, Continue.
-/// Number keys pick a choice.
+/// The Event screen (Anchor: Exploration › Event screen), over the map, which it darkens (the header and the party stay
+/// lit: Camp is off, the Hero Panel opens): the Event's name, its banner picture, what the last choice did (in italics),
+/// the story text, and the choices as lines of text (gold; white when hovered or focused), a trait or class choice with
+/// a grey line under it naming its trait and hero. Hovering or focusing a choice shows its preview in a popup beside it
+/// and lights up the hero who would take it in the party bar. With no choices, a Continue line. Number keys pick.
 /// </summary>
-public partial class EventPanel : PanelContainer
+public partial class EventPanel : Control
 {
     readonly RunScreen screen;
     VBoxContainer col = null!;
     readonly List<Button> choiceButtons = [];
-    Label preview = null!;
+    readonly PanelContainer popup = new() { Visible = false, MouseFilter = MouseFilterEnum.Ignore };
+    readonly Label popupText = new() { AutoTranslateMode = AutoTranslateModeEnum.Disabled };
 
-    public EventPanel(RunScreen screen) => this.screen = screen;
+    public const float Width = 580;
+
+    public EventPanel(RunScreen screen)
+    {
+        this.screen = screen;
+        AnchorRight = 1;
+        AnchorBottom = 1;
+        OffsetTop = RunScreen.TopHeight;
+        OffsetBottom = -RunScreen.PartyHeight - 6;
+    }
 
     DungeonRun Run => screen.Run;
 
     public override void _Ready()
     {
-        AddThemeStyleboxOverride("panel", Ui.Box(new Color(Ui.Panel, 0.98f), Ui.Gold));
-        col = new VBoxContainer();
+        AddChild(new ColorRect { Color = new Color(0, 0, 0, 0.8f), AnchorRight = 1, AnchorBottom = 1 });
+        var scroll = new ScrollContainer
+        {
+            AnchorBottom = 1, OffsetLeft = 40, OffsetRight = 40 + Width + 14, OffsetTop = 14, OffsetBottom = -8,
+            HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled,
+        };
+        AddChild(scroll);
+        col = new VBoxContainer { CustomMinimumSize = new Vector2(Width, 0) };
         col.AddThemeConstantOverride("separation", 8);
-        AddChild(col);
-        Place();
-        screen.Resized += Place;
+        scroll.AddChild(col);
+
+        popup.AddThemeStyleboxOverride("panel", Ui.Box(new Color(0.13f, 0.12f, 0.17f, 0.98f), Ui.Gold, 2, 10));
+        popupText.AddThemeFontSizeOverride("font_size", Ui.Px(15));
+        popupText.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+        popupText.CustomMinimumSize = new Vector2(280, 0);
+        popup.AddChild(popupText);
+        AddChild(popup);
     }
 
-    public override void _ExitTree() => screen.Resized -= Place;
-
-    void Place()
-    {
-        var width = Math.Min(780, screen.Size.X - RunScreen.SideWidth - 60);
-        CustomMinimumSize = new Vector2(width, 0);
-        Size = new Vector2(width, 0);
-        Position = new Vector2(30 + (screen.Size.X - RunScreen.SideWidth - 40 - width) / 2, RunScreen.TopHeight + 16);
-    }
-
-    /// <summary>Rebuilds the panel for the current story block, with what the last action did above it.</summary>
-    public void Show(IReadOnlyList<string> lastLines)
+    /// <summary>Rebuilds the panel for the current story block, with what the last choice did above its text.</summary>
+    /// <param name="focus">Focus the first choice (not while the Hero Panel is open over the Event).</param>
+    public void Show(IReadOnlyList<string> lastLines, bool focus = true)
     {
         foreach (var c in col.GetChildren()) c.QueueFree();
         choiceButtons.Clear();
+        HidePopup();
         if (Run.Event is not { Block: StoryBlock block } e) return;
 
         col.AddChild(Ui.Label(T(EventDef.NameKey(e.Def.Id)), 22, Ui.Gold));
-        var row = new HBoxContainer();
-        row.AddThemeConstantOverride("separation", 14);
-        col.AddChild(row);
-        row.AddChild(new Portrait(screen, e.Active, block.Image) { CustomMinimumSize = new Vector2(132, 150) });
-        var body = new VBoxContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
-        body.AddThemeConstantOverride("separation", 8);
-        row.AddChild(body);
+        col.AddChild(new Banner(screen, Picture(e.Def, block)) { CustomMinimumSize = new Vector2(Width, Width * Banner.Ratio) });
+
+        var text = new VBoxContainer();
+        text.AddThemeConstantOverride("separation", 6);
         if (lastLines.Count > 0)
         {
             var outcome = Ui.Label(string.Join("\n", lastLines), 13, Ui.Dim);
             outcome.AutowrapMode = TextServer.AutowrapMode.WordSmart;
-            body.AddChild(outcome);
+            outcome.AddThemeFontOverride("font", Italic(outcome));
+            text.AddChild(outcome);
         }
         var story = Ui.Label(RunLog.StoryText(Text.Strings, e.Def, block, e.Active), 16);
         story.AutowrapMode = TextServer.AutowrapMode.WordSmart;
-        story.CustomMinimumSize = new Vector2(300, 0);
-        body.AddChild(story);
+        text.AddChild(story);
+        var box = new PanelContainer();
+        box.AddThemeStyleboxOverride("panel", Ui.Box(new Color(0.1f, 0.09f, 0.13f, 0.95f), Colors.Transparent, 0, 0));
+        box.AddChild(text);
+        col.AddChild(box);
+        col.AddChild(new Control { CustomMinimumSize = new Vector2(0, 4) });
 
         var previews = Run.Previews;
         if (previews.Count == 0)
         {
-            var go = Ui.Button(T("ui.continue"), () => screen.Act(Run.Continue));
+            var go = Line(T("ui.continue"), () => screen.Act(Run.Continue));
+            go.FocusEntered += () => screen.HighlightHeroes(null);
             col.AddChild(go);
-            go.GrabFocus();
-            return;
+            choiceButtons.Add(go);
         }
-        var i = 0;
         foreach (var p in previews)
         {
-            var b = Ui.Button($"{++i}. {RunLog.ChoiceText(Text.Strings, e.Def, block, p.Choice)}{Unlocked(p)}", () => screen.Act(() => Run.Choose(p.Choice.Id)));
-            b.Alignment = HorizontalAlignment.Left;
-            b.AutowrapMode = TextServer.AutowrapMode.WordSmart;
-            var text = RunLog.PreviewText(screen.Main.Data, p);
-            b.FocusEntered += () => preview.Text = text;
-            b.MouseEntered += () => preview.Text = text;
-            col.AddChild(b);
+            var b = Line(RunLog.ChoiceText(Text.Strings, e.Def, block, p.Choice), () => screen.Act(() => Run.Choose(p.Choice.Id)));
+            var takers = Takers(p);
+            var popupLines = PopupText(p, takers);
+            b.MouseEntered += () => Hover(b, popupLines, takers);
+            b.FocusEntered += () => Hover(b, popupLines, takers);
+            b.MouseExited += () => { if (!b.HasFocus()) Unhover(); };
+            b.FocusExited += Unhover;
+            var group = new VBoxContainer();
+            group.AddThemeConstantOverride("separation", -2);
+            group.AddChild(b);
+            if (Specialist(p, takers) is { } sub) group.AddChild(Ui.Label(sub, 12, Ui.Dim));
+            col.AddChild(group);
             choiceButtons.Add(b);
         }
-        preview = Ui.Label("", 13, Ui.Gold);
-        preview.AutowrapMode = TextServer.AutowrapMode.WordSmart;
-        preview.CustomMinimumSize = new Vector2(0, 36);
-        col.AddChild(preview);
-        choiceButtons[0].GrabFocus();
+        if (focus) choiceButtons[0].GrabFocus();
     }
 
-    /// <summary>"  (Rogue · Disable 1)" for a trait choice, "  (Warrior)" for a class choice; nothing for an open one.</summary>
-    string Unlocked(ChoicePreview p)
+    public void FocusFirst()
     {
-        if (p.Heroes.Count == 0) return "";
-        var hero = p.Heroes.Contains(Run.Event!.Active) ? Run.Event.Active : p.Heroes[0];
-        var traits = p.Choice.HeroTraits;
-        if (p.Choice.Conditions.Any(c => c is TraitCondition) && traits.Count > 0)
+        if (choiceButtons.Count > 0) choiceButtons[0].GrabFocus();
+    }
+
+    /// <summary>The banner: the block's own picture, else the latest one before it in the Event, else its first.</summary>
+    static string? Picture(EventDef def, StoryBlock block)
+    {
+        if (block.Image is { } own) return own;
+        var stories = def.Blocks.OfType<StoryBlock>().ToList();
+        var at = stories.IndexOf(block);
+        return stories.Take(at).LastOrDefault(s => s.Image is not null)?.Image ?? stories.FirstOrDefault(s => s.Image is not null)?.Image;
+    }
+
+    /// <summary>A choice as a line of text: gold, white when hovered or focused.</summary>
+    static Button Line(string text, Action pressed)
+    {
+        var b = Ui.Button(text, pressed);
+        b.Alignment = HorizontalAlignment.Left;
+        b.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+        b.CustomMinimumSize = new Vector2(Width, 0);
+        foreach (var style in new[] { "normal", "hover", "pressed", "disabled", "focus", "hover_pressed" })
+            b.AddThemeStyleboxOverride(style, new StyleBoxEmpty { ContentMarginTop = 2, ContentMarginBottom = 2 });
+        b.AddThemeFontSizeOverride("font_size", Ui.Px(17));
+        b.AddThemeColorOverride("font_color", Ui.Gold);
+        foreach (var state in new[] { "font_hover_color", "font_focus_color", "font_pressed_color", "font_hover_pressed_color" })
+            b.AddThemeColorOverride(state, Colors.White);
+        return b;
+    }
+
+    static FontVariation Italic(Control c) =>
+        new() { BaseFont = c.GetThemeDefaultFont(), VariationTransform = new Transform2D(1, 0, 0.2f, 1, 0, 0) };
+
+    // ---- Who takes a choice, and its preview ----
+
+    /// <summary>The heroes who could take a choice: the Active Hero if it's among the best placed, else all of them (a
+    /// tie is broken at random when it's taken).</summary>
+    List<Hero> Takers(ChoicePreview p) =>
+        p.Heroes.Contains(Run.Event!.Active) ? [Run.Event.Active] : [.. p.Heroes];
+
+    static string Names(List<Hero> heroes) => string.Join(T("ui.or"), heroes.Select(h => h.Name));
+
+    /// <summary>The grey line under a trait or class choice: its trait (or class) and who takes it.</summary>
+    string? Specialist(ChoicePreview p, List<Hero> takers)
+    {
+        if (takers.Count == 0) return null;
+        var hero = takers[0];
+        if (p.Choice.Conditions.Any(c => c is TraitCondition) && p.Choice.HeroTraits.Count > 0)
         {
-            var best = traits.OrderByDescending(hero.Trait).First();
-            return F("ui.choice_by_trait", ("hero", hero.Name), ("trait", screen.Main.Data.Stats[best].Name), ("level", hero.Trait(best)));
+            var best = p.Choice.HeroTraits.OrderByDescending(hero.Trait).First();
+            return F("ui.choice_trait", ("trait", screen.Main.Data.Stats[best].Name), ("level", hero.Trait(best)), ("hero", Names(takers)));
         }
         if (p.Choice.HeroClass is { } cls)
-            return F("ui.choice_by_class", ("hero", hero.Name), ("class", screen.Main.Data.Classes[cls].Name));
-        return "";
+        {
+            var name = screen.Main.Data.Classes[cls].Name;
+            var who = Names(takers);
+            return who == name ? name : F("ui.choice_class", ("class", name), ("hero", who));
+        }
+        return null;
     }
+
+    /// <summary>The popup: who rolls (for a roll), then the whole decision preview.</summary>
+    string PopupText(ChoicePreview p, List<Hero> takers)
+    {
+        var preview = RunLog.PreviewText(screen.Main.Data, p);
+        return p.Chance is not null && takers.Count > 0 ? F("ui.choice_roller", ("hero", Names(takers))) + "\n" + preview : preview;
+    }
+
+    void Hover(Button b, string text, List<Hero> takers)
+    {
+        screen.HighlightHeroes(takers);
+        if (text.Length == 0) { HidePopup(); return; }
+        popupText.Text = text;
+        popup.Visible = true;
+        popup.ResetSize();
+        hovered = b;
+        PlacePopup();
+    }
+
+    void Unhover()
+    {
+        HidePopup();
+        screen.HighlightHeroes(null);
+    }
+
+    Button? hovered;
+
+    /// <summary>Beside its choice, every frame while shown: the choices settle a frame after the panel is built, and can scroll.</summary>
+    public override void _Process(double delta)
+    {
+        if (popup.Visible) PlacePopup();
+    }
+
+    void PlacePopup()
+    {
+        if (hovered is null || !IsInstanceValid(hovered)) return;
+        var size = popup.GetCombinedMinimumSize();
+        var rect = hovered.GetGlobalRect();
+        var x = GlobalPosition.X + 40 + Width + 24;
+        var y = Mathf.Clamp(rect.GetCenter().Y - size.Y / 2, GlobalPosition.Y + 8, GlobalPosition.Y + Size.Y - size.Y - 8);
+        popup.GlobalPosition = new Vector2(x, y);
+    }
+
+    void HidePopup() => popup.Visible = false;
 
     public override void _UnhandledInput(InputEvent e)
     {
+        if (screen.HeroPanelOpen) return;                        // keys belong to the panel on top
         if (e is InputEventKey { Pressed: true, Echo: false } key && key.Keycode is >= Key.Key1 and <= Key.Key9)
         {
             var n = (int)(key.Keycode - Key.Key1);
@@ -125,23 +231,23 @@ public partial class EventPanel : PanelContainer
     }
 }
 
-/// <summary>The Active Hero's portrait under the Event's picture (each falls back to a placeholder).</summary>
-public partial class Portrait(RunScreen screen, Hero hero, string? image) : Control
+/// <summary>The Event's banner picture, or a dark placeholder until its art arrives.</summary>
+public partial class Banner(RunScreen screen, string? image) : Control
 {
+    /// <summary>Height over width (the art request's shape).</summary>
+    public static readonly float Ratio = (float)Core.Assets.ArtCatalog.EventBannerDisplay.H / Core.Assets.ArtCatalog.EventBannerDisplay.W;
+
     public override void _Draw()
     {
-        var font = GetThemeDefaultFont();
-        var r = new Rect2(Vector2.Zero, new Vector2(Size.X, Size.X));
+        var r = new Rect2(Vector2.Zero, Size);
         if (image is not null && screen.Main.Art.Get($"event_{image}") is { } art)
             DrawTextureRect(art, r, false);
-        else if (screen.Main.Art.Portrait(hero.Unit.Id) is { } tex)
-            DrawTextureRect(tex, r, false);
         else
         {
-            DrawRect(r, Ui.Party.Darkened(0.45f));
-            DrawString(font, r.Position + new Vector2(0, r.Size.Y * 0.62f), hero.Name[..1], HorizontalAlignment.Center, r.Size.X, Ui.Px(48), Ui.Ink);
+            DrawRect(r, new Color(0.16f, 0.15f, 0.12f));
+            for (var i = 0; i < 6; i++)                                   // a soft vignette
+                DrawRect(r.Grow(-i * 10), new Color(0.3f, 0.27f, 0.2f, 0.05f));
         }
-        DrawRect(r, Ui.Gold, false, 2);
-        DrawString(font, new Vector2(0, Size.X + 16), hero.Name, HorizontalAlignment.Center, Size.X, Ui.Px(13), Ui.Ink);
+        DrawRect(r, new Color(0, 0, 0, 0.8f), false, 2);
     }
 }

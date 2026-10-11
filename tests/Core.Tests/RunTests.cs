@@ -38,6 +38,25 @@ public class RunTests
     }
 
     [Fact]
+    public void Points_and_belt_items_can_be_used_during_an_event_and_the_save_keeps_them()
+    {
+        var run = Started();
+        Assert.Equal(RunState.Event, run.State);
+        Assert.True(run.Managing);
+        var hero = run.Heroes.First(h => h.SkillPoints > 0);
+        run.SpendPoint(hero.Id, run.Data.SkillsOf(hero.Class.Id).First().Id);
+        var user = run.Heroes.First(h => h.Belt.Any(s => s.Item.OutsideCombat));
+        var item = user.Belt.First(s => s.Item.OutsideCombat).Item;
+        var charges = user.Charges(item.Id);
+        run.UseItem(user.Id, item.Id);
+        Assert.Equal(charges - 1, user.Charges(item.Id));
+        Assert.Equal(RunState.Event, run.State);                  // the Event goes on
+        var restored = SaveGame.Parse(SaveGame.Of(run).ToJson()).Restore(D);
+        Assert.Equal(SaveGame.Of(run).ToJson(), SaveGame.Of(restored).ToJson());
+        Assert.Equal(charges - 1, restored.Hero(user.Id).Charges(item.Id));
+    }
+
+    [Fact]
     public void Starting_explores_the_start_node_and_runs_its_event()
     {
         var run = Started();

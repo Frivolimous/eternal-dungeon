@@ -27,6 +27,7 @@ public partial class PartyBar : HBoxContainer
     public void Refresh()
     {
         foreach (var c in GetChildren()) c.QueueFree();
+        cards.Clear();
         var run = screen.Run;
         var exploring = run.State == RunState.Exploring && run.Started;
 
@@ -41,7 +42,7 @@ public partial class PartyBar : HBoxContainer
         Camp.CustomMinimumSize = new Vector2(96, 52);
         left.AddChild(Camp);
         HeroPanel = Ui.Button(T("ui.hero_panel"), () => screen.OpenHeroPanel(run.Heroes.FirstOrDefault(h => h.SkillPoints > 0 && !h.Dead)));
-        HeroPanel.Disabled = run.State != RunState.Exploring;
+        HeroPanel.Disabled = !run.Managing;
         HeroPanel.CustomMinimumSize = new Vector2(96, 52);
         left.AddChild(HeroPanel);
         AddChild(left);
@@ -51,6 +52,7 @@ public partial class PartyBar : HBoxContainer
             var block = new HBoxContainer();
             block.AddThemeConstantOverride("separation", 6);
             var card = new HeroCard(screen, hero);
+            cards.Add(card);
             card.Pressed += () => screen.OpenHeroPanel(hero);
             block.AddChild(card);
             var side = new VBoxContainer();
@@ -71,6 +73,13 @@ public partial class PartyBar : HBoxContainer
         Options.CustomMinimumSize = new Vector2(96, 52);
         Options.SizeFlagsVertical = SizeFlags.ShrinkCenter;
         AddChild(Options);
+    }
+
+    readonly List<HeroCard> cards = [];
+
+    public void RedrawCards()
+    {
+        foreach (var c in cards) c.QueueRedraw();
     }
 }
 
@@ -136,7 +145,18 @@ public partial class HeroCard : Button
         DrawString(font, hp.Position + new Vector2(0, 11), F("ui.hp", ("hp", hero.Health), ("max", hero.MaxHealth)),
             HorizontalAlignment.Center, hp.Size.X, 11, Colors.White);
 
-        DrawRect(new Rect2(Vector2.One, Size - Vector2.One * 2), IsHovered() ? Ui.Gold : new Color(Ui.Party, 0.7f), false, 2);
+        // During an Event: the Active Hero has a subtle gold edge; the hero who'd take the hovered choice a strong one.
+        var hovered = screen.Highlighted;
+        var active = screen.Run.Event?.Active == hero;
+        if (hovered is not null && hovered.Contains(hero))
+        {
+            DrawRect(new Rect2(-3, -3, Size.X + 6, Size.Y + 6), new Color(Ui.Gold, 0.35f), false, 6);
+            DrawRect(new Rect2(Vector2.One, Size - Vector2.One * 2), Ui.Gold, false, 3);
+        }
+        else if (active && hovered is null)
+            DrawRect(new Rect2(Vector2.One, Size - Vector2.One * 2), new Color(Ui.Gold, 0.55f), false, 2);
+        else
+            DrawRect(new Rect2(Vector2.One, Size - Vector2.One * 2), IsHovered() ? Ui.Gold : new Color(Ui.Party, 0.7f), false, 2);
         // Unspent skill points: a red dot with the count.
         if (hero.SkillPoints > 0 && !hero.Dead)
         {
@@ -185,7 +205,7 @@ public partial class BeltSlotButton : Button
 
     BeltSlot? Slot => index < hero.Belt.Count ? hero.Belt[index] : null;
 
-    bool CanUse => Slot is { Item.OutsideCombat: true } && screen.Run.State == RunState.Exploring && hero.Available;
+    bool CanUse => Slot is { Item.OutsideCombat: true } && screen.Run.Managing && hero.Available;
 
     public BeltSlotButton(RunScreen screen, Hero hero, int index)
     {

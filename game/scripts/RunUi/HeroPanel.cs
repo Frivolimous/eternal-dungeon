@@ -180,7 +180,7 @@ public partial class HeroPanel : PanelContainer
             var why = hero.Dead ? "dead" : hero.CantRaise(skill.Id);
             var plus = Ui.Button("+", () => screen.Act(() => Run.SpendPoint(hero.Id, skill.Id)));
             plus.Name = "raise_" + skill.Id;
-            plus.Disabled = why is not null || Run.State != RunState.Exploring;
+            plus.Disabled = why is not null || !Run.Managing;
             plus.CustomMinimumSize = new Vector2(36, 0);
             plus.TooltipText = why is null ? "" : T("reason." + why);
             row.AddChild(plus);
@@ -242,7 +242,7 @@ public partial class HeroPanel : PanelContainer
     {
         var col = new VBoxContainer();
         col.AddThemeConstantOverride("separation", 6);
-        var exploring = Run.State == RunState.Exploring && !hero.Dead;
+        var exploring = Run.Managing && !hero.Dead;
         col.AddChild(Line(F("ui.belt", ("used", hero.Belt.Count), ("slots", hero.BeltSlots)), 15, Ui.Gold));
         foreach (var slot in hero.Belt)
         {

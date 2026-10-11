@@ -27,6 +27,8 @@ public partial class RunScreen : Control
     Control overlayLayer = null!;
     EventPanel? eventPanel;
     HeroPanel? heroPanel;
+
+    public bool HeroPanelOpen => heroPanel is not null;
     ColorRect? backdrop;
     Control? popup;
 
@@ -82,7 +84,6 @@ public partial class RunScreen : Control
             AnchorLeft = 1, AnchorRight = 1, AnchorBottom = 1,
             OffsetLeft = -SideWidth - 10, OffsetRight = -10, OffsetTop = TopHeight, OffsetBottom = -PartyHeight - 6,
         };
-        AddChild(journal);
         var side = new VBoxContainer();
         side.AddThemeConstantOverride("separation", 6);
         journal.AddChild(side);
@@ -105,6 +106,7 @@ public partial class RunScreen : Control
 
         overlayLayer = new Control { MouseFilter = MouseFilterEnum.Ignore, AnchorRight = 1, AnchorBottom = 1 };
         AddChild(overlayLayer);
+        overlayLayer.AddChild(journal);                      // first: under the Hero Panel and popups, over the Event
 
         foreach (var r in Run.Results)
             foreach (var line in RunLog.Lines(Main.Data, r))
@@ -143,8 +145,12 @@ public partial class RunScreen : Control
         if (!logged)
             foreach (var line in RunLog.Lines(Main.Data, r))
                 log.AddText(line + "\n");
-        lastLines = [.. r.Outcomes.Where(o => o is not (StoryShown or EventStarted or NodeExplored or MapEntered or ChoiceMade))
-            .SelectMany(o => RunLog.Lines(Main.Data, Single(o)))];
+        var effects = r.Outcomes.Where(o => o is not (StoryShown or EventStarted or NodeExplored or MapEntered or ChoiceMade))
+            .SelectMany(o => RunLog.Lines(Main.Data, Single(o))).ToList();
+        // The Event's "what the last choice did" changes only when the story moves on (not for a potion from the Hero Panel).
+        if (r.Outcomes.Any(o => o is StoryShown or ChoiceMade or EventStarted)) lastLines = effects;
+        var impact = r.Outcomes.Where(Impactful).SelectMany(o => RunLog.Lines(Main.Data, Single(o))).ToList();
+        if (impact.Count > 0) EffectPopup(impact);
         foreach (var o in r.Outcomes)
         {
             if (o is LevelUp l) Toast(F("ui.toast_level", ("hero", l.Hero.Name), ("level", l.Level)));
@@ -157,6 +163,11 @@ public partial class RunScreen : Control
         }
         Refresh();
     }
+
+    /// <summary>What changes something the player cares about: rolls, Health, Mana, Stamina, status, Gold, items, buffs,
+    /// reveals, XP, deaths. (Not who leads, a buff wearing off or the Event closing.)</summary>
+    static bool Impactful(RunOutcome o) => o is EventRolled or ResourceChanged or StatusChanged or NodeRevealed or BuffGained
+        or GoldChanged or ItemGained or CampChargesChanged or InteractableSpawned or HeroDied or XpGained;
 
     static RunResult Single(RunOutcome o)
     {
@@ -183,8 +194,9 @@ public partial class RunScreen : Control
                 ClosePopup();
                 eventPanel = new EventPanel(this);
                 Overlay(eventPanel);
+                overlayLayer.MoveChild(eventPanel, 0);           // under the journal
             }
-            eventPanel.Show(lastLines);
+            eventPanel.Show(lastLines, focus: heroPanel is null);
         }
         else if (eventPanel is not null)
         {
@@ -325,7 +337,7 @@ public partial class RunScreen : Control
 
     public void OpenHeroPanel(Hero? hero = null)
     {
-        if (Run.State != RunState.Exploring) return;
+        if (!Run.Managing) return;
         ClosePopup();
         if (heroPanel is null)
         {
@@ -349,6 +361,7 @@ public partial class RunScreen : Control
         heroPanel = null;
         if (!refocus) return;
         if (arrivalGo is not null) arrivalGo.GrabFocus();     // points spent: set out next
+        else if (eventPanel is not null) eventPanel.FocusFirst();
         else FocusMap();
     }
 
@@ -416,7 +429,45 @@ public partial class RunScreen : Control
         col.GetChild<Button>(1).GrabFocus();
     }
 
+    // ---- The party bar during an Event ----
+
+    /// <summary>The heroes who would take the choice under the pointer (null: none hovered; the Active Hero keeps a
+    /// subtle highlight).</summary>
+    public IReadOnlyList<Hero>? Highlighted { get; private set; }
+
+    public void HighlightHeroes(IReadOnlyList<Hero>? heroes)
+    {
+        Highlighted = heroes;
+        party.RedrawCards();
+    }
+
     // ---- Announcements ----
+
+    /// <summary>What an action did, in a small card that rises over the map and fades (a stand-in until each kind of
+    /// effect has its own animation).</summary>
+    PanelContainer? effectCard;
+
+    void EffectPopup(List<string> lines)
+    {
+        if (effectCard is not null && IsInstanceValid(effectCard)) effectCard.QueueFree();   // one at a time: the newest wins
+        var card = effectCard = new PanelContainer { MouseFilter = MouseFilterEnum.Ignore };
+        card.AddThemeStyleboxOverride("panel", Ui.Box(new Color(0.13f, 0.12f, 0.17f, 0.96f), Ui.Gold, 2, 10));
+        var text = Ui.Label(string.Join("\n", lines.Take(6)), 15);
+        text.HorizontalAlignment = HorizontalAlignment.Center;
+        text.MouseFilter = MouseFilterEnum.Ignore;
+        card.AddChild(text);
+        AddChild(card);
+        var size = card.GetCombinedMinimumSize();
+        var x = eventPanel is not null ? 40 + EventPanel.Width + 40 : (Size.X - size.X) / 2;
+        card.Position = new Vector2(Mathf.Min(x, Size.X - size.X - 20), Size.Y - PartyHeight - size.Y - 30);
+        card.Modulate = new Color(1, 1, 1, 0);
+        var t = card.CreateTween();
+        t.TweenProperty(card, "modulate:a", 1f, 0.2);
+        t.Parallel().TweenProperty(card, "position:y", card.Position.Y - 20, 0.3);
+        t.TweenInterval(Screenshot is null ? 2.4 : 10);
+        t.TweenProperty(card, "modulate:a", 0f, 0.5);
+        t.TweenCallback(Callable.From(card.QueueFree));
+    }
 
     int toasts;
 

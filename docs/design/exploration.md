@@ -89,6 +89,25 @@ The exploration screen looks like a sketched map (Jeremy's layout, 2026-10-11):
 - The action slots show the hero's belt for now (an item usable outside combat is used by pressing it). From M3B they
   show the first 4 exploration spells or items equipped on the belt.
 
+### Event screen
+
+Jeremy's layout (2026-10-11). An Event opens over the map, which goes 80% dark; the header and the party footer stay
+lit. Camp is off during an Event; the Hero Panel opens (spending points and using potions included).
+
+- **Title** at the top, then a wide **banner picture** (an Event's story blocks name their picture; a block without
+  one keeps the last picture shown).
+- **What the last choice did** (rolls, Health, rewards, who takes the lead) in a small italic block above the story
+  text, then the **story text**.
+- **The choices** as lines of text, gold, turning white when hovered or focused. A trait or class choice has a small
+  grey line under it: its trait and level (or class) and the hero who would take it. A block with no choices shows a
+  gold **Continue** line.
+- **Hovering a choice** shows a popup beside it with the decision preview, headed by who rolls ("Rolled by Rogue").
+  What it shows is under audit (Jeremy).
+- **The Active Hero** has a subtle highlight on its card; hovering a choice lights up, more strongly, the hero who would
+  take it (several if they tie). No "Active" tag: it matters when deciding, not when idle.
+- **Every impactful outcome** (a roll, Health or Stamina, Gold, items, buffs, a reveal, XP) shows a small popup stating
+  it, for now. Each kind will get its own animation or effect later.
+
 ### Moving between Maps
 
 **Transition Interactables** move the party on. They share one behaviour with three looks: **Stairs** (Indoor, between
@@ -275,9 +294,9 @@ Event outcomes affect the expedition only through these:
 3. **Camp**, using a Camp charge.
 4. **Leave** the dungeon (see Dungeons › Run outcomes).
 5. **Resume** a deferred Event.
-6. **Go to the next Map:** a shortcut button shown when a transition Interactable is usable.
-7. **Hero Panel,** between Events (not in the middle of one): stats, skills (spending points), traits, the belt and
-   party pack, and using potions. Equipment joins it in M3B.
+6. **Go to the next Map:** press the Region whose transition Interactable is usable.
+7. **Hero Panel,** anywhere outside battle, during an Event too (Jeremy, 2026-10-11; disable again if abused): stats,
+   skills (spending points), traits, the belt and party pack, and using potions. Equipment joins it in M3B.
 8. **Use an exploration consumable** outside combat.
 9. **Cast an exploration spell.**
 10. **Use an exploration skill** (the Primary class's; see [Classes](classes.md)).

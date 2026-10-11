@@ -45,10 +45,13 @@ public static class ArtCatalog
     public const int ActionIconDisplay = 32, StatusIconDisplay = 18;
 
     /// <summary>Exploration art at the reference layout (1280×800): the Map area, a Node's Feature icon, the Camp
-    /// button's icon, an Event's picture.</summary>
+    /// button's icon.</summary>
     public static readonly (int W, int H) MapDisplay = (1260, 600);
 
-    public const int FeatureIconDisplay = 80, CampIconDisplay = 40, EventImageDisplay = 132;
+    public const int FeatureIconDisplay = 80, CampIconDisplay = 40;
+
+    /// <summary>An Event's banner picture, across the top of the Event screen.</summary>
+    public static readonly (int W, int H) EventBannerDisplay = (580, 240);
 
     public static string PortraitId(string unitId, string state = DefaultState) =>
         state == DefaultState ? $"portrait_{unitId}" : $"portrait_{unitId}_{state}";
@@ -101,8 +104,8 @@ public static class ArtCatalog
             list.Add(new ArtRequest($"icon_feature_{feature.Key}", FeatureIconDisplay * 2, FeatureIconDisplay * 2, "Feature icons",
                 $"{string.Join(", ", feature.Select(n => n.Name))}: sketched in ink on transparency, like a drawing on the map", true));
         foreach (var image in data.Events.Values.SelectMany(e => e.Blocks).OfType<StoryBlock>().Select(b => b.Image).OfType<string>().Distinct())
-            list.Add(new ArtRequest($"event_{image}", EventImageDisplay * 2, EventImageDisplay * 2, "Event pictures",
-                $"{string.Join(", ", data.Events.Values.Where(e => e.Blocks.OfType<StoryBlock>().Any(b => b.Image == image)).Select(e => data.Text[EventDef.NameKey(e.Id)]))} (shown instead of the Active Hero's portrait)", true));
+            list.Add(new ArtRequest($"event_{image}", EventBannerDisplay.W * 2, EventBannerDisplay.H * 2, "Event pictures",
+                $"{string.Join(", ", data.Events.Values.Where(e => e.Blocks.OfType<StoryBlock>().Any(b => b.Image == image)).Select(e => data.Text[EventDef.NameKey(e.Id)]))} (the wide banner across the top of the Event)", true));
         return list;
     }
 

@@ -174,6 +174,10 @@ public sealed partial class DungeonRun
 
     public bool Over => State is RunState.Completed or RunState.Wiped;
 
+    /// <summary>The Hero Panel's actions (spending points, using and moving items) are open: between Events and during
+    /// one, never in battle (Anchor: Classes › Skill points).</summary>
+    public bool Managing => State is RunState.Exploring or RunState.Event;
+
     // ---- What the player can do ----
 
     /// <summary>Nodes of the current Map the party can explore: unexplored and touching the explored network.</summary>
@@ -273,12 +277,12 @@ public sealed partial class DungeonRun
         throw new InvalidOperationException($"No usable {kind} at {nodeId}");
     }
 
-    // ---- The Hero Panel (between Events) ----
+    // ---- The Hero Panel (outside battle) ----
 
     /// <summary>Uses a belt item outside combat (a potion): its heal and Mana shares.</summary>
     public RunResult UseItem(string heroId, string itemId)
     {
-        if (State != RunState.Exploring) throw new InvalidOperationException("Items are used from the Hero Panel, between Events");
+        if (!Managing) throw new InvalidOperationException("Items are used from the Hero Panel, outside battle");
         var hero = Hero(heroId);
         var item = Data.Items[itemId];
         if (!hero.Available) throw new InvalidOperationException($"{hero.Name} can't use items now");
@@ -315,7 +319,7 @@ public sealed partial class DungeonRun
 
     public string? CantMoveToBelt(string heroId, string itemId)
     {
-        if (State != RunState.Exploring) return "busy";
+        if (!Managing) return "busy";
         var hero = Hero(heroId);
         if (hero.Dead) return "dead";
         if (Pack.GetValueOrDefault(itemId) <= 0) return "not_in_pack";
@@ -327,7 +331,7 @@ public sealed partial class DungeonRun
     /// <summary>Empties a hero's belt slot holding <paramref name="itemId"/> into the party pack.</summary>
     public RunResult MoveToPack(string heroId, string itemId)
     {
-        if (State != RunState.Exploring) throw new InvalidOperationException("busy");
+        if (!Managing) throw new InvalidOperationException("busy");
         var hero = Hero(heroId);
         var slot = hero.Belt.FirstOrDefault(s => s.Item.Id == itemId) ?? throw new InvalidOperationException($"{hero.Name} has no {itemId}");
         hero.Belt.Remove(slot);
@@ -337,11 +341,11 @@ public sealed partial class DungeonRun
         return Record(r, new RunCommand("to_pack", Hero: heroId, Item: itemId));
     }
 
-    /// <summary>Puts one skill point into a tree skill (the Hero Panel: anywhere between Events). The masteries the new
+    /// <summary>Puts one skill point into a tree skill (the Hero Panel: anywhere outside battle). The masteries the new
     /// tree total unlocks come with it.</summary>
     public RunResult SpendPoint(string heroId, string skillId)
     {
-        if (State != RunState.Exploring) throw new InvalidOperationException("Skill points are spent from the Hero Panel, between Events");
+        if (!Managing) throw new InvalidOperationException("Skill points are spent from the Hero Panel, outside battle");
         var hero = Hero(heroId);
         if (hero.Dead) throw new InvalidOperationException($"{hero.Name} is dead");
         if (hero.CantRaise(skillId) is string why) throw new InvalidOperationException($"Can't raise {skillId}: {why}");
