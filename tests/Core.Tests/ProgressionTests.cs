@@ -122,6 +122,28 @@ public class ProgressionTests
     }
 
     [Fact]
+    public void Fleeing_takes_a_turn_of_casting_first()
+    {
+        var run = Run();
+        run.Start();
+        run.Choose("bash");
+        run.Explore("t_b");
+        run.Continue();
+        var s = run.Battle!.Session;
+        s.Advance();
+        var hero = s.Battle.Units.First(u => u.Id == s.Awaiting!.Id);
+        var started = s.Battle.Clock.Tick;
+        s.Choose(new Choice(hero.Id, "flee"));
+        Assert.False(hero.Fled);                                    // still on the board, casting
+        Assert.Equal("flee", hero.Casting!.ActionId);
+        var leaves = hero.Casting.CompletesAt;
+        Assert.Equal(started + TurnClock.TicksPerTurn, leaves);    // 1 turn
+        s.AutoBattle = true;
+        while (!s.Over && !hero.Fled && hero.Health > 0) s.Advance();
+        if (hero.Fled) Assert.True(s.Battle.Clock.Tick >= leaves);   // gone only once the cast completes
+    }
+
+    [Fact]
     public void Stamina_an_action_spends_is_paid_after_the_battle()
     {
         var run = Run();

@@ -68,7 +68,7 @@ Every unit, heroes and enemies, has three default actions on top of its own skil
 | --- | --- | --- |
 | Attack | 100 | Basic weapon attack |
 | Defend | 100 | +0.3 Avoid and a Shield of 10% max Health until the unit's next turn |
-| Flee (heroes, in a dungeon) | 100 | The hero leaves the battle at once, from any tile. See Exploration › Combat in exploration |
+| Flee (heroes, in a dungeon) | 100 | A 1-turn cast; when it completes, the hero leaves the battle, from any tile. See Exploration › Combat in exploration |
 | Move | 50 | Any empty tile in the area the unit stands in |
 
 A unit with no usable skill (no valid target, or not enough Mana) uses these: it Attacks if it has a valid target, otherwise it Moves to step into an empty front tile if it can, otherwise it sidesteps along its row to a tile from which its melee reaches someone, otherwise it Defends. This keeps "enemies generally stay put" true while stopping melee enemies from waiting behind their own front line.

@@ -57,7 +57,7 @@ public static class CombatLog
         {
             if (r.Outcomes.FirstOrDefault() is CastStarted cast)
             {
-                yield return head + (r.Target is null
+                yield return head + (r.Target is null || r.Target == r.Actor
                     ? s.Format("log.begins_casting", ("actor", r.Actor.Name), ("action", action.Name), ("ready", T(cast.ReadyAt)))
                     : s.Format("log.begins_casting_at", ("actor", r.Actor.Name), ("action", action.Name), ("target", r.Target.Name), ("ready", T(cast.ReadyAt))));
                 foreach (var line in Details(battle, action, [.. r.Outcomes.Skip(1)], level))

@@ -1,5 +1,6 @@
 using EternalDungeon.Core.Assets;
 using EternalDungeon.Core.Combat;
+using EternalDungeon.Core.Data;
 using Godot;
 using Side = EternalDungeon.Core.Combat.Side;
 
@@ -37,21 +38,30 @@ public partial class Timeline : Control
     }
 
     /// <summary>Rebuilds the order; <paramref name="ghost"/> adds the hovered action's markers.</summary>
-    public void Refresh(TurnEstimate? ghost)
+    public void Refresh(TurnEstimate? ghost, ActionDef? action = null)
     {
         if (!IsInsideTree()) return;
         var battle = screen.Session.Battle;
         var entries = Preview.Timeline(battle, Count)
-            .Select(t => (Key: "", t.Unit, t.Tick, Ghost: (string?)null)).ToList();
+            .Select(t => (Key: "", t.Unit, t.Tick, Ghost: (string?)null, Cast: (string?)null)).ToList();
+        // Casts in progress land at their own moment (before a turn at the same tick): a fleeing hero leaves then.
+        if (entries.Count > 0)
+        {
+            var casts = battle.Units.Where(u => u.Alive && u.Casting is not null)
+                .Select(u => (Key: "", Unit: u, Tick: u.Casting!.CompletesAt, Ghost: (string?)null, Cast: (string?)CastLabel(u.Casting))).ToList();
+            var head = entries[0];
+            entries = [head, .. entries.Skip(1).Concat(casts).OrderBy(e => e.Tick).ThenBy(e => e.Cast is null ? 1 : 0)];
+            entries = [.. entries.Take(Count)];
+        }
         if (ghost is not null && screen.Session.Awaiting is { } hero)
         {
             // The ghost replaces the hero's next predicted turn (its current turn stays first).
             var next = entries.FindIndex(1, e => e.Unit == hero);
             if (next > 0) entries.RemoveAt(next);
-            if (ghost.CastCompletes is { } cast) entries.Add(("", hero, cast, Text.T("ui.ghost_cast")));
-            if (ghost.NextTurn is { } turn) entries.Add(("", hero, turn, Text.T("ui.ghost_next")));
+            if (ghost.CastCompletes is { } cast) entries.Add(("", hero, cast, action?.Id == "flee" ? Text.T("ui.timeline_flees") : Text.T("ui.ghost_cast"), null));
+            if (ghost.NextTurn is { } turn) entries.Add(("", hero, turn, Text.T("ui.ghost_next"), null));
             var first = entries[0];
-            entries = [first, .. entries.Skip(1).OrderBy(e => e.Tick).ThenBy(e => e.Ghost is null ? 0 : 1)];
+            entries = [first, .. entries.Skip(1).OrderBy(e => e.Tick).ThenBy(e => e.Cast is null ? 1 : 0).ThenBy(e => e.Ghost is null ? 0 : 1)];
             entries = [.. entries.Take(Count)];
         }
 
@@ -60,8 +70,8 @@ public partial class Timeline : Control
         var keep = new HashSet<string>();
         for (var i = 0; i < entries.Count; i++)
         {
-            var (_, unit, tick, ghostLabel) = entries[i];
-            var baseKey = (ghostLabel is null ? "" : "ghost:") + unit.Id;
+            var (_, unit, tick, ghostLabel, castLabel) = entries[i];
+            var baseKey = (ghostLabel is not null ? "ghost:" : castLabel is not null ? "cast:" : "") + unit.Id;
             var n = seen[baseKey] = seen.GetValueOrDefault(baseKey) + 1;
             var key = $"{baseKey}#{n}";
             keep.Add(key);
@@ -72,8 +82,8 @@ public partial class Timeline : Control
                 AddChild(chip);
             }
             // An enemy's plan is for its next turn: only its first chip shows it.
-            var intent = ghostLabel is null && n == 1 && unit.Alive ? unit.Intent : null;
-            chip.Set(unit, tick, ghostLabel, i == 0 && ghostLabel is null && screen.Session.Awaiting is not null, intent);
+            var intent = ghostLabel is null && castLabel is null && n == 1 && unit.Alive ? unit.Intent : null;
+            chip.Set(unit, tick, ghostLabel, castLabel, i == 0 && ghostLabel is null && screen.Session.Awaiting is not null, intent);
             var t = chip.CreateTween().SetParallel();
             t.TweenProperty(chip, "position", new Vector2(6, Top + i * ChipHeight), 0.25f).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
             t.TweenProperty(chip, "modulate:a", ghostLabel is null ? 1f : 0.75f, 0.2f);
@@ -84,6 +94,10 @@ public partial class Timeline : Control
             chips.Remove(key);
         }
     }
+
+    /// <summary>What a cast in progress does when it lands: "Flees" for Flee, else "Fire Bolt lands".</summary>
+    string CastLabel(Cast cast) => cast.ActionId == "flee" ? Text.T("ui.timeline_flees")
+        : Text.F("ui.timeline_cast", ("action", screen.Main.Data.Actions[cast.ActionId].Name));
 
     /// <summary>
     /// A small tag on <paramref name="unit"/>'s next chip (a stagger's "−20 Act"). It's the chip's child, so it rides
@@ -119,16 +133,17 @@ public partial class Timeline : Control
 
         Unit? unit;
         long tick;
-        string? ghost;
+        string? ghost, cast;
         bool now;
         Intent? intent;
         float flash;                                                     // 0–1 while the intent flashes
 
-        public void Set(Unit u, long t, string? ghostLabel, bool current, Intent? plan)
+        public void Set(Unit u, long t, string? ghostLabel, string? castLabel, bool current, Intent? plan)
         {
             unit = u;
             tick = t;
             ghost = ghostLabel;
+            cast = castLabel;
             now = current;
             intent = plan;
             Size = new Vector2(140, ChipHeight - 4);
@@ -153,7 +168,8 @@ public partial class Timeline : Control
             var side = Ui.Side(unit.Side);
             var box = new Rect2(Vector2.Zero, Size);
             DrawRect(box, ghost is null ? new Color(side.Darkened(0.7f), 0.95f) : new Color(0, 0, 0, 0.3f));
-            DrawRect(box, ghost is not null ? Ui.Gold : now ? Ui.Gold : new Color(side, 0.8f), false, ghost is not null || now ? 2 : 1);
+            DrawRect(box, ghost is not null || now ? Ui.Gold : cast is not null ? Ui.Mana : new Color(side, 0.8f), false,
+                ghost is not null || now || cast is not null ? 2 : 1);
             var portrait = new Rect2(4, 4, 34, 34);
             DrawFace(font, unit, portrait, 14);
             var x = portrait.End.X + 4;
@@ -162,6 +178,7 @@ public partial class Timeline : Control
             DrawString(font, new Vector2(x, 16), ghost ?? name, HorizontalAlignment.Left, w, 10, ghost is null ? Ui.Ink : Ui.Gold);
             DrawString(font, new Vector2(x, 30), Text.F("ui.at_time", ("time", Core.Combat.CombatLog.T(tick))), HorizontalAlignment.Left, w, 10, Ui.Dim);
             if (now) DrawString(font, new Vector2(x, 44), Text.T("ui.now"), HorizontalAlignment.Left, w, 10, Ui.Gold);
+            if (cast is not null) DrawString(font, new Vector2(x, 44), cast, HorizontalAlignment.Left, w, 10, Ui.Mana);
             if (intent is not null) DrawIntent(font, intent);
         }
 

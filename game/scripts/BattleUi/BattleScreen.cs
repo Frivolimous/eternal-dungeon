@@ -528,7 +528,7 @@ public partial class BattleScreen : Control
         if (why is not null) parts.Add(F("ui.unusable", ("reason", Text.Reason(why))));
         info.Text = string.Join(T("log.separator"), parts);
         ghost = why is null ? Preview.NextTurn(Battle, hero, action) : null;
-        timeline.Refresh(ghost);
+        timeline.Refresh(ghost, action);
     }
 
     void Pick(ActionDef action)
@@ -542,7 +542,7 @@ public partial class BattleScreen : Control
         picked = action;
         mode = Mode.ChooseTarget;
         ghost = Preview.NextTurn(Battle, hero, action);
-        timeline.Refresh(ghost);
+        timeline.Refresh(ghost, action);
         ClearMarks();
         board.Cards[hero].Face.Mark = CardMark.Active;
         if (action.Target == ActionTarget.Tile)

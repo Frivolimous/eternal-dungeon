@@ -176,8 +176,10 @@ A combat ends in one of three ways:
    beaten).
 3. **Death:** the whole party is dead, or all heroes are dead or unconscious with no rest left: a party wipe.
 
-**Fleeing** (decided 2026-10-08): Flee is a hero action (100 AP, from any tile) and always works: the hero leaves the
-battle at once, and enemies whose plan aimed at it plan again. When every hero has fled or died, the party has fled.
+**Fleeing** (decided 2026-10-08; cast 2026-10-11): Flee is a hero action (100 AP, from any tile) cast like a spell over 1
+turn: the hero stays on the board while it casts (its Act meter stops, the turn order shows when it will leave), and
+anything that interrupts a cast (stun, most stagger) stops it. When the cast completes, the hero leaves the battle, and
+enemies whose plan aimed at it plan again. When every hero has fled or died, the party has fled.
 If the enemies all die while some heroes have fled, it's a victory: the fled heroes rejoin but get no XP for that
 battle. Fled heroes pay the battle's Stamina cost like everyone else, and dead heroes stay dead. So a party can send one
 hero away to avoid a wipe, at the cost of that hero's XP, the fight and its Stamina; that's intended.

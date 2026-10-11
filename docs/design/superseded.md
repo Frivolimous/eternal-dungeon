@@ -68,3 +68,4 @@
 | Exploration screen layout | Regions as boxes with paths between them, actions, details and the journal in a right column (Claude, M3A step 4) | The sketched-map layout in Exploration › Map screen (Jeremy, 2026-10-11) |
 | Hero Panel timing | Points spent and potions used only between Events, never in the middle of one (2026-10-08) | Anywhere outside battle, during an Event too; to be disabled again if abused (Jeremy, 2026-10-11) |
 | Event panel | A boxed panel with the Active Hero's portrait (or the Event's square picture), the choices as buttons with the hero in brackets, and the preview under them (Claude, M3A step 4) | Jeremy's Event screen (Exploration › Event screen): banner, text choices, a hover popup, the hero highlighted in the party bar |
+| Flee timing | Flee worked at once (2026-10-08) | A 1-turn cast, interruptible like any cast, shown in the turn order: fleeing was too easy (Jeremy, 2026-10-11) |
