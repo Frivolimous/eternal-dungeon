@@ -29,7 +29,6 @@ public partial class RunScreen : Control
     HeroPanel? heroPanel;
 
     public bool HeroPanelOpen => heroPanel is not null;
-    ColorRect? backdrop;
     Control? popup;
 
     /// <summary>The journal stays open or shut across screens (a battle replaces this one).</summary>
@@ -368,10 +367,6 @@ public partial class RunScreen : Control
         ClosePopup();
         if (heroPanel is null)
         {
-            // A dimmed backdrop: the panel is modal, and a click outside it closes it.
-            backdrop = new ColorRect { Color = new Color(0, 0, 0, 0.6f), AnchorRight = 1, AnchorBottom = 1 };
-            backdrop.GuiInput += e => { if (e is InputEventMouseButton { Pressed: true }) CloseHeroPanel(); };
-            Overlay(backdrop);
             heroPanel = new HeroPanel(this, hero ?? Run.Heroes[0]);
             Overlay(heroPanel);
         }
@@ -383,8 +378,6 @@ public partial class RunScreen : Control
     {
         if (heroPanel is null) return;
         heroPanel.QueueFree();
-        backdrop?.QueueFree();
-        backdrop = null;
         heroPanel = null;
         if (!refocus) return;
         if (arrivalGo is not null) arrivalGo.GrabFocus();     // points spent: set out next
@@ -537,7 +530,12 @@ public partial class RunScreen : Control
 
     async void TakeScreenshot(ScreenshotJob job)
     {
-        if (job.Panel == "hero") OpenHeroPanel(Run.Heroes.FirstOrDefault(h => h.SkillPoints > 0) ?? Run.Heroes[0]);
+        if (job.Panel == "hero")
+        {
+            OpenHeroPanel(Run.Heroes.FirstOrDefault(h => h.SkillPoints > 0) ?? Run.Heroes[0]);
+            // Focus a skill, so the shot shows its tooltip too.
+            Callable.From(() => (heroPanel?.FindChild("skill_*", true, false) as Control)?.GrabFocus()).CallDeferred();
+        }
         await ToSignal(GetTree().CreateTimer(0.5), SceneTreeTimer.SignalName.Timeout);
         for (var i = 0; i < 3; i++)
             await ToSignal(RenderingServer.Singleton, RenderingServer.SignalName.FramePostDraw);

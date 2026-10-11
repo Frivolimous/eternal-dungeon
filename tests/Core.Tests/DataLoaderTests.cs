@@ -34,6 +34,14 @@ public class DataLoaderTests
         Fails(("units", $"[{unit}]"), ("unit_tag_stats", tagStats));
 
     [Fact]
+    public void A_stat_says_whether_it_reads_as_a_percentage()
+    {
+        Assert.True(TestData.Repo.Stats["avoid"].Percent);                // a fraction: 0.33 reads 33%
+        Assert.False(TestData.Repo.Stats["hit_stagger"].Percent);         // an amount of Act
+        Assert.False(TestData.Repo.Stats["health"].Percent);
+    }
+
+    [Fact]
     public void Units_load_with_stat_columns_tag_stats_and_compounds()
     {
         var data = LoadTables(Base(

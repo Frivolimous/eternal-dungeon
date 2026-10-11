@@ -139,8 +139,11 @@ public partial class Main : Control
         }
         var focus = GetViewport().GuiGetFocusOwner();
         // The Hero Panel is browsing, not playing: close it.
-        if (focus is not null && FindParent<RunUi.HeroPanel>(focus) is { } panel)
-            focus = panel.FindChild("close", true, false) as Control;
+        if (screen is RunUi.RunScreen { HeroPanelOpen: true } open)
+        {
+            open.CloseHeroPanel();
+            return;
+        }
         if (focus is BaseButton { Disabled: false } b)
         {
             b.EmitSignal(BaseButton.SignalName.Pressed);
@@ -148,13 +151,6 @@ public partial class Main : Control
         }
         else if (screen is RunUi.RunScreen rs) rs.FocusMap(always: true);
         if (autopilot == 0) ShootNow(screenshot!);
-    }
-
-    static T? FindParent<T>(Node node) where T : Node
-    {
-        for (var n = node; n is not null; n = n.GetParent())
-            if (n is T t) return t;
-        return null;
     }
 
     async void ShootNow(ScreenshotJob job)

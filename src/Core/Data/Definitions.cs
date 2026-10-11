@@ -34,12 +34,14 @@ public sealed record StatDef(
     bool Integer,
     bool Hidden,
     double PointValue = 0.01,
-    double Base = 0)
+    double Base = 0,
+    bool Percent = false)
 {
     // PointValue: what one compound-stat point adds to this stat. Compound points are percentages, so a stat
     // written as a fraction (Hit 0.10, Rate 0.5) gets 0.01 a point; Power, written in points, gets 1.
     // Base: added after the modifiers combine, wherever the stat is read. Hit has Base 1: its modifiers start
     // from 0 and combine as usual (Dim), and the result is offset, so every unit hits 100% by default.
+    // Percent: the stat is a fraction, shown as a percentage (Avoid 0.33 reads 33%); otherwise it's an amount.
 
     /// <summary>Whether the stat can be written as a tag stat, such as "Fire Power 50".</summary>
     public bool TagKeyed => Group != StatGroup.Character;

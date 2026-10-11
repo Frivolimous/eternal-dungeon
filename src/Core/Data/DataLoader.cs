@@ -163,7 +163,7 @@ public static partial class DataLoader
     static StatDef ReadStat(Row r)
     {
         var stat = new StatDef(r.Str("id"), r.Str("name"), r.Enum<StatGroup>("group"), r.Enum<CombineMode>("combine"),
-            r.Bool("integer"), r.Bool("hidden"), r.Num("point_value"), r.Num("base"));
+            r.Bool("integer"), r.Bool("hidden"), r.Num("point_value"), r.Num("base"), r.Bool("percent"));
         if (stat.Integer && stat.Combine != CombineMode.Add)
             throw r.Error("integer", "only stats that combine by add can be integers");
         return stat;

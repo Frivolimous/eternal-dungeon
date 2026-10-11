@@ -24,6 +24,7 @@ public static class Schemas
         Enum<CombineMode>("combine", required: true),
         Bool("integer"),
         Bool("hidden"),
+        Bool("percent"),
         Number("point_value", @default: 0.01),
         Number("base", @default: 0));
 
