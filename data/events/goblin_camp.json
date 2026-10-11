@@ -9,7 +9,7 @@
   { "id": "stormed", "type": "story", "success": "patrol" },
   { "id": "patrol", "type": "combat", "encounter": "d0_camp_patrol", "scale": "major", "success": "inside" },
   { "id": "patrol_ready", "type": "combat", "encounter": "d0_camp_patrol", "scale": "major", "initiative": "first_strike", "success": "inside" },
-  { "id": "inside", "type": "story", "success": "pot" },
+  { "id": "inside", "type": "story", "image": "fortress_inside", "success": "pot" },
   { "id": "pot", "type": "story", "success": "chief" },
   { "id": "chief", "type": "combat", "encounter": "d0_goblin_chief", "scale": "boss", "success": "rescued" },
   { "id": "rescued", "type": "action", "actions": [{ "type": "flag", "key": "son_rescued" }, { "type": "complete_dungeon" }], "success": "chief_falls" },
