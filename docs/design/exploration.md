@@ -77,9 +77,15 @@ The exploration screen looks like a sketched map (Jeremy's layout, 2026-10-11):
   by dashed borders that look hand-drawn. Only borders of Regions the player has seen are drawn, so the map grows as it's
   explored. Where two Regions are linked, their border has a **passage**: a gap with a dotted path through it.
 - Each seen Region shows one **central icon**, which also says what can be pressed: **?** (unexplored, can be explored);
-  the Feature at full strength (something to do: a deferred Event, with a red dot, or an Interactable to use); the
-  Feature **dimmed** once complete (hover: "(complete)", nothing to press); the Feature **faded** for a Region seen from
-  afar but not reachable (no hover). The whole Region answers the mouse; keyboard and controller focus the icons.
+  the Feature at full strength while its Event is deferred (with a red dot); the Feature **dimmed** once complete
+  (hover: "(complete)"); the Feature **faded** for a Region seen from afar but not reachable (no hover). The whole Region
+  answers the mouse; keyboard and controller focus the icons.
+- **Interactables** (a Sanctuary, a Pathway, an Alchemist Station) have **icons of their own**, beside the Region's
+  central icon: **glowing** while the party can use them, plain until the Region's Event is over, dimmed once used.
+  Pressing one opens what can be done there (2026-10-11).
+- **A Region with no Event** isn't silent: a short line **rises from the Region** and fades, naming its Interactable
+  ("There's a Sanctuary here.") or, with nothing there, a line from its Feature's small pool ("A dry spring, full of
+  leaves and disappointment."), else a general one. An animation joins it later (2026-10-11).
 - There is **no party marker**: the party's location is indeterminate, and it can explore any linked Region.
 - **Footer:** the **Camp** button (a campfire with the charges left; it asks "Camp now?" with what a Camp restores
   before using a charge) with the **Hero Panel** button under it; then each hero: its card as in battle (portrait,

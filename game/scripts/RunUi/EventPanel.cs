@@ -109,7 +109,7 @@ public partial class EventPanel : Control
             choiceButtons.Add(b);
         }
         // Keyboard and controller players get the first choice focused; with the mouse, nothing is lit until pointed at.
-        if (focus && keyboard) choiceButtons[0].GrabFocus();
+        if (focus && Ui.KeyboardMode) choiceButtons[0].GrabFocus();
     }
 
     public void FocusFirst()
@@ -120,7 +120,7 @@ public partial class EventPanel : Control
     /// <summary>Focus the first choice for a keyboard or controller player (back from the Hero Panel, say).</summary>
     public void FocusIfKeyboard()
     {
-        if (keyboard) FocusFirst();
+        if (Ui.KeyboardMode) FocusFirst();
     }
 
     /// <summary>The banner: the block's own picture, else the latest one before it in the Event, else its first.</summary>
@@ -225,15 +225,6 @@ public partial class EventPanel : Control
     }
 
     void HidePopup() => popup.Visible = false;
-
-    /// <summary>The last input came from the keyboard or a controller (not the mouse): new blocks focus their first choice.</summary>
-    static bool keyboard;
-
-    public override void _Input(InputEvent e)
-    {
-        if (e is InputEventKey or InputEventJoypadButton { Pressed: true }) keyboard = true;
-        else if (e is InputEventMouseButton || (e is InputEventMouseMotion m && m.Relative.LengthSquared() > 4)) keyboard = false;
-    }
 
     public override void _UnhandledInput(InputEvent e)
     {

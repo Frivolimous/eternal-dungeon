@@ -62,7 +62,7 @@ public static class ArtCatalog
     /// button's icon.</summary>
     public static readonly (int W, int H) MapDisplay = (1260, 600);
 
-    public const int FeatureIconDisplay = 80, CampIconDisplay = 40;
+    public const int FeatureIconDisplay = 80, CampIconDisplay = 40, InteractableIconDisplay = 36;
 
     /// <summary>An Event's banner picture, across the top of the Event screen: a fixed width, and any height from 3:1 to 2:1
     /// (shown at the picture's own shape).</summary>
@@ -115,6 +115,9 @@ public static class ArtCatalog
         list.Add(new ArtRequest("map_background", MapDisplay.W * 2, MapDisplay.H * 2, "Maps",
             "Neutral parchment for every Map, like the paper of a sketched map: no drawing on it (the game draws the Regions, borders and icons)", true));
         list.Add(new ArtRequest("icon_camp", CampIconDisplay * 2, CampIconDisplay * 2, "Maps", "Camp (the Camp button): a campfire", true));
+        foreach (var kind in Enum.GetValues<InteractableKind>())
+            list.Add(new ArtRequest($"icon_interactable_{JsonField.SnakeCase(kind.ToString())}", InteractableIconDisplay * 2, InteractableIconDisplay * 2,
+                "Interactable icons", $"{JsonField.SnakeCase(kind.ToString()).Replace('_', ' ')} (beside its Region's icon on the map, glowing while usable): sketched in ink on transparency", true));
         foreach (var feature in data.Nodes.Values.GroupBy(n => n.Feature))
             list.Add(new ArtRequest($"icon_feature_{feature.Key}", FeatureIconDisplay * 2, FeatureIconDisplay * 2, "Feature icons",
                 $"{string.Join(", ", feature.Select(n => n.Name))}: sketched in ink on transparency, like a drawing on the map", true));

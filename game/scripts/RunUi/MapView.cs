@@ -13,13 +13,15 @@ public enum Fog { Hidden, Revealed, Eligible, Explored }
 /// The current Map as a sketched map (Anchor: Exploration › Map screen): each Node is a Region, the part of the Map
 /// nearest it (<see cref="MapRegions"/>), split by hand-drawn dashed borders with a gap where a path crosses. Only borders
 /// of Regions the player has seen are drawn, so the map grows as it's explored. Each seen Region shows one central icon
-/// (<see cref="NodeButton"/>) that says what can be done there. The mouse works on the whole Region; keyboard and
-/// controller focus the icons.
+/// (<see cref="NodeButton"/>) that says what can be done there, and an explored Region's Interactables have icons of
+/// their own beside it (<see cref="InteractableIcon"/>, glowing while usable). The mouse works on the whole Region and
+/// moves the focus, so one ring shows at a time; keyboard and controller focus the icons.
 /// </summary>
 public partial class MapView : Control
 {
     readonly RunScreen screen;
     readonly Dictionary<string, NodeButton> buttons = [];
+    readonly List<InteractableIcon> things = [];
     readonly PanelContainer label = new() { MouseFilter = MouseFilterEnum.Ignore, Visible = false };
     readonly Label labelText = new() { AutoTranslateMode = AutoTranslateModeEnum.Disabled };
     MapLayout? layout;
@@ -27,7 +29,9 @@ public partial class MapView : Control
 
     /// <summary>The Region under the mouse, if the player can hover it.</summary>
     public NodeButton? Hovered { get; private set; }
-    NodeButton? focused;
+
+    /// <summary>The icon the label is for while the mouse isn't on a Region: the focused one, or a hovered Interactable.</summary>
+    Control? marked;
 
     /// <summary>The sketch's colours: ink on parchment.</summary>
     public static readonly Color Ink = new(0.24f, 0.19f, 0.14f), Parchment = new(0.92f, 0.9f, 0.85f),
@@ -58,8 +62,11 @@ public partial class MapView : Control
     public void Refresh()
     {
         foreach (var b in buttons.Values) b.QueueFree();
+        foreach (var t in things) t.QueueFree();
         buttons.Clear();
-        Hovered = focused = null;
+        things.Clear();
+        Hovered = null;
+        marked = null;
         if (Run.Started)
         {
             if (layoutMap != Run.Map.Id) (layout, layoutMap) = (MapRegions.Of(Run.Map), Run.Map.Id);
@@ -69,10 +76,28 @@ public partial class MapView : Control
                 if (fog == Fog.Hidden) continue;
                 var b = new NodeButton(screen, this, node, fog);
                 b.Pressed += () => screen.PressNode(node);
-                b.FocusEntered += () => { focused = b; ShowLabel(); };
-                b.FocusExited += () => { if (focused == b) focused = null; ShowLabel(); };
+                Watch(b);
                 buttons[node.Def.Id] = b;
                 AddChild(b);
+                if (fog != Fog.Explored) continue;
+                foreach (var thing in node.Interactables)
+                {
+                    var icon = new InteractableIcon(screen, node, thing);
+                    Watch(icon);
+                    icon.MouseEntered += () =>
+                    {
+                        SetHovered(null);
+                        if (icon.FocusMode != FocusModeEnum.None) icon.GrabFocus();
+                        Mark(icon);
+                    };
+                    icon.MouseExited += () =>
+                    {
+                        if (icon.HasFocus()) icon.ReleaseFocus();
+                        Mark(null);
+                    };
+                    things.Add(icon);
+                    AddChild(icon);
+                }
             }
         }
         MoveChild(label, -1);
@@ -80,13 +105,25 @@ public partial class MapView : Control
         ShowLabel();
     }
 
-    /// <summary>Focus where there's something to do: an unexplored Region, else a waiting Event, else a Region with
-    /// something to use (the Pathway), else any Region the player can look at.</summary>
+    void Watch(Control c)
+    {
+        c.FocusEntered += () => Mark(c);
+        c.FocusExited += () => { if (marked == c) Mark(null); };
+    }
+
+    void Mark(Control? c)
+    {
+        marked = c;
+        ShowLabel();
+    }
+
+    /// <summary>Focus where there's something to do: an unexplored Region, else a waiting Event, else something to use
+    /// (the Pathway), else any Region the player can look at.</summary>
     public void FocusFirst()
     {
-        var pick = buttons.Values.FirstOrDefault(b => b.Fog == Fog.Eligible)
+        Control? pick = buttons.Values.FirstOrDefault(b => b.Fog == Fog.Eligible)
             ?? buttons.Values.FirstOrDefault(b => b.Node.Event == EventStatus.Deferred)
-            ?? buttons.Values.FirstOrDefault(b => b.Clickable)
+            ?? (Control?)things.FirstOrDefault(t => t.Usable)
             ?? buttons.Values.FirstOrDefault(b => b.Hoverable);
         pick?.GrabFocus();
     }
@@ -103,6 +140,13 @@ public partial class MapView : Control
     {
         foreach (var (id, b) in buttons)
             b.Position = Center(Run.Nodes[id].Def) - NodeButton.Box / 2;
+        // A Region's Interactables sit up and to the right of its main icon, in a row.
+        foreach (var group in things.GroupBy(t => t.Node))
+        {
+            var k = 0;
+            foreach (var t in group)
+                t.Position = Center(group.Key.Def) + new Vector2(34 + k++ * (InteractableIcon.Box.X + 4), -78);
+        }
         ShowLabel();
         QueueRedraw();
     }
@@ -114,36 +158,57 @@ public partial class MapView : Control
         if (!Run.Started) return;
         if (e is InputEventMouseMotion m)
             SetHovered(buttons.GetValueOrDefault(MapRegions.At(Run.Map, ToLayout(m.Position)).Id) is { Hoverable: true } b ? b : null);
-        else if (e is InputEventMouseButton { ButtonIndex: MouseButton.Left, Pressed: true } && Hovered is { Clickable: true } h)
+        else if (e is InputEventMouseButton { ButtonIndex: MouseButton.Left, Pressed: true } && Hovered is { Pressable: true } h)
         {
             AcceptEvent();
-            h.GrabFocus();
             screen.PressNode(h.Node);
         }
     }
 
+    /// <summary>The mouse is on <paramref name="b"/>'s Region (null: on none): it takes the focus, so one ring shows.</summary>
     void SetHovered(NodeButton? b)
     {
         if (b == Hovered) return;
         Hovered?.QueueRedraw();
         Hovered = b;
+        if (b is not null) b.GrabFocus();
+        else if (GetViewport()?.GuiGetFocusOwner() is NodeButton owner && owner.GetParent() == this) owner.ReleaseFocus();
         b?.QueueRedraw();
-        MouseDefaultCursorShape = b is { Clickable: true } ? CursorShape.PointingHand : CursorShape.Arrow;
+        MouseDefaultCursorShape = b is { Pressable: true } ? CursorShape.PointingHand : CursorShape.Arrow;
         ShowLabel();
         QueueRedraw();
     }
 
-    /// <summary>The name label under the hovered (else focused) Region's icon.</summary>
+    /// <summary>The name label under the hovered Region's icon, else under the focused or hovered icon.</summary>
     void ShowLabel()
     {
-        var b = Hovered ?? focused;
-        label.Visible = b is not null;
-        if (b is null) return;
-        labelText.Text = b.Label;
+        Control? c = Hovered ?? marked;
+        var text = c switch { NodeButton b => b.Label, InteractableIcon t => t.Label, _ => null };
+        label.Visible = text is not null && IsInstanceValid(c);
+        if (!label.Visible) return;
+        labelText.Text = text;
         label.ResetSize();
         var size = label.GetCombinedMinimumSize();
-        var pos = b.Position + new Vector2(NodeButton.Box.X / 2 - size.X / 2, NodeButton.Box.Y - 6);
+        var pos = c!.Position + new Vector2(c.Size.X / 2 - size.X / 2, c.Size.Y - 6);
         label.Position = new Vector2(Mathf.Clamp(pos.X, 4, Size.X - size.X - 4), Mathf.Min(pos.Y, Size.Y - size.Y - 4));
+    }
+
+    /// <summary>A line that rises from a Region and fades: what the party found there ("Nothing here but quiet.").</summary>
+    public void Fly(NodeDef node, string text)
+    {
+        var fly = new Label { Text = text, AutoTranslateMode = AutoTranslateModeEnum.Disabled, MouseFilter = MouseFilterEnum.Ignore };
+        fly.AddThemeColorOverride("font_color", Ink);
+        fly.AddThemeColorOverride("font_outline_color", Parchment);
+        fly.AddThemeConstantOverride("outline_size", 8);
+        fly.AddThemeFontSizeOverride("font_size", Ui.Px(18));
+        AddChild(fly);
+        var size = fly.GetCombinedMinimumSize();
+        var start = Center(node) + new Vector2(-size.X / 2, NodeButton.Box.Y / 2 - 10);
+        fly.Position = new Vector2(Mathf.Clamp(start.X, 4, Size.X - size.X - 4), Mathf.Min(start.Y, Size.Y - size.Y - 30));
+        var t = fly.CreateTween();
+        t.TweenProperty(fly, "position:y", fly.Position.Y - 34, 2.4).SetEase(Tween.EaseType.Out).SetTrans(Tween.TransitionType.Cubic);
+        t.Parallel().TweenProperty(fly, "modulate:a", 0f, 0.8).SetDelay(screen.Screenshot is null ? 1.6 : 10);
+        t.TweenCallback(Callable.From(fly.QueueFree));
     }
 
     // ---- Drawing ----
@@ -161,7 +226,7 @@ public partial class MapView : Control
         {
             var poly = cell.Select(ToScreen).ToArray();
             if (!Seen(id)) DrawColoredPolygon(poly, FogTint);
-            else if (Hovered?.Node.Def.Id == id && Hovered.Clickable) DrawColoredPolygon(poly, new Color(Ring, 0.12f));
+            else if (Hovered?.Node.Def.Id == id && Hovered.Pressable) DrawColoredPolygon(poly, new Color(Ring, 0.12f));
         }
         foreach (var border in layout.Borders.Where(x => Seen(x.A) || Seen(x.B)))
         {
@@ -178,7 +243,7 @@ public partial class MapView : Control
         var (a, b) = (ToScreen(border.From), ToScreen(border.To));
         var length = a.DistanceTo(b);
         var normal = (b - a).Normalized().Orthogonal();
-        var seed = (uint)StringComparer.Ordinal.GetHashCode(border.A + "|" + border.B);
+        var seed = Ui.StableHash(border.A + "|" + border.B);
         var (p1, p2) = ((seed % 628) / 100f, (seed / 628 % 628) / 100f);
         var steps = Math.Max(2, (int)(length / 10));
         var amp = Mathf.Min(7, length * 0.06f);
@@ -234,9 +299,9 @@ public partial class MapView : Control
 
 /// <summary>
 /// The central icon of a seen Region, which says what the player can do there: a "?" for an unexplored Region the party
-/// can reach (or its Feature, if a reveal showed it), the Feature at full strength where something can be done (a
-/// waiting Event, with a red dot; a Sanctuary, Pathway or Alchemist Station), dimmed once complete, and faded (no hover)
-/// for a Region seen from afar but not reachable yet.
+/// can reach (or its Feature, if a reveal showed it), the Feature at full strength while its Event waits (with a red
+/// dot), dimmed once complete (its Interactables have their own icons), and faded (no hover) for a Region seen from
+/// afar but not reachable yet.
 /// </summary>
 public partial class NodeButton : Button
 {
@@ -266,13 +331,18 @@ public partial class NodeButton : Button
     DungeonRun Run => screen.Run;
 
     bool Waiting => Node.Event == EventStatus.Deferred;
-    List<InteractableState> Usable => Run.Usable.Where(u => u.Node == Node).Select(u => u.Interactable).ToList();
+
+    /// <summary>Its Interactables the party can use now (they have icons of their own).</summary>
+    public bool HasUsable => Run.Usable.Any(u => u.Node == Node);
 
     /// <summary>The player can point at it (a Region seen from afar can't be).</summary>
     public bool Hoverable => Fog is Fog.Eligible or Fog.Explored;
 
-    /// <summary>Pressing it does something: explore, resume a waiting Event, or use what's there.</summary>
-    public bool Clickable => Fog == Fog.Eligible || (Fog == Fog.Explored && (Waiting || Usable.Count > 0));
+    /// <summary>Its icon is lit: the Region can be explored, or its Event resumed.</summary>
+    public bool Clickable => Fog == Fog.Eligible || (Fog == Fog.Explored && Waiting);
+
+    /// <summary>Pressing the Region does something: what <see cref="Clickable"/> says, or using an Interactable there.</summary>
+    public bool Pressable => Clickable || (Fog == Fog.Explored && HasUsable);
 
     /// <summary>The name label's text.</summary>
     public string Label
@@ -282,8 +352,6 @@ public partial class NodeButton : Button
             if (Fog == Fog.Eligible)
                 return Node.Revealed is null ? T("ui.node_unexplored") : F("ui.node_unexplored_named", ("node", Node.Def.Name));
             if (Waiting) return F("ui.node_waiting", ("node", Node.Def.Name), ("event", T(EventDef.NameKey(Node.Def.Event!))));
-            var usable = Usable.Select(u => RunLog.InteractableName(EternalDungeon.Game.Text.Strings, u.Kind)).ToList();
-            if (usable.Count > 0) return F("ui.node_use", ("node", Node.Def.Name), ("status", string.Join(T("preview.separator"), usable)));
             return F("ui.node_complete", ("node", Node.Def.Name));
         }
     }
@@ -323,6 +391,73 @@ public partial class NodeButton : Button
             DrawCircle(mark, 11, reveal == RevealIcon.Sanctuary ? Ui.Party : Ui.Enemy);
             var glyph = reveal switch { RevealIcon.Boss => "!!", RevealIcon.Enemies => "!", _ => "+" };
             DrawString(font, mark + new Vector2(-11, 6), glyph, HorizontalAlignment.Center, 22, Ui.Px(14), Colors.White);
+        }
+    }
+}
+
+/// <summary>
+/// An Interactable's own icon (a Sanctuary, a Pathway, an Alchemist Station), beside its Region's main icon: glowing
+/// while the party can use it, plain until the Region's Event is over, dimmed once used. Pressing it opens what can be
+/// done there.
+/// </summary>
+public partial class InteractableIcon : Button
+{
+    public static readonly Vector2 Box = new(44, 44);
+    public NodeState Node { get; }
+    readonly InteractableState thing;
+    readonly RunScreen screen;
+
+    public InteractableIcon(RunScreen screen, NodeState node, InteractableState thing)
+    {
+        this.screen = screen;
+        Node = node;
+        this.thing = thing;
+        Size = Box;
+        CustomMinimumSize = Box;
+        FocusMode = Usable ? FocusModeEnum.All : FocusModeEnum.None;
+        MouseDefaultCursorShape = Usable ? CursorShape.PointingHand : CursorShape.Arrow;
+        AutoTranslateMode = AutoTranslateModeEnum.Disabled;
+        foreach (var style in new[] { "normal", "hover", "pressed", "disabled", "focus" })
+            AddThemeStyleboxOverride(style, new StyleBoxEmpty());
+        FocusEntered += QueueRedraw;
+        FocusExited += QueueRedraw;
+        Pressed += () => { if (Usable) screen.OpenInteractables(node, [thing]); };
+    }
+
+    public bool Usable => screen.Run.Usable.Any(u => u.Interactable == thing);
+
+    string Name => RunLog.InteractableName(EternalDungeon.Game.Text.Strings, thing.Kind);
+
+    public string Label => thing.Used ? F("ui.thing_used", ("interactable", Name))
+        : Usable ? F("ui.thing_use", ("interactable", Name)) : F("ui.thing_later", ("interactable", Name));
+
+    public override void _Process(double delta)
+    {
+        if (Usable) QueueRedraw();                                     // the glow pulses
+    }
+
+    public override void _Draw()
+    {
+        var font = GetThemeDefaultFont();
+        var center = Box / 2;
+        const float r = Core.Assets.ArtCatalog.InteractableIconDisplay / 2f;
+        if (Usable)
+        {
+            var pulse = 0.5f + 0.5f * Mathf.Sin(Time.GetTicksMsec() / 260f);
+            for (var i = 4; i >= 1; i--)
+                DrawCircle(center, r + 2 + i * 3 * (0.7f + 0.3f * pulse), new Color(Ui.Gold, 0.07f + 0.05f * pulse));
+        }
+        if (HasFocus()) DrawArc(center, r + 5, 0, Mathf.Tau, 40, MapView.Ring, 4, true);
+        var alpha = thing.Used ? 0.4f : Usable ? 1f : 0.65f;
+        var rect = new Rect2(center - new Vector2(r, r), new Vector2(r * 2, r * 2));
+        if (screen.Main.Art.Get($"icon_interactable_{JsonField.SnakeCase(thing.Kind.ToString())}") is { } tex)
+            DrawTextureRect(tex, rect, false, new Color(1, 1, 1, alpha));
+        else
+        {
+            // Placeholder: a gold disc with the Interactable's initial.
+            DrawCircle(center, r, new Color(Ui.Gold.Darkened(0.15f), alpha));
+            DrawArc(center, r, 0, Mathf.Tau, 32, new Color(MapView.Ink, alpha), 2, true);
+            DrawString(font, new Vector2(0, center.Y + 8), Name[..1], HorizontalAlignment.Center, Box.X, Ui.Px(22), new Color(MapView.Ink, alpha));
         }
     }
 }

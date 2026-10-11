@@ -5,6 +5,19 @@ namespace EternalDungeon.Game;
 /// <summary>Placeholder look: colours, the theme, and small builders for panels and buttons.</summary>
 public static class Ui
 {
+    /// <summary>The last input came from the keyboard or a controller, not the mouse (<see cref="Main"/> tracks it): screens
+    /// focus their first control for keyboard players only, so a mouse player sees nothing lit until pointing.</summary>
+    public static bool KeyboardMode { get; set; }
+
+    /// <summary>A hash of a string that's the same on every run of the game (string.GetHashCode isn't): for looks that must
+    /// stay put, like a border's bend or which flavour line a Region shows.</summary>
+    public static uint StableHash(string s)
+    {
+        var h = 2166136261u;                                        // FNV-1a
+        foreach (var c in s) h = (h ^ c) * 16777619u;
+        return h;
+    }
+
     public static readonly Color Background = new(0.118f, 0.106f, 0.149f);
     public static readonly Color Panel = new(0.16f, 0.145f, 0.2f, 0.94f);
     public static readonly Color PanelBorder = new(0.36f, 0.32f, 0.42f);

@@ -105,6 +105,12 @@ public partial class Main : Control
     /// <summary>Seconds played in this run (saved with it, for the end screen).</summary>
     public double RunSeconds { get; private set; }
 
+    public override void _Input(InputEvent e)
+    {
+        if (e is InputEventKey or InputEventJoypadButton { Pressed: true }) Ui.KeyboardMode = true;
+        else if (e is InputEventMouseButton || (e is InputEventMouseMotion m && m.Relative.LengthSquared() > 4)) Ui.KeyboardMode = false;
+    }
+
     public override void _Process(double delta)
     {
         if (Run is { Over: false }) RunSeconds += delta;
@@ -140,7 +146,7 @@ public partial class Main : Control
             b.EmitSignal(BaseButton.SignalName.Pressed);
             autopilot--;
         }
-        else if (screen is RunUi.RunScreen rs) rs.FocusMap();
+        else if (screen is RunUi.RunScreen rs) rs.FocusMap(always: true);
         if (autopilot == 0) ShootNow(screenshot!);
     }
 

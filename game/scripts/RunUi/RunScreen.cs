@@ -162,12 +162,35 @@ public partial class RunScreen : Control
             return;
         }
         Refresh();
+        // A Region with no Event: a line rises from it, naming what's there, or the quiet.
+        if (r.Outcomes.OfType<NodeExplored>().FirstOrDefault() is { } explored && !r.Outcomes.Any(o => o is EventStarted))
+            map.Fly(explored.Node, FoundText(explored.Node));
     }
 
     /// <summary>What changes something the player cares about: rolls, Health, Mana, Stamina, status, Gold, items, buffs,
     /// reveals, XP, deaths. (Not who leads, a buff wearing off or the Event closing.)</summary>
     static bool Impactful(RunOutcome o) => o is EventRolled or ResourceChanged or StatusChanged or NodeRevealed or BuffGained
         or GoldChanged or ItemGained or CampChargesChanged or InteractableSpawned or HeroDied or XpGained;
+
+    /// <summary>What the party finds in a Region without an Event: its Interactables, else a line from the Feature's pool
+    /// (explore.empty.&lt;feature&gt;.1, .2…), else the general one (explore.empty.1…), chosen by a stable hash of the run
+    /// and the Region: the same run shows the same line, and the run's random numbers are left alone.</summary>
+    string FoundText(NodeDef node)
+    {
+        if (node.Interactables.Count > 0)
+            return F("explore.found", ("interactable", string.Join(T("preview.separator"),
+                node.Interactables.Select(k => RunLog.InteractableName(EternalDungeon.Game.Text.Strings, k)))));
+        var pool = Pool($"explore.empty.{node.Feature}.");
+        if (pool.Count == 0) pool = Pool("explore.empty.");
+        return pool.Count == 0 ? "" : T(pool[(int)(Ui.StableHash($"{Run.Seed}:{node.Id}") % (uint)pool.Count)]);
+    }
+
+    static List<string> Pool(string prefix)
+    {
+        var keys = new List<string>();
+        for (var i = 1; EternalDungeon.Game.Text.Strings.Has(prefix + i); i++) keys.Add(prefix + i);
+        return keys;
+    }
 
     static RunResult Single(RunOutcome o)
     {
@@ -208,9 +231,11 @@ public partial class RunScreen : Control
 
     void Overlay(Control c) => overlayLayer.AddChild(c);
 
-    /// <summary>Focus the first thing to do: an Event's first choice while one is open, else the map.</summary>
-    public void FocusMap()
+    /// <summary>Focus the first thing to do: an Event's first choice while one is open, else the map. Only for keyboard
+    /// and controller players unless <paramref name="always"/> (a mouse player sees nothing lit until pointing).</summary>
+    public void FocusMap(bool always = false)
     {
+        if (!always && !Ui.KeyboardMode) return;
         if (eventPanel is not null) Callable.From(eventPanel.FocusFirst).CallDeferred();
         else Callable.From(map.FocusFirst).CallDeferred();
     }
@@ -228,7 +253,7 @@ public partial class RunScreen : Control
 
     /// <summary>A small list of what the party can do at a Node: use its Sanctuary, take its Pathway, buy at its
     /// Alchemist Station.</summary>
-    void OpenInteractables(NodeState node, List<InteractableState> things)
+    public void OpenInteractables(NodeState node, List<InteractableState> things)
     {
         ClosePopup();
         var panel = new PanelContainer();
@@ -493,6 +518,15 @@ public partial class RunScreen : Control
 
     public override void _UnhandledInput(InputEvent e)
     {
+        // Nothing focused (the mouse was in use): the first arrow or accept focuses the first thing to do.
+        if (eventPanel is null && popup is null && heroPanel is null && arrival is null && GetViewport().GuiGetFocusOwner() is null
+            && (e.IsActionPressed("ui_up") || e.IsActionPressed("ui_down") || e.IsActionPressed("ui_left")
+                || e.IsActionPressed("ui_right") || e.IsActionPressed("ui_accept")))
+        {
+            FocusMap(always: true);
+            AcceptEvent();
+            return;
+        }
         if (!e.IsActionPressed("ui_cancel")) return;
         if (popup is not null) { ClosePopup(); FocusMap(); }
         else if (heroPanel is not null) CloseHeroPanel();
