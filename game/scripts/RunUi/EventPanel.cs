@@ -9,8 +9,9 @@ namespace EternalDungeon.Game.RunUi;
 /// The Event screen (Anchor: Exploration › Event screen), over the map, which it darkens (the header and the party stay
 /// lit: Camp is off, the Hero Panel opens): the Event's name, its banner picture, what the last choice did (in italics),
 /// the story text, and the choices as lines of text (gold; white when hovered or focused), a trait or class choice with
-/// a grey line under it naming its trait and hero. Hovering or focusing a choice shows its preview in a popup beside it
-/// and lights up the hero who would take it in the party bar. With no choices, a Continue line. Number keys pick.
+/// a grey line under it naming its trait and hero. Pointing at a choice focuses it (so one line is white at a time);
+/// the first choice is focused at once only for keyboard and controller players. A focused choice shows its preview
+/// beside it and lights up the hero who would take it in the party bar. With no choices, a Continue line. Number keys pick.
 /// </summary>
 public partial class EventPanel : Control
 {
@@ -55,7 +56,8 @@ public partial class EventPanel : Control
     }
 
     /// <summary>Rebuilds the panel for the current story block, with what the last choice did above its text.</summary>
-    /// <param name="focus">Focus the first choice (not while the Hero Panel is open over the Event).</param>
+    /// <param name="focus">Focus the first choice for a keyboard or controller player (not while the Hero Panel is open
+    /// over the Event).</param>
     public void Show(IReadOnlyList<string> lastLines, bool focus = true)
     {
         foreach (var c in col.GetChildren()) c.QueueFree();
@@ -97,9 +99,7 @@ public partial class EventPanel : Control
             var b = Line(RunLog.ChoiceText(Text.Strings, e.Def, block, p.Choice), () => screen.Act(() => Run.Choose(p.Choice.Id)));
             var takers = Takers(p);
             var popupLines = PopupText(p, takers);
-            b.MouseEntered += () => Hover(b, popupLines, takers);
             b.FocusEntered += () => Hover(b, popupLines, takers);
-            b.MouseExited += () => { if (!b.HasFocus()) Unhover(); };
             b.FocusExited += Unhover;
             var group = new VBoxContainer();
             group.AddThemeConstantOverride("separation", -2);
@@ -108,12 +108,19 @@ public partial class EventPanel : Control
             col.AddChild(group);
             choiceButtons.Add(b);
         }
-        if (focus) choiceButtons[0].GrabFocus();
+        // Keyboard and controller players get the first choice focused; with the mouse, nothing is lit until pointed at.
+        if (focus && keyboard) choiceButtons[0].GrabFocus();
     }
 
     public void FocusFirst()
     {
         if (choiceButtons.Count > 0) choiceButtons[0].GrabFocus();
+    }
+
+    /// <summary>Focus the first choice for a keyboard or controller player (back from the Hero Panel, say).</summary>
+    public void FocusIfKeyboard()
+    {
+        if (keyboard) FocusFirst();
     }
 
     /// <summary>The banner: the block's own picture, else the latest one before it in the Event, else its first.</summary>
@@ -129,6 +136,9 @@ public partial class EventPanel : Control
     static Button Line(string text, Action pressed)
     {
         var b = Ui.Button(text, pressed);
+        // The pointer moves the focus, so one line is white at a time (and its preview and hero follow).
+        b.MouseEntered += () => b.GrabFocus();
+        b.MouseExited += () => { if (b.HasFocus()) b.ReleaseFocus(); };
         b.Alignment = HorizontalAlignment.Left;
         b.AutowrapMode = TextServer.AutowrapMode.WordSmart;
         b.CustomMinimumSize = new Vector2(Width, 0);
@@ -216,9 +226,27 @@ public partial class EventPanel : Control
 
     void HidePopup() => popup.Visible = false;
 
+    /// <summary>The last input came from the keyboard or a controller (not the mouse): new blocks focus their first choice.</summary>
+    static bool keyboard;
+
+    public override void _Input(InputEvent e)
+    {
+        if (e is InputEventKey or InputEventJoypadButton { Pressed: true }) keyboard = true;
+        else if (e is InputEventMouseButton || (e is InputEventMouseMotion m && m.Relative.LengthSquared() > 4)) keyboard = false;
+    }
+
     public override void _UnhandledInput(InputEvent e)
     {
         if (screen.HeroPanelOpen) return;                        // keys belong to the panel on top
+        // Nothing focused (the mouse was in use): the first move or accept focuses the first choice.
+        if (choiceButtons.Count > 0 && !choiceButtons.Any(b => b.HasFocus())
+            && (e.IsActionPressed("ui_up") || e.IsActionPressed("ui_down") || e.IsActionPressed("ui_accept")
+                || e.IsActionPressed("ui_focus_next") || e.IsActionPressed("ui_focus_prev")))
+        {
+            choiceButtons[0].GrabFocus();
+            AcceptEvent();
+            return;
+        }
         if (e is InputEventKey { Pressed: true, Echo: false } key && key.Keycode is >= Key.Key1 and <= Key.Key9)
         {
             var n = (int)(key.Keycode - Key.Key1);

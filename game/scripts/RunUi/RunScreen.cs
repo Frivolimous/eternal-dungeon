@@ -208,9 +208,11 @@ public partial class RunScreen : Control
 
     void Overlay(Control c) => overlayLayer.AddChild(c);
 
+    /// <summary>Focus the first thing to do: an Event's first choice while one is open, else the map.</summary>
     public void FocusMap()
     {
-        Callable.From(map.FocusFirst).CallDeferred();
+        if (eventPanel is not null) Callable.From(eventPanel.FocusFirst).CallDeferred();
+        else Callable.From(map.FocusFirst).CallDeferred();
     }
 
     // ---- The Map: what pressing a Node does ----
@@ -361,7 +363,7 @@ public partial class RunScreen : Control
         heroPanel = null;
         if (!refocus) return;
         if (arrivalGo is not null) arrivalGo.GrabFocus();     // points spent: set out next
-        else if (eventPanel is not null) eventPanel.FocusFirst();
+        else if (eventPanel is not null) eventPanel.FocusIfKeyboard();
         else FocusMap();
     }
 
