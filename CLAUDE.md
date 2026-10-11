@@ -107,7 +107,8 @@ game/              Godot .NET project: presentation and input only
                          (user://save.json) after every action and at each hero decision in battle
   assets/manifest.json   fixed images (size, AI-placeholder flag) and the art styles
   assets/styles/<style>/ one folder per candidate art style, images by ArtCatalog id (docs/art-requests.md)
-docs/screenshots/  reference screenshots from screenshot mode
+docs/screenshots/  reference screenshots from screenshot mode;  docs/screen-guide.md  a name for every piece of
+                   every screen (keep it current when screens change)
 tools/build.ps1    export script
 builds/            export output (not committed)
 ```

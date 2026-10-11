@@ -258,21 +258,29 @@ wild-beast enemies, and a family story told through Dungeon flags. Claude writes
 
 ## Acceptance criteria
 
+Status checked 2026-10-11, at the end of step 4. Each ticked item names what backs it.
+
 - [x] The Anchor updates above are written, with superseded rows (2026-10-08).
 - [ ] A new game starts Dungeon 0. Both Maps can be fully explored, and the Goblin Chief can be beaten, with the mouse
-      alone and with the keyboard alone.
-- [ ] Every Event block type works, including trait and class conditions, rolls with modifiers, Gold conditions,
+      alone and with the keyboard alone. *Built: auto-play completes 199 of 200 runs (`sim dungeon --runs 200`), and the
+      screenshot autopilot plays a run through every screen to its end screen by keyboard focus alone. Left for Jeremy: a full run
+      with the mouse alone and one with the keyboard alone.*
+- [x] Every Event block type works, including trait and class conditions, rolls with modifiers, Gold conditions,
       initiative modifiers, defer and resume, spawned Interactables (Sanctuary, Alchemist Station), and Boss flee →
-      defer. All 15 Events from the manifest are playable and validate on load.
-- [ ] Stamina, Exhaustion, Unconscious with auto-Rest, Camp, Sanctuary, potions and consumables follow the rules.
-      The Flee rules hold, including the victory-with-fled-heroes case.
-- [ ] XP, levels, spending points anywhere outside combat, prerequisites, masteries at 1, 6 and 11 and traits work.
-      Heroes reach about Level 4 before the final boss in a typical run.
-- [ ] Constant saving: quit and reload anywhere, including mid-battle and mid-Event, and the run continues identically
-      (tested).
-- [ ] A wipe restarts Dungeon 0. Completion shows the end screen.
-- [ ] `sim event` and `sim dungeon` work. The dungeon summary is in `docs/sample-logs/`.
-- [ ] No hard-coded text: every event string is a key in `strings.csv`. Reference screenshots of the new screens are
-      in `docs/screenshots/`. The art request list is updated.
-- [ ] `CLAUDE.md` and `docs/commands.md` list the new commands. `ed.bat` has them.
+      defer. All 15 Events from the manifest are playable and validate on load. *RunTests, Dungeon0Tests (every first
+      choice of every Event plays to its end; the Gold condition and both spawns, 2026-10-11), EventLoaderTests.*
+- [x] Stamina, Exhaustion, Unconscious with auto-Rest, Camp, Sanctuary, potions and consumables follow the rules.
+      The Flee rules hold, including the victory-with-fled-heroes case. *RunTests; Flee is now a 1-turn cast
+      (ProgressionTests).*
+- [x] XP, levels, spending points anywhere outside combat, prerequisites, masteries at 1, 6 and 11 and traits work.
+      Heroes reach about Level 4 before the final boss in a typical run. *ProgressionTests, SkillEffectTests; level 4.0
+      at the Chief in auto-play. The numbers are Jeremy's to tune.*
+- [x] Constant saving: quit and reload anywhere, including mid-battle and mid-Event, and the run continues identically
+      (tested). *SaveTests (reload at every action and every hero decision); the game saves after each.*
+- [x] A wipe restarts Dungeon 0. Completion shows the end screen. *RunTests; the end screen for both.*
+- [x] `sim event` and `sim dungeon` work. The dungeon summary is in `docs/sample-logs/`. *Logs regenerated 2026-10-11.*
+- [x] No hard-coded text: every event string is a key in `strings.csv`. Reference screenshots of the new screens are
+      in `docs/screenshots/`. The art request list is updated. *EventLoaderTests check every key; a test keeps
+      art-requests.md current; `run_*.png`.*
+- [x] `CLAUDE.md` and `docs/commands.md` list the new commands. `ed.bat` has them. *Options 13 and 14.*
 - [ ] **Checkpoint (go/no-go):** Jeremy plays Dungeon 0 start to finish a few times. Is the loop fun?

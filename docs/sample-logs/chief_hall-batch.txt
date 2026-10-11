@@ -1,47 +1,47 @@
 The Goblin Chief · 1000 battles · seeds 1–1000
 Win rate         100.0%  (1000 won, 0 lost, 0 stalemates)
-Battle length    11.2 turns on average
-Party HP left    51.4% on average, 7.9% at worst
-Hit rate         94.8% of 40200 attacks
+Battle length    10.6 turns on average
+Party HP left    56.9% on average, 27.6% at worst
+Hit rate         94.8% of 39098 attacks
 
 Damage dealt per battle
-  Elementalist              198.8
-  Rogue                     182.8
-  Warrior                   165.4
-  Goblin Chief              117.7
-  Goblin Grunt               45.4
+  Elementalist              199.5
+  Rogue                     177.8
+  Warrior                   169.3
+  Goblin Chief              114.2
+  Goblin Grunt               44.7
 
 Hero deaths per battle
-  Warrior                     0.2
+  Warrior                     0.1
   Rogue                       0.1
 
 Actions used per battle
-  Elementalist: Fire Bolt               4.2
-  Elementalist: Frost Shard             4.6
-  Goblin Chief: Cleave                  5.4
-  Goblin Chief: War Cry                 2.8
-  Goblin Grunt: Defend                  3.2
+  Elementalist: Fire Bolt               4.1
+  Elementalist: Frost Shard             4.3
+  Goblin Chief: Cleave                  5.2
+  Goblin Chief: War Cry                 2.7
+  Goblin Grunt: Defend                  3.1
   Goblin Grunt: Move                    1.0
-  Goblin Grunt: Slash                   3.5
-  Rogue: Dagger Attack                 16.4
+  Goblin Grunt: Slash                   3.4
+  Rogue: Dagger Attack                 15.8
   Rogue: Defend                         0.6
   Rogue: Move                           0.1
-  Warrior: Attack                       2.3
-  Warrior: Defend                       0.8
-  Warrior: Power Attack                 3.9
+  Warrior: Attack                       2.5
+  Warrior: Defend                       0.6
+  Warrior: Power Attack                 3.8
 
 Effects and CC applied per battle
-  Chill                                 4.0
-  Guard                                 4.6
+  Chill                                 3.8
+  Guard                                 4.3
   Stealth                               0.1
-  War Cry                               2.8
+  War Cry                               2.7
   Act knocked back (stagger)            0.0
   Casts interrupted                     0.0
 
 Procs fired per battle
-  Elementalist: Chill                   4.0
-  Goblin Chief: War Cry                 2.8
-  Goblin Grunt: Guard                   3.2
+  Elementalist: Chill                   3.8
+  Goblin Chief: War Cry                 2.7
+  Goblin Grunt: Guard                   3.1
   Rogue: Guard                          0.6
   Rogue: Stealth                        0.1
-  Warrior: Guard                        0.8
+  Warrior: Guard                        0.6

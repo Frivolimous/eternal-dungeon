@@ -1,149 +1,146 @@
 Systems Showcase · seed 42
-Party: Rogue 100 HP, Warrior 148 HP, Elementalist 80 HP
+Party: Rogue 100 HP, Warrior 162 HP, Elementalist 100 HP
 Enemies: Goblin Brute 200 HP, Goblin Grunt 85 HP, Goblin Hexer 160 HP
 
 [T 0.59] Rogue → Move
          Rogue moves r1c0 → r0c1 (opposing area)
-         applies Stealth (+0.5 avoid, -1 threatening, 1 turns) on Rogue
+         applies Stealth (+0.5 avoid, -1 threatening, 2 turns) on Rogue
          Goblin Grunt now plans Slash → Rogue (its plan was blocked)
 [T 0.89] Goblin Hexer begins casting Hex Bolt at Warrior (ready at T 1.49)
-[T 1.00] Stealth on Rogue ends
 [T 1.00] Rogue → Dagger Attack → Goblin Hexer
          hit (100%) · 12 dmg (Physical) · Goblin Hexer HP 160 → 148
+         Stealth on Rogue ends
 [T 1.00] Warrior → Shield Bash → Goblin Hexer
          hit (100%) · 7 dmg (Physical) · Goblin Hexer HP 148 → 141
          Goblin Hexer moves r0c2 → r1c2 (Push)
          applies Dazed (Stun, 1 turns) on Goblin Hexer
          interrupts Goblin Hexer: the cast fizzles
 [T 1.00] Elementalist → Frost Shard → Goblin Grunt
-         hit (100%) · 18 dmg (Arcane, Ice) · Goblin Grunt HP 85 → 67
+         hit (100%) · 19 dmg (Arcane, Ice) · Goblin Grunt HP 85 → 66
          applies Chill (-30 speed, 2 turns) on Goblin Grunt
 [T 1.17] Goblin Grunt → Slash → Rogue
          hit (83%) · 16 dmg (Physical) · Rogue HP 100 → 84
 [T 1.43] Goblin Brute → Smash → Warrior
          miss (77%)
 [T 1.63] Rogue → Dagger Attack → Goblin Grunt
-         hit (100%) · 12 dmg (Physical) · Goblin Grunt HP 67 → 55
+         hit (100%) · 12 dmg (Physical) · Goblin Grunt HP 66 → 54
 [T 2.00] Dazed on Goblin Hexer ends
 [T 2.00] Warrior → Power Attack → Goblin Brute
-         hit (100%) · 34 dmg (Physical) · Goblin Brute HP 200 → 166
+         hit (100%) · 36 dmg (Physical) · Goblin Brute HP 200 → 164
 [T 2.00] Elementalist begins casting Fire Bolt at Goblin Grunt (ready at T 2.50)
 [T 2.25] Rogue → Dagger Attack → Goblin Grunt
-         hit (100%) · 12 dmg (Physical) · Goblin Grunt HP 55 → 43
+         hit (100%) · 12 dmg (Physical) · Goblin Grunt HP 54 → 42
 [T 2.50] Elementalist → Fire Bolt → Goblin Grunt
-         hit (100%) · 34 dmg (Arcane, Fire) · Goblin Grunt HP 43 → 9
+         hit (100%) · 35 dmg (Arcane, Fire) · Goblin Grunt HP 42 → 7
 [T 2.84] Goblin Grunt → Slash → Rogue
          hit (83%) · 16 dmg (Physical) · Rogue HP 84 → 68
 [T 2.86] Goblin Brute → Smash → Warrior
-         hit (77%) · 22 dmg (Physical) · Warrior HP 148 → 126
+         hit (77%) · 22 dmg (Physical) · Warrior HP 162 → 140
          staggers Warrior: −20 Act
 [T 2.88] Rogue → Dagger Attack → Goblin Grunt
-         hit (100%) · 12 dmg (Physical) · Goblin Grunt HP 9 → 0
+         hit (100%) · 12 dmg (Physical) · Goblin Grunt HP 7 → 0
          Goblin Grunt falls
 [T 3.11] Goblin Hexer begins casting Hex Bolt at Warrior (ready at T 3.71)
 [T 3.50] Rogue → Dagger Attack → Goblin Hexer
          hit (100%) · 12 dmg (Physical) · Goblin Hexer HP 141 → 129
 [T 3.50] Elementalist → Frost Shard → Goblin Hexer
-         hit (100%) · 18 dmg (Arcane, Ice) · Goblin Hexer HP 129 → 111
+         hit (100%) · 19 dmg (Arcane, Ice) · Goblin Hexer HP 129 → 110
          applies Chill (-30 speed, 2 turns) on Goblin Hexer
 [T 3.71] Goblin Hexer → Hex Bolt → Warrior
-         hit (90%) · 11 dmg (Spirit, Dark) · Warrior HP 126 → 115
+         hit (90%) · 11 dmg (Spirit, Dark) · Warrior HP 140 → 129
          Goblin Hexer's Flaming procs (100%)
-         Flaming deals 5 dmg (Arcane, Fire) to Warrior (HP 115 → 110)
+         Flaming deals 5 dmg (Arcane, Fire) to Warrior (HP 129 → 124)
          applies Dread (Fear, 2 turns) on Warrior
 [T 4.13] Rogue → Dagger Attack → Goblin Hexer
-         hit (100%) · 12 dmg (Physical) · Goblin Hexer HP 111 → 99
+         hit (100%) · 12 dmg (Physical) · Goblin Hexer HP 110 → 98
 [T 4.20] Warrior → Move
          Warrior moves r0c1 → r1c0
+         Goblin Brute now plans Smash → Elementalist (its plan was blocked)
 [T 4.29] Goblin Brute → Smash → Elementalist
-         hit (85%) · 22 dmg (Physical) · Elementalist HP 80 → 58
+         hit (85%) · 22 dmg (Physical) · Elementalist HP 100 → 78
          staggers Elementalist: −20 Act
 [T 4.70] Warrior → Defend
-         applies Guard (+0.3 avoid, Shield 15, until next turn) on Warrior
-[T 4.70] Elementalist begins casting Fire Bolt at Goblin Brute (ready at T 5.20)
+         applies Guard (+0.3 avoid, Shield 16, until next turn) on Warrior
+[T 4.70] Elementalist begins casting Fire Bolt at Goblin Hexer (ready at T 5.20)
 [T 4.75] Rogue → Dagger Attack → Goblin Hexer
-         hit (100%) · 12 dmg (Physical) · Goblin Hexer HP 99 → 87
+         hit (100%) · 12 dmg (Physical) · Goblin Hexer HP 98 → 86
 [T 5.00] Dread on Warrior ends
 [T 5.00] Chill on Goblin Hexer ends
-[T 5.20] Elementalist → Fire Bolt → Goblin Brute
-         hit (100%) · 34 dmg (Arcane, Fire) · Goblin Brute HP 166 → 132
+[T 5.20] Elementalist → Fire Bolt → Goblin Hexer
+         hit (100%) · 35 dmg (Arcane, Fire) · Goblin Hexer HP 86 → 51
 [T 5.26] Goblin Hexer begins casting Hex Bolt at Elementalist (ready at T 5.86)
 [T 5.38] Rogue → Dagger Attack → Goblin Brute
-         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 132 → 121
+         hit (100%) · 18 dmg (Physical, crit) · Goblin Brute HP 164 → 146
 [T 5.70] Guard on Warrior ends
 [T 5.70] Warrior → Move
          Warrior moves r1c0 → r0c1
-[T 5.72] Goblin Brute → Smash → Elementalist
-         hit (85%) · 22 dmg (Physical) · Elementalist HP 58 → 36
-         staggers Elementalist: −20 Act
+[T 5.72] Goblin Brute → Smash → Rogue
+         hit (79%) · 22 dmg (Physical) · Rogue HP 68 → 46
+         staggers Rogue: −20 Act
 [T 5.86] Goblin Hexer → Hex Bolt → Elementalist
-         hit (81%) · 11 dmg (Spirit, Dark) · Elementalist HP 36 → 25
+         hit (81%) · 11 dmg (Spirit, Dark) · Elementalist HP 78 → 67
          Goblin Hexer's Flaming procs (100%)
-         Flaming deals 5 dmg (Arcane, Fire) to Elementalist (HP 25 → 20)
+         Flaming deals 5 dmg (Arcane, Fire) to Elementalist (HP 67 → 62)
          applies Dread (Fear, 2 turns) on Elementalist
-[T 6.00] Rogue → Dagger Attack → Goblin Hexer
-         hit (100%) · 12 dmg (Physical) · Goblin Hexer HP 87 → 75
+[T 6.17] Rogue → Dagger Attack → Goblin Hexer
+         hit (100%) · 12 dmg (Physical) · Goblin Hexer HP 51 → 39
 [T 6.20] Warrior → Power Attack → Goblin Brute
-         hit (100%) · 34 dmg (Physical) · Goblin Brute HP 121 → 87
-[T 6.40] Elementalist → Move
+         hit (100%) · 36 dmg (Physical) · Goblin Brute HP 146 → 110
+[T 6.20] Elementalist → Move
          Elementalist moves r0c0 → r1c0
-         Goblin Brute now plans Smash → Warrior (its plan was blocked)
-[T 6.63] Rogue → Dagger Attack → Goblin Brute
-         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 87 → 76
-[T 6.90] Elementalist → Defend
-         applies Guard (+0.3 avoid, Shield 8, until next turn) on Elementalist
-[T 6.97] Goblin Hexer begins casting Hex Bolt at Elementalist (ready at T 7.57)
+[T 6.70] Elementalist → Defend
+         applies Guard (+0.3 avoid, Shield 10, until next turn) on Elementalist
+[T 6.80] Rogue → Dagger Attack → Goblin Brute
+         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 110 → 99
+[T 6.97] Goblin Hexer begins casting Hex Bolt at Rogue (ready at T 7.57)
 [T 7.00] Dread on Elementalist ends
-[T 7.15] Goblin Brute → Smash → Warrior
-         hit (77%) · 22 dmg (Physical) · Warrior HP 110 → 88
-         staggers Warrior: −20 Act
-[T 7.25] Rogue → Dagger Attack → Goblin Brute
-         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 76 → 65
-[T 7.57] Goblin Hexer → Hex Bolt → Elementalist
-         miss (57%)
-[T 7.88] Rogue → Dagger Attack → Goblin Brute
-         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 65 → 54
-[T 7.90] Guard on Elementalist ends
-[T 7.90] Elementalist → Frost Shard → Goblin Brute
-         hit (100%) · 18 dmg (Arcane, Ice) · Goblin Brute HP 54 → 36
-         applies Chill (-30 speed, 2 turns) on Goblin Brute
-[T 8.40] Warrior → Attack → Goblin Brute
-         hit (100%) · 16 dmg (Physical) · Goblin Brute HP 36 → 20
-[T 8.50] Rogue → Dagger Attack → Goblin Brute
-         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 20 → 9
-[T 8.68] Goblin Hexer begins casting Hex Bolt at Elementalist (ready at T 9.28)
-[T 8.90] Elementalist begins casting Fire Bolt at Goblin Brute (ready at T 9.40)
-[T 9.00] Chill on Goblin Brute ends
-[T 9.05] Goblin Brute → Smash → Warrior
+[T 7.15] Goblin Brute → Smash → Rogue
+         hit (79%) · 22 dmg (Physical) · Rogue HP 46 → 24
+         staggers Rogue: −20 Act
+[T 7.57] Goblin Hexer → Hex Bolt → Rogue
+         hit (90%) · 11 dmg (Spirit, Dark) · Rogue HP 24 → 13
+         Goblin Hexer's Flaming procs (100%)
+         Flaming deals 5 dmg (Arcane, Fire) to Rogue (HP 13 → 8)
+         applies Dread (Fear, 2 turns) on Rogue
+[T 7.59] Rogue → Move
+         Rogue moves r0c1 (opposing area) → r1c1 (opposing area)
+         applies Stealth (+0.5 avoid, -1 threatening, 2 turns) on Rogue
+         Goblin Brute now plans Smash → Warrior (its target became less threatening)
+         Goblin Hexer now plans Hex Bolt → Elementalist (its target became less threatening)
+[T 7.70] Guard on Elementalist ends
+[T 7.70] Elementalist → Frost Shard → Goblin Hexer
+         hit (100%) · 19 dmg (Arcane, Ice) · Goblin Hexer HP 39 → 20
+         applies Chill (-30 speed, 2 turns) on Goblin Hexer
+[T 8.00] Rogue → Defend
+         applies Guard (+0.3 avoid, Shield 10, until next turn) on Rogue
+[T 8.20] Warrior → Attack → Goblin Brute
+         hit (100%) · 17 dmg (Physical) · Goblin Brute HP 99 → 82
+[T 8.58] Goblin Brute → Smash → Warrior
          miss (77%)
-[T 9.13] Rogue → Dagger Attack → Goblin Brute
-         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 9 → 0
-         Goblin Brute falls
-         Goblin Hexer steps forward (r1c2 → r0c2)
-[T 9.28] Goblin Hexer → Hex Bolt → Elementalist
-         hit (81%) · 11 dmg (Spirit, Dark) · Elementalist HP 20 → 9
-         Goblin Hexer's Flaming procs (100%)
-         Flaming deals 5 dmg (Arcane, Fire) to Elementalist (HP 9 → 4)
-         applies Dread (Fear, 2 turns) on Elementalist
-[T 9.40] Elementalist → Fire Bolt → Goblin Brute
-         fizzles: Goblin Brute has fallen
-[T 9.40] Warrior → Power Attack → Goblin Hexer
-         hit (100%) · 38 dmg (Physical) · Goblin Hexer HP 75 → 37
-[T 9.75] Rogue → Dagger Attack → Goblin Hexer
-         hit (100%) · 12 dmg (Physical) · Goblin Hexer HP 37 → 25
-[T 10.38] Rogue → Dagger Attack → Goblin Hexer
-         hit (100%) · 12 dmg (Physical) · Goblin Hexer HP 25 → 13
-[T 10.39] Goblin Hexer begins casting Hex Bolt at Elementalist (ready at T 10.99)
-[T 10.40] Elementalist → Defend
-         applies Guard (+0.3 avoid, Shield 8, until next turn) on Elementalist
-[T 10.99] Goblin Hexer → Hex Bolt → Elementalist
-         hit (57%) · 11 dmg (Spirit, Dark) · Shield absorbs 8 · Elementalist HP 4 → 1
-         Goblin Hexer's Flaming procs (100%)
-         Flaming deals 5 dmg (Arcane, Fire) to Elementalist (HP 1 → 0)
-         Elementalist falls
-[T 11.00] Rogue → Dagger Attack → Goblin Hexer
-         hit (100%) · 12 dmg (Physical) · Goblin Hexer HP 13 → 1
-[T 11.40] Warrior → Attack → Goblin Hexer
-         hit (100%) · 18 dmg (Physical) · Goblin Hexer HP 1 → 0
+[T 8.70] Elementalist begins casting Fire Bolt at Goblin Hexer (ready at T 9.20)
+[T 8.84] Guard on Rogue ends
+[T 8.84] Rogue → Defend
+         applies Guard (+0.3 avoid, Shield 10, until next turn) on Rogue
+[T 9.00] Dread on Rogue ends
+[T 9.00] Stealth on Rogue ends
+[T 9.00] Chill on Goblin Hexer ends
+[T 9.11] Goblin Hexer begins casting Hex Bolt at Elementalist (ready at T 9.71)
+[T 9.20] Elementalist → Fire Bolt → Goblin Hexer
+         hit (100%) · 35 dmg (Arcane, Fire) · Goblin Hexer HP 20 → 0
          Goblin Hexer falls
-[T 11.40] Victory: the party wins.
+         Goblin Hexer's Hex Bolt fizzles: the caster fell
+[T 9.20] Warrior → Power Attack → Goblin Brute
+         hit (100%) · 36 dmg (Physical) · Goblin Brute HP 82 → 46
+[T 9.67] Guard on Rogue ends
+[T 9.67] Rogue → Dagger Attack → Goblin Brute
+         hit (100%) · 11 dmg (Physical) · Goblin Brute HP 46 → 35
+[T 10.00] Goblin Brute → Smash → Rogue
+         hit (79%) · 22 dmg (Physical) · Rogue HP 8 → 0
+         Rogue falls
+[T 10.20] Elementalist → Frost Shard → Goblin Brute
+         hit (100%) · 19 dmg (Arcane, Ice) · Goblin Brute HP 35 → 16
+         applies Chill (-30 speed, 2 turns) on Goblin Brute
+[T 11.20] Warrior → Attack → Goblin Brute
+         hit (100%) · 17 dmg (Physical) · Goblin Brute HP 16 → 0
+         Goblin Brute falls
+[T 11.20] Victory: the party wins.

@@ -17,6 +17,57 @@ public class Dungeon0Tests
         Assert.All(events, e => Assert.True(Repo.Events.ContainsKey(e)));
     }
 
+    /// <summary>A Dungeon 0 run past its first Event, exploring.</summary>
+    static DungeonRun Exploring()
+    {
+        var run = new DungeonRun(Repo, "dungeon_0", 1);
+        run.Start();
+        var policy = new RunPolicy();
+        while (run.State != RunState.Exploring) policy.Step(run);
+        return run;
+    }
+
+    /// <summary>Takes <paramref name="choice"/>, then continues through the story to the Event's end.</summary>
+    static void Play(DungeonRun run, params string[] choices)
+    {
+        foreach (var c in choices) run.Choose(c);
+        while (run.State == RunState.Event && run.Choices.Count == 0) run.Continue();
+    }
+
+    [Fact]
+    public void A_gold_condition_shows_its_choice_only_with_the_gold_and_the_herbalist_spawns_a_station_that_sells()
+    {
+        var run = Exploring();
+        run.DebugSetGold(0);
+        run.DebugExplore("gr_glade");
+        Assert.DoesNotContain("pay", run.Choices.Select(c => c.Id));        // 25 Gold needed
+        run.DebugSetGold(40);
+        Assert.Contains("pay", run.Choices.Select(c => c.Id));
+        Play(run, "pay");
+        Assert.Equal(15, run.Gold);
+        Assert.Contains(run.Usable, u => u.Node.Def.Id == "gr_glade" && u.Interactable.Kind == InteractableKind.AlchemistStation);
+        var potion = Repo.ItemList.First(i => i.Price > 0);
+        run.DebugSetGold(100);
+        var before = run.Pack.GetValueOrDefault(potion.Id) + run.Heroes.Sum(h => h.Charges(potion.Id));
+        run.Buy("gr_glade", potion.Id);
+        Assert.Equal(100 - potion.Price, run.Gold);
+        Assert.Equal(before + 1, run.Pack.GetValueOrDefault(potion.Id) + run.Heroes.Sum(h => h.Charges(potion.Id)));
+    }
+
+    [Fact]
+    public void Rekindling_the_campsite_spawns_a_sanctuary_the_party_can_use()
+    {
+        var run = Exploring();
+        run.DebugExplore("fe_camp");
+        Play(run, "search");
+        Play(run, "rekindle");
+        Assert.Equal(RunState.Exploring, run.State);
+        Assert.Contains(run.Usable, u => u.Node.Def.Id == "fe_camp" && u.Interactable.Kind == InteractableKind.Sanctuary);
+        var r = run.UseInteractable("fe_camp", InteractableKind.Sanctuary);
+        Assert.Single(r.Of<SanctuaryUsed>());
+        Assert.All(run.Heroes.Where(h => !h.Dead), h => Assert.Equal(h.MaxHealth, h.Health));
+    }
+
     [Fact]
     public void Every_party_trait_is_checked_somewhere()
     {

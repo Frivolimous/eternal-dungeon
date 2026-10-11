@@ -1,5 +1,5 @@
 The Caged Merchant · Forest Edge Trail · seed 1
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 
 · Forest Edge ·
 The party explores Forest Edge Trail.
@@ -12,7 +12,7 @@ Warrior takes the lead.
 → Warrior: Tear the bars apart. It will not be quiet.
 Warrior grabs the bars and heaves. The cage, never fully committed to being a cage, comes apart with an almighty crack. Nearby, two goblin voices shout and come running.
 Battle: Goblin Guards (Major fight)
-Victory. Stamina −1. Warrior 108/140, Rogue 100/100, Elementalist 80/80
+Victory. Stamina −1. Warrior 108/140, Rogue 100/100, Elementalist 100/100
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
@@ -24,14 +24,14 @@ Gold +10 (now 10)
 The merchant presses a few coins into Warrior's hand, then, after a visible struggle, one more. "Bartleby Crumpwhistle, forever in your debt! They went east, past the Gatekeeper's post. Find my family! I'll wait at the trail. And find the cart, if it's no trouble!"
 The Caged Merchant is over.
 
-Warrior 108/140 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 80/80 HP 94/120 MP St 3
+Warrior 108/140 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 100/100 HP 94/120 MP St 3
 Gold 10, Camp charges 1, pack: empty
 Flags: merchant_freed
 
 ==============================
 
 The Bog Crocodile · Black Bog · seed 1
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 
 · Forest Edge ·
 The party explores Black Bog.
@@ -42,7 +42,7 @@ The trail sinks into black, still water, and the only way on is through it. A si
 Elementalist rolls 50% (Awareness 1): failure
 The water explodes! A crocodile the length of a rowboat surges out of the murk, all teeth and no manners, and lunges for the nearest hero.
 Battle: Bog Crocodile (Major fight, Surprised)
-Victory. Stamina −1. Warrior 115/140, Rogue 75/100, Elementalist 80/80
+Victory. Stamina −1. Warrior 115/140, Rogue 75/100, Elementalist 100/100
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
@@ -54,34 +54,13 @@ Gold +15 (now 15)
 Inside the crocodile, the party finds a pouch of coins, an unbroken potion, and most of the rest of the sign.
 The Bog Crocodile is over.
 
-Warrior 115/140 HP St 3 · Rogue 75/100 HP St 3 · Elementalist 80/80 HP 94/120 MP St 3
+Warrior 115/140 HP St 3 · Rogue 75/100 HP St 3 · Elementalist 100/100 HP 94/120 MP St 3
 Gold 15, Camp charges 1, pack: Health Potion ×1
 
 ==============================
 
-The Wolf Den · Bone Cave · seed 1
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
-
-· Forest Edge ·
-The party explores Bone Cave.
-The Wolf Den (Elementalist leads)
-A shallow cave, ringed with carefully piled bones picked very clean. Skulls line the entrance in a row, the way other households keep flowerpots. Peeking inside, you can faintly see some neatly sorted scraps of meat. Snarls echo from deeper within. Several wolves, by the sound of it, all hungry.
-  · roar: Scare the pack off. Be the scariest thing here. [Warrior] → +10 Gold
-  · enter: Go in and explore. The wolves will most likely object. → Major fight (1 Stamina, 3 enemies)
-  · leave: Walk away. Let the wolves keep their flowerpots. → no fight
-Warrior takes the lead.
-→ Warrior: Scare the pack off. Be the scariest thing here.
-Gold +10 (now 10)
-Warrior bellows into the cave and bangs steel on stone. A long, thoughtful silence follows. Then the whole pack bolts for the trees, leaving their scraps behind, still neatly sorted!
-The Wolf Den is over.
-
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
-Gold 10, Camp charges 1, pack: empty
-
-==============================
-
 The Overgrown Shrine · Mossy Altar · seed 1
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 
 · Forest Edge ·
 The party explores Mossy Altar.
@@ -98,13 +77,34 @@ Elementalist gains Threadsight (5 steps)
 A warm wind stirs the clearing, and the forest snaps into focus. For a moment the whole world looks carefully stitched together, apart from a few bits nobody quite finished. The party's eyes stay sharp for a while.
 The Overgrown Shrine is over.
 
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 Gold 0, Camp charges 1, pack: empty
 
 ==============================
 
+The Wolf Den · Bone Cave · seed 1
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
+
+· Forest Edge ·
+The party explores Bone Cave.
+The Wolf Den (Elementalist leads)
+A shallow cave, ringed with carefully piled bones picked very clean. Skulls line the entrance in a row, the way other households keep flowerpots. Peeking inside, you can faintly see some neatly sorted scraps of meat. Snarls echo from deeper within. Several wolves, by the sound of it, all hungry.
+  · roar: Scare the pack off. Be the scariest thing here. [Warrior] → +10 Gold
+  · enter: Go in and explore. The wolves will most likely object. → Major fight (1 Stamina, 3 enemies)
+  · leave: Walk away. Let the wolves keep their flowerpots. → no fight
+Warrior takes the lead.
+→ Warrior: Scare the pack off. Be the scariest thing here.
+Gold +10 (now 10)
+Warrior bellows into the cave and bangs steel on stone. A long, thoughtful silence follows. Then the whole pack bolts for the trees, leaving their scraps behind, still neatly sorted!
+The Wolf Den is over.
+
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
+Gold 10, Camp charges 1, pack: empty
+
+==============================
+
 The Muddy Crossing · Mud Flats · seed 1
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 
 · Forest Edge ·
 The party explores Mud Flats.
@@ -119,13 +119,13 @@ Warrior takes the lead.
 Warrior sets a pace the mud simply cannot argue with. The party marches through without breaking stride, and every boot comes out the far side still attached.
 The Muddy Crossing is over.
 
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 Gold 0, Camp charges 1, pack: empty
 
 ==============================
 
 The Abandoned Campsite · Ransacked Camp · seed 1
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 
 · Forest Edge ·
 The party explores Ransacked Camp.
@@ -145,13 +145,13 @@ Gold +10 (now 10)
 Under a tent, the party finds a few coins and a potion the goblins missed. They were busy with the cooking pot.
 The Abandoned Campsite is over.
 
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 Gold 10, Camp charges 2, pack: Health Potion ×1
 
 ==============================
 
 The Gatekeeper Garrison · Gatekeeper's Post · seed 1
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 
 · Forest Edge ·
 The party explores Gatekeeper's Post.
@@ -165,7 +165,7 @@ Warrior takes the lead.
 → Warrior: Frighten off his guards. Some goblins scare easily.
 Warrior stands tall, weapon raised, with a look that asks which of them plans to fall with the gate. One guard drops his spear and flees into the trees. The other stays, visibly shaken. So, a little, does the Gatekeeper.
 Battle: Gatekeeper Garrison (outer guard intimidated) (Boss fight)
-Victory. Stamina −1. Warrior 99/140, Rogue 73/100, Elementalist 52/80
+Victory. Stamina −1. Warrior 99/140, Rogue 45/100, Elementalist 100/100
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
@@ -179,14 +179,14 @@ Gold +25 (now 25)
 The Gatekeeper sinks to his knees. "Tell them... the Gatekeeper... kept the gate..." *Clonk*. His helmet keeps rolling long after he stops. The iron key drops into the dirt, the gate creaks open behind him, and the path east lies clear.
 The Gatekeeper Garrison is over.
 
-Warrior 99/140 HP St 3 · Rogue 73/100 HP St 3 · Elementalist 52/80 HP 84/120 MP St 3
+Warrior 99/140 HP St 3 · Rogue 45/100 HP St 3 · Elementalist 100/100 HP 84/120 MP St 3
 Gold 25, Camp charges 1, pack: empty
 Flags: gatekeeper_key
 
 ==============================
 
 The Merchant's Wife · Thorn Thicket · seed 1
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 
 · Goblin Ruins ·
 The party explores Thorn Thicket.
@@ -197,7 +197,7 @@ A woman's scream cuts through the trees. "Help! Help! They're gonna turn me into
 → Elementalist: Investigate those suspicious bushes.
 Elementalist points out that one of the bushes has ears. The bush, offended, draws a knife. Goblin raiders pour out, but the party is ready for them!
 Battle: Goblin Raiders (Major fight)
-Victory. Stamina −1. Warrior 64/140, Rogue 100/100, Elementalist 52/80
+Victory. Stamina −1. Warrior 64/140, Rogue 100/100, Elementalist 72/100
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
@@ -207,14 +207,14 @@ Elementalist gains 15 XP (15 in all).
 "Thank you, heroes!" the woman cries as the party frees her. "But they still have my son! Please, I don't want my boy to be goblin stew!" Her husband, she explains, is caged near the forest edge, probably still shouting about the cart. "Their fortress is east. Please, bring my Tobble home."
 The Merchant's Wife is over.
 
-Warrior 64/140 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 52/80 HP 84/120 MP St 3
+Warrior 64/140 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 72/100 HP 84/120 MP St 3
 Gold 0, Camp charges 1, pack: empty
 Flags: wife_saved
 
 ==============================
 
 The Goblin Tripwire · Narrow Path · seed 1
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 
 · Goblin Ruins ·
 The party explores Narrow Path.
@@ -223,11 +223,11 @@ The path narrows between two steep banks. It's quiet. Too quiet. The birds must 
   · look: Birds know things. Watch the ground as you proceed. → 50% (Elementalist, Awareness 1): more choices / 50%: −8 Health (one hero), curse: Bleeding (3 battles), Major fight (1 Stamina, 2 enemies)
 → Elementalist: Birds know things. Watch the ground as you proceed.
 Elementalist rolls 50% (Awareness 1): failure
-Elementalist: Health -8 (80 → 72)
+Elementalist: Health -8 (100 → 92)
 Elementalist gains Bleeding (3 battles)
 Elementalist's leg catches the wire. *SPROING!* Spiked logs thunder down the bank and catch Elementalist with a nasty, bleeding gash. Up the path, a goblin patrol cheers and comes jogging down to see what it caught.
 Battle: Goblin Patrol (Major fight)
-Victory. Stamina −1. Warrior 124/140, Rogue 86/100, Elementalist 35/80
+Victory. Stamina −1. Warrior 124/140, Rogue 86/100, Elementalist 55/100
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
@@ -236,13 +236,34 @@ Rogue gains 15 XP (15 in all).
 Elementalist gains 15 XP (15 in all).
 The Goblin Tripwire is over.
 
-Warrior 124/140 HP St 3 · Rogue 86/100 HP St 3 · Elementalist 35/80 HP 102/120 MP St 3
+Warrior 124/140 HP St 3 · Rogue 86/100 HP St 3 · Elementalist 55/100 HP 102/120 MP St 3
 Gold 0, Camp charges 1, pack: empty
 
 ==============================
 
+The Baited Snare · Reed Marsh · seed 1
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
+
+· Goblin Ruins ·
+The party explores Reed Marsh.
+The Baited Snare (Elementalist leads)
+A rope snare dangles over the path, crude but obvious. Inside you see a small pile of coins, a good bait for human prey!
+  · reset: Disable the snare, shouldn't be too hard [Rogue] → +10 Gold
+  · cut: Try to grab the gold without triggering the trap → 50%: +10 Gold / 50%: Major fight (1 Stamina, 2 enemies), Surprised
+  · leave: Leave the gold, you're not falling for it! → no fight
+Rogue takes the lead.
+→ Rogue: Disable the snare, shouldn't be too hard
+Gold +10 (now 10)
+Rogue carefully traces the rope and finds the bent sapling meant to be used as the trigger. After jamming a stick to block the release, the snare is effectively disabled.
+The Baited Snare is over.
+
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
+Gold 10, Camp charges 1, pack: empty
+
+==============================
+
 The Goblin Sentry Tower · Lookout Hill · seed 1
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 
 · Goblin Ruins ·
 The party explores Lookout Hill.
@@ -261,34 +282,13 @@ Gold +10 (now 10)
 The whole valley spreads out below: a boar rooting in the grove, figures moving in the marsh, and the goblin fortress to the east. Someone has carved an arrow into the railing pointing at it, labeled HOME. A purse sits on the boards, unattended.
 The Goblin Sentry Tower is over.
 
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
-Gold 10, Camp charges 1, pack: empty
-
-==============================
-
-The Baited Snare · Reed Marsh · seed 1
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
-
-· Goblin Ruins ·
-The party explores Reed Marsh.
-The Baited Snare (Elementalist leads)
-A rope snare dangles over the path, crude but obvious. Inside you see a small pile of coins, a good bait for human prey!
-  · reset: Disable the snare, shouldn't be too hard [Rogue] → +10 Gold
-  · cut: Try to grab the gold without triggering the trap → 50%: +10 Gold / 50%: Major fight (1 Stamina, 2 enemies), Surprised
-  · leave: Leave the gold, you're not falling for it! → no fight
-Rogue takes the lead.
-→ Rogue: Disable the snare, shouldn't be too hard
-Gold +10 (now 10)
-Rogue carefully traces the rope and finds the bent sapling meant to be used as the trigger. After jamming a stick to block the release, the snare is effectively disabled.
-The Baited Snare is over.
-
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 Gold 10, Camp charges 1, pack: empty
 
 ==============================
 
 The Wild Boar · Oak Grove · seed 1
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 
 · Goblin Ruins ·
 The party explores Oak Grove.
@@ -300,7 +300,7 @@ Warrior takes the lead.
 → Warrior: Hold the line
 Warrior plants their feet and doesn't budge an inch. The party forms up around them, and the boar thunders straight into a wall of steel.
 Battle: Wild Boar (Major fight, First Strike)
-Victory. Stamina −1. Warrior 125/140, Rogue 100/100, Elementalist 80/80
+Victory. Stamina −1. Warrior 125/140, Rogue 100/100, Elementalist 100/100
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
@@ -311,13 +311,13 @@ Warrior: Health +21 (104 → 125)
 That night, the party roasts the boar over a small fire. It tastes of temper and acorns. A good meal does wonders.
 The Wild Boar is over.
 
-Warrior 125/140 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 80/80 HP 102/120 MP St 3
+Warrior 125/140 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 100/100 HP 102/120 MP St 3
 Gold 0, Camp charges 1, pack: empty
 
 ==============================
 
 The Runed Boundary Stone · Standing Stone · seed 1
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 
 · Goblin Ruins ·
 The party explores Standing Stone.
@@ -333,13 +333,13 @@ Elementalist gains Rune-Charged (3 battles)
 Elementalist presses both hands to the stone. Its power floods in, bright and cold, and stays. The stone hums a little lower, slightly put out, as the whole party's Mana surges.
 The Runed Boundary Stone is over.
 
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 Gold 0, Camp charges 1, pack: empty
 
 ==============================
 
 The Wandering Herbalist · Hermit's Glade · seed 1
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 
 · Goblin Ruins ·
 The party explores Hermit's Glade.
@@ -353,13 +353,13 @@ New at Hermit's Glade: Alchemist Station.
 She unpacks kettles, vials, and a small hand-painted sign: POTIONS. NOT MUSHROOMS. Her Alchemist Station is open for business.
 The Wandering Herbalist is over.
 
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 Gold 0, Camp charges 1, pack: empty
 
 ==============================
 
 The Goblin Camp · Goblin Fortress · seed 1
-Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 80/80 HP 120/120 MP St 4
+Warrior 140/140 HP St 4 · Rogue 100/100 HP St 4 · Elementalist 100/100 HP 120/120 MP St 4
 
 · Goblin Ruins ·
 The party explores Goblin Fortress.
@@ -374,7 +374,7 @@ Rogue takes the lead.
 Rogue sneaks around the camp's walls. On the far side, a rotting board smelling strongly of goblin urine can easily be kicked through.
 In the middle of the camp, the Goblin Chief, the fattest goblin anyone has ever seen, is lowering a small boy toward the bubbling pot. A shaman spins in circles beside it for luck. The Chief turns, outraged. "Who dares interrupt LUNCH?"
 Battle: The Goblin Chief (Boss fight)
-Victory. Stamina −1. Warrior 34/140, Rogue 100/100, Elementalist 80/80
+Victory. Stamina −1. Warrior 34/140, Rogue 100/100, Elementalist 100/100
 Warrior: Stamina -1 (4 → 3)
 Rogue: Stamina -1 (4 → 3)
 Elementalist: Stamina -1 (4 → 3)
@@ -390,9 +390,6 @@ Tobble is safe, but his family is nowhere to be found. The party sets off with h
 The Goblin Camp is over.
 The Goblin Raid is complete! Somewhere, a bard starts composing.
 
-Warrior 34/140 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 80/80 HP 40/120 MP St 3
+Warrior 34/140 HP St 3 · Rogue 100/100 HP St 3 · Elementalist 100/100 HP 40/120 MP St 3
 Gold 20, Camp charges 1, pack: empty
 Flags: son_rescued
-
-==============================
-
