@@ -5,7 +5,7 @@ namespace EternalDungeon.Core.Combat;
 /// <summary>
 /// Tree skills and masteries on a unit (Anchor: Classes › Skill trees, Masteries). A hero's tree levels decide its
 /// masteries (a mastery is held once its class's tree has 1, 6 or 11 points), and every skill held adds its stats (per
-/// level × level), grants its actions and grants its procs.
+/// level × level, plus any step reached at its level), grants its actions and grants its procs.
 /// </summary>
 public static class Skills
 {
@@ -39,7 +39,7 @@ public static class Skills
         {
             var skill = data.Skills[id];
             foreach (var s in skill.Stats)
-                unit.Stats.Add(Source(id), s.Stat, s.PerLevel * level, s.Tag);
+                if (s.At(level) is var v and not 0) unit.Stats.Add(Source(id), s.Stat, v, s.Tag);
             unit.GrantedActions.AddRange(skill.Actions.Where(a => !unit.GrantedActions.Contains(a)));
             unit.GrantedProcs.AddRange(skill.Procs);
         }

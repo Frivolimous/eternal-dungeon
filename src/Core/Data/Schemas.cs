@@ -130,9 +130,10 @@ public static class Schemas
         Id("class"), Enum<SkillKind>("kind", required: true), Int("order", required: true), Int("max_level", @default: 5),
         Id("requires", required: false), Int("points", @default: 0), List("actions"), List("procs"));
 
-    /// <summary>What a skill raises per level: a stat (optionally tag-keyed) or a compound stat.</summary>
-    public static readonly TableSchema SkillStats = Child("skill_stats", "skills", "skill", ["stat", "tag"],
-        Id("stat"), Id("tag", required: false), Number("per_level", required: true));
+    /// <summary>What a skill raises: a stat (optionally tag-keyed) or a compound stat, either <c>per_level</c> × its level
+    /// or a flat <c>amount</c> once it reaches <c>at_level</c>.</summary>
+    public static readonly TableSchema SkillStats = Child("skill_stats", "skills", "skill", ["stat", "tag", "at_level"],
+        Id("stat"), Id("tag", required: false), Number("per_level"), Int("at_level"), Number("amount"));
 
     /// <summary>Hero levels and the total XP each takes.</summary>
     public static readonly TableSchema Levels = new("levels", [Int("level", required: true), Int("xp", required: true), Text("note")], ["level"]);

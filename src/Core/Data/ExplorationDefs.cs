@@ -89,9 +89,14 @@ public sealed record DungeonDef(string Id, string Name, int CampCharges, IReadOn
 /// its class's tree; Anchor: Classes › Skill trees, Masteries).</summary>
 public enum SkillKind { Tree, Mastery }
 
-/// <summary>A stat (or compound stat) a skill raises: <see cref="PerLevel"/> × its level. A flag stat (an effect
-/// switched on, such as the opening crit) counts as on above 0.</summary>
-public sealed record SkillStat(string Stat, string? Tag, double PerLevel);
+/// <summary>A stat (or compound stat) a skill raises: <see cref="PerLevel"/> × its level, or (with <see cref="AtLevel"/>) a
+/// flat <see cref="Amount"/> from that level on, a boost or a drop. A flag stat (an effect switched on, such as the
+/// opening crit) counts as on above 0.</summary>
+public sealed record SkillStat(string Stat, string? Tag, double PerLevel, int? AtLevel = null, double Amount = 0)
+{
+    /// <summary>What it adds at a skill level.</summary>
+    public double At(int level) => AtLevel is { } n ? (level >= n ? Amount : 0) : PerLevel * level;
+}
 
 /// <summary>
 /// One skill of a class: a tree skill with its prerequisite (1+ point in it) and tier position, or a mastery with the

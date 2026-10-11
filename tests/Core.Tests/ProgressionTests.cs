@@ -183,6 +183,44 @@ public class ProgressionTests
         Assert.Contains("two masteries at 1 points", Fails("""{ "id": "b", "name": "B", "class": "warrior", "kind": "mastery", "order": 9, "points": 1 }"""));
     }
 
+    [Fact]
+    public void A_skill_step_adds_a_flat_amount_from_its_level_on()
+    {
+        var files = RunTestData.RepoFiles();
+        RunTestData.AddRows(files, "skill_stats", """
+              { "skill": "vigor", "stat": "health", "at_level": 5, "amount": 10 },
+              { "skill": "vigor", "stat": "avoid", "at_level": 1, "amount": -0.05 }
+            """);
+        var data = RunTestData.Load(files);
+        var perLevel = data.Skills["vigor"].Stats.Single(s => s.Stat == "health" && s.AtLevel is null).PerLevel;
+        double Stat(int level, string stat = "health")
+        {
+            var u = new Unit("warrior", data.Units["warrior"], Side.Party, data);
+            if (level > 0) Skills.Apply(data, u, new Dictionary<string, int> { ["vigor"] = level });
+            return u.Stats.Get(stat);
+        }
+        Assert.Equal(perLevel * 4, Stat(4) - Stat(0), 6);           // no step yet
+        Assert.Equal(perLevel * 5 + 10, Stat(5) - Stat(0), 6);      // the step joins at 5
+        Assert.True(Stat(1, "avoid") < Stat(0, "avoid"));           // a drop from level 1
+    }
+
+    [Fact]
+    public void Skill_stat_rows_give_per_level_or_a_step()
+    {
+        Assert.Contains("levels run 1 to 5, got 6", FailsStat("""{ "skill": "vigor", "stat": "power", "at_level": 6, "amount": 1 }"""));
+        Assert.Contains("not both", FailsStat("""{ "skill": "vigor", "stat": "power", "per_level": 1, "at_level": 2, "amount": 1 }"""));
+        Assert.Contains("at_level needs an amount", FailsStat("""{ "skill": "vigor", "stat": "power", "at_level": 2 }"""));
+        Assert.Contains("amount needs an at_level", FailsStat("""{ "skill": "vigor", "stat": "power", "amount": 1 }"""));
+        Assert.Contains("give per_level", FailsStat("""{ "skill": "vigor", "stat": "power" }"""));
+    }
+
+    static string FailsStat(string row)
+    {
+        var files = RunTestData.RepoFiles();
+        RunTestData.AddRows(files, "skill_stats", "  " + row);
+        return Assert.Throws<DataException>(() => RunTestData.Load(files)).Message;
+    }
+
     /// <summary>Loads the repo data with one extra skill row; returns the error.</summary>
     static string Fails(string row)
     {

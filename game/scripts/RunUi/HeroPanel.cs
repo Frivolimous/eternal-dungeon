@@ -207,14 +207,25 @@ public partial class HeroPanel : PanelContainer
     {
         var parts = new List<string>();
         if (Text.Strings.Has("skill." + skill.Id)) parts.Add(T("skill." + skill.Id));
-        var stats = skill.Stats.Where(s => !Flag(s)).Select(s =>
+        string Amounts(IEnumerable<SkillStat> rows, Func<SkillStat, double> value) => string.Join(", ", rows.Select(s =>
         {
             var name = Data.Compounds.TryGetValue(s.Stat, out var c) ? c.Name : Data.Stats[s.Stat].Name;
             if (s.Tag is { } tag) name = $"{Data.Tags[tag].Name} {name}";
-            return $"{(s.PerLevel > 0 ? "+" : "")}{Num(s.PerLevel)} {name}";
-        }).ToList();
-        if (stats.Count > 0)
-            parts.Add(skill.Kind == SkillKind.Tree ? F("ui.per_level", ("stats", string.Join(", ", stats))) : string.Join(", ", stats));
+            return $"{(value(s) > 0 ? "+" : "")}{Num(value(s))} {name}";
+        }));
+        var shown = skill.Stats.Where(s => !Flag(s)).ToList();
+        var scaling = shown.Where(s => s.AtLevel is null).ToList();
+        if (scaling.Count > 0)
+        {
+            var stats = Amounts(scaling, s => s.PerLevel);
+            parts.Add(skill.Kind == SkillKind.Tree ? F("ui.per_level", ("stats", stats)) : stats);
+        }
+        // Steps: a flat boost or drop from a level on (a mastery's only level needs no label).
+        foreach (var step in shown.Where(s => s.AtLevel is not null).GroupBy(s => s.AtLevel!.Value).OrderBy(g => g.Key))
+        {
+            var stats = Amounts(step, s => s.Amount);
+            parts.Add(skill.Kind == SkillKind.Tree ? F("ui.at_level", ("level", step.Key), ("stats", stats)) : stats);
+        }
         foreach (var a in skill.Actions)
             parts.Add(F("ui.grants_action", ("action", Data.Actions[a].Name)));
         return string.Join(" ", parts);

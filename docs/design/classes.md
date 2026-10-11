@@ -63,6 +63,8 @@ Tree skills are **passives and modifiers**. Active abilities come from masteries
 - **Effect modifiers:** change standard effects, or effects tied to the class.
 - **Rule exceptions:** a special rule, or a change to a rule, not covered above.
 
+A skill's stats either scale with its level (an amount per level) or come in **steps**: a flat boost or drop from a given level on, often at level 1 (a skill's identity from its first point, or the cost of its gain) or level 5 (a capstone). A skill can mix both (decided 2026-10-11).
+
 ## Masteries
 
 Each class has 3 masteries, unlocked in order by the **total points spent in that class's tree: 1, 6 and 11**. Masteries have one level. A Dabble holds at most 5 points, so it gets exactly the first mastery; a Secondary reaching its third (11 of its 15 possible points) is a deliberate sacrifice.

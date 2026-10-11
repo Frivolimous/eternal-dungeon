@@ -245,7 +245,21 @@ public static partial class DataLoader
                     }
                     if (def.Group == StatGroup.Trait) throw x.Error("stat", "skills don't raise traits (traits come from classes)");
                 }
-                skillStats.Add(new SkillStat(stat, tag, x.Num("per_level")));
+                if (x.Has("at_level"))
+                {
+                    // A step: a flat amount from that level on.
+                    var at = x.Int("at_level");
+                    if (at < 1 || at > maxLevel) throw x.Error("at_level", $"the skill's levels run 1 to {maxLevel}, got {at}");
+                    if (x.Has("per_level")) throw x.Error("per_level", "a row gives either per_level or at_level + amount, not both");
+                    if (!x.Has("amount")) throw x.Error("amount", "at_level needs an amount (what it adds from that level on)");
+                    skillStats.Add(new SkillStat(stat, tag, 0, at, x.Num("amount")));
+                }
+                else
+                {
+                    if (x.Has("amount")) throw x.Error("amount", "amount needs an at_level (use per_level to scale with every level)");
+                    if (!x.Has("per_level")) throw x.Error("per_level", "give per_level, or at_level + amount");
+                    skillStats.Add(new SkillStat(stat, tag, x.Num("per_level")));
+                }
             }
             skills.Add(new SkillDef(id, r.Str("name"), r.Str("class"), kind, r.Int("order"), maxLevel, requires, points,
                 r.List("actions"), r.List("procs"), skillStats));
