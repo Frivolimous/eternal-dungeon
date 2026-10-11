@@ -94,7 +94,7 @@ The exploration screen looks like a sketched map (Jeremy's layout, 2026-10-11):
 Jeremy's layout (2026-10-11). An Event opens over the map, which goes 80% dark; the header and the party footer stay
 lit. Camp is off during an Event; the Hero Panel opens (spending points and using potions included).
 
-- **Title** at the top, then a wide **banner picture** (an Event's story blocks name their picture; a block without
+- **Title** at the top, then a wide **banner picture**, any shape from 3:1 to 2:1 (an Event's story blocks name their picture; a block without
   one keeps the last picture shown).
 - **What the last choice did** (rolls, Health, rewards, who takes the lead) in a small italic block above the story
   text, then the **story text**.

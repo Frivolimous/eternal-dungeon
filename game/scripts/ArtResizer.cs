@@ -48,10 +48,12 @@ public static class ArtResizer
                 GD.PrintErr($"  error  {System.IO.Path.GetFileName(file)}: can't read the image");
                 continue;
             }
-            var note = Fit(image, request.Width, request.Height);
+            // A flexible height keeps the master's own shape (cropped only past the allowed range).
+            var height = request.HeightFor(image.GetWidth(), image.GetHeight());
+            var note = Fit(image, request.Width, height);
             image.SavePng(System.IO.Path.Combine(target, id + ".png"));
             written.Add(id);
-            GD.Print($"  wrote  {id}.png {request.Width}×{request.Height}{note}");
+            GD.Print($"  wrote  {id}.png {request.Width}×{height}{note}");
         }
 
         var missing = catalog.Values.Where(r => !r.Optional && !written.Contains(r.Id)

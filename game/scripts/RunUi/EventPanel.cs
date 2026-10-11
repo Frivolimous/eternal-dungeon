@@ -20,7 +20,7 @@ public partial class EventPanel : Control
     readonly PanelContainer popup = new() { Visible = false, MouseFilter = MouseFilterEnum.Ignore };
     readonly Label popupText = new() { AutoTranslateMode = AutoTranslateModeEnum.Disabled };
 
-    public const float Width = 580;
+    public const float Width = Core.Assets.ArtCatalog.EventBannerWidth;
 
     public EventPanel(RunScreen screen)
     {
@@ -64,7 +64,7 @@ public partial class EventPanel : Control
         if (Run.Event is not { Block: StoryBlock block } e) return;
 
         col.AddChild(Ui.Label(T(EventDef.NameKey(e.Def.Id)), 22, Ui.Gold));
-        col.AddChild(new Banner(screen, Picture(e.Def, block)) { CustomMinimumSize = new Vector2(Width, Width * Banner.Ratio) });
+        col.AddChild(new Banner(screen, Picture(e.Def, block)));
 
         var text = new VBoxContainer();
         text.AddThemeConstantOverride("separation", 6);
@@ -231,16 +231,30 @@ public partial class EventPanel : Control
     }
 }
 
-/// <summary>The Event's banner picture, or a dark placeholder until its art arrives.</summary>
-public partial class Banner(RunScreen screen, string? image) : Control
+/// <summary>The Event's banner picture at its own shape (its height is free within the art request's range), or a dark
+/// placeholder until its art arrives.</summary>
+public partial class Banner : Control
 {
-    /// <summary>Height over width (the art request's shape).</summary>
-    public static readonly float Ratio = (float)Core.Assets.ArtCatalog.EventBannerDisplay.H / Core.Assets.ArtCatalog.EventBannerDisplay.W;
+    readonly RunScreen screen;
+    readonly string? image;
+
+    public Banner(RunScreen screen, string? image)
+    {
+        this.screen = screen;
+        this.image = image;
+        var width = (float)Core.Assets.ArtCatalog.EventBannerWidth;
+        var height = 240f;                                          // the placeholder's
+        if (Art is { } art)
+            height = Mathf.Clamp(width * art.GetHeight() / art.GetWidth(), Core.Assets.ArtCatalog.EventBannerMinHeight, Core.Assets.ArtCatalog.EventBannerMaxHeight);
+        CustomMinimumSize = new Vector2(width, height);
+    }
+
+    Texture2D? Art => image is null ? null : screen.Main.Art.Get($"event_{image}");
 
     public override void _Draw()
     {
         var r = new Rect2(Vector2.Zero, Size);
-        if (image is not null && screen.Main.Art.Get($"event_{image}") is { } art)
+        if (Art is { } art)
             DrawTextureRect(art, r, false);
         else
         {

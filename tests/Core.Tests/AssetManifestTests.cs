@@ -57,6 +57,40 @@ public class AssetManifestTests
     }
 
     [Fact]
+    public void An_event_banner_keeps_its_own_height_within_the_range()
+    {
+        var banner = ArtCatalog.All(TestData.Repo).First(r => r.Id.StartsWith("event_"));
+        Assert.True(banner.FlexibleHeight);
+        Assert.Equal("1160×388–580", banner.Size);
+        Assert.Equal(492, banner.HeightFor(1024, 434));               // 1024×434 keeps its shape
+        Assert.Equal(580, banner.HeightFor(1000, 1000));              // a square is cropped to 2:1
+        Assert.Equal(388, banner.HeightFor(2000, 400));               // a very wide one to 3:1
+        Assert.True(banner.Fits(1160, 492));
+        Assert.False(banner.Fits(1160, 600));
+        Assert.False(banner.Fits(1024, 434));                         // the width is fixed
+
+        var root = Path.Combine(Path.GetTempPath(), "ed-banner-" + Guid.NewGuid().ToString("N"));
+        var dir = Path.Combine(root, "styles", "ink");
+        Directory.CreateDirectory(dir);
+        try
+        {
+            void Png(string id, int w, int h)
+            {
+                var bytes = new byte[24];
+                System.Buffers.Binary.BinaryPrimitives.WriteInt32BigEndian(bytes.AsSpan(16), w);
+                System.Buffers.Binary.BinaryPrimitives.WriteInt32BigEndian(bytes.AsSpan(20), h);
+                File.WriteAllBytes(Path.Combine(dir, id + ".png"), bytes);
+            }
+            Png(banner.Id, 1160, 492);
+            var manifest = AssetManifest.Parse("""{ "assets": [], "styles": [{ "id": "ink", "name": "Ink", "aiPlaceholder": true }] }""");
+            Assert.DoesNotContain(manifest.CheckStyles(root, ArtCatalog.All(TestData.Repo)), p => p.Contains(banner.Id));
+            Png(banner.Id, 1160, 700);
+            Assert.Contains(manifest.CheckStyles(root, ArtCatalog.All(TestData.Repo)), p => p.Contains(banner.Id) && p.Contains("388–580"));
+        }
+        finally { Directory.Delete(root, true); }
+    }
+
+    [Fact]
     public void Lists_only_flagged_assets()
     {
         var manifest = AssetManifest.Parse("""

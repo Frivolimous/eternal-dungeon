@@ -4,7 +4,21 @@ using EternalDungeon.Core.Data;
 namespace EternalDungeon.Core.Assets;
 
 /// <summary>One image a style provides: its id (the file name, without .png), exact size, and what it shows.</summary>
-public sealed record ArtRequest(string Id, int Width, int Height, string Group, string Description, bool Optional);
+/// <summary>An image the game asks for, at twice its display size. With <see cref="MinHeight"/> its height is free between
+/// that and <see cref="Height"/> (the width stays fixed): the game shows it at the shape it has.</summary>
+public sealed record ArtRequest(string Id, int Width, int Height, string Group, string Description, bool Optional, int MinHeight = 0)
+{
+    public bool FlexibleHeight => MinHeight > 0;
+
+    /// <summary>The size as the art requests list it: 1160×388–580 for a flexible height.</summary>
+    public string Size => FlexibleHeight ? $"{Width}×{MinHeight}–{Height}" : $"{Width}×{Height}";
+
+    public bool Fits(int width, int height) => width == Width && (FlexibleHeight ? height >= MinHeight && height <= Height : height == Height);
+
+    /// <summary>The height a source image gets at this width: its own shape, kept within the allowed heights.</summary>
+    public int HeightFor(int sourceWidth, int sourceHeight) =>
+        FlexibleHeight ? Math.Clamp((int)Math.Round((double)sourceHeight * Width / sourceWidth), MinHeight, Height) : Height;
+}
 
 /// <summary>
 /// Every styled image the game uses (M2 brief §9), derived from the data so the list never goes stale. A style is a
@@ -50,8 +64,9 @@ public static class ArtCatalog
 
     public const int FeatureIconDisplay = 80, CampIconDisplay = 40;
 
-    /// <summary>An Event's banner picture, across the top of the Event screen.</summary>
-    public static readonly (int W, int H) EventBannerDisplay = (580, 240);
+    /// <summary>An Event's banner picture, across the top of the Event screen: a fixed width, and any height from 3:1 to 2:1
+    /// (shown at the picture's own shape).</summary>
+    public const int EventBannerWidth = 580, EventBannerMinHeight = 194, EventBannerMaxHeight = 290;
 
     public static string PortraitId(string unitId, string state = DefaultState) =>
         state == DefaultState ? $"portrait_{unitId}" : $"portrait_{unitId}_{state}";
@@ -104,8 +119,8 @@ public static class ArtCatalog
             list.Add(new ArtRequest($"icon_feature_{feature.Key}", FeatureIconDisplay * 2, FeatureIconDisplay * 2, "Feature icons",
                 $"{string.Join(", ", feature.Select(n => n.Name))}: sketched in ink on transparency, like a drawing on the map", true));
         foreach (var image in data.Events.Values.SelectMany(e => e.Blocks).OfType<StoryBlock>().Select(b => b.Image).OfType<string>().Distinct())
-            list.Add(new ArtRequest($"event_{image}", EventBannerDisplay.W * 2, EventBannerDisplay.H * 2, "Event pictures",
-                $"{string.Join(", ", data.Events.Values.Where(e => e.Blocks.OfType<StoryBlock>().Any(b => b.Image == image)).Select(e => data.Text[EventDef.NameKey(e.Id)]))} (the wide banner across the top of the Event)", true));
+            list.Add(new ArtRequest($"event_{image}", EventBannerWidth * 2, EventBannerMaxHeight * 2, "Event pictures",
+                $"{string.Join(", ", data.Events.Values.Where(e => e.Blocks.OfType<StoryBlock>().Any(b => b.Image == image)).Select(e => data.Text[EventDef.NameKey(e.Id)]))} (the wide banner across the top of the Event; any height in the range, from 3:1 to 2:1)", true, EventBannerMinHeight * 2));
         return list;
     }
 
@@ -135,7 +150,7 @@ public static class ArtCatalog
             sb.AppendLine("| Id | Size | Needed | Shows |");
             sb.AppendLine("| --- | --- | --- | --- |");
             foreach (var r in group)
-                sb.AppendLine($"| `{r.Id}` | {r.Width}×{r.Height} | {(r.Optional ? "optional" : "yes")} | {r.Description} |");
+                sb.AppendLine($"| `{r.Id}` | {r.Size} | {(r.Optional ? "optional" : "yes")} | {r.Description} |");
         }
         return sb.ToString();
     }

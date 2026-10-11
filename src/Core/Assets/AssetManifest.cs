@@ -57,8 +57,8 @@ public sealed partial class AssetManifest(IReadOnlyList<AssetEntry> entries, IRe
                     continue;
                 }
                 present.Add(id);
-                if (ImageSize(file) is var (w, h) && (w != request.Width || h != request.Height))
-                    problems.Add($"styles/{style.Id}/{name}: should be {request.Width}×{request.Height}, file is {w}×{h}");
+                if (ImageSize(file) is var (w, h) && !request.Fits(w, h))
+                    problems.Add($"styles/{style.Id}/{name}: should be {request.Size}, file is {w}×{h}");
             }
             if (missing is not null) missing[style.Id] = catalog.Count(r => !r.Optional && !present.Contains(r.Id));
         }
