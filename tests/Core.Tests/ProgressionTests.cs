@@ -77,9 +77,11 @@ public class ProgressionTests
         var w = run.Hero("warrior");
         var max = w.MaxHealth;
         w.Health = max - 30;
-        run.SpendPoint("warrior", "vigor");                         // +8 Health a level, + Strength
-        Assert.Equal(max + 8, w.MaxHealth);
-        Assert.Equal(max - 22, w.Health);
+        run.SpendPoint("warrior", "vigor");
+        var gain = (int)D.Skills["vigor"].Stats.Where(s => s.Stat == "health").Sum(s => s.At(1));
+        Assert.True(gain > 0);
+        Assert.Equal(max + gain, w.MaxHealth);
+        Assert.Equal(max - 30 + gain, w.Health);                        // the current value rises with it
     }
 
     [Fact]
@@ -95,7 +97,8 @@ public class ProgressionTests
         Assert.Contains("stealth_move", rogue.ActionIds);
         Assert.DoesNotContain("move", rogue.ActionIds);                // the Rogue's Move replaces it
         var plain = new Unit("x", D.Units["rogue"], Side.Party, D);
-        Assert.Equal(plain.Stats.GetCompound("accuracy") + 3, rogue.Stats.GetCompound("accuracy"));
+        var accuracy = D.Skills["shadow_mastery"].Stats.Where(s => s.Stat == "accuracy").Sum(s => s.At(1));
+        Assert.Equal(plain.Stats.GetCompound("accuracy") + accuracy, rogue.Stats.GetCompound("accuracy"));
         Assert.DoesNotContain("power_attack", run.Battle.Session.Battle.Unit("warrior").ActionIds);   // no point spent
     }
 

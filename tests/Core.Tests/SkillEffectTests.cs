@@ -35,7 +35,8 @@ public class SkillEffectTests
         return b.Act(actor, b.Data.Actions[action], target ?? actor);
     }
 
-    static double PerLevel(string skill, string stat) => Repo.Skills[skill].Stats.Single(s => s.Stat == stat).PerLevel;
+    /// <summary>What a skill adds to a stat at a level: its per-level rows and any steps reached.</summary>
+    static double Total(string skill, string stat, int level) => Repo.Skills[skill].Stats.Where(s => s.Stat == stat).Sum(s => s.At(level));
 
     [Fact]
     public void Battle_might_makes_the_first_basic_attack_that_hits_a_crit()
@@ -58,7 +59,7 @@ public class SkillEffectTests
         var b = new Battle(Repo, [w, g], seed: 1);
         var act = g.ActTicks;
         var stagger = Use(b, w, "attack", g).Of<Staggered>().Single();
-        Assert.Equal((int)(PerLevel("weapon_mastery", "hit_stagger") * 5), stagger.Amount);
+        Assert.Equal((int)(Total("weapon_mastery", "hit_stagger", 5)), stagger.Amount);
         Assert.Equal(act - stagger.Amount * TurnClock.TicksPerTurn, g.ActTicks);
     }
 
@@ -87,7 +88,7 @@ public class SkillEffectTests
         var full = Resolution.Damage(rogue, Repo.Actions["dagger_attack"], g).Power;
         g.TakeDamage(g.Health - g.MaxHealth / 2 + 1);               // just below half
         var low = Resolution.Damage(rogue, Repo.Actions["dagger_attack"], g).Power;
-        Assert.Equal(PerLevel("executioner", "execute_power") * 5, low - full, 6);
+        Assert.Equal(Total("executioner", "execute_power", 5), low - full, 6);
         _ = b;
     }
 
@@ -95,7 +96,7 @@ public class SkillEffectTests
     public void Opportunist_refunds_ap_against_a_stunned_or_slowed_target()
     {
         var rogue = U("rogue", "r", Side.Party, ("opportunist", 5));
-        var cap = PerLevel("opportunist", "opportunist") * 5;
+        var cap = Total("opportunist", "opportunist", 5);
         var stunned = Target("s");
         var slowed = Target("c");
         var b = new Battle(Repo, [rogue, stunned, slowed], seed: 1);
@@ -116,7 +117,7 @@ public class SkillEffectTests
     {
         var e = U("elementalist", "e", Side.Party, ("magical_aptitude", 1), ("mana_conduit", 5));
         var bolt = Repo.Actions["fire_bolt"];
-        var share = PerLevel("mana_conduit", "mana_cost") * 5;
+        var share = Total("mana_conduit", "mana_cost", 5);
         Assert.Equal((int)Math.Round(bolt.ManaCost * (1 + share), MidpointRounding.AwayFromZero), e.ManaCost(bolt));
         Assert.True(e.ManaCost(bolt) < bolt.ManaCost);
     }
@@ -129,12 +130,12 @@ public class SkillEffectTests
         var b = new Battle(Repo, [rogue, g], seed: 1);
         var r = b.ActAt(rogue, Repo.Actions["stealth_move"], b.Grid.TileOptions(rogue, Repo.Actions["stealth_move"]).First());
         var stealth = r.Of<BuffApplied>().Single(x => x.Buff.Def.Id == "stealth");
-        Assert.Equal(Repo.Buffs["stealth"].Length + (int)Math.Floor(PerLevel("shadow_mastery", "stealth_turns") * 4 + 1e-9), stealth.Remaining);
+        Assert.Equal(Repo.Buffs["stealth"].Length + (int)Math.Floor(Total("shadow_mastery", "stealth_turns", 4) + 1e-9), stealth.Remaining);
         Assert.True(rogue.Stealthed);
         var inStealth = Resolution.Damage(rogue, Repo.Actions["dagger_attack"], g, 1).CMult;
         rogue.Buffs.Clear();
         var outOf = Resolution.Damage(rogue, Repo.Actions["dagger_attack"], g, 1).CMult;
-        Assert.Equal(PerLevel("shadow_mastery", "stealth_c_mult") * 4, inStealth - outOf, 6);
+        Assert.Equal(Total("shadow_mastery", "stealth_c_mult", 4), inStealth - outOf, 6);
     }
 
     [Fact]
@@ -180,6 +181,6 @@ public class SkillEffectTests
         var b = new Battle(Repo, [e, w, far, g], seed: 1, grid);
         b.Start();
         string[] fire = ["fire", "elemental", "spell"];
-        Assert.Equal(PerLevel("elemental_ward", "elemental_ward") * 5, w.Stats.Get("avoid", fire) - far.Stats.Get("avoid", fire), 6);
+        Assert.Equal(Total("elemental_ward", "elemental_ward", 5), w.Stats.Get("avoid", fire) - far.Stats.Get("avoid", fire), 6);
     }
 }

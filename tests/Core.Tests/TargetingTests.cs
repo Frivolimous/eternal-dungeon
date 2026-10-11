@@ -29,13 +29,14 @@ public class TargetingTests
     [Fact]
     public void A_tank_being_hit_isnt_more_vulnerable_until_it_is_the_easiest_kill()
     {
-        var tank = U("warrior", "tank", Side.Party);                     // 140 HP
-        var mage = U("elementalist", "mage", Side.Party);                // 80 HP
+        var tank = U("warrior", "tank", Side.Party);
+        var mage = U("elementalist", "mage", Side.Party);
+        Assert.True(tank.Health > mage.Health + 20);                      // the premise: the tank is sturdier
         double Vulnerability(Unit u) => UnitAi.Scores([tank, mage], 0).Single(s => s.Unit == u).Score;
         Assert.Equal(1, Vulnerability(mage), 9);
-        tank.TakeDamage(50);                                              // 90 HP: still more than the mage
+        tank.TakeDamage(tank.Health - mage.Health - 10);                  // 10 more than the mage: still sturdier
         Assert.True(Vulnerability(tank) < Vulnerability(mage));
-        tank.TakeDamage(30);                                              // 60 HP: now the easiest kill
+        tank.TakeDamage(20);                                              // 10 less than the mage: now the easiest kill
         Assert.Equal(1, Vulnerability(tank), 9);
         tank.Stats.Add("curse", "vulnerability", 20);                    // the stat adds on top, in percent
         Assert.Equal(1.2, Vulnerability(tank), 9);
