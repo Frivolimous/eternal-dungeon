@@ -362,6 +362,10 @@ public partial class BattleScreen : Control
             case TurnLost l:
                 Float(l.Unit, T("ui.turn_lost"), Ui.Dim, 14);
                 break;
+            case Fled f:
+                // The hero leaves the battle: its card goes (the next refresh hides it), so nothing else stands under it.
+                Float(f.Unit, T("ui.fled"), Ui.Dim, 18);
+                break;
             case Died d:
                 // A moment on the knocked-out portrait, then the card flips face down.
                 SetMoment(d.Unit, "knocked_out");
@@ -409,10 +413,17 @@ public partial class BattleScreen : Control
         board.PlaceCards(seconds);
         foreach (var (unit, card) in board.Cards)
         {
+            // A hero who fled is out of the battle: no card, nothing to point at.
+            card.Visible = !unit.Fled;
+            unitButtons[unit].Visible = !unit.Fled;
+            if (unit.Fled) continue;
             if (!unit.Alive && !falling.Contains(unit)) card.Flip(true, seconds);
             else card.SetTilted(unit.Stunned);
             card.Redraw();
         }
+        // A unit standing on a fallen one's tile takes the pointer: live units' targets go on top.
+        foreach (var (unit, b) in unitButtons)
+            if (unit.Alive) b.MoveToFront();
         timeline.Refresh(ghost);
         details.Refresh();
     }
