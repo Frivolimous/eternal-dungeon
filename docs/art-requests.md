@@ -190,23 +190,14 @@ showing where the game draws. Paint the frame over the grey and leave the rest t
 | Id | Size | Needed | Shows |
 | --- | --- | --- | --- |
 | `icon_feature_cage` | 160×160 | optional | Forest Edge Trail: sketched in ink on transparency, like a drawing on the map |
-| `icon_feature_swamp` | 160×160 | optional | Black Bog: sketched in ink on transparency, like a drawing on the map |
-| `icon_feature_shrine` | 160×160 | optional | Mossy Altar: sketched in ink on transparency, like a drawing on the map |
+| `icon_feature_pond` | 160×160 | optional | Black Bog, Mud Flats, Reed Marsh: sketched in ink on transparency, like a drawing on the map |
+| `icon_feature_shrine` | 160×160 | optional | Mossy Altar, Standing Stone, Ruined Chapel: sketched in ink on transparency, like a drawing on the map |
 | `icon_feature_cave` | 160×160 | optional | Bone Cave: sketched in ink on transparency, like a drawing on the map |
-| `icon_feature_mud` | 160×160 | optional | Mud Flats: sketched in ink on transparency, like a drawing on the map |
-| `icon_feature_campsite` | 160×160 | optional | Ransacked Camp: sketched in ink on transparency, like a drawing on the map |
-| `icon_feature_spring` | 160×160 | optional | Dry Spring: sketched in ink on transparency, like a drawing on the map |
-| `icon_feature_garrison` | 160×160 | optional | Gatekeeper's Post: sketched in ink on transparency, like a drawing on the map |
-| `icon_feature_thicket` | 160×160 | optional | Thorn Thicket: sketched in ink on transparency, like a drawing on the map |
-| `icon_feature_tripwire` | 160×160 | optional | Narrow Path: sketched in ink on transparency, like a drawing on the map |
-| `icon_feature_snare` | 160×160 | optional | Reed Marsh: sketched in ink on transparency, like a drawing on the map |
-| `icon_feature_tower` | 160×160 | optional | Lookout Hill: sketched in ink on transparency, like a drawing on the map |
-| `icon_feature_boar_ground` | 160×160 | optional | Oak Grove: sketched in ink on transparency, like a drawing on the map |
-| `icon_feature_standing_stone` | 160×160 | optional | Standing Stone: sketched in ink on transparency, like a drawing on the map |
-| `icon_feature_herbalist` | 160×160 | optional | Hermit's Glade: sketched in ink on transparency, like a drawing on the map |
-| `icon_feature_chapel` | 160×160 | optional | Ruined Chapel: sketched in ink on transparency, like a drawing on the map |
-| `icon_feature_burned_camp` | 160×160 | optional | Burned Camp: sketched in ink on transparency, like a drawing on the map |
-| `icon_feature_fortress` | 160×160 | optional | Goblin Fortress: sketched in ink on transparency, like a drawing on the map |
+| `icon_feature_tent` | 160×160 | optional | Ransacked Camp, Hermit's Glade, Burned Camp: sketched in ink on transparency, like a drawing on the map |
+| `icon_feature_waterfall` | 160×160 | optional | Dry Spring: sketched in ink on transparency, like a drawing on the map |
+| `icon_feature_fort` | 160×160 | optional | Gatekeeper's Post, Lookout Hill, Goblin Fortress: sketched in ink on transparency, like a drawing on the map |
+| `icon_feature_forest` | 160×160 | optional | Thorn Thicket, Oak Grove: sketched in ink on transparency, like a drawing on the map |
+| `icon_feature_forest_trail` | 160×160 | optional | Narrow Path: sketched in ink on transparency, like a drawing on the map |
 
 ## Event pictures
 
