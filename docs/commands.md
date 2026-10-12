@@ -42,7 +42,7 @@ overwriting edits that exist on only one side (the sheet or `data\`).
 | Command | What it does |
 | --- | --- |
 | `dotnet run --project src\Sim -- format-data` | Rewrites `data\*.json` in their standard form, after editing JSON by hand |
-| `dotnet run --project src\Sim -- art-requests` | Regenerates `docs\art-requests.md` (after adding units or actions) |
+| `dotnet run --project src\Sim -- art-requests` | Regenerates `docs\art-requests.md` (after adding units or actions) and the card frame templates in `docs\art-templates\` |
 | `dotnet run --project src\Sim -- encounters` | Lists the encounter ids |
 | `dotnet run --project src\Sim -- event goblin_camp --flags merchant_freed,wife_saved --gold 50` | Plays an Event with Dungeon flags and Gold set first, to see a branch (add `--battle-log` to print the fights) |
 | `dotnet run --project src\Sim -- load save.json` | Restores a dungeon save and prints the run it holds, up to where it was saved. Send a save with a bug report: it replays the run exactly |

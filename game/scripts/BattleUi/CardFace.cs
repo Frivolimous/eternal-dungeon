@@ -35,17 +35,18 @@ public partial class CardFace : Control
         CustomMinimumSize = size;
     }
 
-    /// <summary>Portrait rectangle: 10 px from the left (the Act meter), 4 px from the top, full width otherwise.</summary>
-    Rect2 PortraitRect
+    /// <summary>Where each part goes (shared with the card frame templates). A side-on Tall card's portrait is turned.</summary>
+    CardLayout Layout
     {
         get
         {
             var (w, h) = ArtCatalog.PortraitDisplay(Unit.Def.Size);
             if (rotatePortrait) (w, h) = (h, w);
-            var x = 10 + (Size.X - 14 - w) / 2;
-            return new Rect2(x, 4, w, h);
+            return CardLayout.Of((int)Size.X, (int)Size.Y, w, h);
         }
     }
+
+    static Rect2 R(Box b) => new(b.X, b.Y, b.W, b.H);
 
     public override void _Draw()
     {
@@ -55,7 +56,8 @@ public partial class CardFace : Control
         DrawRect(new Rect2(Vector2.Zero, Size), bg);
 
         // Portrait, or a generated placeholder: a gradient in the side's colour and the unit's initials.
-        var p = PortraitRect;
+        var layout = Layout;
+        var p = R(layout.Portrait);
         var texture = screen.Main.Art.Portrait(Unit.Def.Id, PortraitState());
         if (texture is not null)
         {
@@ -78,9 +80,10 @@ public partial class CardFace : Control
                 HorizontalAlignment.Center, p.Size.X, big, new Color(Ui.Ink, 0.8f));
         }
 
-        // Name banner along the bottom of the portrait.
-        var banner = new Rect2(p.Position.X, p.End.Y - 18, p.Size.X, 18);
-        DrawRect(banner, new Color(0, 0, 0, 0.65f));
+        // Name plate along the bottom of the portrait: solid, in a dark shade of the side's colour (the frame is the
+        // same for both sides, so this tells them apart).
+        var banner = R(layout.NamePlate);
+        DrawRect(banner, side.Darkened(0.75f));
         DrawString(font, banner.Position + new Vector2(3, 13), Unit.Name, HorizontalAlignment.Center, banner.Size.X - 6, 11, Ui.Ink);
 
         // Status icons along the top of the portrait.
@@ -92,7 +95,7 @@ public partial class CardFace : Control
         }
 
         // Act meter (or cast progress) up the left edge.
-        var meter = new Rect2(3, 4, 5, Size.Y - 8);
+        var meter = R(layout.ActMeter);
         DrawRect(meter, new Color(0, 0, 0, 0.5f));
         var tick = screen.Session.Battle.Clock.Tick;
         var (fill, color) = Unit.Casting is { } cast
@@ -103,17 +106,13 @@ public partial class CardFace : Control
 
         // The Mana gauge (units with Mana only; the slot stays empty otherwise, so HP bars line up), then the HP bar
         // with numbers and Shield.
-        var barX = p.Position.X;
-        var barW = p.Size.X;
-        var y = p.End.Y + 2;
-        const int thin = 4;
         if (Unit.MaxMana > 0)
         {
-            DrawRect(new Rect2(barX, y, barW, thin), new Color(0, 0, 0, 0.5f));
-            DrawRect(new Rect2(barX, y, barW * Unit.Mana / Unit.MaxMana, thin), Ui.Mana);
+            var mana = R(layout.Mana);
+            DrawRect(mana, new Color(0, 0, 0, 0.5f));
+            DrawRect(new Rect2(mana.Position, new Vector2(mana.Size.X * Unit.Mana / Unit.MaxMana, mana.Size.Y)), Ui.Mana);
         }
-        y += thin + 2;
-        var hp = new Rect2(barX, y, barW, 14);
+        var hp = R(layout.Health);
         DrawRect(hp, new Color(0, 0, 0, 0.6f));
         var share = (float)Unit.Health / Math.Max(1, Unit.MaxHealth);
         DrawRect(new Rect2(hp.Position, new Vector2(hp.Size.X * share, hp.Size.Y)), share < 1f / 3 ? Ui.HealthLow : Ui.Health);
@@ -126,18 +125,28 @@ public partial class CardFace : Control
                                      : Text.F("ui.hp", ("hp", Unit.Health), ("max", Unit.MaxHealth));
         DrawString(font, hp.Position + new Vector2(0, 11), hpText, HorizontalAlignment.Center, hp.Size.X, 11, Colors.White);
 
-        // Highlight: the active hero glows gold, valid targets green, the hovered target white.
-        var mark = Mark switch
+        // Highlight: the active hero glows gold, valid targets green, the hovered target white. With a frame image the
+        // frame is the border, and a highlight recolours its outer edge; without one, the card has a thin outline in
+        // the side's colour.
+        Color? mark = Mark switch
         {
             CardMark.Active => Ui.Gold,
             CardMark.Valid => Ui.Valid,
             CardMark.Hovered => Colors.White,
-            _ => new Color(side, 0.7f),
+            _ => null,
         };
-        DrawRect(new Rect2(Vector2.One, Size - Vector2.One * 2), mark, false, Mark == CardMark.None ? 2 : 4);
         if (screen.Main.Art.Get($"card_frame_{ArtCatalog.SizeName(Unit.Def.Size)}") is { } frame && !rotatePortrait)
+        {
             DrawTextureRect(frame, new Rect2(Vector2.Zero, Size), false);
+            if (mark is { } highlight) Outline(highlight, CardLayout.HighlightWidth);
+        }
+        else
+            Outline(mark ?? new Color(side, 0.7f), mark is null ? 2 : 4);
     }
+
+    /// <summary>A border of <paramref name="width"/> px just inside the card's edge.</summary>
+    void Outline(Color color, float width) =>
+        DrawRect(new Rect2(Vector2.One * width / 2, Size - Vector2.One * width), color, false, width);
 
     string PortraitState()
     {

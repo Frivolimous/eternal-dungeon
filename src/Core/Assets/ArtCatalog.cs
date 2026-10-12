@@ -154,6 +154,15 @@ public static class ArtCatalog
             sb.AppendLine("| --- | --- | --- | --- |");
             foreach (var r in group)
                 sb.AppendLine($"| `{r.Id}` | {r.Size} | {(r.Optional ? "optional" : "yes")} | {r.Description} |");
+            if (group.Key == "Cards")
+            {
+                sb.AppendLine();
+                sb.AppendLine($"Each frame has a template at its exact size in `{CardLayout.TemplateFolder}/` (`card_frame_<size>_template.png`),");
+                sb.AppendLine("showing where the game draws. Paint the frame over the grey and leave the rest transparent:");
+                sb.AppendLine();
+                foreach (var (name, rgb, means) in CardLayout.TemplateLegend)
+                    sb.AppendLine($"- **{name}** (#{rgb:X6}): {means}");
+            }
         }
         return sb.ToString();
     }

@@ -333,6 +333,8 @@ int ArtRequests()
     var text = ArtCatalog.Markdown(LoadData());
     File.WriteAllText(path, text);
     Console.WriteLine($"Wrote {path} ({ArtCatalog.All(LoadData()).Count} images)");
+    foreach (var name in CardTemplates.Write(root))
+        Console.WriteLine($"Wrote {CardLayout.TemplateFolder}/{name}");
     return 0;
 }
 
@@ -354,7 +356,7 @@ int Help()
           load <save.json>                                           restore a dungeon save and print the run it holds
           format-data                                                rewrite data/*.json in canonical form
           assets                                                     check the asset manifest and art styles, list AI placeholders
-          art-requests                                               write docs/art-requests.md (every image a style needs)
+          art-requests                                               write docs/art-requests.md (every image a style needs) and the card frame templates
           pull-sheets [--force]                                      read the Google Sheet, validate, print the changes, write data/
           push-sheets [--force]                                      write data/ to the Google Sheet (keeps _ columns and row order)
         """);

@@ -31,7 +31,7 @@ section has a reference screenshot in `docs/screenshots/`. Claude keeps this cur
 | --- | --- |
 | **Camp button** | Bottom left, "Camp ×N"; opens the **Camp confirm** ("Camp now?") |
 | **Hero Panel button** | Under the Camp button |
-| **Hero card** | A hero's card as in battle: portrait, name banner, Mana bar, Health bar |
+| **Hero card** | A hero's card as in battle: portrait, name plate, Mana bar, Health bar |
 | **Level badge** | "Lv 2" at the top right of a hero card |
 | **Points dot** | The red dot with a number at a hero card's top left: unspent skill points |
 | **Active edge** | The faint gold edge on the Active Hero's card during an Event; strong with a glow on the hero who'd take the hovered choice |
@@ -78,7 +78,7 @@ section has a reference screenshot in `docs/screenshots/`. Claude keeps this cur
 | **Ghost marker** | The faint gold chip showing where the hovered action puts the hero's next turn ("next turn", "cast lands", "Flees") |
 | **Cast chip** | A blue-edged chip at the moment a cast in progress lands ("Flees", "Fire Bolt lands") |
 | **Board** | The two 3×2 areas, enemies on top |
-| **Card** | A unit: portrait, name banner, status icons, Act meter (left edge, blue while casting), Mana gauge, Health bar |
+| **Card** | A unit: portrait, name plate (solid, dark blue for heroes, dark red for enemies), status icons, Act meter (left edge, blue while casting), Mana gauge, Health bar |
 | **Card mark** | A card's highlight: gold (active hero), green (valid target), white (hovered target) |
 | **Action bar** | The row of action buttons along the bottom (number keys; AP cost; hourglass for a cast) |
 | **Preview line** | The line above the action bar: the hovered action's numbers |

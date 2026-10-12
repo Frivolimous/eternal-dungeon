@@ -62,7 +62,7 @@ dotnet run --project src/Sim -- dungeon dungeon_0 --seed 1 [--battle-log] [--sav
 dotnet run --project src/Sim -- dungeon dungeon_0 --runs 200                # many runs: completion, wipes, resources at bosses
 dotnet run --project src/Sim -- load save.json        # restore a dungeon save and print the run it holds
 dotnet run --project src/Sim -- assets               # check the asset manifest and art styles, list AI placeholders
-dotnet run --project src/Sim -- art-requests         # rewrite docs/art-requests.md (a test checks it's current)
+dotnet run --project src/Sim -- art-requests         # rewrite docs/art-requests.md (a test checks it's current) + docs/art-templates/
 dotnet test --filter-method "*Bad_enum*"             # one test by name (wildcards allowed)
 powershell -ExecutionPolicy Bypass -File tools/build.ps1   # export Windows + Linux builds into builds/
 ```
