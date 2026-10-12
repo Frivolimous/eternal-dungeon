@@ -43,7 +43,7 @@ public partial class MapView : Control
         ClipContents = true;
         MouseFilter = MouseFilterEnum.Stop;
         Resized += Place;
-        MouseExited += () => SetHovered(null);
+        MouseExited += () => { HoverThing(null); SetHovered(null); };
         var box = Ui.Box(new Color(0.97f, 0.95f, 0.9f), Ink, 1, 6);
         box.ContentMarginTop = box.ContentMarginBottom = 3;
         label.AddThemeStyleboxOverride("panel", box);
@@ -67,6 +67,7 @@ public partial class MapView : Control
         things.Clear();
         Hovered = null;
         marked = null;
+        hoveredThing = null;
         if (Run.Started)
         {
             if (layoutMap != Run.Map.Id) (layout, layoutMap) = (MapRegions.Of(Run.Map), Run.Map.Id);
@@ -157,12 +158,52 @@ public partial class MapView : Control
     {
         if (!Run.Started) return;
         if (e is InputEventMouseMotion m)
-            SetHovered(buttons.GetValueOrDefault(MapRegions.At(Run.Map, ToLayout(m.Position)).Id) is { Hoverable: true } b ? b : null);
-        else if (e is InputEventMouseButton { ButtonIndex: MouseButton.Left, Pressed: true } && Hovered is { Pressable: true } h)
         {
-            AcceptEvent();
-            screen.PressNode(h.Node);
+            var b = buttons.GetValueOrDefault(MapRegions.At(Run.Map, ToLayout(m.Position)).Id) is { Hoverable: true } r ? r : null;
+            // A Region whose Event is over but has something to use: pointing at it points at that.
+            var thing = b is { Clickable: false } ? things.FirstOrDefault(t => t.Node == b.Node && t.Usable) : null;
+            if (thing is not null) HoverThing(thing);
+            else
+            {
+                HoverThing(null);
+                SetHovered(b);
+            }
         }
+        else if (e is InputEventMouseButton { ButtonIndex: MouseButton.Left, Pressed: true })
+        {
+            if (hoveredThing is not null)
+            {
+                AcceptEvent();
+                hoveredThing.EmitSignal(BaseButton.SignalName.Pressed);
+            }
+            else if (Hovered is { Pressable: true } h)
+            {
+                AcceptEvent();
+                screen.PressNode(h.Node);
+            }
+        }
+    }
+
+    /// <summary>The usable Interactable the mouse is pointing at through its Region (its icon has the focus).</summary>
+    InteractableIcon? hoveredThing;
+
+    void HoverThing(InteractableIcon? thing)
+    {
+        if (thing == hoveredThing && (thing is null || thing.HasFocus())) return;
+        if (hoveredThing is not null && IsInstanceValid(hoveredThing))
+        {
+            if (hoveredThing.HasFocus()) hoveredThing.ReleaseFocus();
+            Mark(null);
+        }
+        hoveredThing = thing;
+        if (thing is not null)
+        {
+            SetHovered(null);
+            thing.GrabFocus();
+            Mark(thing);
+            MouseDefaultCursorShape = CursorShape.PointingHand;
+        }
+        QueueRedraw();
     }
 
     /// <summary>The mouse is on <paramref name="b"/>'s Region (null: on none): it takes the focus, so one ring shows.</summary>
@@ -226,7 +267,7 @@ public partial class MapView : Control
         {
             var poly = cell.Select(ToScreen).ToArray();
             if (!Seen(id)) DrawColoredPolygon(poly, FogTint);
-            else if (Hovered?.Node.Def.Id == id && Hovered.Pressable) DrawColoredPolygon(poly, new Color(Ring, 0.12f));
+            else if ((Hovered?.Node.Def.Id == id && Hovered.Pressable) || hoveredThing?.Node.Def.Id == id) DrawColoredPolygon(poly, new Color(Ring, 0.12f));
         }
         foreach (var border in layout.Borders.Where(x => Seen(x.A) || Seen(x.B)))
         {

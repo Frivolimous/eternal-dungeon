@@ -82,7 +82,8 @@ The exploration screen looks like a sketched map (Jeremy's layout, 2026-10-11):
   answers the mouse; keyboard and controller focus the icons.
 - **Interactables** (a Sanctuary, a Pathway, an Alchemist Station) have **icons of their own**, beside the Region's
   central icon: **glowing** while the party can use them, plain until the Region's Event is over, dimmed once used.
-  Pressing one opens what can be done there (2026-10-11).
+  Pressing one opens what can be done there (2026-10-11). Once a Region's Event is over, pointing anywhere in the
+  Region points at its usable Interactable, and a click there uses it (2026-10-12).
 - **A Region with no Event** isn't silent: a short line **rises from the Region** and fades, naming its Interactable
   ("There's a Sanctuary here.") or, with nothing there, a line from its Feature's small pool ("A dry spring, full of
   leaves and disappointment."), else a general one. An animation joins it later (2026-10-11).
