@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eternal Dungeon</title>
+<meta name="description" content="Eternal Dungeon: a roguelike party dungeon crawler with speed-driven turn-based combat. The vision for the game, and where it stands today.">
+<style>
+  :root {
+    --bg: #1e1b26;
+    --bg-deep: #16141c;
+    --panel: #292534;
+    --border: #4b4358;
+    --ink: #ede5d6;
+    --dim: #a69eb3;
+    --gold: #f2c75a;
+    --parchment: #ebe5d8;
+    --parchment-ink: #3d3024;
+    --done: #5cc761;
+    --now: #f2c75a;
+    --later: #6b6478;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.6 "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: var(--gold); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---- Hero ---- */
+  header.hero {
+    position: relative;
+    min-height: 88vh;
+    display: grid;
+    align-items: end;
+    background: var(--bg-deep);
+    overflow: hidden;
+  }
+  header.hero .art {
+    position: absolute; inset: 0;
+    background: url("img/key-art.png") center / cover no-repeat;
+    opacity: 0.55;
+  }
+  header.hero::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(22,20,28,0.1) 0%, rgba(22,20,28,0.6) 55%, var(--bg) 100%);
+  }
+  header.hero .wrap { position: relative; z-index: 1; padding-bottom: 72px; }
+  .eyebrow { color: var(--gold); letter-spacing: 0.18em; text-transform: uppercase; font-size: 13px; font-weight: 600; }
+  h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(48px, 9vw, 96px);
+    line-height: 1;
+    margin: 12px 0 18px;
+    color: var(--gold);
+    text-shadow: 0 2px 24px rgba(0,0,0,0.6);
+  }
+  .lede { font-size: 21px; max-width: 640px; margin: 0 0 24px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 0; list-style: none; }
+  .tags li {
+    border: 1px solid var(--border); background: rgba(41,37,52,0.8);
+    padding: 4px 12px; border-radius: 999px; font-size: 14px; color: var(--dim);
+  }
+
+  /* ---- Sections ---- */
+  section { padding: 88px 0; }
+  section + section { border-top: 1px solid #2c2836; }
+  h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 36px; color: var(--gold); margin: 0 0 8px;
+  }
+  .sub { color: var(--dim); margin: 0 0 40px; max-width: 680px; }
+  h3 { font-size: 19px; margin: 0 0 6px; color: var(--ink); }
+
+  .pillars { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .pillar { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; }
+  .pillar p { margin: 0; color: var(--dim); }
+
+  .quote {
+    margin: 48px 0 0;
+    background: var(--parchment); color: var(--parchment-ink);
+    border-radius: 12px; padding: 28px 32px;
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 28px; align-items: center;
+  }
+  .quote img { border-radius: 8px; }
+  .quote blockquote { margin: 0; font-family: Georgia, serif; font-size: 19px; line-height: 1.55; }
+  .quote figcaption { margin-top: 12px; font-size: 14px; opacity: 0.75; }
+
+  /* ---- Screenshots ---- */
+  .shots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+  .shot { margin: 0; }
+  .shot img { border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+  .shot figcaption { margin-top: 12px; color: var(--dim); font-size: 15px; }
+  .shot figcaption b { color: var(--ink); font-weight: 600; }
+  .note { margin-top: 32px; color: var(--dim); font-size: 14px; border-left: 3px solid var(--gold); padding-left: 14px; }
+
+  /* ---- Status ---- */
+  .road { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  .road li {
+    display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 16px; align-items: start;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px;
+  }
+  .badge { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; justify-self: start; }
+  .done .badge { background: rgba(92,199,97,0.15); color: var(--done); }
+  .now .badge { background: rgba(242,199,90,0.15); color: var(--now); }
+  .later .badge { background: rgba(107,100,120,0.25); color: var(--dim); }
+  .now { border-color: var(--gold) !important; }
+  .road h3 { margin-bottom: 2px; }
+  .road p { margin: 0; color: var(--dim); font-size: 15px; }
+
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin: 0 0 40px; }
+  .fact { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+  .fact .n { font-family: Georgia, serif; font-size: 34px; color: var(--gold); line-height: 1.1; }
+  .fact .l { color: var(--dim); font-size: 14px; }
+
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px; }
+  ul.plain { margin: 0; padding-left: 20px; color: var(--dim); }
+  ul.plain li { margin-bottom: 8px; }
+  ul.plain b { color: var(--ink); font-weight: 600; }
+
+  footer { padding: 40px 0 56px; color: var(--dim); font-size: 14px; border-top: 1px solid #2c2836; }
+
+  @media (max-width: 760px) {
+    body { font-size: 16px; }
+    .wrap { padding: 0 16px; }
+    section { padding: 64px 0; }
+    .shots { grid-template-columns: minmax(0, 1fr); }
+    .quote { grid-template-columns: minmax(0, 1fr); padding: 22px; }
+    .road li { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    header.hero { min-height: 78vh; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="art" role="img" aria-label="A goblin camp in a dark forest: in-progress placeholder art"></div>
+  <div class="wrap">
+    <div class="eyebrow">In development</div>
+    <h1>Eternal Dungeon</h1>
+    <p class="lede">A roguelike party dungeon crawler. Lead four heroes through hand-crafted dungeons and an endless
+      Shadow World, in turn-based battles where speed decides who acts next.</p>
+    <ul class="tags">
+      <li>Turn-based tactics</li>
+      <li>Party building</li>
+      <li>Roguelike runs</li>
+      <li>Steam · Windows &amp; Steam Deck</li>
+      <li>One-time purchase, no monetization</li>
+    </ul>
+  </div>
+</header>
+
+<main>
+
+<section id="vision">
+  <div class="wrap">
+    <h2>The vision</h2>
+    <p class="sub">What the finished game is meant to be. Each part below is written down in the project's design
+      document and is being built milestone by milestone.</p>
+    <div class="pillars">
+      <div class="pillar">
+        <h3>Explore a dungeon, Region by Region</h3>
+        <p>Every dungeon is a set of Maps under fog of war. Each step into the unknown costs Stamina; Events,
+          battles, shrines and merchants wait in the Regions. Camp, rest at Sanctuaries, beat each Map's boss and
+          push deeper, or turn back while you still can.</p>
+      </div>
+      <div class="pillar">
+        <h3>Battles where speed is everything</h3>
+        <p>Combat is purely turn-based on two small grids. A visible turn order shows who acts next, enemies show
+          what they plan to do, and every action's cost decides how soon a hero acts again. Spells take time to cast,
+          and can be interrupted.</p>
+      </div>
+      <div class="pillar">
+        <h3>Heroes built three ways</h3>
+        <p>Each hero combines a Primary class, a Secondary class and a Dabble skill, drawn from 15 classes. Skill
+          trees unlock masteries; class traits open new choices in Events. Equipment, Blessings and Artifacts
+          layer on top of one tag-based stat system.</p>
+      </div>
+      <div class="pillar">
+        <h3>Depth is the difficulty</h3>
+        <p>No difficulty settings: how deep you can go is the difficulty. Five scripted dungeons lead into the
+          endless Shadow World. Heroes keep their levels and gear between dungeons, and Reincarnation trades a
+          hero's progress for permanent power and a new race.</p>
+      </div>
+      <div class="pillar">
+        <h3>Events with a sense of humour</h3>
+        <p>A dry, wry narrator tells the dungeon's stories. Choices depend on who is in your party: a Rogue can
+          pick the lock, a Warrior can tear the bars apart, and a well-read hero may notice what everyone else
+          missed.</p>
+      </div>
+      <div class="pillar">
+        <h3>Made for Steam</h3>
+        <p>A premium release for Windows and Steam Deck, with mouse, keyboard and controller support, cloud saves,
+          achievements and a free demo before launch. No ads, no in-app purchases.</p>
+      </div>
+    </div>
+
+    <figure class="quote">
+      <img src="img/banner-merchant.png" alt="A merchant in a goblin cage beside a forest trail (placeholder art)">
+      <div>
+        <blockquote>A wooden cage sits crooked beside the trail. Goblin carpentry runs mostly on enthusiasm. Inside, a
+          merchant flings himself at the bars. "Goblins! They took my wife! My boy! My cart, which I had only just
+          finished paying for! Their Gatekeeper has the key!"</blockquote>
+        <figcaption>The Caged Merchant, the first Event of Dungeon 0</figcaption>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<section id="screens">
+  <div class="wrap">
+    <h2>The game today</h2>
+    <p class="sub">Screenshots from the current build: the playable first dungeon, the Goblin Raid.</p>
+    <div class="shots">
+      <figure class="shot">
+        <img src="img/map.png" alt="The exploration map: Regions on parchment under fog of war, with the party below">
+        <figcaption><b>Exploring.</b> Each Region of the Map is drawn on parchment as it's discovered. A question mark is
+          somewhere the party can go next; the heroes, their Stamina and their belts sit along the bottom.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/event.png" alt="The Caged Merchant Event: a banner picture, the story, and three choices">
+        <figcaption><b>An Event.</b> Story, a picture and choices. A grey line under a choice names the trait or class
+          it needs and the hero who would take it; hovering a choice shows its odds and what follows.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/battle.png" alt="A battle against four goblins, with the turn order on the left">
+        <figcaption><b>Battle.</b> The turn order runs down the left, with each enemy's plan on its chip. Hovering an
+          action shows its numbers and where the hero's next turn would land.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/boss.png" alt="The Goblin Chief boss battle in the side-on layout">
+        <figcaption><b>A boss.</b> Large units take up a full area. A spell being cast shows in the turn order at the
+          moment it lands, so the party can try to stop it.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/hero-panel.png" alt="The Hero Panel with the Warrior's skill tree and a skill tooltip">
+        <figcaption><b>Growing a hero.</b> The Hero Panel shows stats and traits, and the skill tree as a tree:
+          one click raises a skill, and its tooltip shows what the next level gives.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/title.png" alt="The title screen of the playtest demo">
+        <figcaption><b>The playtest demo.</b> A build of the first dungeon is going out to playtesters, with a title
+          screen and a note on what the demo is.</figcaption>
+      </figure>
+    </div>
+    <p class="note">All art shown is placeholder: much of it is AI-generated, used only to test the game while it's being
+      built. The released game will use original, human-made art.</p>
+  </div>
+</section>
+
+<section id="status">
+  <div class="wrap">
+    <h2>Where it stands</h2>
+    <p class="sub">The project is built in milestones, each ending in something playable or testable. The first
+      dungeon is playable from start to finish, and a demo build is going out to playtesters.</p>
+
+    <div class="facts">
+      <div class="fact"><div class="n">1</div><div class="l">playable dungeon: 2 Maps, 18 Regions</div></div>
+      <div class="fact"><div class="n">15</div><div class="l">hand-written Events</div></div>
+      <div class="fact"><div class="n">3</div><div class="l">classes with skill trees and masteries</div></div>
+      <div class="fact"><div class="n">300</div><div class="l">automated tests on the rules</div></div>
+    </div>
+
+    <ol class="road">
+      <li class="done"><span class="badge">Done</span><div><h3>Foundations and rules core</h3>
+        <p>The project, builds and data pipeline; then the full rules engine: stats, combat formulas, turn order,
+          buffs, crowd control, targeting AI and the battle grid, with a command-line battle simulator.</p></div></li>
+      <li class="done"><span class="badge">Done</span><div><h3>Playable battle</h3>
+        <p>The battle screen: cards on a table, the turn order, enemy intents, animations, mouse and keyboard
+          play.</p></div></li>
+      <li class="now"><span class="badge">Now</span><div><h3>Dungeon 0, the first slice</h3>
+        <p>Exploration, Events, Stamina, Camps and Sanctuaries, XP and skill trees, saving at every step, and the
+          screens for all of it. Playable end to end; now in review and tuning, ending in the go/no-go question:
+          is the loop fun?</p></div></li>
+      <li class="later"><span class="badge">Next</span><div><h3>Generated dungeons and equipment</h3>
+        <p>A dungeon generator with event pools, Indoor Maps of Rooms and Hallways, and loot.</p></div></li>
+      <li class="later"><span class="badge">Later</span><div><h3>Town and build depth</h3>
+        <p>The Town, the remaining classes, Secondary and Dabble classes, shops, Blessings and the first full
+          dungeons.</p></div></li>
+      <li class="later"><span class="badge">Later</span><div><h3>Content and endgame</h3>
+        <p>All 15 classes, dungeons 3 to 5, the Shadow World, Reincarnation and the economy.</p></div></li>
+      <li class="later"><span class="badge">Later</span><div><h3>Steam</h3>
+        <p>Achievements, cloud saves, controller and Steam Deck support, a demo, and launch.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2>How it's made</h2>
+    <p class="sub">A small team: a designer who owns the design, art direction and playtesting, and Claude, an AI,
+      as the main developer.</p>
+    <div class="two">
+      <ul class="plain">
+        <li><b>Godot 4 and C#.</b> All the game's rules live in a plain C# library with no engine code, covered by
+          automated tests. Godot only draws the game and takes input.</li>
+        <li><b>Simulated before it's played.</b> A battle simulator plays thousands of fights, and an auto-player runs
+          whole dungeons, so numbers can be checked before anyone sits down to play.</li>
+        <li><b>Deterministic.</b> Every run comes from one seed: a save is a list of decisions that replays exactly.</li>
+      </ul>
+      <ul class="plain">
+        <li><b>Content as data.</b> Classes, skills, enemies, items and every word on screen live in data tables,
+          edited in a shared spreadsheet and checked automatically on load.</li>
+        <li><b>A living design document.</b> Every rule is written down first, and changes to rules and code land
+          together, so the design and the game never drift apart.</li>
+        <li><b>A voice for the writing.</b> A tone guide and a lore bible keep every Event, name and line consistent.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">Eternal Dungeon · in development · status as of October 2026</div>
+</footer>
+
+</body>
+</html>
